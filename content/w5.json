@@ -1,0 +1,831 @@
+{
+  "week": 5,
+  "level": "Advanced",
+  "title": "AI-engineering met LLM's",
+  "topics": "Tokens, prompting, structured output, tools, embeddings, pgvector, RAG, evals",
+  "questions": [
+    {
+      "id": "5-0",
+      "type": "choice",
+      "question": "Wat voorspelt een LLM?",
+      "correct": "Het volgende token",
+      "wrong": [
+        "De volgende zin in één keer",
+        "De waarheid",
+        "Een SQL-query"
+      ],
+      "explanation": "Chat-modellen zijn daarna getraind om instructies te volgen.",
+      "simple": "Een LLM werkt als de woordvoorspelling op je telefoon, maar dan heel slim: het kiest steeds het stukje tekst (token) dat het meest waarschijnlijk volgt. Dat stukje plakt het erachter en dan voorspelt het het volgende, net zo lang tot het antwoord af is.",
+      "why_wrong": [
+        "Het model maakt geen hele zin in één keer; het bouwt de zin stukje voor stukje op.",
+        "Het model weet niet wat waar is; het kiest wat waarschijnlijk klinkt, en dat kan ook onzin zijn.",
+        "Een SQL-query kan het wel schrijven, maar dat doet het ook token voor token, net als elke andere tekst."
+      ]
+    },
+    {
+      "id": "5-1",
+      "type": "choice",
+      "question": "Hoeveel is één token ongeveer?",
+      "correct": "Zo'n driekwart woord",
+      "wrong": [
+        "Eén letter",
+        "Eén zin",
+        "Eén alinea"
+      ],
+      "explanation": "Een woorddeel. Tokens zijn je kosten.",
+      "simple": "Het model knipt tekst in kleine stukjes, zoals puzzelstukjes van woorden. Een kort woord is vaak één stukje, een lang woord wordt in een paar stukjes geknipt, dus gemiddeld is een token ongeveer driekwart woord. Je betaalt per stukje, dus dit bepaalt je kosten.",
+      "why_wrong": [
+        "Eén letter is te klein; meestal zitten er meerdere letters in één token.",
+        "Een zin bestaat uit veel tokens, niet uit één.",
+        "Een alinea is nog veel groter en bevat tientallen tot honderden tokens."
+      ]
+    },
+    {
+      "id": "5-2",
+      "type": "choice",
+      "question": "Onthoudt het model het gesprek tussen twee API-calls?",
+      "correct": "Nee, je stuurt elke keer de hele history mee",
+      "wrong": [
+        "Ja, automatisch",
+        "Alleen bij temperature 0",
+        "Alleen bij grote modellen"
+      ],
+      "explanation": "De API is stateless. Opslaan is jouw werk.",
+      "simple": "Het model is als iemand zonder geheugen die elke keer een nieuwe brief krijgt. Wil je dat hij weet wat er eerder gezegd is, dan moet je het hele gesprek opnieuw in de brief zetten. Het gesprek bewaren is dus jouw taak.",
+      "why_wrong": [
+        "De API onthoudt niets tussen calls; zonder history begint het model elke keer blanco.",
+        "Temperature gaat over hoe willekeurig het model kiest, niet over geheugen.",
+        "Ook grote modellen zijn stateless; groot betekent niet dat ze je gesprek bewaren."
+      ]
+    },
+    {
+      "id": "5-3",
+      "type": "choice",
+      "question": "Welke temperature gebruik je voor extractie en classificatie?",
+      "correct": "0",
+      "wrong": [
+        "1",
+        "2",
+        "Maakt niet uit"
+      ],
+      "explanation": "Hoger is voor creatief schrijven.",
+      "simple": "Temperature is een soort durf-knop: hoe hoger, hoe meer het model ook minder voor de hand liggende woorden kiest. Bij uithalen of sorteren wil je elke keer hetzelfde, nette antwoord, dus zet je de knop op 0.",
+      "why_wrong": [
+        "Bij 1 kiest het model gevarieerder, en dat wil je juist niet als je steeds hetzelfde etiket of veld wilt.",
+        "Bij 2 wordt de output erg willekeurig en vaak rommelig, dat past bij geen enkele extractie.",
+        "Het maakt wel uit: een hogere temperature geeft wisselende antwoorden op dezelfde vraag."
+      ]
+    },
+    {
+      "id": "5-4",
+      "type": "choice",
+      "question": "Hoe beperk je hallucinaties?",
+      "correct": "Gronden in opgehaalde feiten, citaties vragen en outputs valideren",
+      "wrong": [
+        "Een hogere temperature",
+        "Langere prompts",
+        "Meer max_tokens"
+      ],
+      "explanation": "En een ongecontroleerd antwoord mag nooit een onomkeerbare actie uitvoeren.",
+      "simple": "Een model dat uit zijn hoofd antwoordt, verzint soms dingen. Geef het daarom een open-boek-toets: stop de echte feiten in de prompt, laat het zeggen waar het antwoord staat, en controleer de uitkomst. En laat een niet-gecontroleerd antwoord nooit iets doen dat je niet kunt terugdraaien.",
+      "why_wrong": [
+        "Een hogere temperature maakt het model juist wilder, dus eerder meer verzinsels.",
+        "Een langere prompt zonder echte feiten voorkomt niet dat het model iets verzint.",
+        "Meer max_tokens geeft het model alleen meer ruimte om te praten, niet om gelijk te hebben."
+      ]
+    },
+    {
+      "id": "5-5",
+      "type": "choice",
+      "question": "Waar zet je de modelnaam?",
+      "correct": "In settings/config",
+      "wrong": [
+        "Hardcoded in elke call",
+        "In de prompt",
+        "In de README"
+      ],
+      "explanation": "Modellen worden om de paar maanden vervangen.",
+      "simple": "Modellen worden om de paar maanden vervangen door nieuwere. Als de naam op één plek in je instellingen staat, verander je één regel en klaar, net zoals je één adres in je contacten aanpast in plaats van op elke brief.",
+      "why_wrong": [
+        "Hardcoded in elke call betekent dat je bij een nieuw model overal in je code moet gaan zoeken en wijzigen.",
+        "In de prompt doet de naam niets; de API kiest het model via de `model`-parameter, niet via tekst.",
+        "De README is documentatie voor mensen; je code leest daar niets uit."
+      ]
+    },
+    {
+      "id": "5-6",
+      "type": "choice",
+      "question": "Waarom wrap je de SDK in je eigen `ask()`-functie?",
+      "correct": "Dan kun je van vendor wisselen zonder de rest aan te passen",
+      "wrong": [
+        "Het is sneller",
+        "Dat eist de provider",
+        "Alleen voor streaming"
+      ],
+      "explanation": "Later zit alle LLM-code achter je eigen `llm/`-module.",
+      "simple": "Met je eigen `ask()`-functie maak je een soort stekkerdoos: de rest van je code prikt alleen in jouw doos. Wil je een andere provider, dan wissel je alleen wat er achter de doos zit en hoeft de rest niets te merken.",
+      "why_wrong": [
+        "Een extra functie maakt de call niet sneller; het gaat om makkelijk kunnen wisselen.",
+        "De provider eist dit niet; je kunt de SDK ook direct gebruiken, het is jouw eigen keuze voor nette code.",
+        "Het helpt bij alles, niet alleen bij streaming: ook bij logging, retries en van model wisselen."
+      ]
+    },
+    {
+      "id": "5-7",
+      "type": "choice",
+      "question": "Hoe bereken je de kosten van een call?",
+      "correct": "`input_tokens × prijs_in + output_tokens × prijs_out`",
+      "wrong": [
+        "Vaste prijs per request",
+        "Alleen output telt",
+        "Per karakter"
+      ],
+      "explanation": "Log usage bij elke call.",
+      "simple": "Je betaalt zoals bij een taxi met twee meters: één voor wat je erin stopt (input-tokens) en één voor wat eruit komt (output-tokens). Elke meter heeft een eigen prijs, dus je telt die twee bedragen op. Log daarom bij elke call hoeveel tokens het waren.",
+      "why_wrong": [
+        "Er is geen vaste prijs per request; een lange vraag kost meer dan een korte.",
+        "De input telt ook mee, en bij lange prompts of veel context is dat vaak het grootste deel.",
+        "Je betaalt per token, niet per karakter."
+      ]
+    },
+    {
+      "id": "5-8",
+      "type": "choice",
+      "question": "Waarom zet je altijd `max_tokens`?",
+      "correct": "Om kosten en op hol geslagen loops te begrenzen",
+      "wrong": [
+        "Het model wordt er slimmer van",
+        "Het is verplicht voor streaming",
+        "Het heeft geen effect"
+      ],
+      "explanation": "Een loop die blijft aanroepen is de snelste manier om een klantbudget op te maken.",
+      "simple": "`max_tokens` is een rem: het model mag niet langer praten dan jij toestaat. Zo kan één antwoord of een loop die maar blijft doorgaan niet ongemerkt je hele budget opmaken.",
+      "why_wrong": [
+        "Een limiet maakt het model niet slimmer; het kapt het antwoord alleen af als het te lang wordt.",
+        "Het is niet speciaal voor streaming; je zet het bij elke call als veiligheidsgrens.",
+        "Het heeft wel effect: het model stopt zodra het de limiet bereikt."
+      ]
+    },
+    {
+      "id": "5-9",
+      "type": "choice",
+      "question": "Waarom zet je documenten in tags als `<document>...</document>`?",
+      "correct": "Het scheidt instructies van data en dempt prompt injection",
+      "wrong": [
+        "Het model kan alleen HTML lezen",
+        "Het is sneller",
+        "Voor JSON-output"
+      ],
+      "explanation": "Behandel elke tekst die het model binnenkomt als data.",
+      "simple": "Met tags zet je de tekst van een document als het ware in een doos met een etiket: dit is materiaal, geen opdracht. Staat er in dat document iets als 'doe nu iets anders', dan weet het model beter dat dit gewoon inhoud is. Het helpt, maar is geen perfecte bescherming.",
+      "why_wrong": [
+        "Het model leest gewone tekst prima; de tags zijn alleen een duidelijke scheiding, geen HTML-eis.",
+        "Tags maken niets sneller; ze voegen zelfs een paar tokens toe.",
+        "Tags rond een document zijn er om data van instructies te scheiden, niet om JSON terug te krijgen."
+      ]
+    },
+    {
+      "id": "5-10",
+      "type": "choice",
+      "question": "Wat is few-shot prompting?",
+      "correct": "Twee of drie voorbeelden van input → output in de prompt",
+      "wrong": [
+        "Weinig tokens gebruiken",
+        "Een lage temperature",
+        "Eén API-call doen"
+      ],
+      "explanation": "Voorbeelden werken beter dan een alinea regels.",
+      "simple": "Few-shot is voordoen in plaats van uitleggen: je laat twee of drie voorbeelden zien van 'dit gaat erin, dit komt eruit'. Net als bij een nieuw spelletje snapt het model het sneller van een paar voorbeelden dan van een lange lijst regels.",
+      "why_wrong": [
+        "Weinig tokens gebruiken is zuinig zijn, dat heeft niets met voorbeelden te maken.",
+        "Een lage temperature gaat over hoe willekeurig het model kiest, niet over voorbeelden in de prompt.",
+        "Het aantal API-calls staat los van few-shot; het gaat om voorbeelden binnen de prompt."
+      ]
+    },
+    {
+      "id": "5-11",
+      "type": "choice",
+      "question": "Wat is het patroon voor structured output?",
+      "correct": "Schema in de prompt + Pydantic-validatie + retry met de fout",
+      "wrong": [
+        "Een regex op de tekst",
+        "Vertrouwen op het model",
+        "Temperature op 1"
+      ],
+      "explanation": "Libraries als instructor doen de retry-loop voor je.",
+      "simple": "Je vertelt het model precies welk formulier je terug wilt (schema), je controleert het formulier met Pydantic, en klopt het niet, dan geef je het terug met de fout erbij. Zoals een juf die een opdracht teruggeeft met 'hier mist je naam'.",
+      "why_wrong": [
+        "Een regex is broos: een klein verschil in de tekst en je patroon matcht niet meer, en het checkt geen types.",
+        "Blind vertrouwen gaat mis, want het model levert soms kapotte of incomplete JSON.",
+        "Temperature 1 maakt de output juist wisselender, dus eerder fouten in het formaat."
+      ]
+    },
+    {
+      "id": "5-12",
+      "type": "choice",
+      "question": "De output faalt op Pydantic-validatie. Wat stuur je terug in de retry?",
+      "correct": "De ruwe output als assistant-bericht en de fout als user-bericht",
+      "wrong": [
+        "Niets, gewoon dezelfde call opnieuw",
+        "Een nieuwe system prompt",
+        "Een error naar de gebruiker"
+      ],
+      "explanation": "Dan kan het model zijn eigen fout zien en verbeteren.",
+      "simple": "Je laat het model zien wat het zelf schreef en vertelt erbij wat er mis was. Zo kan het zijn eigen werk nakijken en verbeteren, net als jij met een nagekeken toets.",
+      "why_wrong": [
+        "Dezelfde call opnieuw doen geeft het model geen aanwijzing, dus het maakt vaak dezelfde fout weer.",
+        "Een nieuwe system prompt vertelt het model niet wat er precies fout ging in dit antwoord.",
+        "Meteen een error naar de gebruiker sturen geeft het model geen kans om het te herstellen."
+      ]
+    },
+    {
+      "id": "5-13",
+      "type": "choice",
+      "question": "Wie voert bij tool calling de functie echt uit?",
+      "correct": "Jouw code",
+      "wrong": [
+        "Het model",
+        "De provider",
+        "De gebruiker"
+      ],
+      "explanation": "Het model vraagt; jouw code beslist óf en hoe.",
+      "simple": "Het model is als een klant die een bestelbriefje schrijft: 'zoek het weer op voor Utrecht'. Het briefje zelf doet niets; jouw code leest het, beslist of het mag, voert het uit en geeft het resultaat terug.",
+      "why_wrong": [
+        "Het model kan zelf niets uitvoeren; het schrijft alleen een verzoek in tekst.",
+        "De provider stuurt alleen het verzoek terug; de functie draait niet bij hen maar in jouw code.",
+        "De gebruiker drukt niet zelf op de knop; jouw code voert de tool automatisch uit (en vraagt alleen bevestiging bij gevaarlijke acties)."
+      ]
+    },
+    {
+      "id": "5-14",
+      "type": "choice",
+      "question": "Wanneer stopt de `agent_turn`-loop?",
+      "correct": "Als `stop_reason` niet `\"tool_use\"` is",
+      "wrong": [
+        "Altijd na één call",
+        "Zodra er tekst in het antwoord zit",
+        "Nooit"
+      ],
+      "explanation": "Daarna stuur je de tekst-blokken terug als antwoord.",
+      "simple": "Zolang het model zegt 'ik wil nog een tool gebruiken' (`stop_reason` is `\"tool_use\"`), voer je die uit en vraag je opnieuw. Zegt het iets anders, dan is het klaar en geef je de tekst als antwoord terug.",
+      "why_wrong": [
+        "Na één call is het model vaak nog niet klaar, omdat het eerst het resultaat van een tool nodig heeft.",
+        "Het model kan tekst sturen en tegelijk om een tool vragen, dus tekst betekent nog niet dat het klaar is.",
+        "Een loop die nooit stopt blijft calls doen en tokens kosten; hij moet stoppen zodra er geen tool meer gevraagd wordt."
+      ]
+    },
+    {
+      "id": "5-15",
+      "type": "choice",
+      "question": "Wat doe je met tools die iets veranderen (versturen, verwijderen, betalen)?",
+      "correct": "Bevestiging vragen of een allow-list gebruiken",
+      "wrong": [
+        "Vrij laten aanroepen",
+        "Alleen bij temperature 0 toestaan",
+        "Nooit gebruiken"
+      ],
+      "explanation": "Lees-tools mag het model vrij aanroepen.",
+      "simple": "Kijken mag altijd, maar iets veranderen niet zomaar, net als in een winkel. Bij versturen, verwijderen of betalen vraag je eerst 'weet je het zeker?' of laat je alleen toe wat op een vaste lijst staat. Een model kan zich vergissen of misleid worden.",
+      "why_wrong": [
+        "Vrij laten aanroepen betekent dat één fout of één trucje in de tekst echte schade kan doen.",
+        "Temperature 0 maakt het model voorspelbaarder, maar niet betrouwbaar genoeg voor gevaarlijke acties.",
+        "Nooit gebruiken is te streng; met bevestiging of een allow-list kun je ze veilig inzetten."
+      ]
+    },
+    {
+      "id": "5-16",
+      "type": "choice",
+      "question": "Waar bewaar je de history van een actief gesprek?",
+      "correct": "In Redis met een TTL (en Postgres voor het permanente record)",
+      "wrong": [
+        "In het model",
+        "In een globale Python-lijst",
+        "In de JWT"
+      ],
+      "explanation": "En meng nooit de histories van twee gebruikers.",
+      "simple": "Redis is als een whiteboard: snel en handig voor het gesprek van nu, en met een TTL wordt het na een tijdje vanzelf uitgeveegd. Postgres is het archief waar je het blijvend bewaart. Zorg wel dat elke gebruiker zijn eigen whiteboard heeft.",
+      "why_wrong": [
+        "Het model onthoudt niets tussen calls, dus daar kun je niets bewaren.",
+        "Een globale Python-lijst is weg bij een herstart, wordt niet gedeeld tussen meerdere servers en mengt snel gebruikers door elkaar.",
+        "Een JWT is een soort pasje om te laten zien wie je bent; een heel gesprek past daar niet in en hoort daar niet."
+      ]
+    },
+    {
+      "id": "5-17",
+      "type": "choice",
+      "question": "Wat zijn de drie stappen van RAG?",
+      "correct": "Index, retrieve, generate",
+      "wrong": [
+        "Train, test, deploy",
+        "Chunk, train, serve",
+        "Prompt, parse, print"
+      ],
+      "explanation": "Chunken en embedden → vergelijkbare chunks zoeken → antwoorden uit die chunks.",
+      "simple": "RAG is als een bibliotheek gebruiken. Eerst zet je alle boeken geordend in de kast (index), dan pak je de paar bladzijden die bij de vraag passen (retrieve), en daarna schrijft het model een antwoord uit die bladzijden (generate).",
+      "why_wrong": [
+        "Train, test, deploy is het stappenplan voor zelf een model trainen; bij RAG train je niets.",
+        "Bij RAG train je het model niet; je zoekt de juiste stukken tekst op en geeft die mee.",
+        "Prompt, parse, print beschrijft gewoon een call doen en de output tonen, zonder iets op te zoeken."
+      ]
+    },
+    {
+      "id": "5-18",
+      "type": "choice",
+      "question": "Wat is een embedding?",
+      "correct": "Een lijst floats die de betekenis van een tekst voorstelt",
+      "wrong": [
+        "Een samenvatting",
+        "Een token",
+        "Een hash"
+      ],
+      "explanation": "Teksten met vergelijkbare betekenis wijzen dezelfde kant op, ook in verschillende talen.",
+      "simple": "Een embedding is een soort adres op een betekenis-kaart, geschreven als een lange rij getallen. Teksten die ongeveer hetzelfde betekenen liggen dicht bij elkaar op die kaart, ook als ze in een andere taal zijn of andere woorden gebruiken.",
+      "why_wrong": [
+        "Een samenvatting is gewone tekst; een embedding is een rij getallen.",
+        "Een token is een stukje tekst; een embedding beschrijft de betekenis van een heel stuk tekst.",
+        "Een hash verandert compleet bij één andere letter, terwijl een embedding juist gelijk blijft bij dezelfde betekenis."
+      ]
+    },
+    {
+      "id": "5-19",
+      "type": "choice",
+      "question": "Waarmee meet je hoe vergelijkbaar twee embeddings zijn?",
+      "correct": "Cosine similarity",
+      "wrong": [
+        "Levenshtein-afstand",
+        "SHA-256",
+        "De lengte van de tekst"
+      ],
+      "explanation": "~0.8 bij dezelfde betekenis, ~0.1 bij iets anders.",
+      "simple": "Elke embedding wijst als een pijl een kant op. Cosine similarity kijkt of twee pijlen dezelfde kant op wijzen: ongeveer dezelfde richting betekent ongeveer dezelfde betekenis (rond 0.8), heel andere richting betekent iets anders (rond 0.1).",
+      "why_wrong": [
+        "Levenshtein telt hoeveel letters je moet veranderen; dat zegt iets over spelling, niet over betekenis.",
+        "SHA-256 is een hash: elke kleine wijziging geeft een totaal ander resultaat, dus je kunt er geen gelijkenis mee meten.",
+        "De lengte van een tekst zegt niets over waar die tekst over gaat."
+      ]
+    },
+    {
+      "id": "5-20",
+      "type": "choice",
+      "question": "Wat betekent de pgvector-operator `<=>`?",
+      "correct": "Cosine distance: kleiner is dichterbij",
+      "wrong": [
+        "Gelijkheid",
+        "Groter dan",
+        "Een JSON-pad"
+      ],
+      "explanation": "Similarity = `1 - (embedding <=> query)`.",
+      "simple": "`<=>` meet de afstand tussen twee embeddings: hoe kleiner het getal, hoe meer ze op elkaar lijken. Daarom sorteer je ermee van klein naar groot en pak je de bovenste. Wil je de similarity, dan reken je `1 - afstand`.",
+      "why_wrong": [
+        "Gelijkheid schrijf je in SQL gewoon met `=`.",
+        "Groter dan is `>`; `<=>` vergelijkt geen getallen maar vectoren.",
+        "Een JSON-pad schrijf je in Postgres met operators als `->` en `->>`."
+      ]
+    },
+    {
+      "id": "5-21",
+      "type": "choice",
+      "question": "Waarom overlap bij het chunken?",
+      "correct": "Zinnen op de grens komen dan in beide chunks",
+      "wrong": [
+        "Meer tokens geeft altijd betere antwoorden",
+        "Het is sneller",
+        "Het is verplicht"
+      ],
+      "explanation": "Bijvoorbeeld chunks van 800 tekens met 150 overlap.",
+      "simple": "Als je een tekst in stukken knipt, kan een belangrijke zin precies op de knip vallen. Door de stukken een beetje te laten overlappen, zoals dakpannen, staat die zin in allebei de stukken heel en kan hij gevonden worden.",
+      "why_wrong": [
+        "Meer tokens maken een antwoord niet vanzelf beter; overlap is er alleen om zinnen niet doormidden te knippen.",
+        "Overlap maakt het juist iets trager en groter, omdat je meer tekst opslaat.",
+        "Het is niet verplicht; het is een slimme keuze om informatie op de grens niet kwijt te raken."
+      ]
+    },
+    {
+      "id": "5-22",
+      "type": "choice",
+      "question": "Welke index maak je voor snelle vectorsearch?",
+      "correct": "HNSW met `vector_cosine_ops`",
+      "wrong": [
+        "B-tree",
+        "GIN met trigrammen",
+        "Geen index nodig"
+      ],
+      "explanation": "Approximate nearest neighbour.",
+      "simple": "HNSW is als een wegwijzer-netwerk door een grote stad: je springt snel van buurt naar buurt richting het goede adres, in plaats van elk huis langs te gaan. Het vindt bijna altijd de dichtstbijzijnde, en heel snel. Met `vector_cosine_ops` meet hij afstand op dezelfde manier als je query.",
+      "why_wrong": [
+        "Een B-tree is goed voor sorteren en exacte waarden, maar kan niet 'lijkt het meest op' zoeken in honderden dimensies.",
+        "GIN met trigrammen zoekt op stukjes letters in tekst, niet op betekenis in vectoren.",
+        "Zonder index vergelijkt Postgres je vraag met elke rij, en dat wordt traag als je veel chunks hebt."
+      ]
+    },
+    {
+      "id": "5-23",
+      "type": "choice",
+      "question": "Multi-tenant RAG: hoe voorkom je dat klant A de documenten van klant B ziet?",
+      "correct": "Een WHERE op tenant id in de retrieval-query",
+      "wrong": [
+        "Het model vragen dat niet te doen",
+        "Een aparte prompt per klant",
+        "Een hogere similarity-drempel"
+      ],
+      "explanation": "Dat filter hoort in de query, niet in de prompt.",
+      "simple": "Je zorgt dat de verkeerde documenten er niet eens bij komen: met een `WHERE` op tenant id haalt de database alleen de papieren van die klant op. Het model krijgt die van klant B dus nooit te zien, zoals een kluisje dat alleen met jouw sleutel opengaat.",
+      "why_wrong": [
+        "Een model kun je vragen wat je wilt, maar het kan zich vergissen of misleid worden; het is geen slot.",
+        "Een aparte prompt houdt niet tegen dat de zoekopdracht documenten van een andere klant ophaalt.",
+        "Een strengere drempel filtert op hoe goed iets lijkt, niet op van wie het is; een document van klant B kan ook prima lijken."
+      ]
+    },
+    {
+      "id": "5-24",
+      "type": "choice",
+      "question": "Wat moet de RAG-prompt afdwingen?",
+      "correct": "Alleen antwoorden uit de chunks, met citaties, en anders 'weet ik niet'",
+      "wrong": [
+        "Zo lang mogelijk antwoorden",
+        "Eigen kennis gebruiken",
+        "Geen bronnen noemen"
+      ],
+      "explanation": "Test ook de onbeantwoordbare vragen.",
+      "simple": "Het model krijgt een open-boek-toets met alleen de opgehaalde bladzijden. Het mag alleen antwoorden wat daarin staat, moet zeggen waar het stond, en als het er niet in staat zegt het eerlijk 'weet ik niet'. Test dus ook vragen waar geen antwoord op is.",
+      "why_wrong": [
+        "Lange antwoorden zijn niet beter en geven meer ruimte voor verzinsels en kosten.",
+        "Eigen kennis van het model kan verouderd of verzonnen zijn; daarom wil je juist dat het bij de bronnen blijft.",
+        "Zonder bronnen kan niemand controleren of het antwoord echt uit de documenten komt."
+      ]
+    },
+    {
+      "id": "5-25",
+      "type": "choice",
+      "question": "Hoe stream je een antwoord in FastAPI?",
+      "correct": "Een generator in een `StreamingResponse` (SSE)",
+      "wrong": [
+        "Een lijst teruggeven",
+        "Alleen via WebSockets",
+        "Via polling"
+      ],
+      "explanation": "Na het streamen voeg je het volledige antwoord toe aan de history.",
+      "simple": "Met streaming krijg je het antwoord druppel voor druppel, zoals een kraan in plaats van een volle emmer. Een generator geeft steeds een stukje, en `StreamingResponse` stuurt elk stukje meteen door naar de browser. Als alles binnen is, zet je het hele antwoord in de history.",
+      "why_wrong": [
+        "Een lijst teruggeven betekent wachten tot alles klaar is en het dan in één keer sturen.",
+        "WebSockets kunnen ook, maar zijn niet de enige manier; voor tekst naar de gebruiker is SSE met `StreamingResponse` simpeler.",
+        "Bij polling vraagt de browser steeds 'is er al iets nieuws?', wat trager en omslachtiger is."
+      ]
+    },
+    {
+      "id": "5-26",
+      "type": "choice",
+      "question": "Hoe ziet een Server-Sent Events-frame eruit?",
+      "correct": "`data: {...}\\n\\n`",
+      "wrong": [
+        "Een JSON-array",
+        "Een CSV-regel",
+        "Een HTTP-header"
+      ],
+      "explanation": "Afsluiten met `data: [DONE]`.",
+      "simple": "Elk berichtje begint met `data:` en eindigt met een lege regel (twee keer `\\n`). Die lege regel is als een punt aan het eind van een zin: zo weet de browser dat dit stukje compleet is. Aan het eind stuur je `data: [DONE]`.",
+      "why_wrong": [
+        "Een JSON-array kun je pas lezen als hij helemaal af is, terwijl je bij streaming losse stukjes wilt sturen.",
+        "Een CSV-regel is een tabelformaat; SSE gebruikt regels die met `data:` beginnen.",
+        "Headers worden één keer aan het begin van het antwoord gestuurd, niet per stukje tekst."
+      ]
+    },
+    {
+      "id": "5-27",
+      "type": "choice",
+      "question": "Er staat 'ignore previous instructions' in een geüploade PDF. Wat is dat?",
+      "correct": "Prompt injection",
+      "wrong": [
+        "Een bug in pypdf",
+        "Onschuldig",
+        "Een feature van het model"
+      ],
+      "explanation": "Behandel opgehaalde tekst als onbetrouwbaar.",
+      "simple": "Iemand probeert stiekem het model nieuwe opdrachten te geven via de tekst van een document, zoals een briefje in een boek met 'negeer je juf'. Dat heet prompt injection. Behandel tekst uit documenten daarom altijd als data, niet als opdracht.",
+      "why_wrong": [
+        "pypdf leest de tekst gewoon goed uit; de tekst staat echt in de PDF.",
+        "Het is niet onschuldig: zo'n zin kan het model laten afwijken van jouw instructies.",
+        "Het is geen feature maar een aanval die gebruikmaakt van het feit dat het model alle tekst leest."
+      ]
+    },
+    {
+      "id": "5-28",
+      "type": "choice",
+      "question": "Wat meet recall@k?",
+      "correct": "Of de juiste chunk in de top k zit",
+      "wrong": [
+        "De snelheid",
+        "De kosten",
+        "De toon"
+      ],
+      "explanation": "Retrieval en generatie meet je apart.",
+      "simple": "Recall@k kijkt of het goede stukje tekst bij de eerste k zoekresultaten zat, zoals checken of het juiste boek op de stapel van de bibliothecaris lag. Zit het er niet bij, dan kan het model het antwoord ook niet geven. Daarom meet je zoeken en antwoorden apart.",
+      "why_wrong": [
+        "Snelheid meet je met latency, niet met recall@k.",
+        "Kosten tel je met tokens en prijzen, niet met recall@k.",
+        "De toon beoordeel je bij het antwoord zelf, niet bij het zoeken."
+      ]
+    },
+    {
+      "id": "5-29",
+      "type": "choice",
+      "question": "Wat log je per LLM-call?",
+      "correct": "request_id, user_id, model, prompt_version, tokens, latency, chunk ids",
+      "wrong": [
+        "Alleen errors",
+        "De API-key",
+        "Niets"
+      ],
+      "explanation": "Dan kun je precies terugzien wat het model zag.",
+      "simple": "Je houdt per call een soort logboek bij, zoals een vluchtrecorder in een vliegtuig. Met wie, welk model, welke promptversie, hoeveel tokens, hoe lang en welke chunks kun je later precies terugzien wat het model zag en waarom het iets zei.",
+      "why_wrong": [
+        "Alleen errors loggen helpt niet als een antwoord wel lukte maar inhoudelijk fout was.",
+        "Een API-key is geheim en hoort nooit in een log, want wie het log leest kan dan op jouw kosten calls doen.",
+        "Zonder logs kun je problemen, kosten en rare antwoorden achteraf niet uitzoeken."
+      ]
+    },
+    {
+      "id": "5-30",
+      "type": "truefalse",
+      "question": "Je bouwt de eval set pas nadat je de prompt hebt getuned.",
+      "answer": false,
+      "explanation": "Eerst de eval set, dan tunen. Anders weet je niet of je verbetert.",
+      "simple": "Eerst maak je de toets, dan ga je oefenen. Als je de vragen pas achteraf bedenkt, kies je ongemerkt vragen die je prompt al goed doet, en weet je niet of een wijziging echt beter is."
+    },
+    {
+      "id": "5-31",
+      "type": "choice",
+      "question": "Hoeveel onbeantwoordbare vragen moeten minimaal in de Week 5 eval set?",
+      "correct": "3 (van minstens 15)",
+      "wrong": [
+        "0",
+        "1",
+        "15"
+      ],
+      "explanation": "De assistent moet ook 'weet ik niet' kunnen zeggen.",
+      "simple": "In je testset van minstens 15 vragen zitten er minstens 3 waar het antwoord niet in de documenten staat. Zo test je of de assistent eerlijk 'weet ik niet' zegt in plaats van iets te verzinnen.",
+      "why_wrong": [
+        "Met 0 test je nooit of de assistent durft te zeggen dat hij het niet weet.",
+        "Met maar 1 vraag is het toeval of hij goed of fout gaat; de afspraak is minstens 3.",
+        "15 is het minimale totaal van de hele set; dan zou er geen enkele beantwoordbare vraag meer in zitten."
+      ]
+    },
+    {
+      "id": "5-32",
+      "type": "choice",
+      "question": "Wat combineert hybrid search?",
+      "correct": "Vector search en Postgres full-text search (`tsvector`)",
+      "wrong": [
+        "Twee LLM's",
+        "Redis en Postgres",
+        "SQL en regex"
+      ],
+      "explanation": "Bijvoorbeeld met reciprocal rank fusion.",
+      "simple": "Hybrid search gebruikt twee zoekers tegelijk: één die op betekenis zoekt (vector search) en één die op precieze woorden zoekt (full-text met `tsvector`). Zo vind je zowel 'iets wat erop lijkt' als exacte namen of codes, en voeg je de lijstjes slim samen.",
+      "why_wrong": [
+        "Twee LLM's laten praten is geen zoekmethode; hybrid search gaat over het ophalen van tekst.",
+        "Redis en Postgres zijn twee databases, maar hybrid search combineert twee zoekmanieren binnen Postgres.",
+        "Regex zoekt op letterpatronen en snapt geen betekenis; hybrid search gebruikt vectoren en full-text."
+      ]
+    },
+    {
+      "id": "5-33",
+      "type": "choice",
+      "question": "Hoe verlaag je LLM-kosten?",
+      "correct": "Goedkoper model voor classificatie, prompt caching, max_tokens, dagbudget per gebruiker",
+      "wrong": [
+        "Hogere temperature",
+        "Meer context meesturen",
+        "Een langere system prompt"
+      ],
+      "explanation": "Tel het dagbudget in Redis.",
+      "simple": "Net als thuis bespaar je door slim te kiezen: een goedkoop model voor simpele sorteerklusjes, hergebruiken wat je al eens stuurde (prompt caching), een rem op de lengte (`max_tokens`) en een dagbudget per gebruiker. Zo groeit de rekening niet onverwacht.",
+      "why_wrong": [
+        "Temperature verandert hoe het model kiest, niet hoeveel tokens je betaalt.",
+        "Meer context betekent meer input-tokens, dus juist hogere kosten.",
+        "Een langere system prompt gaat bij elke call mee en kost dus elke keer extra tokens."
+      ]
+    }
+  ],
+  "flashcards": [
+    {
+      "id": "5-f0",
+      "front": "LLM in vier regels",
+      "back": "De prompt is het programma · de context is het geheugen · output is waarschijnlijkheid (temperature) · modellen hallucineren",
+      "simple": "Wat je in de prompt schrijft is je programma, en alles wat het model weet staat in de context die je meestuurt. Het antwoord is een kansspel dat je met temperature regelt, en het model kan dingen verzinnen, dus controleer altijd."
+    },
+    {
+      "id": "5-f1",
+      "front": "Eerste API-call",
+      "back": "`client.messages.create(model=settings.llm_model, max_tokens=..., temperature=0, system=..., messages=[...])`. Log `usage`.",
+      "simple": "Een eerste call is als een bestelformulier invullen: welk model (uit je settings), hoe lang het antwoord mag zijn, hoe voorspelbaar (temperature 0), de rol (system) en het gesprek (messages). Daarna schrijf je `usage` op, zodat je weet wat het kostte."
+    },
+    {
+      "id": "5-f2",
+      "front": "Kosten",
+      "back": "`input_tokens × prijs_in + output_tokens × prijs_out`. Altijd `max_tokens`. Schat tokens vooraf met tiktoken.",
+      "simple": "Je betaalt apart voor wat erin gaat en wat eruit komt, elk met een eigen prijs per token. Zet altijd `max_tokens` als rem, en met tiktoken kun je vooraf al ongeveer tellen hoeveel tokens je tekst is."
+    },
+    {
+      "id": "5-f3",
+      "front": "Zeven prompt-regels",
+      "back": "Rol en doel · format expliciet · data in tags · voorbeelden (few-shot) · redeneren bij moeilijke taken · beperken en dan valideren · itereren met een testset",
+      "simple": "Een goede prompt is als een goede opdracht aan een nieuwe stagiair: zeg wie hij is en wat het doel is, hoe het resultaat eruit moet zien, wat data is (in tags), laat voorbeelden zien en laat hem bij lastige dingen eerst nadenken. Daarna controleer je het werk en verbeter je de opdracht met een vaste set testvragen."
+    },
+    {
+      "id": "5-f4",
+      "front": "Structured output",
+      "back": "Schema in de prompt → `Model.model_validate_json(raw)` → bij `ValidationError` de fout terugsturen en opnieuw proberen.",
+      "simple": "Je vertelt het model welke vorm de JSON moet hebben, en Pydantic controleert of het klopt. Zo niet, dan stuur je de foutmelding terug zodat het model het kan verbeteren, net als een formulier dat terugkomt met 'dit veld is verplicht'."
+    },
+    {
+      "id": "5-f5",
+      "front": "Tool calling",
+      "back": "Jij beschrijft tools als JSON-schema → model vraagt om een call → jouw code voert uit en stuurt `tool_result` terug → herhalen tot `stop_reason != \"tool_use\"`.",
+      "simple": "Je geeft het model een menukaart met tools. Het model bestelt er een, jouw code maakt het klaar en brengt het resultaat terug (`tool_result`). Dat herhaal je tot het model geen nieuwe bestelling meer doet."
+    },
+    {
+      "id": "5-f6",
+      "front": "Tool-veiligheid",
+      "back": "Lees-tools vrij. Tools met side effects: bevestiging of allow-list. Argumenten altijd valideren met Pydantic.",
+      "simple": "Opzoeken mag het model vrij, want dat verandert niets. Iets veranderen (versturen, verwijderen, betalen) mag alleen na bevestiging of als het op een vaste lijst staat. En wat het model aan de tool meegeeft controleer je altijd met Pydantic, want het kan zich vergissen."
+    },
+    {
+      "id": "5-f7",
+      "front": "Conversation state",
+      "back": "API is stateless. Actief gesprek in Redis met TTL, permanent in Postgres. Trimmen of samenvatten als het lang wordt.",
+      "simple": "De API onthoudt niets, dus jij bewaart het gesprek: het lopende gesprek op een snel whiteboard (Redis, met TTL), het blijvende verslag in het archief (Postgres). Wordt het gesprek te lang, dan knip je oude stukken weg of vat je ze samen."
+    },
+    {
+      "id": "5-f8",
+      "front": "RAG",
+      "back": "Index (chunk → embed → opslaan) · retrieve (vraag embedden → dichtstbijzijnde chunks) · generate (alleen uit die chunks, met citaties)",
+      "simple": "RAG is een bibliotheek voor je model: eerst knip je teksten in stukken, zet je ze om in getallen en sla je ze op. Bij een vraag zoek je de stukken die er het meest op lijken, en het model antwoordt alleen daaruit, met bronvermelding."
+    },
+    {
+      "id": "5-f9",
+      "front": "Embedding",
+      "back": "Lijst floats (bv. 1536) die betekenis voorstelt. Vergelijken met cosine similarity.",
+      "simple": "Een embedding is een lange rij getallen (bijvoorbeeld 1536) die zegt waar een tekst over gaat, als een adres op een betekenis-kaart. Met cosine similarity kijk je of twee adressen dicht bij elkaar liggen."
+    },
+    {
+      "id": "5-f10",
+      "front": "pgvector",
+      "back": "`CREATE EXTENSION vector` · kolom `vector(1536)` · `ORDER BY embedding <=> $1 LIMIT 5` · `USING hnsw (embedding vector_cosine_ops)`",
+      "simple": "pgvector leert Postgres rekenen met embeddings. Je zet de extensie aan, maakt een kolom voor vectoren, sorteert met `<=>` op afstand (kleinst eerst) en zet er een HNSW-index op zodat zoeken snel blijft."
+    },
+    {
+      "id": "5-f11",
+      "front": "Chunking",
+      "back": "Stukken met overlap (bv. 800/150). Beter: structuur volgen (koppen, pagina's) en metadata opslaan voor citaties.",
+      "simple": "Je knipt teksten in stukken die een beetje overlappen, zodat geen zin op de knip verloren gaat. Nog beter is knippen langs de natuurlijke grenzen zoals koppen en pagina's, en per stuk opschrijven waar het vandaan kwam, zodat je later netjes de bron kunt noemen."
+    },
+    {
+      "id": "5-f12",
+      "front": "RAG verbeteren",
+      "back": "Hybrid search (+ tsvector) · re-ranking · metadata-filters (tenant id!) · query rewriting",
+      "simple": "Je RAG wordt beter door slimmer te zoeken: ook op exacte woorden (hybrid search), de gevonden stukken nog eens netjes op volgorde zetten (re-ranking), filteren op wie iets mag zien (tenant id) en een rommelige vraag eerst herschrijven tot een goede zoekvraag."
+    },
+    {
+      "id": "5-f13",
+      "front": "Streaming",
+      "back": "Generator die `data: {json}\\n\\n` yieldt → `StreamingResponse(..., media_type=\"text/event-stream\")`.",
+      "simple": "Een generator geeft steeds een klein stukje antwoord, elk in de vorm `data: ...` met een lege regel erachter. `StreamingResponse` met type `text/event-stream` stuurt die stukjes direct door, zodat de gebruiker het antwoord ziet verschijnen terwijl het nog geschreven wordt."
+    },
+    {
+      "id": "5-f14",
+      "front": "Productieklaar",
+      "back": "Timeouts en retries · caching op hash van de prompt · async + gather · guard-rails tegen prompt injection · kostenbeheer",
+      "simple": "Klaar voor echt gebruik betekent: niet eeuwig wachten (timeouts) en het nog eens proberen bij een hapering (retries), hetzelfde antwoord hergebruiken bij dezelfde prompt (caching), meerdere calls tegelijk doen (async), je beschermen tegen trucjes in teksten en de kosten in de gaten houden."
+    },
+    {
+      "id": "5-f15",
+      "front": "Evaluatie",
+      "back": "Retrieval: recall@k · generatie: correct, gegrond, toon · structured: schema-valid rate · systeem: latency p50/p95, tokens, errors",
+      "simple": "Je kijkt elk onderdeel apart na, zoals een rapport met vakken: vond het zoeken het goede stuk (recall@k), klopt het antwoord en komt het uit de bronnen, is de JSON geldig, en hoe snel en duur is het geheel. Zo weet je precies waar het misgaat."
+    },
+    {
+      "id": "5-f16",
+      "front": "Observability",
+      "back": "Elke call één record: request_id, user_id, model, prompt_version, tokens, latency_ms, chunk ids. Prompts versioneren in Git.",
+      "simple": "Per call schrijf je één regel in het logboek met alles wat je later nodig hebt: wie, welk model, welke promptversie, hoeveel tokens, hoe lang het duurde en welke chunks erbij zaten. Je prompts bewaar je in Git, zodat je altijd weet welke versie welk antwoord gaf."
+    }
+  ],
+  "typing": [
+    {
+      "id": "5-t0",
+      "type": "type",
+      "question": "Welke parameter zet je op `0` voor zo voorspelbaar mogelijke antwoorden van een LLM?",
+      "answers": [
+        "temperature",
+        "temperature=0",
+        "temperature 0"
+      ],
+      "explanation": "Met `temperature=0` kiest het model steeds de meest waarschijnlijke tokens. Handig voor extractie en tests.",
+      "simple": "Temperature is de creativiteitsknop. Op 0 kiest het model steeds het meest voor de hand liggende woord."
+    },
+    {
+      "id": "5-t1",
+      "type": "type",
+      "question": "Welke parameter geef je altijd mee om de lengte en kosten van het antwoord te begrenzen?",
+      "answers": [
+        "max_tokens"
+      ],
+      "exact": true,
+      "explanation": "`max_tokens` begrenst hoeveel tokens het model mag genereren. Zonder grens kan één call onverwacht duur worden.",
+      "simple": "Je zegt vooraf: je mag maximaal zoveel woorden gebruiken. Zo weet je dat de rekening niet ontploft."
+    },
+    {
+      "id": "5-t2",
+      "type": "type",
+      "question": "Met welke Pydantic-methode valideer je een JSON-string van het model tegen je schema?",
+      "answers": [
+        "model_validate_json",
+        "model_validate_json()",
+        "Model.model_validate_json"
+      ],
+      "explanation": "`Model.model_validate_json(raw)` parset en valideert in één stap. Bij fouten krijg je een `ValidationError`.",
+      "simple": "Pydantic leest de tekst van het model en checkt of alles klopt met jouw formulier. Zo niet, dan krijg je een duidelijke foutmelding."
+    },
+    {
+      "id": "5-t3",
+      "type": "type",
+      "question": "Met welke maat vergelijk je meestal twee embeddings?",
+      "answers": [
+        "cosine similarity",
+        "cosine",
+        "cosinus similarity",
+        "cosinusgelijkenis"
+      ],
+      "explanation": "Cosine similarity meet de hoek tussen twee vectoren: hoe kleiner de hoek, hoe meer de betekenis lijkt.",
+      "simple": "Twee pijlen die dezelfde kant op wijzen, betekenen ongeveer hetzelfde. Cosine meet hoe gelijk die richting is."
+    },
+    {
+      "id": "5-t4",
+      "type": "type",
+      "question": "Welke Postgres-extensie gebruik je om embeddings op te slaan en erin te zoeken?",
+      "answers": [
+        "pgvector",
+        "vector"
+      ],
+      "exact": true,
+      "explanation": "`CREATE EXTENSION vector` geeft je het kolomtype `vector(1536)` en operators zoals `<=>` voor cosine distance.",
+      "simple": "Een uitbreiding die Postgres leert om met lijsten getallen te zoeken naar wat qua betekenis het dichtst bij ligt."
+    },
+    {
+      "id": "5-t5",
+      "type": "type",
+      "question": "Waar staan de drie letters van RAG voor?",
+      "answers": [
+        "Retrieval-Augmented Generation",
+        "Retrieval Augmented Generation"
+      ],
+      "explanation": "Retrieval-Augmented Generation: eerst relevante stukken ophalen, dan het model laten antwoorden op basis daarvan.",
+      "simple": "Eerst opzoeken, dan antwoorden. Zoals een open-boek-toets."
+    },
+    {
+      "id": "5-t6",
+      "type": "sentence",
+      "question": "Leg in drie stappen uit hoe RAG werkt.",
+      "model": "1. Indexeren: documenten in stukken knippen, embedden en opslaan. 2. Ophalen: de vraag embedden en de dichtstbijzijnde stukken zoeken. 3. Genereren: het model antwoordt alleen op basis van die stukken, met bronvermelding.",
+      "points": [
+        "Indexeren: chunken, embedden, opslaan",
+        "Ophalen: dichtstbijzijnde chunks bij de vraag",
+        "Genereren: alleen uit die chunks, met bronnen"
+      ]
+    },
+    {
+      "id": "5-t7",
+      "type": "sentence",
+      "question": "Wat doe je als het model JSON teruggeeft dat niet door je schema komt?",
+      "model": "Je vangt de `ValidationError`, stuurt de foutmelding terug naar het model en vraagt het opnieuw te proberen. Je zet een maximum op het aantal pogingen.",
+      "points": [
+        "`ValidationError` vangen",
+        "Foutmelding terugsturen en opnieuw proberen",
+        "Maximum aantal pogingen"
+      ]
+    },
+    {
+      "id": "5-t8",
+      "type": "sentence",
+      "question": "Waarom zijn tools met side effects riskant, en wat doe je eraan?",
+      "model": "Het model kan een tool aanroepen met verkeerde of gemanipuleerde argumenten, bijvoorbeeld door prompt injection. Daarom valideer je de argumenten met Pydantic en laat je een mens bevestigen, of gebruik je een allow-list, voordat er echt iets gebeurt.",
+      "points": [
+        "Het model kan verkeerde of gemanipuleerde argumenten sturen",
+        "Argumenten valideren met Pydantic",
+        "Bevestiging door een mens of een allow-list"
+      ]
+    },
+    {
+      "id": "5-t9",
+      "type": "sentence",
+      "question": "Waarom moet je in een chat-app zelf de gespreksgeschiedenis bijhouden?",
+      "model": "De API is stateless: hij onthoudt niets tussen calls. Je stuurt dus elke keer de relevante geschiedenis mee. Het actieve gesprek bewaar je bijvoorbeeld in Redis met een TTL, en je trimt of vat samen als het te lang wordt.",
+      "points": [
+        "De API onthoudt niets tussen calls",
+        "Elke call de geschiedenis meesturen",
+        "Opslaan met TTL en inkorten als het lang wordt"
+      ]
+    }
+  ]
+}

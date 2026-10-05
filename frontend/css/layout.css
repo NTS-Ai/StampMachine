@@ -1,0 +1,78 @@
+/* Layout: "workbook arcade". Een sticky HUD-balk, een grid met zes weektickets plus één
+   omgekeerd eindbaas-ticket; spelen gebeurt op één gecentreerde kaart. */
+
+/* ---------- HUD ---------- */
+.hud {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 5;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.hud .wrap { display: flex; align-items: center; gap: 10px 16px; padding-block: 10px; flex-wrap: wrap; }
+.brand {
+  font-family: var(--f-mono); font-weight: 600; font-size: 13px; letter-spacing: .12em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 8px; white-space: nowrap;
+}
+.brand b {
+  display: inline-grid; place-items: center; height: 26px; padding-inline: 6px; border-radius: 7px;
+  background: var(--ink); color: var(--bg); font-size: 12px; letter-spacing: .04em;
+}
+.hud-stats { margin-left: auto; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.hud-tools { display: flex; align-items: center; gap: 8px; }
+.lvl { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.lvl-name { font-weight: 700; white-space: nowrap; }
+.xpbar { width: 120px; height: 8px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.xpbar i { display: block; height: 100%; background: var(--gold); border-radius: 99px; transition: width .5s; }
+
+@media (max-width: 620px) {
+  .hud .wrap { padding-block: 8px; }
+  .hud-tools { margin-left: auto; }
+  .hud-stats { order: 2; flex-basis: 100%; margin-left: 0; gap: 10px; justify-content: space-between; flex-wrap: nowrap; }
+  .lvl { flex: 1; min-width: 0; gap: 8px; }
+  .lvl-name { overflow: hidden; text-overflow: ellipsis; }
+  .xpbar { flex: 1; min-width: 40px; width: auto; }
+  .iconbtn .btn-label { display: none; }
+  /* Tijdens het oefenen alleen het logo en de knoppen tonen: meer ruimte voor de vraag. */
+  body[data-screen="play"] .hud-stats,
+  body[data-screen="cards"] .hud-stats { display: none; }
+}
+/* Heel smalle schermen: het XP-getal valt weg, de XP-balk blijft. */
+@media (max-width: 380px) { #xpText { display: none; } }
+
+/* ---------- startscherm ---------- */
+.hero { padding-block: 36px 22px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: end; }
+.hero h1 { font-size: clamp(34px, 6vw, 60px); font-weight: 800; letter-spacing: -.02em; }
+.hero h1 em { font-style: normal; color: var(--accent); }
+.hero p { color: var(--muted); max-width: 56ch; margin: 12px 0 0; }
+.meter { display: grid; gap: 6px; min-width: 220px; }
+.meter .big { font-family: var(--f-display); font-size: 44px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+.meter small { color: var(--muted); font-size: 13px; }
+@media (max-width: 700px) { .hero { grid-template-columns: 1fr; padding-block: 24px 18px; } }
+
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; padding-bottom: 32px; }
+@media (max-width: 960px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 620px) { .grid { grid-template-columns: 1fr; gap: 12px; } }
+
+/* Privacy-regel met de wisknop, onder de tickets. */
+.privacy {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px;
+  border-top: 1px solid var(--line); padding-block: 18px; margin-bottom: 8px;
+  color: var(--muted); font-size: 14px;
+}
+.privacy p { margin: 0; max-width: 62ch; }
+
+footer { color: var(--muted); font-size: 13px; padding-block: 0 32px; }
+
+/* ---------- speelscherm ---------- */
+.stage { max-width: 780px; margin: 0 auto; padding-block: 22px 60px; }
+@media (max-width: 620px) { .stage { padding-block: 12px 40px; } }
+.play-hud { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.play-hud .grow { flex: 1; min-width: 120px; }
+.mode-tag { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.score { font-family: var(--f-display); font-weight: 800; font-size: 26px; font-variant-numeric: tabular-nums; min-width: 4ch; text-align: right; }
+@media (max-width: 480px) {
+  .play-hud { gap: 8px 10px; }
+  .score { font-size: 22px; }
+}

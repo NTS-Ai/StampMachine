@@ -1,0 +1,1183 @@
+{
+  "week": 3,
+  "level": "Intermediate",
+  "title": "Databases: Docker, SQL & SQLAlchemy",
+  "topics": "Compose, SQL, joins, schema design, psycopg, ORM, Alembic",
+  "questions": [
+    {
+      "id": "3-0",
+      "type": "choice",
+      "question": "Wat is het verschil tussen een image en een container?",
+      "correct": "Image = read-only recept, container = draaiende kopie ervan",
+      "wrong": [
+        "Container = recept, image = draaiende kopie",
+        "Er is geen verschil",
+        "Een image is een volume"
+      ],
+      "explanation": "Alles wat een container schrijft verdwijnt met de container, behalve wat in een volume staat.",
+      "simple": "Een image is als een recept in een kookboek: het verandert niet, je gebruikt het alleen. Een container is de taart die je ervan bakt, en van één recept kun je tien taarten bakken. Wat je op de taart zet, verdwijnt als je hem weggooit, tenzij je het in een aparte doos bewaart: een volume.",
+      "why_wrong": [
+        "Dit is precies andersom: het recept (image) blijft vast, de container is wat er draait.",
+        "Er is wel verschil: van één image kun je veel containers starten, net als veel taarten van één recept.",
+        "Een volume is een opslagdoos voor data; een image is het vaste recept waar een container uit komt."
+      ]
+    },
+    {
+      "id": "3-1",
+      "type": "choice",
+      "question": "Wat overleeft `docker rm -f pg`?",
+      "correct": "De data in het named volume",
+      "wrong": [
+        "Niets",
+        "De container",
+        "De environment variables"
+      ],
+      "explanation": "Daarom zet je `/var/lib/postgresql/data` op een volume.",
+      "simple": "`docker rm -f` gooit de container weg, maar een named volume is een aparte kluis buiten de container. Je databasebestanden staan in die kluis, dus als je een nieuwe container start met hetzelfde volume, is alles er weer.",
+      "why_wrong": [
+        "Het named volume blijft bestaan; alleen de container zelf is weg.",
+        "De container is juist wat `docker rm -f` verwijdert.",
+        "Environment variables horen bij de container en verdwijnen mee; je geeft ze opnieuw mee bij de volgende `docker run`."
+      ]
+    },
+    {
+      "id": "3-2",
+      "type": "choice",
+      "question": "Wat betekent `-p 5432:5432`?",
+      "correct": "HOST:CONTAINER poortmapping",
+      "wrong": [
+        "CONTAINER:HOST poortmapping",
+        "Twee databases",
+        "Het protocol"
+      ],
+      "explanation": "Links je laptop, rechts de container.",
+      "simple": "Denk aan twee deuren met een gang ertussen: het eerste nummer is de deur van je laptop, het tweede de deur van de container. Alles wat op poort 5432 van je laptop aanklopt, wordt doorgestuurd naar poort 5432 in de container.",
+      "why_wrong": [
+        "De volgorde is andersom: links staat altijd je laptop (host), rechts de container.",
+        "Het gaat om één database; de twee getallen zijn de twee kanten van dezelfde verbinding.",
+        "De getallen zijn poortnummers, geen protocol."
+      ]
+    },
+    {
+      "id": "3-3",
+      "type": "truefalse",
+      "question": "`postgres:latest` is de beste tag om te gebruiken.",
+      "answer": false,
+      "explanation": "Pin altijd een versie, zoals `postgres:16`. Nooit `:latest`.",
+      "simple": "`latest` is als 'het nieuwste model' bestellen: morgen kan dat een ander model zijn dan vandaag. Met `postgres:16` weet je precies wat je krijgt, op elke laptop en elke dag. Een nieuwe hoofdversie kan je oude data bovendien niet zomaar openen."
+    },
+    {
+      "id": "3-4",
+      "type": "choice",
+      "question": "Een container doet raar. Wat is je eerste debugstap?",
+      "correct": "`docker logs -f`",
+      "wrong": [
+        "`docker rm -f`",
+        "`docker compose down -v`",
+        "Je laptop herstarten"
+      ],
+      "explanation": "Kijk eerst wat de server zegt.",
+      "simple": "Als je auto raar doet, kijk je eerst naar de lampjes op het dashboard voordat je de motor uit elkaar haalt. `docker logs -f` laat zien wat de container zelf zegt, en meestal staat de foutmelding daar gewoon in.",
+      "why_wrong": [
+        "Dan gooi je de container weg, en daarmee ook zijn logs, voordat je weet wat er mis was.",
+        "Dan verwijder je ook je volumes, dus al je data, terwijl je de oorzaak nog niet kent.",
+        "Herstarten lost het probleem in de container meestal niet op en je leert er niets van."
+      ]
+    },
+    {
+      "id": "3-5",
+      "type": "choice",
+      "question": "Wat is het verschil tussen `docker compose down` en `down -v`?",
+      "correct": "`-v` verwijdert ook de named volumes, dus je data",
+      "wrong": [
+        "`-v` betekent verbose",
+        "Geen verschil",
+        "`-v` stopt alleen, zonder te verwijderen"
+      ],
+      "explanation": "`down` houdt named volumes. `down -v` gooit ze weg. Voorzichtig.",
+      "simple": "`down` is als de winkel sluiten en opruimen; de spullen in het magazijn (de named volumes) blijven liggen. `down -v` gooit ook het magazijn leeg, dus daarna is je database weg.",
+      "why_wrong": [
+        "Bij `docker compose down` betekent `-v` 'volumes', niet 'verbose'.",
+        "Het verschil is groot: met `-v` ben je je data kwijt.",
+        "Alleen stoppen doe je met `docker compose stop`; `-v` verwijdert juist méér."
+      ]
+    },
+    {
+      "id": "3-6",
+      "type": "choice",
+      "question": "Vanuit een andere container bereik je de database via...",
+      "correct": "`db:5432`, de servicenaam",
+      "wrong": [
+        "`localhost:5432`",
+        "`127.0.0.1:5432`",
+        "`host:5432`"
+      ],
+      "explanation": "In een container betekent localhost de container zelf.",
+      "simple": "Elke container is als een eigen huis, en `localhost` betekent 'mijn eigen huis'. Compose geeft elk huis in het straatje een naam, dus je API vindt de database door naar het huis `db` te gaan.",
+      "why_wrong": [
+        "`localhost` wijst in een container naar die container zelf, en daar draait geen database.",
+        "`127.0.0.1` is hetzelfde als localhost, dus ook weer de container zelf.",
+        "Er is geen service die `host` heet; je gebruikt de servicenaam uit je compose-bestand."
+      ]
+    },
+    {
+      "id": "3-7",
+      "type": "choice",
+      "question": "Waarvoor dient de healthcheck met `pg_isready`?",
+      "correct": "Compose weet wanneer de database echt klaar is",
+      "wrong": [
+        "Hij maakt backups",
+        "Hij versnelt queries",
+        "Hij herstart bij elke fout"
+      ],
+      "explanation": "Adminer of je API gebruikt `depends_on` met `condition: service_healthy`.",
+      "simple": "Een database die net start is als een oven die nog opwarmt: hij staat aan, maar je kunt er nog niet in bakken. `pg_isready` vraagt steeds 'ben je klaar?', en pas bij 'ja' start Compose de diensten die wachten met `condition: service_healthy`.",
+      "why_wrong": [
+        "Een healthcheck kijkt alleen of de database antwoordt; backups maak je met iets als `pg_dump`.",
+        "Een healthcheck kijkt alleen mee en maakt de database niet sneller.",
+        "Een healthcheck meldt alleen gezond of ongezond; herstarten regel je apart met `restart`."
+      ]
+    },
+    {
+      "id": "3-8",
+      "type": "type",
+      "question": "Welk psql-commando toont alle tabellen?",
+      "answers": [
+        "\\dt"
+      ],
+      "explanation": "`\\d tabel` beschrijft één tabel, `\\x` vertical output, `\\timing`, `\\i file.sql`, `\\q` stoppen.",
+      "simple": "`\\dt` kun je onthouden als 'describe tables': het is de inhoudsopgave van je database. De backslash vertelt psql dat het een commando van psql zelf is en geen SQL."
+    },
+    {
+      "id": "3-9",
+      "type": "choice",
+      "question": "Welk type gebruik je voor geld?",
+      "correct": "`INTEGER` in centen (of `NUMERIC`)",
+      "wrong": [
+        "`FLOAT`",
+        "`REAL`",
+        "`TEXT`"
+      ],
+      "explanation": "FLOAT voor geld: nooit. Afrondingsfouten.",
+      "simple": "Een FLOAT rekent bij benadering, een beetje zoals een liniaal met speling: 0,1 + 0,2 wordt net niet precies 0,3. Bij geld wil je elke cent exact, dus tel je in hele centen (`INTEGER`) of gebruik je `NUMERIC`, dat precies rekent.",
+      "why_wrong": [
+        "FLOAT rekent bij benadering, dus er sluipen kleine afrondingsfouten in je bedragen.",
+        "`REAL` is ook een float, alleen nog minder precies, dus net zo slecht voor geld.",
+        "Met `TEXT` kun je niet rekenen, en '12,50' en '12.5' zijn dan zomaar twee verschillende dingen."
+      ]
+    },
+    {
+      "id": "3-10",
+      "type": "choice",
+      "question": "Waarom `TIMESTAMPTZ` en niet `TIMESTAMP`?",
+      "correct": "TIMESTAMPTZ legt een moment vast mét tijdzone",
+      "wrong": [
+        "TIMESTAMP is nauwkeuriger",
+        "Ze zijn hetzelfde",
+        "TIMESTAMPTZ bewaart alleen de datum"
+      ],
+      "explanation": "In Python hoort daar `DateTime(timezone=True)` en `datetime.now(UTC)` bij.",
+      "simple": "`TIMESTAMPTZ` is als een poststempel: je weet precies op welk moment een brief is verstuurd, waar ter wereld je ook bent. Postgres bewaart het als één moment in UTC en laat het zien in jouw tijdzone. Een gewone `TIMESTAMP` zegt alleen '14:00', maar niet 14:00 waar.",
+      "why_wrong": [
+        "Beide zijn even nauwkeurig; het verschil zit in de tijdzone.",
+        "TIMESTAMP weet niet welke tijdzone bedoeld is, TIMESTAMPTZ legt een echt moment vast.",
+        "TIMESTAMPTZ bewaart datum én tijd; alleen een datum is het type `DATE`."
+      ]
+    },
+    {
+      "id": "3-11",
+      "type": "choice",
+      "question": "Wat garandeert een PRIMARY KEY?",
+      "correct": "Uniek en nooit NULL",
+      "wrong": [
+        "Alleen uniek",
+        "Een index op een foreign key",
+        "Een vaste sortering"
+      ],
+      "explanation": "Hij identificeert de rij.",
+      "simple": "Een primary key is als het pasnummer in de bibliotheek: elk nummer bestaat maar één keer en iedereen heeft er een. Zo kun je altijd precies één rij aanwijzen; met een lege of dubbele pas zou dat niet lukken.",
+      "why_wrong": [
+        "Alleen uniek is `UNIQUE`; een primary key mag daarbovenop ook nooit leeg (NULL) zijn.",
+        "Postgres maakt een index op de primary key zelf, niet op een foreign key.",
+        "Een primary key bepaalt geen volgorde; die krijg je alleen met `ORDER BY`."
+      ]
+    },
+    {
+      "id": "3-12",
+      "type": "truefalse",
+      "question": "Gebruik een business-waarde zoals sku of e-mail als primary key.",
+      "answer": false,
+      "explanation": "Gebruik een SERIAL id als primary key en zet een UNIQUE op de echte identifier.",
+      "simple": "Echte waarden zoals een e-mailadres kunnen veranderen, en dan moet je ze overal aanpassen waar ernaar verwezen wordt. Een saai nummer (`SERIAL id`) verandert nooit, en met een `UNIQUE` op de e-mail voorkom je toch dubbele."
+    },
+    {
+      "id": "3-13",
+      "type": "choice",
+      "question": "Wat doet `UPDATE parts SET stock = 0;`?",
+      "correct": "Zet de stock van élke rij op 0, zonder bevestiging",
+      "wrong": [
+        "Geeft een error",
+        "Alleen de eerste rij",
+        "Niets zonder COMMIT"
+      ],
+      "explanation": "Schrijf eerst de WHERE, draai hem als SELECT, check het aantal rijen, maak er dan UPDATE van.",
+      "simple": "Een `UPDATE` zonder `WHERE` is als tegen de hele klas zeggen 'jullie hebben allemaal een 0', terwijl je één leerling bedoelde. Postgres vraagt niet 'weet je het zeker?', hij doet het meteen bij elke rij.",
+      "why_wrong": [
+        "De query is geldige SQL, dus Postgres voert hem gewoon uit.",
+        "Zonder `WHERE` geldt de wijziging voor alle rijen, niet alleen de eerste.",
+        "In psql staat autocommit standaard aan, dus de wijziging is meteen definitief."
+      ]
+    },
+    {
+      "id": "3-14",
+      "type": "choice",
+      "question": "Welke clausule voert Postgres als eerste uit?",
+      "correct": "FROM",
+      "wrong": [
+        "SELECT",
+        "WHERE",
+        "ORDER BY"
+      ],
+      "explanation": "FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT.",
+      "simple": "Je moet eerst weten uit welke kast je pakt (`FROM`), voordat je kunt kiezen welke spullen je wilt (`WHERE`) en wat je laat zien (`SELECT`). Daarom begint Postgres bij `FROM`, ook al schrijf je `SELECT` bovenaan.",
+      "why_wrong": [
+        "`SELECT` schrijf je wel als eerste, maar Postgres voert het pas na `WHERE`, `GROUP BY` en `HAVING` uit.",
+        "`WHERE` kan pas filteren als `FROM` heeft gezegd uit welke tabel de rijen komen.",
+        "`ORDER BY` komt bijna als laatste: sorteren kan pas als je weet welke rijen er zijn."
+      ]
+    },
+    {
+      "id": "3-15",
+      "type": "truefalse",
+      "question": "Je kunt een alias uit SELECT gebruiken in WHERE.",
+      "answer": false,
+      "explanation": "WHERE draait vóór SELECT, dus de alias bestaat nog niet. In ORDER BY mag het wel.",
+      "simple": "`WHERE` draait eerder dan `SELECT`, dus de bijnaam die je in `SELECT` geeft, bestaat dan nog niet. Het is alsof je iemand roept met een bijnaam die hij pas later op de dag krijgt. `ORDER BY` komt na `SELECT` en kent de bijnaam wel."
+    },
+    {
+      "id": "3-16",
+      "type": "truefalse",
+      "question": "Zonder ORDER BY krijg je de rijen in de volgorde waarin ze zijn ingevoegd.",
+      "answer": false,
+      "explanation": "Zonder ORDER BY is er geen gegarandeerde volgorde.",
+      "simple": "Een tabel is geen stapel die netjes op volgorde blijft liggen, maar meer een grote doos waar Postgres dingen in en uit schuift. Zonder `ORDER BY` pakt hij de rijen op de handigste manier, en die volgorde kan zomaar veranderen."
+    },
+    {
+      "id": "3-17",
+      "type": "choice",
+      "question": "Hoe vind je work orders zonder technician?",
+      "correct": "`WHERE technician_id IS NULL`",
+      "wrong": [
+        "`WHERE technician_id = NULL`",
+        "`WHERE technician_id = 0`",
+        "`WHERE NOT technician_id`"
+      ],
+      "explanation": "Met NULL vergelijk je nooit via `=`.",
+      "simple": "NULL betekent 'onbekend', en je kunt niet zeggen of iets onbekends gelijk is aan iets anders. Daarom heeft SQL een aparte vraag: `IS NULL`, oftewel 'is dit vakje leeg?'.",
+      "why_wrong": [
+        "`= NULL` geeft altijd 'onbekend' in plaats van true, dus je krijgt nul rijen terug.",
+        "0 is een echte waarde en niet hetzelfde als leeg; rijen met NULL vind je zo niet.",
+        "`NOT` werkt alleen op true/false en niet op een getal, dus Postgres geeft hier een error."
+      ]
+    },
+    {
+      "id": "3-18",
+      "type": "choice",
+      "question": "`WHERE technician_id <> 3`. Wat gebeurt er met rijen waar `technician_id` NULL is?",
+      "correct": "Die vallen stil weg",
+      "wrong": [
+        "Die komen mee",
+        "Je krijgt een error",
+        "Alleen de eerste komt mee"
+      ],
+      "explanation": "NULL betekent onbekend. `NULL <> 3` is niet true, dus de rij valt eruit.",
+      "simple": "NULL is 'weet ik niet'. Op de vraag 'is iets onbekends anders dan 3?' is het antwoord ook 'weet ik niet', en `WHERE` laat alleen rijen door met een duidelijk 'ja'. Wil je ze toch, zet er dan `OR technician_id IS NULL` bij.",
+      "why_wrong": [
+        "`NULL <> 3` is niet true maar onbekend, en `WHERE` laat alleen true door.",
+        "Er komt geen foutmelding; de rijen verdwijnen stilletjes, en dat maakt het juist gevaarlijk.",
+        "Alle NULL-rijen worden hetzelfde behandeld, dus er komt er niet één mee."
+      ]
+    },
+    {
+      "id": "3-19",
+      "type": "choice",
+      "question": "Wat is het verschil tussen `count(*)` en `count(technician_id)`?",
+      "correct": "`count(*)` telt alle rijen, `count(col)` alleen niet-NULL waarden",
+      "wrong": [
+        "Ze zijn hetzelfde",
+        "`count(col)` telt ook NULL",
+        "`count(*)` slaat NULL-rijen over"
+      ],
+      "explanation": "Het verschil tussen de twee is precies je aantal NULLs.",
+      "simple": "`count(*)` telt hoeveel leerlingen er in de klas zitten. `count(technician_id)` telt hoeveel leerlingen hun vakje op het lijstje hebben ingevuld. Lege vakjes (NULL) tellen bij de tweede niet mee.",
+      "why_wrong": [
+        "Ze verschillen zodra de kolom NULLs bevat; dan is `count(col)` kleiner.",
+        "`count(col)` slaat NULL juist over; alleen ingevulde waarden tellen.",
+        "`count(*)` telt elke rij, ook rijen waar kolommen NULL zijn."
+      ]
+    },
+    {
+      "id": "3-20",
+      "type": "choice",
+      "question": "Wat geeft `sum()` over nul rijen?",
+      "correct": "`NULL`, dus gebruik `COALESCE(sum(x), 0)`",
+      "wrong": [
+        "`0`",
+        "Een error",
+        "Een lege string"
+      ],
+      "explanation": "Assessment-valkuil: `order_cost` geeft None voor een order zonder parts.",
+      "simple": "Als je de prijzen optelt in een lege boodschappentas, zegt SQL niet 0 maar 'geen antwoord' (NULL), omdat er niets was om op te tellen. `COALESCE(sum(x), 0)` betekent: als er niets uitkomt, maak er dan 0 van.",
+      "why_wrong": [
+        "SQL geeft hier NULL in plaats van 0; daarom heb je `COALESCE` nodig.",
+        "Optellen over nul rijen mag gewoon en geeft geen error, alleen NULL.",
+        "`sum()` geeft een getal of NULL, nooit een string."
+      ]
+    },
+    {
+      "id": "3-21",
+      "type": "choice",
+      "question": "Wat geeft `SELECT 5 / 2;` in Postgres?",
+      "correct": "`2`",
+      "wrong": [
+        "`2.5`",
+        "`3`",
+        "Een error"
+      ],
+      "explanation": "Integer gedeeld door integer is integer. Schrijf `5 / 2.0`.",
+      "simple": "Als je twee hele getallen deelt, geeft Postgres ook een heel getal terug en laat de rest weg, zoals 5 koekjes verdelen over 2 kinderen: ieder krijgt er 2. Wil je 2.5, maak dan één van de twee een kommagetal: `5 / 2.0`.",
+      "why_wrong": [
+        "2.5 krijg je alleen als minstens één van de getallen een kommagetal is, zoals `5 / 2.0`.",
+        "Postgres rondt hier niet naar boven af; het deel achter de komma valt gewoon weg.",
+        "Hele getallen delen mag gewoon; alleen delen door nul geeft een error."
+      ]
+    },
+    {
+      "id": "3-22",
+      "type": "choice",
+      "question": "Wat is het verschil tussen WHERE en HAVING?",
+      "correct": "WHERE filtert rijen vóór het groeperen, HAVING filtert groepen erna",
+      "wrong": [
+        "Ze doen hetzelfde",
+        "HAVING draait eerst",
+        "WHERE werkt alleen bij joins"
+      ],
+      "explanation": "Truc: zeg 'voor elke status, hoeveel'. Wat na 'voor elke' komt is je GROUP BY.",
+      "simple": "Stel dat je knikkers per kleur in bakjes sorteert. `WHERE` gooit de kapotte knikkers weg vóór het sorteren; `HAVING` gooit daarna hele bakjes weg, bijvoorbeeld bakjes met minder dan 5 knikkers. Daarom kan `HAVING` kijken naar dingen als `count(*)`, die pas bestaan na het groeperen.",
+      "why_wrong": [
+        "`WHERE` werkt op losse rijen en `HAVING` op groepen, dus ze filteren op een ander moment.",
+        "`HAVING` draait juist ná `GROUP BY`, en `WHERE` ervoor.",
+        "`WHERE` werkt in elke query, ook zonder join."
+      ]
+    },
+    {
+      "id": "3-23",
+      "type": "choice",
+      "question": "Welke regel geldt bij GROUP BY?",
+      "correct": "Elke kolom in SELECT staat in GROUP BY of zit in een aggregate",
+      "wrong": [
+        "Je mag maar één kolom groeperen",
+        "GROUP BY vereist ORDER BY",
+        "`SELECT *` mag altijd"
+      ],
+      "explanation": "Geen uitzonderingen.",
+      "simple": "Als je per kleur één bakje knikkers maakt, kan elk bakje maar één regel in het antwoord geven. Een kolom uit `GROUP BY` is per bakje hetzelfde, en een aggregate zoals `count()` vat het bakje samen. Elke andere kolom heeft meerdere waarden per bakje, en dan weet Postgres niet welke hij moet laten zien.",
+      "why_wrong": [
+        "Je mag op meerdere kolommen tegelijk groeperen, bijvoorbeeld `GROUP BY status, technician_id`.",
+        "`ORDER BY` is optioneel; `GROUP BY` werkt ook zonder.",
+        "`SELECT *` haalt ook kolommen op die niet in `GROUP BY` staan, en dat geeft meestal een error."
+      ]
+    },
+    {
+      "id": "3-24",
+      "type": "choice",
+      "question": "Je wilt elke work order met klant én technician, ook die zonder technician. Welke join naar technicians?",
+      "correct": "LEFT JOIN",
+      "wrong": [
+        "INNER JOIN",
+        "CROSS JOIN",
+        "Een subquery is verplicht"
+      ],
+      "explanation": "De test: moet de rij blijven als de andere kant ontbreekt? Ja → LEFT JOIN.",
+      "simple": "Een `LEFT JOIN` houdt elke work order op de lijst, ook als er geen technician bij hoort; dat vakje wordt dan NULL. Het is als een klassenlijst waarop leerlingen zonder mentor gewoon blijven staan, met een leeg vakje erachter.",
+      "why_wrong": [
+        "Een `INNER JOIN` gooit work orders zonder technician weg, terwijl je die juist wilt zien.",
+        "Een `CROSS JOIN` koppelt elke work order aan élke technician, dus je krijgt veel te veel rijen.",
+        "Een subquery is niet nodig; een `LEFT JOIN` doet dit direct."
+      ]
+    },
+    {
+      "id": "3-25",
+      "type": "choice",
+      "question": "Welke query vindt parts die nooit op een work order zijn gebruikt?",
+      "correct": "`LEFT JOIN work_order_parts wop ... WHERE wop.part_id IS NULL`",
+      "wrong": [
+        "`JOIN work_order_parts wop ... WHERE wop.part_id IS NULL`",
+        "`JOIN ... HAVING count(*) = 0`",
+        "`WHERE p.id <> wop.part_id`"
+      ],
+      "explanation": "Dat is een anti-join: 'welke hiervan heeft geen van die'.",
+      "simple": "Je zet alle parts op een lijst en schrijft ernaast waar ze gebruikt zijn (`LEFT JOIN`). Parts die nergens gebruikt zijn, hebben een leeg vakje ernaast, en die vind je met `WHERE wop.part_id IS NULL`.",
+      "why_wrong": [
+        "Een gewone `JOIN` gooit ongebruikte parts al weg, dus er zijn geen NULL-rijen meer over om te vinden.",
+        "Na een gewone `JOIN` heeft elk overgebleven part minstens één regel, dus `count(*)` is nooit 0.",
+        "Dit koppelt elk part aan de regels van ándere parts, dus ook gebruikte parts komen erin."
+      ]
+    },
+    {
+      "id": "3-26",
+      "type": "truefalse",
+      "question": "Een INNER JOIN kan zonder foutmelding rijen laten verdwijnen.",
+      "answer": true,
+      "explanation": "Een INNER JOIN is een filter in vermomming. Tel de rijen met beide joins.",
+      "simple": "Een `INNER JOIN` houdt alleen rijen over die aan beide kanten een match hebben. Ontbreekt de andere kant, dan verdwijnt de rij stil, zoals een brief zonder adres die gewoon niet bezorgd wordt zonder dat iemand het je vertelt."
+    },
+    {
+      "id": "3-27",
+      "type": "choice",
+      "question": "Wat doet een CTE (`WITH ... AS (...)`)?",
+      "correct": "Geeft een tussenstap een naam",
+      "wrong": [
+        "Maakt een permanente tabel",
+        "Maakt een index",
+        "Start een transactie"
+      ],
+      "explanation": "Wat een goedgekozen functienaam is in Python, is een CTE in SQL.",
+      "simple": "Een CTE is als een kladblaadje waar je een tussenantwoord op schrijft, met een naam erboven. In de rest van je query kun je naar die naam verwijzen, zodat een lange query leesbaar blijft. Na de query is het blaadje weer weg.",
+      "why_wrong": [
+        "Een CTE bestaat alleen tijdens die ene query; daarna is hij weg.",
+        "Een CTE maakt geen index; die maak je met `CREATE INDEX`.",
+        "Een transactie start je met `BEGIN`; een CTE is gewoon een stukje van één query."
+      ]
+    },
+    {
+      "id": "3-28",
+      "type": "choice",
+      "question": "Wat is het verschil tussen GROUP BY en een window function met `OVER ()`?",
+      "correct": "GROUP BY klapt rijen samen, OVER () geeft het antwoord terug aan elke rij",
+      "wrong": [
+        "Ze zijn hetzelfde",
+        "OVER () is een snellere GROUP BY",
+        "Postgres heeft geen window functions"
+      ],
+      "explanation": "Bijvoorbeeld `rank() OVER (ORDER BY ...)` of een percentage van het totaal per rij.",
+      "simple": "`GROUP BY` is als alle knikkers per kleur in één bakje gooien: je houdt één rij per kleur over. `OVER ()` laat elke knikker op zijn plek liggen en plakt er een briefje op met het antwoord, zoals het totaal of een rangnummer.",
+      "why_wrong": [
+        "`GROUP BY` maakt minder rijen, `OVER ()` houdt alle rijen; dat is een groot verschil.",
+        "Het gaat niet om snelheid: ze geven een ander soort resultaat.",
+        "Postgres heeft wel window functions, zoals `rank()` en `sum(...) OVER ()`."
+      ]
+    },
+    {
+      "id": "3-29",
+      "type": "choice",
+      "question": "Waarom staat er `NULLIF(sum(...) OVER (), 0)` in een deling?",
+      "correct": "Om delen door nul te voorkomen",
+      "wrong": [
+        "Om alles NULL te maken",
+        "Om af te ronden",
+        "Om te sorteren"
+      ],
+      "explanation": "`NULLIF(x, 0)` maakt van 0 een NULL; delen door NULL geeft NULL in plaats van een error.",
+      "simple": "Delen door 0 geeft in Postgres een error en dan stopt je query. `NULLIF(x, 0)` maakt van een 0 een NULL, en delen door NULL geeft gewoon NULL ('weet ik niet') in plaats van een crash.",
+      "why_wrong": [
+        "Alleen als de som precies 0 is, wordt het NULL; andere waarden blijven gewoon staan.",
+        "Afronden doe je met `round()`; `NULLIF` rondt niets af.",
+        "Sorteren doe je met `ORDER BY`; `NULLIF` verandert alleen een 0 in NULL."
+      ]
+    },
+    {
+      "id": "3-30",
+      "type": "choice",
+      "question": "Wat is de primary key van de link table `work_order_parts`?",
+      "correct": "`(work_order_id, part_id)`",
+      "wrong": [
+        "Alleen een `id SERIAL`",
+        "`qty`",
+        "`part_id`"
+      ],
+      "explanation": "De samengestelde key verbiedt hetzelfde part twee keer op één job. Daarom bestaat `qty`.",
+      "simple": "Elke regel in `work_order_parts` betekent 'dit part hoort bij deze job'. Door die twee samen als key te nemen, kan hetzelfde part maar één keer per job op de lijst staan, net als één regel per product op je kassabon, met een aantal erbij.",
+      "why_wrong": [
+        "Met alleen een `id` mag hetzelfde part meerdere keren op één job staan, en dat wil je niet.",
+        "`qty` is een hoeveelheid; die mag best op meerdere regels hetzelfde zijn.",
+        "Met alleen `part_id` zou elk part maar op één job ooit gebruikt kunnen worden."
+      ]
+    },
+    {
+      "id": "3-31",
+      "type": "choice",
+      "question": "Een job gebruikt drie keer hetzelfde part. Waar staat die 3?",
+      "correct": "In `qty` op de regel in `work_order_parts`",
+      "wrong": [
+        "Als drie rijen in `work_order_parts`",
+        "In `parts.stock`",
+        "In `work_orders`"
+      ],
+      "explanation": "Eén regel per part per job, met een hoeveelheid.",
+      "simple": "Op een kassabon staat niet drie keer 'melk', maar één keer 'melk × 3'. Zo werkt `work_order_parts` ook: één regel per part per job, en `qty` zegt hoeveel.",
+      "why_wrong": [
+        "De samengestelde primary key verbiedt drie rijen met hetzelfde part op één job.",
+        "`parts.stock` is hoeveel er nog in het magazijn ligt, niet hoeveel één job gebruikt.",
+        "Een work order kan veel verschillende parts hebben, dus een aantal per part past daar niet."
+      ]
+    },
+    {
+      "id": "3-32",
+      "type": "choice",
+      "question": "Welke ON DELETE hoort bij `work_order_parts.work_order_id`?",
+      "correct": "CASCADE: job weg, regels weg",
+      "wrong": [
+        "RESTRICT",
+        "SET NULL",
+        "Geen, dat verzin je later"
+      ],
+      "explanation": "Maar bij `part_id` géén cascade: een part verwijderen mag de geschiedenis niet herschrijven.",
+      "simple": "De regels in `work_order_parts` zijn als de regels op een bon: zonder de bon betekenen ze niets. Gooi je de job weg, dan moeten de regels mee, en dat regelt `CASCADE` automatisch.",
+      "why_wrong": [
+        "`RESTRICT` blokkeert het verwijderen van de job zolang er regels zijn, terwijl die regels zonder job toch niets betekenen.",
+        "`SET NULL` kan hier niet, want `work_order_id` zit in de primary key en mag dus nooit NULL zijn.",
+        "Kies je niets, dan blokkeert Postgres het verwijderen, net als `RESTRICT`; dit hoort bij het ontwerp, niet bij later."
+      ]
+    },
+    {
+      "id": "3-33",
+      "type": "choice",
+      "question": "Een work order is gepland maar nog niet toegewezen. Wat betekent dat voor `technician_id`?",
+      "correct": "Die kolom is nullable",
+      "wrong": [
+        "NOT NULL met default 0",
+        "Hij hoort in een aparte tabel",
+        "Een lege string"
+      ],
+      "explanation": "Bijvoeglijke naamwoorden in de brief ('nog niet toegewezen') worden nullability in het schema.",
+      "simple": "'Nog niet toegewezen' betekent dat het vakje voorlopig leeg mag blijven. In de database heet dat nullable: `technician_id` mag NULL zijn tot er iemand gekozen is.",
+      "why_wrong": [
+        "Er bestaat geen technician met id 0, dus de foreign key weigert die waarde.",
+        "Een aparte tabel is niet nodig; een lege foreign key zegt al 'nog niemand'.",
+        "`technician_id` is een getal dat naar een rij wijst; een lege string is geen geldig id."
+      ]
+    },
+    {
+      "id": "3-34",
+      "type": "choice",
+      "question": "Waarom kopieert een productiesysteem `unit_price_cents` op de orderregel?",
+      "correct": "De prijs op een afgeronde job is de prijs van die dag",
+      "wrong": [
+        "Om joins te vermijden",
+        "Normalisatie vereist het",
+        "Het is sneller"
+      ],
+      "explanation": "Zonder die kopie herprijst een prijswijziging alle historische facturen. Zet die beperking in je README.",
+      "simple": "Een kassabon van vorige maand laat de prijs van toen zien, ook als de melk nu duurder is. Door `unit_price_cents` op de regel te kopiëren, blijft een oude factuur kloppen als je later de prijs van een part verandert.",
+      "why_wrong": [
+        "Het gaat niet om joins vermijden, maar om de prijs van dat moment vast te houden.",
+        "Normalisatie zegt juist 'één feit op één plek'; dit is een bewuste uitzondering.",
+        "Snelheid is niet de reden; het gaat erom dat de geschiedenis niet verandert."
+      ]
+    },
+    {
+      "id": "3-35",
+      "type": "choice",
+      "question": "Hoe geef je een waarde veilig mee aan een query met psycopg?",
+      "correct": "`cur.execute(\"SELECT * FROM parts WHERE sku = %s\", (sku,))`",
+      "wrong": [
+        "`cur.execute(f\"... WHERE sku = '{sku}'\")`",
+        "Eerst `sku.replace(\"'\", \"\")`",
+        "Met `str.format`"
+      ],
+      "explanation": "SQL en waarde gaan apart naar de server. De waarde wordt nooit als SQL gelezen.",
+      "simple": "Met `%s` geef je de query en de waarde in twee aparte enveloppen aan de database. Wat in de waarde-envelop zit, wordt altijd als gewone tekst gelezen en nooit als SQL-opdracht, dus niemand kan er stiekem een eigen commando in smokkelen.",
+      "why_wrong": [
+        "Een f-string plakt de tekst in je SQL, dus iemand kan via `sku` eigen SQL meesturen (SQL injection).",
+        "Zelf tekens weghalen vergeet altijd wel een truc en kan ook echte waarden kapotmaken.",
+        "`str.format` plakt de waarde net als een f-string in de SQL, met hetzelfde gevaar."
+      ]
+    },
+    {
+      "id": "3-36",
+      "type": "choice",
+      "question": "Wat is `(sku)` zonder komma?",
+      "correct": "Gewoon een string, geen tuple",
+      "wrong": [
+        "Een tuple",
+        "Een lijst",
+        "Een set"
+      ],
+      "explanation": "Een tuple met één element schrijf je als `(sku,)`.",
+      "simple": "Haakjes alleen zijn in Python gewoon haakjes, zoals in `(2 + 3)`. Pas de komma maakt er een tuple van: `(sku,)`. Zonder komma krijgt psycopg een losse string in plaats van een tuple, en dan gaat het mis.",
+      "why_wrong": [
+        "Een tuple met één element heeft een komma nodig: `(sku,)`.",
+        "Een lijst schrijf je met blokhaken: `[sku]`.",
+        "Een set schrijf je met accolades: `{sku}`."
+      ]
+    },
+    {
+      "id": "3-37",
+      "type": "choice",
+      "question": "De tabelnaam in je query is dynamisch. Hoe doe je dat veilig in psycopg?",
+      "correct": "Met `psycopg.sql.Identifier`",
+      "wrong": [
+        "Met een `%s` parameter",
+        "Met een f-string",
+        "Dat kan niet"
+      ],
+      "explanation": "Tabel- en kolomnamen kun je niet parametriseren.",
+      "simple": "`%s` is bedoeld voor waarden, zoals een getal of tekst, niet voor namen van tabellen of kolommen. `sql.Identifier` zet zo'n naam netjes tussen dubbele aanhalingstekens, zodat hij altijd als naam gelezen wordt en nooit als extra SQL.",
+      "why_wrong": [
+        "Een `%s` wordt een waarde tussen quotes, en een tabelnaam als waarde geeft een SQL-error.",
+        "Een f-string plakt de naam rauw in je SQL en zet de deur open voor SQL injection.",
+        "Het kan wel, met `psycopg.sql.Identifier`."
+      ]
+    },
+    {
+      "id": "3-38",
+      "type": "choice",
+      "question": "Wat betekent `Mapped[int | None]` in een SQLAlchemy-model?",
+      "correct": "Een nullable kolom",
+      "wrong": [
+        "Een NOT NULL kolom",
+        "Een primary key",
+        "Een foreign key"
+      ],
+      "explanation": "`Mapped[int]` is NOT NULL. De type hint is het schema.",
+      "simple": "`int | None` betekent in Python 'een getal of niets'. SQLAlchemy leest die type hint en maakt er een kolom van die leeg (NULL) mag zijn. Zonder `| None` wordt het `NOT NULL`.",
+      "why_wrong": [
+        "NOT NULL krijg je met gewoon `Mapped[int]`, zonder `| None`.",
+        "Een primary key geef je aan met `mapped_column(primary_key=True)`.",
+        "Een foreign key geef je aan met `ForeignKey(...)` in `mapped_column`."
+      ]
+    },
+    {
+      "id": "3-39",
+      "type": "choice",
+      "question": "Hoe filter je volgens het workbook op NULL in een SQLAlchemy `.where()`?",
+      "correct": "`.is_(None)`",
+      "wrong": [
+        "`== None` werkt altijd goed",
+        "`.equals(None)`",
+        "`is None`"
+      ],
+      "explanation": "Python's `is None` kun je niet overloaden; gebruik `.is_(None)`.",
+      "simple": "Python's `is` kun je niet aanpassen, dus SQLAlchemy kan er geen SQL van maken. Daarom heeft een kolom de methode `.is_(None)`, die netjes `IS NULL` in je query zet.",
+      "why_wrong": [
+        "`== None` vertaalt SQLAlchemy wel, maar linters keuren het af en het leest verwarrend; het workbook kiest `.is_(None)`.",
+        "Een methode `.equals(None)` bestaat niet in SQLAlchemy.",
+        "`is None` is gewoon Python: het vergelijkt meteen en wordt nooit SQL."
+      ]
+    },
+    {
+      "id": "3-40",
+      "type": "choice",
+      "question": "Welke aanroep geeft een lijst objecten terug?",
+      "correct": "`session.scalars(select(Part)).all()`",
+      "wrong": [
+        "`session.execute(select(Part.name, Part.sku)).all()`",
+        "`session.get(Part, 1)`",
+        "`session.scalar(select(Part))`"
+      ],
+      "explanation": "scalars → objecten, scalar → één of None, get → op primary key, execute → rijen met meerdere kolommen.",
+      "simple": "`scalars()` pakt uit elke rij het eerste vakje, en bij `select(Part)` is dat het hele Part-object. Met `.all()` krijg je ze allemaal in een lijst, als een stapel kaartjes uit de bak.",
+      "why_wrong": [
+        "Dit geeft rijen met losse kolommen (naam en sku), geen Part-objecten.",
+        "`get` haalt één object op via de primary key, geen lijst.",
+        "`scalar` (zonder s) geeft maar één object terug, of None."
+      ]
+    },
+    {
+      "id": "3-41",
+      "type": "choice",
+      "question": "Hoe haal je één rij op via de primary key?",
+      "correct": "`session.get(Model, id)`",
+      "wrong": [
+        "`session.scalars(select(Model)).all()`",
+        "`session.find(id)`",
+        "`Model.get(id)`"
+      ],
+      "explanation": "Kort en duidelijk.",
+      "simple": "`session.get` is als in de bibliotheek een boek opvragen met het precieze boeknummer: je krijgt meteen dat ene boek, of niets. Heeft de session het object al in zijn geheugen, dan hoeft hij de database niet eens te vragen.",
+      "why_wrong": [
+        "Dit haalt alle rijen op als lijst, niet één rij op id.",
+        "Een `session.find` bestaat niet in SQLAlchemy.",
+        "Een model heeft geen eigen `get`; ophalen gaat via de session."
+      ]
+    },
+    {
+      "id": "3-42",
+      "type": "choice",
+      "question": "Je loopt over 100 orders en print `o.customer.name`. Je ziet 101 queries. Oplossing?",
+      "correct": "`selectinload` of `joinedload`",
+      "wrong": [
+        "Meer indexes",
+        "`commit()` in de loop",
+        "`echo=False` zetten"
+      ],
+      "explanation": "Het N+1-probleem. `selectinload` voor lijsten, `joinedload` voor many-to-one. Dan 2 queries, altijd 2.",
+      "simple": "Het is als 100 keer apart naar de winkel lopen voor één ding, in plaats van één keer met een boodschappenlijstje. `selectinload` of `joinedload` haalt alle klanten in één keer mee, dus je houdt een vast klein aantal queries over in plaats van 101.",
+      "why_wrong": [
+        "Indexes maken elke query iets sneller, maar het blijven er 101.",
+        "Committen in de loop maakt het eerder erger, en het aantal queries blijft gelijk.",
+        "`echo=False` verbergt alleen de logging; de 101 queries gebeuren nog steeds."
+      ]
+    },
+    {
+      "id": "3-43",
+      "type": "choice",
+      "question": "Wat is het verschil tussen `flush()` en `commit()`?",
+      "correct": "flush stuurt de SQL (constraints vuren daar), commit maakt het permanent",
+      "wrong": [
+        "Ze doen hetzelfde",
+        "commit stuurt, flush maakt permanent",
+        "flush rolt terug"
+      ],
+      "explanation": "Bij flush kun je een constraint-fout nog netjes afvangen.",
+      "simple": "`flush()` is je boodschappen op de band bij de kassa leggen: de kassa scant alles en ziet meteen als iets niet mag (een constraint). `commit()` is betalen: pas dan is het echt van jou. Tot je betaalt, kun je nog alles terugleggen met een rollback.",
+      "why_wrong": [
+        "Ze doen iets anders: flush stuurt de SQL, commit maakt het definitief.",
+        "Het is andersom: flush stuurt, commit maakt permanent.",
+        "Terugdraaien doe je met `rollback()`; flush stuurt juist wijzigingen naar de database."
+      ]
+    },
+    {
+      "id": "3-44",
+      "type": "choice",
+      "question": "Wie commit in het repository-patroon?",
+      "correct": "De caller. De repository flusht alleen",
+      "wrong": [
+        "De repository, na elke methode",
+        "Alembic",
+        "Niemand, dat gaat vanzelf"
+      ],
+      "explanation": "Een repository die zelf commit kun je niet combineren tot één atomaire operatie.",
+      "simple": "De repository is de helper die de boodschappen op de band legt (flush), de caller is degene die betaalt (commit). Zo kan de caller meerdere stappen samen doen en pas aan het eind alles in één keer goedkeuren, of alles terugzetten als er iets misgaat.",
+      "why_wrong": [
+        "Als de repository na elke methode commit, kun je meerdere stappen niet meer als één geheel terugdraaien.",
+        "Alembic regelt veranderingen aan het schema, niet het opslaan van je data.",
+        "SQLAlchemy commit niet vanzelf; zonder `commit()` gaat je werk verloren."
+      ]
+    },
+    {
+      "id": "3-45",
+      "type": "choice",
+      "question": "Waarom heeft `complete_order` twee loops?",
+      "correct": "Eerst álles checken, dan pas iets veranderen",
+      "wrong": [
+        "Voor de performance",
+        "SQLAlchemy vereist het",
+        "Tegen N+1"
+      ],
+      "explanation": "Een rollback zou je ook redden, maar een goede foutmelding (InsufficientStock) is beter.",
+      "simple": "Als je een taart bakt, kijk je eerst of je álle ingrediënten hebt voordat je de eieren breekt. `complete_order` doet hetzelfde: eerst checken of er van elk part genoeg is, en pas dan de voorraad verlagen. Zo krijg je een duidelijke fout (`InsufficientStock`) in plaats van een half afgemaakte klus.",
+      "why_wrong": [
+        "Twee loops is juist iets meer werk; het gaat om veiligheid, niet om snelheid.",
+        "SQLAlchemy schrijft niet voor hoeveel loops je gebruikt.",
+        "N+1 los je op met `selectinload` of `joinedload`, niet met een extra loop."
+      ]
+    },
+    {
+      "id": "3-46",
+      "type": "choice",
+      "question": "Waarom gebruikt de test-fixture `join_transaction_mode=\"create_savepoint\"`?",
+      "correct": "De test mag committen, de buitenste transactie rolt alles terug",
+      "wrong": [
+        "Het is sneller",
+        "Het maakt tabellen aan",
+        "Voor parallelle tests"
+      ],
+      "explanation": "Elke test begint in dezelfde wereld en laat niets achter. En gebruik een aparte testdatabase.",
+      "simple": "De test speelt in een zandbak binnen een grote doos: hij mag alles bouwen en zelfs 'opslaan' (commit), maar dat is alleen een savepoint. Na de test wordt de hele doos teruggedraaid, zodat de volgende test weer met een schone database begint.",
+      "why_wrong": [
+        "Snelheid is niet het doel; het gaat erom dat elke test niets achterlaat.",
+        "Tabellen maak je apart aan, bijvoorbeeld met migrations of `create_all`.",
+        "Het is bedoeld om elke test op te ruimen, niet om tests tegelijk te laten draaien."
+      ]
+    },
+    {
+      "id": "3-47",
+      "type": "choice",
+      "question": "Autogenerate voegt een NOT NULL-kolom toe aan een tabel die al rijen heeft. Wat gebeurt er bij upgrade?",
+      "correct": "`NotNullViolation`: je moet zelf een `server_default` toevoegen",
+      "wrong": [
+        "Het werkt gewoon",
+        "De kolom wordt automatisch nullable",
+        "De rijen worden verwijderd"
+      ],
+      "explanation": "Regel 4: een NOT NULL-kolom toevoegen betekent beslissen wat de bestaande rijen krijgen.",
+      "simple": "Het is alsof je een verplicht vakje aan een formulier toevoegt, terwijl de oude formulieren dat vakje leeg hebben. Postgres weigert dat met `NotNullViolation`. Met een `server_default` zeg je wat de bestaande rijen in dat vakje krijgen.",
+      "why_wrong": [
+        "Zonder default krijgen bestaande rijen NULL, en dat mag niet in een NOT NULL-kolom.",
+        "Postgres maakt je kolom niet stiekem nullable; hij geeft een error.",
+        "Postgres verwijdert nooit zomaar rijen; de upgrade faalt gewoon."
+      ]
+    },
+    {
+      "id": "3-48",
+      "type": "truefalse",
+      "question": "Een migration die al gemerged is mag je nog aanpassen.",
+      "answer": false,
+      "explanation": "Nooit. Schrijf een nieuwe migration.",
+      "simple": "Een gemergde migration is als een bladzijde in een gedeeld logboek die anderen al hebben uitgevoerd. Hun database heeft hem al gedraaid en kijkt er niet meer naar, dus een aanpassing komt daar nooit aan. Wil je iets veranderen, schrijf dan een nieuwe bladzijde: een nieuwe migration."
+    },
+    {
+      "id": "3-49",
+      "type": "choice",
+      "question": "Wat mist autogenerate vaak?",
+      "correct": "Renames (ziet drop + add) en CHECK constraints",
+      "wrong": [
+        "Nieuwe tabellen",
+        "Nieuwe kolommen",
+        "Alles, het werkt nooit"
+      ],
+      "explanation": "Lees elke gegenereerde migration voordat je hem draait.",
+      "simple": "Autogenerate vergelijkt een foto van je models met een foto van de database. Een hernoemde kolom ziet eruit als 'oude weg, nieuwe erbij', dus hij maakt drop + add en je data verdwijnt. CHECK constraints ziet hij vaak niet, dus lees elke migration voordat je hem draait.",
+      "why_wrong": [
+        "Nieuwe tabellen ziet autogenerate juist goed.",
+        "Nieuwe kolommen ziet autogenerate ook goed.",
+        "Autogenerate werkt prima voor de meeste dingen; je moet het resultaat alleen altijd nalezen."
+      ]
+    },
+    {
+      "id": "3-50",
+      "type": "type",
+      "question": "Met welk commando pas je alle migrations toe?",
+      "answers": [
+        "alembic upgrade head"
+      ],
+      "explanation": "`alembic downgrade -1` draait de laatste terug, `alembic current` en `alembic history` tonen de stand.",
+      "simple": "`head` is de nieuwste migration, het bovenste blad van de stapel. `alembic upgrade head` voert alle migrations uit die je database nog niet heeft, tot hij helemaal bij is."
+    },
+    {
+      "id": "3-51",
+      "type": "choice",
+      "question": "Waar houdt Alembic bij welke versie je database heeft?",
+      "correct": "In de tabel `alembic_version`: één rij, één string",
+      "wrong": [
+        "In `alembic.ini`",
+        "In `migrations/env.py`",
+        "In `.env`"
+      ],
+      "explanation": "`SELECT * FROM alembic_version;`",
+      "simple": "Alembic legt in je database een klein briefje in de tabel `alembic_version`, met het nummer van de laatste migration. Omdat dat briefje in de database zelf ligt, weet elke database apart hoe ver hij is.",
+      "why_wrong": [
+        "`alembic.ini` bevat de instellingen van Alembic zelf, niet de stand van een database.",
+        "`env.py` vertelt Alembic hoe hij verbinding maakt, niet welke versie er draait.",
+        "`.env` bevat instellingen zoals de database-URL, niet de migration-versie."
+      ]
+    },
+    {
+      "id": "3-52",
+      "type": "choice",
+      "question": "Validatie in Python of een constraint in de database?",
+      "correct": "Allebei: Python voor een goede foutmelding, de constraint zodat het waar blijft",
+      "wrong": [
+        "Alleen Python",
+        "Alleen de database",
+        "Geen van beide"
+      ],
+      "explanation": "Maar om 3 uur 's nachts wordt alleen de constraint afgedwongen.",
+      "simple": "Python is als de juf die vriendelijk zegt 'niet rennen in de gang'. De constraint is het hek dat er altijd staat, ook als de juf er niet is. Python geeft een nette foutmelding, en de database zorgt dat de regel echt nooit gebroken wordt, ook niet door een ander script om 3 uur 's nachts.",
+      "why_wrong": [
+        "Een ander script of een handmatige query kan om Python heen, en dan wordt de regel toch gebroken.",
+        "Alleen de database geeft vaak een onduidelijke foutmelding aan de gebruiker.",
+        "Zonder controle komt er rommel in je database die je later moeilijk opruimt."
+      ]
+    },
+    {
+      "id": "3-53",
+      "type": "choice",
+      "question": "Welke enum-valkuil noemt het assessment?",
+      "correct": "Opgeslagen als `PLANNED` in plaats van `planned`",
+      "wrong": [
+        "Enums kunnen niet in Postgres",
+        "Een enum maakt geen index",
+        "Een enum is altijd een int"
+      ],
+      "explanation": "Dan matcht je SQL uit sessie 5 niet meer met je eigen database. De fix staat in de WorkOrder-docstring.",
+      "simple": "SQLAlchemy slaat een Python-enum standaard op met zijn naam (`PLANNED`) in plaats van zijn waarde (`planned`). Dan zoekt je SQL naar 'planned' en vindt niets, omdat er 'PLANNED' staat. Hoofdletters tellen mee, net als bij een wachtwoord.",
+      "why_wrong": [
+        "Postgres ondersteunt enums gewoon, met `CREATE TYPE ... AS ENUM`.",
+        "Of er een index is, staat los van het enum-type; dat is niet de valkuil.",
+        "Een Postgres-enum werkt met tekstlabels zoals `planned`, niet met getallen."
+      ]
+    },
+    {
+      "id": "3-54",
+      "type": "choice",
+      "question": "`workload()` moet ook technicians met nul open orders tonen. Waar hoort de statusfilter?",
+      "correct": "In de JOIN-conditie, niet in WHERE",
+      "wrong": [
+        "In WHERE",
+        "In HAVING",
+        "In ORDER BY"
+      ],
+      "explanation": "In WHERE gooi je de NULL-rij van de outer join weg en wordt het ongemerkt weer een INNER JOIN.",
+      "simple": "Met een `LEFT JOIN` krijgt een technician zonder open orders één rij met lege vakjes. Zet je de statusfilter in `WHERE`, dan gooit die filter juist die lege rij weg en verdwijnt de technician. In de `ON`-conditie bepaal je alleen welke orders er worden aangeplakt, en blijft elke technician op de lijst.",
+      "why_wrong": [
+        "In `WHERE` faalt de check op de rij met lege vakjes, dus technicians zonder open orders verdwijnen.",
+        "`HAVING` filtert pas groepen ná het tellen; dan zijn orders met een andere status al meegeteld.",
+        "`ORDER BY` sorteert alleen en filtert niets."
+      ]
+    }
+  ],
+  "flashcards": [
+    {
+      "id": "3-f0",
+      "front": "Image · container · volume",
+      "back": "Image = read-only recept (`postgres:16`). Container = draaiende kopie; wat hij schrijft sterft mee. Volume = opslag die de container overleeft.",
+      "simple": "Een image is het recept dat nooit verandert. Een container is het koken volgens dat recept; als je klaar bent en opruimt, is alles op het aanrecht weg. Een volume is de koelkast: wat daarin staat, blijft bewaard."
+    },
+    {
+      "id": "3-f1",
+      "front": "localhost of db?",
+      "back": "Vanaf je laptop: `localhost:5432`. Vanuit een andere container: `db:5432`, de servicenaam. localhost in een container is de container zelf.",
+      "simple": "Je laptop en elke container zijn aparte huizen. Vanaf je laptop klop je op je eigen deur (`localhost:5432`), en die deur is doorverbonden met de database. Vanuit een container gebruik je de naam van het huis van de database: `db`."
+    },
+    {
+      "id": "3-f2",
+      "front": "Compose-commando's",
+      "back": "`docker compose up -d` · `ps` · `logs db` · `down` (volumes blijven) · `down -v` (volumes weg, voorzichtig)",
+      "simple": "`up -d` zet alles aan op de achtergrond, `ps` laat zien wat er draait en `logs` laat horen wat een dienst zegt. `down` ruimt de containers op maar laat je data staan; `down -v` gooit ook de data weg, dus daar ben je voorzichtig mee."
+    },
+    {
+      "id": "3-f3",
+      "front": "psql-commando's",
+      "back": "`\\dt` tabellen · `\\d work_orders` één tabel · `\\x` verticaal · `\\timing` · `\\i queries.sql` · `\\q`",
+      "simple": "Commando's met een backslash zijn snelknoppen van psql zelf, geen SQL. `\\dt` is de inhoudsopgave, `\\d` bekijkt één tabel, `\\x` zet brede rijen onder elkaar, `\\timing` toont hoe lang een query duurt, `\\i` draait een bestand en `\\q` sluit af."
+    },
+    {
+      "id": "3-f4",
+      "front": "Types kiezen",
+      "back": "TEXT (geen VARCHAR(50) 'voor de zekerheid') · INTEGER/BIGINT · geld in centen of NUMERIC(12,2), nooit FLOAT · BOOLEAN · TIMESTAMPTZ · DATE · JSONB alleen voor echt ongestructureerde extra's",
+      "simple": "Kies het type dat past bij wat je bewaart, net als het juiste bakje in de keuken. Tekst in `TEXT`, hele getallen in `INTEGER`, geld in centen of `NUMERIC` omdat FLOAT kleine afrondingsfoutjes maakt, en tijdstippen in `TIMESTAMPTZ` zodat de tijdzone klopt."
+    },
+    {
+      "id": "3-f5",
+      "front": "Vijf constraints",
+      "back": "NOT NULL · PRIMARY KEY (uniek + nooit NULL) · UNIQUE · REFERENCES other(id) · CHECK (...)",
+      "simple": "Constraints zijn huisregels die de database zelf bewaakt. `NOT NULL`: niet leeg laten. `PRIMARY KEY`: elk nummer één keer en nooit leeg. `UNIQUE`: geen dubbele. `REFERENCES`: moet naar iets bestaands wijzen. `CHECK`: moet aan een voorwaarde voldoen, zoals `qty > 0`."
+    },
+    {
+      "id": "3-f6",
+      "front": "SELECT: geschreven vs uitgevoerd",
+      "back": "Uitvoering: FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT. Alias dus niet in WHERE, wel in ORDER BY.",
+      "simple": "Je schrijft `SELECT` bovenaan, maar Postgres pakt eerst de kast (`FROM`), filtert (`WHERE`), maakt groepjes (`GROUP BY`, `HAVING`) en kiest pas dan wat je ziet (`SELECT`). Een bijnaam uit `SELECT` bestaat daarom nog niet in `WHERE`, maar wel in `ORDER BY`."
+    },
+    {
+      "id": "3-f7",
+      "front": "NULL",
+      "back": "Betekent onbekend. `NULL = NULL` is niet true. Gebruik `IS NULL`. `WHERE x <> 3` laat alle NULL-rijen weg.",
+      "simple": "NULL is 'weet ik niet', niet 0 en ook geen lege tekst. Of iets onbekends gelijk is aan iets anders onbekends, weet je ook niet, dus `NULL = NULL` is niet true. Daarom vraag je het met `IS NULL`, en daarom vallen NULL-rijen weg bij `x <> 3`."
+    },
+    {
+      "id": "3-f8",
+      "front": "Aggregatie-verrassingen",
+      "back": "`count(*)` vs `count(col)`: verschil = aantal NULLs · `sum()` over 0 rijen = NULL → `COALESCE(sum(x), 0)` · `avg()` deelt door niet-NULL · `5 / 2` = 2",
+      "simple": "`count(*)` telt alle rijen, `count(col)` alleen de ingevulde vakjes. Optellen van niets geeft NULL in plaats van 0, dus gebruik `COALESCE`. `avg()` slaat lege vakjes over, en twee hele getallen delen geeft een heel getal: `5 / 2` is 2."
+    },
+    {
+      "id": "3-f9",
+      "front": "INNER of LEFT JOIN?",
+      "back": "Moet de rij blijven als de andere kant ontbreekt? Ja → LEFT JOIN. INNER JOIN is een filter in vermomming.",
+      "simple": "Vraag jezelf: moet deze rij blijven als er aan de andere kant niets bij hoort? Zo ja, dan neem je een `LEFT JOIN`, die de rij laat staan met lege vakjes. Een `INNER JOIN` gooit zulke rijen stil weg."
+    },
+    {
+      "id": "3-f10",
+      "front": "Anti-join",
+      "back": "`LEFT JOIN wop ON wop.part_id = p.id WHERE wop.part_id IS NULL` → parts die nergens gebruikt zijn.",
+      "simple": "Je zet naast elk part waar het gebruikt is. Staat er niets naast, dan is dat vakje NULL, en die parts vind je met `IS NULL`. Zo zoek je wat ergens níet in voorkomt."
+    },
+    {
+      "id": "3-f11",
+      "front": "CTE vs window function",
+      "back": "CTE (`WITH x AS (...)`) geeft een tussenstap een naam. `OVER ()` rekent over alle rijen en geeft het antwoord aan elke rij terug.",
+      "simple": "Een CTE is een kladblaadje met een naam voor een tussenantwoord binnen je query. Een window function met `OVER ()` laat alle rijen staan en schrijft op elke rij het antwoord over het geheel, zoals het totaal."
+    },
+    {
+      "id": "3-f12",
+      "front": "De vijf vragen per kolom",
+      "back": "1. Kan dit onbekend zijn? → nullable · 2. Wat maakt de rij uniek? → PK + UNIQUE · 3. Andere rij weg, en dan? → RESTRICT/CASCADE/SET NULL · 4. Eén feit of twee? · 5. Zoek ik hierop? → index, maar eerst meten",
+      "simple": "Bij elke kolom loop je een checklist af, zoals voordat je op reis gaat. Mag het leeg zijn? Wat maakt de rij uniek? Wat gebeurt er als iets waarnaar je verwijst verdwijnt? Staat hier één feit of twee? En zoek je hier vaak op, zodat een index helpt (maar meet eerst)?"
+    },
+    {
+      "id": "3-f13",
+      "front": "Van brief naar schema",
+      "back": "Zelfstandige naamwoorden → tabellen · werkwoorden → foreign keys · 'meerdere, meerdere van elk' → link table met qty · bijvoeglijk ('nog niet toegewezen') → nullable",
+      "simple": "Lees de opdracht als een taalles. Dingen (zelfstandige naamwoorden) worden tabellen, wat ze met elkaar doen (werkwoorden) wordt een foreign key, 'veel bij veel' wordt een link table met een aantal, en woorden als 'nog niet' betekenen dat een kolom leeg mag zijn."
+    },
+    {
+      "id": "3-f14",
+      "front": "De link table",
+      "back": "`work_order_parts(work_order_id ... ON DELETE CASCADE, part_id, qty CHECK (qty > 0), PRIMARY KEY (work_order_id, part_id))`",
+      "simple": "De link table is de kassabon tussen jobs en parts: één regel per part per job, met een aantal (`qty`) dat groter dan 0 moet zijn. De samengestelde primary key voorkomt dubbele regels, en `CASCADE` ruimt de regels op als de job verdwijnt."
+    },
+    {
+      "id": "3-f15",
+      "front": "Normaliseren",
+      "back": "Eén feit op één plek. Behalve een feit over dat moment: de prijs op een afgeronde job hoort op de regel (`unit_price_cents`).",
+      "simple": "Normaliseren betekent dat je elk feit maar op één plek opschrijft, zodat het nooit op twee plekken anders kan zijn. De uitzondering is een feit over een moment, zoals de prijs op een oude kassabon; die kopieer je bewust naar de regel."
+    },
+    {
+      "id": "3-f16",
+      "front": "SQL injection",
+      "back": "Nooit f-strings in queries. Altijd `cur.execute(\"... = %s\", (sku,))`. Let op de komma. Dynamische namen: `psycopg.sql.Identifier`.",
+      "simple": "SQL injection is als iemand die op een bestelbriefje stiekem 'en geef me ook de kluis' bijschrijft. Met `%s` en een aparte tuple blijft de waarde altijd gewoon een waarde. Vergeet de komma in `(sku,)` niet, en gebruik `sql.Identifier` voor tabelnamen."
+    },
+    {
+      "id": "3-f17",
+      "front": "SQLAlchemy-types",
+      "back": "`Mapped[int]` = NOT NULL · `Mapped[int | None]` = nullable · `__table_args__` is een tuple · filter op NULL met `.is_(None)`",
+      "simple": "In SQLAlchemy is de type hint het schema: `Mapped[int]` moet altijd ingevuld zijn, `Mapped[int | None]` mag leeg blijven. `__table_args__` moet een tuple zijn, dus vergeet de komma niet. Op NULL filter je met `.is_(None)`, omdat Python's `is` geen SQL kan worden."
+    },
+    {
+      "id": "3-f18",
+      "front": "Queries in SQLAlchemy",
+      "back": "Lijst objecten: `session.scalars(...).all()` · één of None: `session.scalar(...)` · op PK: `session.get(Model, id)` · meerdere kolommen: `session.execute(...).all()`",
+      "simple": "Kies de aanroep op basis van wat je terug wilt. Een lijst objecten: `scalars(...).all()`. Precies één of niets: `scalar(...)`. Eén op nummer: `get(Model, id)`. Rijen met losse kolommen: `execute(...).all()`."
+    },
+    {
+      "id": "3-f19",
+      "front": "N+1",
+      "back": "1 query voor de lijst + 1 per object. Fix: `options(selectinload(...))` voor lijsten, `joinedload` voor many-to-one. Zet `echo=True` en tel.",
+      "simple": "N+1 is 100 keer apart naar de winkel lopen in plaats van één keer met een lijstje. `selectinload` of `joinedload` haalt de gekoppelde objecten in één keer mee. Met `echo=True` zie je alle queries voorbijkomen en kun je ze tellen."
+    },
+    {
+      "id": "3-f20",
+      "front": "flush vs commit",
+      "back": "`flush()` stuurt SQL, constraints vuren daar. `commit()` maakt het permanent. De repository flusht, alleen de caller commit.",
+      "simple": "`flush()` is je boodschappen op de band leggen: de kassa checkt alles al. `commit()` is betalen: dan is het definitief. De repository legt op de band, alleen de caller betaalt, zodat meerdere stappen samen slagen of samen mislukken."
+    },
+    {
+      "id": "3-f21",
+      "front": "Testen tegen een database",
+      "back": "Connection → `begin()` → `Session(bind=connection, join_transaction_mode=\"create_savepoint\")` → na de test rollback. Aparte testdatabase.",
+      "simple": "Elke test speelt in een zandbak die na afloop helemaal wordt gladgestreken. Je opent een transactie, de test mag daarbinnen committen via savepoints, en aan het eind draai je alles terug. Gebruik wel een aparte testdatabase, zodat je echte data nooit geraakt wordt."
+    },
+    {
+      "id": "3-f22",
+      "front": "Alembic-commando's",
+      "back": "`alembic init migrations` · `revision --autogenerate -m \"...\"` · `upgrade head` · `current` · `history` · `downgrade -1`",
+      "simple": "`init` zet de map voor migrations klaar, `revision --autogenerate` schrijft een nieuwe stap op basis van je models, `upgrade head` voert alle stappen uit, `current` en `history` laten zien waar je bent, en `downgrade -1` zet één stap terug."
+    },
+    {
+      "id": "3-f23",
+      "front": "Vier migration-regels",
+      "back": "1. Lees elke gegenereerde migration · 2. Nooit een gemergde migration aanpassen · 3. Test tegen een database mét rijen · 4. NOT NULL toevoegen = beslissen wat bestaande rijen krijgen (`server_default`)",
+      "simple": "Migrations zijn als een recept dat iedereen stap voor stap volgt. Lees elke stap na, verander nooit een stap die anderen al gedaan hebben, probeer het uit op een database met echte rijen, en bedenk bij een nieuw verplicht vakje wat de oude rijen erin krijgen."
+    }
+  ],
+  "typing": [
+    {
+      "id": "3-t0",
+      "type": "type",
+      "question": "Met welk commando start je de services uit je Compose-bestand op de achtergrond?",
+      "answers": [
+        "docker compose up -d",
+        "docker-compose up -d"
+      ],
+      "explanation": "`up -d` start alle services detached, dus op de achtergrond. Met `docker compose ps` zie je wat er draait.",
+      "simple": "Je zet alle containers aan en krijgt je terminal meteen terug, terwijl ze op de achtergrond doordraaien."
+    },
+    {
+      "id": "3-t1",
+      "type": "type",
+      "question": "Je Postgres-service heet `db`. Welke hostnaam gebruik je vanuit een andere container?",
+      "answers": [
+        "db",
+        "db:5432"
+      ],
+      "exact": true,
+      "explanation": "Binnen het Compose-netwerk bereiken services elkaar via de servicenaam. `localhost` is in een container de container zelf.",
+      "simple": "In het Compose-netwerk heeft elke container een naam als huisnummer. Je belt dus `db`, niet `localhost`, want dat ben je zelf."
+    },
+    {
+      "id": "3-t2",
+      "type": "type",
+      "question": "Typ de WHERE-voorwaarde die rijen vindt waar `email` NULL is.",
+      "answers": [
+        "email IS NULL",
+        "WHERE email IS NULL"
+      ],
+      "explanation": "`NULL` betekent onbekend, dus `email = NULL` is nooit true. Gebruik `IS NULL`.",
+      "simple": "Iets onbekends kun je niet vergelijken met iets anders onbekends. Je vraagt daarom: is dit veld leeg? Dat is `IS NULL`."
+    },
+    {
+      "id": "3-t3",
+      "type": "type",
+      "question": "Welke JOIN gebruik je als de rij moet blijven bestaan, ook als de andere kant ontbreekt?",
+      "answers": [
+        "LEFT JOIN",
+        "LEFT OUTER JOIN",
+        "left"
+      ],
+      "explanation": "Een `LEFT JOIN` houdt alle rijen van de linkertabel. Ontbreekt de match, dan zijn de kolommen van rechts `NULL`. Een `INNER JOIN` gooit die rijen weg.",
+      "simple": "Iedereen van links mag mee naar het feest, ook zonder partner van rechts."
+    },
+    {
+      "id": "3-t4",
+      "type": "type",
+      "question": "Welke SQLAlchemy-methode haalt één object op via de primary key?",
+      "answers": [
+        "session.get",
+        "session.get()",
+        "get"
+      ],
+      "exact": true,
+      "explanation": "`session.get(Model, id)` geeft het object of `None`, en kijkt eerst in de identity map van de sessie.",
+      "simple": "Je weet het nummer al, dus je vraagt direct: geef me nummer 7."
+    },
+    {
+      "id": "3-t5",
+      "type": "type",
+      "question": "Met welk Alembic-commando laat je een migration genereren uit je modellen? Typ het zonder `-m`.",
+      "answers": [
+        "alembic revision --autogenerate"
+      ],
+      "explanation": "Alembic vergelijkt je modellen met de database en schrijft de verschillen in een nieuwe migration. Lees die altijd na.",
+      "simple": "Alembic kijkt wat er veranderd is en schrijft een voorstel. Jij leest het na voordat je het uitvoert."
+    },
+    {
+      "id": "3-t6",
+      "type": "sentence",
+      "question": "Wat is het verschil tussen een image, een container en een volume?",
+      "model": "Een image is het read-only recept, zoals `postgres:16`. Een container is een draaiende kopie daarvan; wat hij schrijft verdwijnt als de container weg is. Een volume is opslag die de container overleeft, zodat je data blijft bestaan.",
+      "points": [
+        "Image: read-only recept",
+        "Container: draaiende kopie, data verdwijnt mee",
+        "Volume: opslag die de container overleeft"
+      ]
+    },
+    {
+      "id": "3-t7",
+      "type": "sentence",
+      "question": "Waarom zet je nooit een waarde met een f-string in een SQL-query?",
+      "model": "Dan kan iemand via de invoer eigen SQL meesturen: SQL injection. Met parameters, zoals `cur.execute(\"... = %s\", (sku,))`, stuurt de driver de waarde los van de query mee.",
+      "points": [
+        "Risico op SQL injection",
+        "Gebruik parameters zoals `%s`",
+        "De driver houdt waarde en query gescheiden"
+      ]
+    },
+    {
+      "id": "3-t8",
+      "type": "sentence",
+      "question": "Wat is het N+1-probleem, en hoe los je het op?",
+      "model": "Je doet één query voor de lijst en daarna nog één query per object, bijvoorbeeld om een relatie te laden. Bij 100 objecten zijn dat 101 queries. Met `selectinload` of `joinedload` laad je de relaties in één keer mee.",
+      "points": [
+        "Eén query voor de lijst plus één per object",
+        "Wordt traag bij veel objecten",
+        "Oplossing: `selectinload` of `joinedload`"
+      ]
+    },
+    {
+      "id": "3-t9",
+      "type": "sentence",
+      "question": "Wat is het verschil tussen `flush()` en `commit()`?",
+      "model": "`flush()` stuurt de SQL naar de database; daar vuren de constraints, maar het is nog niet definitief. `commit()` maakt de transactie permanent. De repository flusht, alleen de caller commit.",
+      "points": [
+        "`flush()` stuurt SQL, constraints vuren",
+        "`commit()` maakt het permanent",
+        "De repository flusht, de caller commit"
+      ]
+    }
+  ]
+}

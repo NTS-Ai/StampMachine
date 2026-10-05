@@ -1,0 +1,13 @@
+{
+  // Laat VS Code alle JS-bestanden controleren op typefouten via de JSDoc-commentaren.
+  // Er is geen build-stap: de browser laadt de bestanden zoals ze zijn.
+  "compilerOptions": {
+    "checkJs": true,
+    "allowJs": true,
+    "noEmit": true,
+    "strict": false,
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"]
+  },
+  "include": ["js/**/*.js"]
+}

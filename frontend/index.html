@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Leergame voor het 6-weken Python- en AI-workbook: per week een quiz, flashcards, een speedrun en typvragen, plus een eindbaas met alle weken door elkaar.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#ECEFF6" media="(prefers-color-scheme: light)" data-scheme="light">
+<meta name="theme-color" content="#0E1220" media="(prefers-color-scheme: dark)" data-scheme="dark">
+<title>NTS Stampmachine</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/components.css">
+<!-- Thema meteen toepassen, vóór de pagina tekent, zodat er geen flits van het verkeerde thema is. -->
+<script src="js/theme.js"></script>
+</head>
+<body data-screen="home">
+
+<header class="hud">
+  <div class="wrap">
+    <div class="brand"><b>NTS</b>Stampmachine</div>
+    <div class="hud-stats">
+      <div class="lvl">
+        <span class="lvl-name" id="lvlName">Stagiair</span>
+        <span class="xpbar"><i id="xpFill" style="width:0%"></i></span>
+        <span class="pill" id="xpText">0 XP</span>
+      </div>
+      <span class="pill" id="dayStreak" title="Dagen op rij gespeeld">0 dagen op rij</span>
+    </div>
+    <div class="hud-tools">
+      <button class="iconbtn" id="themeBtn" type="button"></button>
+      <button class="iconbtn" id="soundBtn" type="button" aria-pressed="true"></button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- Startscherm -->
+  <section id="home" class="wrap">
+    <div class="hero">
+      <div>
+        <h1>Zes weken workbook.<br><em>Tot het erin zit.</em></h1>
+        <p>Elke week heeft een quiz, flashcards, een speedrun van 60 seconden en typvragen. Wat je fout hebt komt vaker terug. Klaar met alle weken? Dan wacht de pager om 03:00.</p>
+        <button class="weak" id="weakBtn" type="button">Herhaal mijn zwakke plekken</button>
+        <p class="notice" id="clearedNotice" hidden>Je vorige voortgang is gewist, omdat je 30 dagen niet hebt gespeeld.</p>
+      </div>
+      <div class="meter">
+        <small>Totaal gestampt</small>
+        <div class="big" id="totalPct">0%</div>
+        <div class="bar" style="--hue:var(--accent)"><i id="totalBar" style="width:0%"></i></div>
+        <small id="totalSub">0 van 0 vragen beheerst</small>
+      </div>
+    </div>
+    <div class="grid" id="grid"></div>
+    <div class="privacy">
+      <p>Je voortgang wordt automatisch gewist als je 30 dagen niet speelt. Je kunt hem ook zelf meteen wissen.</p>
+      <button class="btn danger" id="resetBtn" type="button">Wis mijn voortgang</button>
+    </div>
+  </section>
+
+  <!-- Quiz, speedrun, eindbaas, zwakke plekken en typen -->
+  <section id="play" class="wrap" hidden>
+    <div class="stage">
+      <div class="play-hud">
+        <button class="btn" id="quitBtn" type="button">Stoppen</button>
+        <div class="grow">
+          <div class="mode-tag" id="modeTag">Quiz</div>
+          <div class="bar" style="--hue:var(--accent);margin-top:4px"><i id="progFill" style="width:0%"></i></div>
+        </div>
+        <span class="hearts" id="hearts" hidden></span>
+        <span class="combo" id="combo" hidden>x2</span>
+        <span class="score" id="score">0</span>
+      </div>
+      <div class="bossbar" id="bossbar" hidden>
+        <div class="lbl"><span>Pager om 03:00 — productie-incident</span><span id="bossHpText">25 / 25</span></div>
+        <div class="bar"><i id="bossHp" style="width:100%"></i></div>
+      </div>
+      <div class="timer" id="timer"><i id="timerFill"></i></div>
+      <div class="card" id="qcard"></div>
+    </div>
+  </section>
+
+  <!-- Flashcards -->
+  <section id="cards" class="wrap" hidden>
+    <div class="stage">
+      <div class="play-hud">
+        <button class="btn" id="fcQuit" type="button">Stoppen</button>
+        <div class="grow">
+          <div class="mode-tag" id="fcTag">Flashcards</div>
+          <div class="bar" style="--hue:var(--good);margin-top:4px"><i id="fcProg" style="width:0%"></i></div>
+        </div>
+        <span class="pill" id="fcCount">0 / 0</span>
+      </div>
+      <div class="fc-wrap" id="fcWrap">
+        <div class="fc" id="fc" tabindex="0" role="button" aria-label="Kaart omdraaien">
+          <div class="face front">
+            <span class="chip" id="fcChip">Week 1</span>
+            <h2 id="fcFront"></h2>
+            <span class="hint"><span class="kbd">Klik of spatie om om te draaien</span><span class="touch-only">Tik om om te draaien</span></span>
+          </div>
+          <div class="face back">
+            <span class="chip">Antwoord</span>
+            <p id="fcBack"></p>
+            <p class="jipcard" id="fcJip" hidden></p>
+          </div>
+        </div>
+      </div>
+      <div class="fc-foot" id="fcFoot" hidden>
+        <button class="btn no lg" id="fcNo" type="button">Nog niet<span class="kbd"> (1)</span></button>
+        <button class="btn yes lg" id="fcYes" type="button">Zit erin<span class="kbd"> (2)</span></button>
+        <span class="hint touch-only">Of veeg: naar links is nog niet, naar rechts is zit erin.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Resultaat na een ronde -->
+  <section id="result" class="wrap" hidden>
+    <div class="stage" id="resBody"></div>
+  </section>
+
+  <footer class="wrap">Gebaseerd op het Fayora AI-workbook "Python for Software &amp; AI Engineering" (6 weken). Je voortgang wordt alleen in deze browser bewaard.</footer>
+</main>
+
+<dialog class="dialog" id="confirmDialog" aria-labelledby="dlgTitle" aria-describedby="dlgText">
+  <form method="dialog">
+    <h2 id="dlgTitle"></h2>
+    <p id="dlgText"></p>
+    <div class="dlg-btns">
+      <button class="btn lg" id="dlgCancel" value="cancel" type="submit"></button>
+      <button class="btn lg primary" id="dlgOk" value="ok" type="submit"></button>
+    </div>
+  </form>
+</dialog>
+
+<canvas id="confetti" width="0" height="0"></canvas>
+
+<!-- Volgorde is belangrijk: latere scripts gebruiken wat eerdere scripts definiëren. -->
+<script src="js/data/content.js"></script>
+<script src="js/core/utils.js"></script>
+<script src="js/core/content.js"></script>
+<script src="js/core/state.js"></script>
+<script src="js/fx/sound.js"></script>
+<script src="js/fx/confetti.js"></script>
+<script src="js/ui/dialog.js"></script>
+<script src="js/ui/hud.js"></script>
+<script src="js/screens/results.js"></script>
+<script src="js/screens/home.js"></script>
+<script src="js/screens/game.js"></script>
+<script src="js/screens/cards.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
