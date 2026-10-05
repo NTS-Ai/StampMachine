@@ -1,0 +1,882 @@
+{
+  "week": 2,
+  "level": "Beginner → Intermediate",
+  "title": "Echte programma's schrijven",
+  "topics": "Packages, venv, files & JSON, exceptions, OOP, dataclasses, pytest",
+  "questions": [
+    {
+      "id": "2-0",
+      "type": "choice",
+      "question": "Wat is een package in Python?",
+      "correct": "Een map met modules en een `__init__.py`",
+      "wrong": [
+        "Eén `.py`-bestand",
+        "Alleen iets dat je met pip installeert",
+        "Een virtual environment"
+      ],
+      "explanation": "Module = één .py-bestand. Package = map met modules plus `__init__.py`.",
+      "simple": "Een module is één los `.py`-bestand, zoals één boek. Een package is een map vol van die bestanden, zoals een boekenkast. Het bestandje `__init__.py` is het bordje op de kast dat zegt: dit hoort bij elkaar en je mag het importeren.",
+      "why_wrong": [
+        "Eén `.py`-bestand heet een module; een package is juist een map met meerdere modules.",
+        "Je eigen map met modules en een `__init__.py` is ook een package, ook als je hem nooit met pip installeert.",
+        "Een virtual environment is een aparte gereedschapskist voor je project, geen map met je eigen code."
+      ]
+    },
+    {
+      "id": "2-1",
+      "type": "choice",
+      "question": "Wanneer is `__name__ == \"__main__\"` True?",
+      "correct": "Als het bestand direct wordt uitgevoerd",
+      "wrong": [
+        "Als het bestand geïmporteerd wordt",
+        "Altijd",
+        "Alleen tijdens tests"
+      ],
+      "explanation": "Zo is een bestand zowel importeerbaar als uitvoerbaar.",
+      "simple": "Python geeft elk bestand een naambordje: `__name__`. Start je het bestand zelf, dan staat op het bordje `\"__main__\"`. Importeert een ander bestand het, dan staat er de naam van de module, en draait de code onder die `if` dus niet.",
+      "why_wrong": [
+        "Bij importeren is `__name__` de naam van de module, dus de vergelijking is dan False.",
+        "Het hangt ervan af hoe het bestand gestart wordt; bij een import is het niet True.",
+        "Tijdens tests wordt je bestand meestal juist geïmporteerd, dus dan is het eerder False."
+      ]
+    },
+    {
+      "id": "2-2",
+      "type": "choice",
+      "question": "Waarom krijgt elk project een eigen virtual environment?",
+      "correct": "Zodat elk project zijn eigen packages en versies heeft",
+      "wrong": [
+        "Python wordt er sneller van",
+        "Anders werkt Git niet",
+        "pip werkt alleen in een venv"
+      ],
+      "explanation": "Project A kan requests 2.31 gebruiken en project B 2.32.",
+      "simple": "Een venv is als een eigen lunchtrommel per project. Zo kan project A de ene versie van een package gebruiken en project B een andere, zonder dat ze elkaars spullen pakken of kapotmaken.",
+      "why_wrong": [
+        "Een venv maakt Python niet sneller; hij houdt alleen de packages per project gescheiden.",
+        "Git werkt prima zonder venv; die twee hebben niets met elkaar te maken.",
+        "pip werkt ook buiten een venv, maar dan installeert hij alles op één gedeelde plek."
+      ]
+    },
+    {
+      "id": "2-3",
+      "type": "type",
+      "question": "Met welk commando maak je een venv in de map `.venv`?",
+      "answers": [
+        "python3 -m venv .venv",
+        "python -m venv .venv"
+      ],
+      "explanation": "Daarna activeren met `source .venv/bin/activate`.",
+      "simple": "Je vraagt Python (`python3`) om zijn ingebouwde hulpje `venv` te draaien (`-m venv`) en de nieuwe gereedschapskist in de map `.venv` te zetten. Daarna zet je hem aan met `source .venv/bin/activate`."
+    },
+    {
+      "id": "2-4",
+      "type": "truefalse",
+      "question": "Je commit `.venv/` naar Git zodat je teamgenoten dezelfde packages krijgen.",
+      "answer": false,
+      "explanation": "Een venv commit je nooit. Afhankelijkheden staan in `pyproject.toml` (of `requirements.txt` via `pip freeze`).",
+      "simple": "Een venv is als een opgebouwde legotoren op jouw tafel; die stuur je niet op. Je stuurt het bouwplan (`pyproject.toml` of `requirements.txt`), en je teamgenoot bouwt zelf dezelfde toren op zijn eigen computer."
+    },
+    {
+      "id": "2-5",
+      "type": "choice",
+      "question": "Wat doet `pip install -e \".[dev]\"`?",
+      "correct": "Editable install van je eigen package plus de dev-tools",
+      "wrong": [
+        "Installeert alleen pytest",
+        "Maakt een nieuwe venv",
+        "Schrijft requirements.txt"
+      ],
+      "explanation": "Editable betekent dat wijzigingen in je code direct gelden zonder opnieuw te installeren.",
+      "simple": "`pip install -e` legt een snoer naar je eigen codemap in plaats van er een kopie van te maken. Pas je je code aan, dan geldt dat meteen, zonder opnieuw te installeren. Het stukje `[dev]` zegt: neem ook de extra gereedschappen voor ontwikkelaars mee, zoals de testtools.",
+      "why_wrong": [
+        "Het installeert je eigen package plus alle dev-tools, niet alleen pytest.",
+        "Een venv maak je met `python3 -m venv`; dit commando installeert alleen iets in een bestaande omgeving.",
+        "Dit commando installeert dingen; een `requirements.txt` maak je met `pip freeze`."
+      ]
+    },
+    {
+      "id": "2-6",
+      "type": "choice",
+      "question": "Welke file-mode voegt toe aan het eind van een bestand?",
+      "correct": "`'a'`",
+      "wrong": [
+        "`'w'`",
+        "`'r'`",
+        "`'x'`"
+      ],
+      "explanation": "Let op: `'w'` overschrijft het hele bestand.",
+      "simple": "Met `'a'` (van append, toevoegen) schrijf je onderaan verder, zoals een nieuwe regel in je dagboek. Wat er al stond, blijft gewoon staan.",
+      "why_wrong": [
+        "Met `'w'` gum je eerst het hele bestand leeg en begin je opnieuw.",
+        "Met `'r'` mag je alleen lezen, niet schrijven.",
+        "Met `'x'` maak je een nieuw bestand; bestaat het al, dan krijg je een fout."
+      ]
+    },
+    {
+      "id": "2-7",
+      "type": "choice",
+      "question": "Waarom schrijf je `with open(...) as f:`?",
+      "correct": "Het bestand wordt altijd gesloten, ook bij een fout",
+      "wrong": [
+        "Het is sneller",
+        "Het leest alles in één keer",
+        "Het maakt het bestand altijd aan"
+      ],
+      "explanation": "Een context manager garandeert de cleanup.",
+      "simple": "`with` is als een deur die vanzelf dichtvalt achter je. Wat er binnen ook gebeurt, zelfs als er iets misgaat, het bestand wordt netjes gesloten.",
+      "why_wrong": [
+        "Het gaat niet sneller; het zorgt er alleen voor dat het bestand altijd dicht gaat.",
+        "Hoeveel je leest, bepaal je zelf met bijvoorbeeld `f.read()` of een loop; `with` regelt alleen het openen en sluiten.",
+        "Of een bestand wordt aangemaakt, hangt af van de mode zoals `'w'` of `'r'`, niet van `with`."
+      ]
+    },
+    {
+      "id": "2-8",
+      "type": "choice",
+      "question": "JSON `null` wordt in Python...",
+      "correct": "`None`",
+      "wrong": [
+        "`null`",
+        "`0`",
+        "`''`"
+      ],
+      "explanation": "object→dict, array→list, true→True, null→None.",
+      "simple": "JSON en Python spreken een iets andere taal. Het JSON-woord voor 'niks' is `null`, en Python zegt daarvoor `None`. Bij het inlezen vertaalt Python het dus.",
+      "why_wrong": [
+        "`null` bestaat niet in Python; je krijgt dan een `NameError`.",
+        "`0` is een echt getal, en dat is iets anders dan 'niks'.",
+        "`''` is een lege tekst, en dat is ook iets anders dan 'niks'."
+      ]
+    },
+    {
+      "id": "2-9",
+      "type": "choice",
+      "question": "Wat is het verschil tussen `json.loads` en `json.load`?",
+      "correct": "`loads` leest een string, `load` een bestand-object",
+      "wrong": [
+        "`loads` is sneller",
+        "`load` geeft een string terug",
+        "Er is geen verschil"
+      ],
+      "explanation": "De s staat voor string. Bij `dumps` en `dump` is het net zo.",
+      "simple": "De s in `loads` staat voor string: je geeft het tekst die je al in je hand hebt. `load` krijgt een geopend bestand en leest daar zelf uit, zoals een brief uit de envelop halen.",
+      "why_wrong": [
+        "Het verschil zit niet in snelheid, maar in wat je erin stopt: een string of een bestand.",
+        "`load` leest juist uit een bestand en geeft Python-data terug, zoals een dict of list.",
+        "Er is wel een verschil: de ene krijgt een string, de andere een bestand-object."
+      ]
+    },
+    {
+      "id": "2-10",
+      "type": "truefalse",
+      "question": "Een `datetime` kun je zonder meer met `json.dumps` opslaan.",
+      "answer": false,
+      "explanation": "Datums zijn geen JSON. Converteer ze zelf, bijvoorbeeld met `.isoformat()`.",
+      "simple": "JSON kent alleen simpele dingen zoals tekst, getallen, lijsten en true/false. Een `datetime` past daar niet in, dus `json.dumps` geeft een fout. Je maakt er eerst zelf tekst van, bijvoorbeeld met `.isoformat()`."
+    },
+    {
+      "id": "2-11",
+      "type": "choice",
+      "question": "`csv.DictReader` geeft elke rij als...",
+      "correct": "Een dict met strings",
+      "wrong": [
+        "Een dict met de juiste types",
+        "Een tuple",
+        "Een lijst met ints"
+      ],
+      "explanation": "Alles komt binnen als str. Getallen converteer je zelf met `float()`.",
+      "simple": "Een CSV-bestand is gewoon tekst, zoals een briefje. `csv.DictReader` geeft elke rij als een dict met de kolomnamen als sleutels, maar alles blijft tekst. Wil je rekenen, dan maak je er zelf een getal van met `float()` of `int()`.",
+      "why_wrong": [
+        "De reader weet niet welk type je bedoelt, dus ook `\"12\"` blijft gewoon tekst.",
+        "Je krijgt een dict met kolomnamen, geen tuple; met `csv.reader` krijg je per rij een lijst.",
+        "Er komen geen ints uit; alles wat je leest is tekst."
+      ]
+    },
+    {
+      "id": "2-12",
+      "type": "choice",
+      "question": "Hoe lees je een traceback?",
+      "correct": "Van onder naar boven: de onderste regel is de fout",
+      "wrong": [
+        "Van boven naar beneden",
+        "Alleen de eerste regel",
+        "Alleen het regelnummer"
+      ],
+      "explanation": "De regels erboven laten zien waar het gebeurde.",
+      "simple": "Een traceback is als een spoor van voetstappen naar de plek van het ongeluk. Onderaan staat wat er misging, en de regels daarboven laten zien welke weg Python ernaartoe liep.",
+      "why_wrong": [
+        "Bovenaan begint het spoor pas; de echte fout staat onderaan.",
+        "De eerste regel is alleen de kop 'Traceback'; de foutmelding staat onderaan.",
+        "Een regelnummer zegt waar, maar niet wat er mis is; dat staat in de onderste regel."
+      ]
+    },
+    {
+      "id": "2-13",
+      "type": "choice",
+      "question": "Wanneer draait het `else`-blok van try/except?",
+      "correct": "Alleen als er géén exception was",
+      "wrong": [
+        "Altijd",
+        "Alleen bij een exception",
+        "Na finally"
+      ],
+      "explanation": "`finally` draait altijd, ook bij een fout.",
+      "simple": "Denk aan een recept: `try` is 'probeer de taart te bakken', `except` is 'als hij aanbrandt, doe dit', en `else` is 'is hij goed gelukt, versier hem dan'. Dat versieren gebeurt dus alleen als er niets misging.",
+      "why_wrong": [
+        "Het blok dat altijd draait, is `finally`, niet `else`.",
+        "Bij een exception draait juist het `except`-blok, en `else` wordt overgeslagen.",
+        "`else` draait vóór `finally`, niet erna."
+      ]
+    },
+    {
+      "id": "2-14",
+      "type": "truefalse",
+      "question": "Een kale `except:` is een prima vangnet.",
+      "answer": false,
+      "explanation": "Vang specifieke exceptions op de plek waar je er iets zinnigs mee kunt. Laat de rest doorgaan.",
+      "simple": "Een kale `except:` is als een vangnet dat alles vangt, ook dingen die je juist wilt zien, zoals een typfout of Ctrl+C. Zo verstop je fouten. Vang liever alleen de fout die je verwacht en waar je iets mee kunt."
+    },
+    {
+      "id": "2-15",
+      "type": "choice",
+      "question": "Wat doet een kale `raise` binnen een except-blok?",
+      "correct": "Gooit de huidige exception opnieuw",
+      "wrong": [
+        "Stopt het programma zonder melding",
+        "Maakt een nieuwe lege Exception",
+        "Niets"
+      ],
+      "explanation": "Gebruik het als je de fout wilt loggen maar niet kunt herstellen.",
+      "simple": "Een kale `raise` is als een bal die je vangt, even bekijkt, en dan weer doorgooit. Je kunt de fout bijvoorbeeld opschrijven in een log, en daarna gaat dezelfde fout gewoon verder omhoog.",
+      "why_wrong": [
+        "Het programma stopt niet stil; dezelfde fout gaat verder, met de hele melding erbij.",
+        "Er komt geen nieuwe lege fout; het is precies de fout die je net ving.",
+        "Er gebeurt wel iets: de gevangen fout wordt opnieuw gegooid."
+      ]
+    },
+    {
+      "id": "2-16",
+      "type": "choice",
+      "question": "Wat is `self` in een methode?",
+      "correct": "De instantie waarop de methode wordt aangeroepen",
+      "wrong": [
+        "De class zelf",
+        "Een keyword dat je moet importeren",
+        "De parent class"
+      ],
+      "explanation": "Python geeft `self` automatisch mee.",
+      "simple": "Een class is een koekjesvorm, en elk koekje dat je ermee maakt is een instantie. `self` is het koekje waar je op dat moment mee bezig bent. Python geeft dat koekje vanzelf mee als je de methode aanroept.",
+      "why_wrong": [
+        "De class zelf is de koekjesvorm; die krijg je als `cls` in een `@classmethod`.",
+        "`self` hoef je niet te importeren; het is gewoon de eerste parameter van een methode.",
+        "Bij de parent class kom je met `super()`, niet met `self`."
+      ]
+    },
+    {
+      "id": "2-17",
+      "type": "choice",
+      "question": "Waarvoor dienen `__repr__` en `__str__`?",
+      "correct": "repr voor developers, str voor gebruikers (wat print toont)",
+      "wrong": [
+        "str voor developers, repr voor print",
+        "Ze doen hetzelfde",
+        "repr werkt alleen in dataclasses"
+      ],
+      "explanation": "`repr` toont iets als `Task('x', priority=1)`, `str` iets als `[ ] x (P1)`.",
+      "simple": "`__repr__` is het technische etiket voor ontwikkelaars, zodat je precies ziet wat het object is. `__str__` is het nette etiket voor gebruikers, en dat laat `print` zien.",
+      "why_wrong": [
+        "Het is precies andersom: repr is voor developers en str is wat `print` toont.",
+        "Ze hebben een ander doel: de een is technisch, de ander netjes voor de gebruiker.",
+        "Elk object in Python heeft een repr; een dataclass schrijft er alleen vanzelf een voor je."
+      ]
+    },
+    {
+      "id": "2-18",
+      "type": "choice",
+      "question": "`@classmethod def from_gross(cls, gross)` is typisch...",
+      "correct": "Een alternatieve constructor",
+      "wrong": [
+        "Een getter",
+        "Een validator",
+        "Een test"
+      ],
+      "explanation": "Bijvoorbeeld `Invoice.from_gross(121)`.",
+      "simple": "Normaal maak je een object met de gewone constructor. Een `@classmethod` zoals `from_gross` is een tweede ingang, zoals een winkel met een voordeur en een zijdeur: je komt in dezelfde winkel, maar begint met andere gegevens, hier een bruto bedrag.",
+      "why_wrong": [
+        "Een getter leest een waarde van een bestaand object; dit maakt juist een nieuw object.",
+        "Een validator controleert data; deze methode bouwt een nieuw object.",
+        "Een test staat in een testbestand en controleert je code; dit is gewone code die objecten maakt."
+      ]
+    },
+    {
+      "id": "2-19",
+      "type": "choice",
+      "question": "Wanneer gebruik je inheritance?",
+      "correct": "Bij een echte 'is-een'-relatie",
+      "wrong": [
+        "Altijd als je code wilt delen",
+        "Nooit",
+        "Bij een 'heeft-een'-relatie"
+      ],
+      "explanation": "Anders gebruik je composition: een object heeft een ander object.",
+      "simple": "Inheritance past als je met recht kunt zeggen 'een hond is een dier'. Kun je alleen zeggen 'een auto heeft een motor', dan stop je het ene object in het andere. Dat heet composition.",
+      "why_wrong": [
+        "Alleen code willen delen is geen goede reden; daar is composition vaak beter voor.",
+        "Inheritance is wel nuttig, zolang het om een echte 'is-een'-relatie gaat.",
+        "Bij 'heeft-een' gebruik je composition: het ene object zit in het andere."
+      ]
+    },
+    {
+      "id": "2-20",
+      "type": "choice",
+      "question": "Wat schrijft `@dataclass` voor je?",
+      "correct": "`__init__`, `__repr__` en `__eq__`",
+      "wrong": [
+        "Alleen `__init__`",
+        "Een databasetabel",
+        "Tests"
+      ],
+      "explanation": "Daardoor heb je gratis value equality: twee Tasks met dezelfde velden zijn `==`.",
+      "simple": "`@dataclass` is als een stempel die het saaie werk voor je doet. Hij schrijft `__init__` om het object te maken, `__repr__` om het netjes te tonen en `__eq__` om twee objecten met dezelfde velden gelijk te noemen.",
+      "why_wrong": [
+        "Hij schrijft meer dan alleen `__init__`; ook `__repr__` en `__eq__` krijg je erbij.",
+        "Ondanks de naam heeft het niets met een database te maken; het is gewoon een Python-class.",
+        "Tests schrijf je nog steeds zelf; de dataclass maakt alleen methodes voor je class."
+      ]
+    },
+    {
+      "id": "2-21",
+      "type": "choice",
+      "question": "Hoe geef je een dataclass-veld een lege lijst als default?",
+      "correct": "`tags: list[str] = field(default_factory=list)`",
+      "wrong": [
+        "`tags: list[str] = []`",
+        "`tags: list[str] = list`",
+        "Dat kan niet"
+      ],
+      "explanation": "Een kale `[]` is een mutable default; dataclass weigert dat.",
+      "simple": "Met een kale `[]` zouden alle objecten één en dezelfde lijst delen, zoals één boodschappenbriefje voor het hele huis. `field(default_factory=list)` geeft elk object zijn eigen nieuwe, lege lijst.",
+      "why_wrong": [
+        "Een kale `[]` zou door alle objecten gedeeld worden; daarom weigert dataclass dat met een fout.",
+        "Dan is de default het woord `list` zelf, de soort, en niet een lege lijst.",
+        "Het kan wel, met `field(default_factory=list)`."
+      ]
+    },
+    {
+      "id": "2-22",
+      "type": "choice",
+      "question": "Waar valideer je de velden van een dataclass?",
+      "correct": "In `__post_init__`",
+      "wrong": [
+        "In `__repr__`",
+        "In `__validate__`",
+        "In de test"
+      ],
+      "explanation": "Bijvoorbeeld: lege titel of priority buiten 1–3 → `ValueError`.",
+      "simple": "`__post_init__` draait meteen nadat het object gemaakt is, zoals een controle aan het eind van de lopende band. Klopt er iets niet, zoals een lege titel, dan gooi je daar een `ValueError`.",
+      "why_wrong": [
+        "`__repr__` is alleen voor het tonen van het object, niet voor controleren.",
+        "`__validate__` bestaat niet; Python roept die methode nooit vanzelf aan.",
+        "Een test kijkt of je code werkt, maar houdt foute data niet tegen als je programma echt draait."
+      ]
+    },
+    {
+      "id": "2-23",
+      "type": "choice",
+      "question": "Wat betekent `-> Task | None` als return type?",
+      "correct": "De functie geeft een Task of None terug",
+      "wrong": [
+        "De functie gooit een error bij None",
+        "De functie geeft altijd een Task",
+        "Er zijn twee Task-classes"
+      ],
+      "explanation": "Type hints veranderen niets aan de uitvoering, maar je editor vangt er fouten mee.",
+      "simple": "Het `|`-teken betekent 'of'. Het is een etiket op de doos: er zit een Task in, of er zit niks in (`None`). Zo weet jij, en je editor, dat je ook op 'niks' moet rekenen.",
+      "why_wrong": [
+        "Een type hint gooit geen errors; het is alleen een etiket voor jou en je editor.",
+        "Met `| None` staat er juist dat er ook niks terug kan komen.",
+        "Het gaat om één Task-class; het `|` betekent alleen 'of'."
+      ]
+    },
+    {
+      "id": "2-24",
+      "type": "choice",
+      "question": "Wat is `ruff`?",
+      "correct": "Linter en formatter",
+      "wrong": [
+        "Testrunner",
+        "Package manager",
+        "Database-driver"
+      ],
+      "explanation": "`ruff check .` vindt problemen, `ruff format .` formatteert volgens PEP 8.",
+      "simple": "`ruff` is als een strenge maar snelle juf die je schrift nakijkt. `ruff check .` zoekt foutjes en slordigheden, en `ruff format .` zet je code netjes in de vaste stijl.",
+      "why_wrong": [
+        "Tests draai je met pytest; `ruff` kijkt alleen naar hoe je code geschreven is.",
+        "Packages installeer je met pip; `ruff` installeert niets.",
+        "`ruff` praat niet met een database; hij leest alleen je codebestanden."
+      ]
+    },
+    {
+      "id": "2-25",
+      "type": "choice",
+      "question": "Wat is `(n * n for n in range(10**9))`?",
+      "correct": "Een generator expression: lazy, kost bijna geen geheugen",
+      "wrong": [
+        "Een lijst met een miljard getallen",
+        "Een set",
+        "Een SyntaxError"
+      ],
+      "explanation": "Ronde haakjes = generator. Pas bij itereren wordt er gerekend.",
+      "simple": "Ronde haakjes maken een generator: een machine die pas een getal uitrekent als je erom vraagt. Het is als een kraan die je opendraait in plaats van een zwembad vol water. Daarom kost het bijna geen geheugen.",
+      "why_wrong": [
+        "Een lijst maak je met vierkante haken; met ronde haakjes wordt er nog niets opgeslagen.",
+        "Een set maak je met accolades `{}`, niet met ronde haakjes.",
+        "Dit is gewoon geldige Python; ronde haakjes rond zo'n expressie maken een generator."
+      ]
+    },
+    {
+      "id": "2-26",
+      "type": "choice",
+      "question": "Wat doet `yield`?",
+      "correct": "Geeft een waarde en pauzeert de functie tot de volgende `next()`",
+      "wrong": [
+        "Beëindigt de functie definitief",
+        "Geeft een lijst terug",
+        "Start een thread"
+      ],
+      "explanation": "Daarmee bouw je streams: grote files, database-cursors, LLM-antwoorden.",
+      "simple": "`yield` is als een verteller die na elk hoofdstuk even stopt. De functie geeft één waarde, wacht, en gaat bij de volgende `next()` verder waar hij was gebleven.",
+      "why_wrong": [
+        "Een functie definitief stoppen doe je met `return`; `yield` pauzeert alleen.",
+        "Je krijgt de waarden één voor één, niet in één keer als lijst.",
+        "Er komt geen extra thread bij; alles draait gewoon na elkaar."
+      ]
+    },
+    {
+      "id": "2-27",
+      "type": "choice",
+      "question": "Waarom staat `@functools.wraps(fn)` in een decorator?",
+      "correct": "Zo behoudt de wrapper de naam en docstring van de originele functie",
+      "wrong": [
+        "Dan wordt hij sneller",
+        "Dan wordt het resultaat gecachet",
+        "Zonder werkt de decorator niet"
+      ],
+      "explanation": "Anders heet elke gedecoreerde functie ineens `wrapper`.",
+      "simple": "Een decorator stopt je functie in een verpakking, de wrapper. Zonder `functools.wraps` staat op de verpakking alleen 'wrapper'. Met `wraps` plak je het originele etiket, met de naam en docstring, weer op de buitenkant.",
+      "why_wrong": [
+        "Het maakt je code niet sneller; het kopieert alleen de naam en docstring.",
+        "Onthouden van resultaten doet `lru_cache`, niet `wraps`.",
+        "De decorator werkt ook zonder `wraps`, maar dan heet je functie ineens `wrapper`."
+      ]
+    },
+    {
+      "id": "2-28",
+      "type": "choice",
+      "question": "Wat doet `@functools.lru_cache`?",
+      "correct": "Memoïsatie: resultaten onthouden voor dezelfde input",
+      "wrong": [
+        "Logging",
+        "Timing",
+        "Thread-safety"
+      ],
+      "explanation": "`fib(80)` wordt daardoor direct berekend.",
+      "simple": "`lru_cache` is als een spiekbriefje: heb je een som al eens uitgerekend, dan schrijft hij het antwoord op. Vraag je hetzelfde nog een keer, dan pakt hij het antwoord van het briefje in plaats van opnieuw te rekenen.",
+      "why_wrong": [
+        "Hij schrijft niets naar een log; hij onthoudt alleen antwoorden.",
+        "Hij meet geen tijd; hij onthoudt alleen antwoorden zodat het sneller gaat.",
+        "Hij gaat over onthouden van antwoorden, niet over veilig werken met meerdere threads."
+      ]
+    },
+    {
+      "id": "2-29",
+      "type": "choice",
+      "question": "In een `@contextmanager`-functie: waar draait de body van het `with`-blok?",
+      "correct": "Op de plek van `yield`",
+      "wrong": [
+        "Voor de functie",
+        "Na het finally-blok",
+        "In een aparte thread"
+      ],
+      "explanation": "Code voor yield = setup, finally na yield = cleanup.",
+      "simple": "Zie het als een broodje: de code vóór `yield` is de onderste helft (klaarzetten), de code ná `yield` in `finally` is de bovenste helft (opruimen). Wat in je `with`-blok staat, is het beleg, en dat komt precies op de plek van `yield`.",
+      "why_wrong": [
+        "Eerst draait de setup-code van de functie zelf; pas bij `yield` is het `with`-blok aan de beurt.",
+        "Na `finally` is het opruimen al klaar; de body draait daarvoor, bij `yield`.",
+        "Er komt geen aparte thread bij; de body draait gewoon op de plek van `yield`."
+      ]
+    },
+    {
+      "id": "2-30",
+      "type": "choice",
+      "question": "Welke testnaam is goed?",
+      "correct": "`test_empty_title_rejected`",
+      "wrong": [
+        "`test_1`",
+        "`test_task`",
+        "`check()`"
+      ],
+      "explanation": "Een testnaam beschrijft het gedrag dat getest wordt.",
+      "simple": "Een goede testnaam is als een etiket op een potje: je weet meteen wat erin zit. Bij `test_empty_title_rejected` lees je direct welk gedrag getest wordt, dus als hij faalt, weet je meteen wat er kapot is.",
+      "why_wrong": [
+        "Een nummer zegt niets; als hij faalt, weet je niet wat er stuk is.",
+        "Dit zegt alleen waar het over gaat, niet welk gedrag je precies test.",
+        "pytest vindt alleen functies die met `test_` beginnen, en deze naam zegt ook niet wat er getest wordt."
+      ]
+    },
+    {
+      "id": "2-31",
+      "type": "choice",
+      "question": "Welke pytest-feature draait één test met meerdere inputs?",
+      "correct": "`@pytest.mark.parametrize`",
+      "wrong": [
+        "`@pytest.fixture`",
+        "`pytest.raises`",
+        "`-k`"
+      ],
+      "explanation": "Bijvoorbeeld priority 0, 4 en -1 die allemaal een ValueError moeten geven.",
+      "simple": "`@pytest.mark.parametrize` is als één bakvorm die je met verschillende soorten deeg vult. Je schrijft de test één keer, en pytest draait hem voor elke input uit je lijstje apart.",
+      "why_wrong": [
+        "Een fixture zet iets klaar voor je test, zoals een object of map, maar draait de test niet met meerdere inputs.",
+        "`pytest.raises` controleert of er een bepaalde fout komt, maar draait de test niet vaker.",
+        "`-k` kiest op naam welke tests je draait, maar geeft ze geen andere inputs."
+      ]
+    },
+    {
+      "id": "2-32",
+      "type": "choice",
+      "question": "Welke fixture geeft je een tijdelijke map voor bestandstests?",
+      "correct": "`tmp_path`",
+      "wrong": [
+        "`tempdir`",
+        "`files`",
+        "`os.tmp`"
+      ],
+      "explanation": "Zo raken je tests nooit je echte data.",
+      "simple": "`tmp_path` geeft je test een eigen lege kladmap, zoals een kladblaadje dat je na afloop weggooit. Zo kan je test vrij bestanden schrijven zonder je echte data te raken.",
+      "why_wrong": [
+        "`tempdir` is geen fixture van pytest; de juiste naam is `tmp_path`.",
+        "`files` is geen fixture van pytest; die geeft je geen tijdelijke map.",
+        "`os.tmp` bestaat niet; voor tijdelijke mappen in tests gebruik je `tmp_path`."
+      ]
+    },
+    {
+      "id": "2-33",
+      "type": "type",
+      "question": "Met welk commando maak je een nieuwe branch en switch je er meteen naar? (zonder branchnaam)",
+      "answers": [
+        "git switch -c",
+        "git checkout -b"
+      ],
+      "explanation": "Bijvoorbeeld `git switch -c feature/week2-taskman`.",
+      "simple": "`git switch` brengt je naar een andere branch, zoals naar een ander spoor overstappen. De `-c` (van create) betekent: maak dit spoor eerst aan. Zo doe je twee dingen in één keer."
+    },
+    {
+      "id": "2-34",
+      "type": "choice",
+      "question": "Hoe herken je een merge conflict in een bestand?",
+      "correct": "`<<<<<<<`, `=======` en `>>>>>>>`",
+      "wrong": [
+        "`###` en `---`",
+        "`CONFLICT:` en `END`",
+        "Het bestand is leeg"
+      ],
+      "explanation": "Maak er de juiste versie van, dan `git add` en commit.",
+      "simple": "Als Git twee versies niet zelf kan samenvoegen, zet hij ze allebei in het bestand, tussen de tekens `<<<<<<<`, `=======` en `>>>>>>>`. Jij kiest dan de goede versie, haalt de tekens weg en doet `git add` en een commit.",
+      "why_wrong": [
+        "Zulke tekens gebruikt Git niet voor conflicten; hij gebruikt rijen van `<`, `=` en `>`.",
+        "Git schrijft geen woorden als `CONFLICT:` in je bestand; die zie je alleen in de terminal.",
+        "Git maakt je bestand niet leeg; hij zet juist allebei de versies erin."
+      ]
+    },
+    {
+      "id": "2-35",
+      "type": "choice",
+      "question": "Welke commit message volgt de conventie?",
+      "correct": "Add JSON storage for tasks",
+      "wrong": [
+        "fixed stuff",
+        "Added JSON storage for tasks.",
+        "update"
+      ],
+      "explanation": "Imperatief, en zeg wat en waarom.",
+      "simple": "Een goede commit message is als een opdracht op een briefje: 'Add JSON storage for tasks'. Je schrijft in de gebiedende wijs (doe dit), zonder punt aan het eind, en je zegt duidelijk wat er verandert.",
+      "why_wrong": [
+        "Dit zegt niet wat er gefixt is, en het staat in de verleden tijd.",
+        "Dit staat in de verleden tijd en eindigt met een punt; de conventie is gebiedende wijs zonder punt.",
+        "Eén woord zegt niet wat er veranderd is of waarom."
+      ]
+    },
+    {
+      "id": "2-36",
+      "type": "choice",
+      "question": "Je fixt een bug. Wat schrijf je eerst?",
+      "correct": "Een test die faalt",
+      "wrong": [
+        "De fix",
+        "De README",
+        "De commit message"
+      ],
+      "explanation": "Test faalt, je fixt, test slaagt. Dan kan de bug nooit ongemerkt terugkomen.",
+      "simple": "Eerst schrijf je een test die laat zien dat het kapot is, zoals een alarm dat afgaat. Daarna fix je de bug tot het alarm stil is. Komt de bug ooit terug, dan gaat het alarm meteen weer af.",
+      "why_wrong": [
+        "Zonder falende test weet je niet zeker of je fix echt de bug oplost.",
+        "De README beschrijft je project, maar bewijst niet dat de bug weg is.",
+        "De commit message schrijf je pas als je fix klaar en getest is."
+      ]
+    }
+  ],
+  "flashcards": [
+    {
+      "id": "2-f0",
+      "front": "Module vs package",
+      "back": "Module = één `.py`-bestand. Package = map met modules plus `__init__.py`.",
+      "simple": "Een module is één boek, een `.py`-bestand. Een package is een boekenkast: een map met modules plus een `__init__.py` dat zegt dat ze bij elkaar horen."
+    },
+    {
+      "id": "2-f1",
+      "front": "`if __name__ == \"__main__\":`",
+      "back": "Alleen True als het bestand direct draait, niet bij import. Zo is een bestand importeerbaar én uitvoerbaar.",
+      "simple": "Start je het bestand zelf, dan is `__name__` gelijk aan `\"__main__\"` en draait de code onder de `if`. Importeert iemand anders het, dan wordt dat stuk overgeslagen. Zo kan één bestand zowel gereedschap als programma zijn."
+    },
+    {
+      "id": "2-f2",
+      "front": "venv in vijf stappen",
+      "back": "`python3 -m venv .venv` · `source .venv/bin/activate` · `pip install ...` · `pip freeze > requirements.txt` · `deactivate`",
+      "simple": "Maak de gereedschapskist (`python3 -m venv .venv`), open hem (`source .venv/bin/activate`), stop er spullen in (`pip install`), schrijf op wat erin zit (`pip freeze > requirements.txt`) en doe hem weer dicht (`deactivate`)."
+    },
+    {
+      "id": "2-f3",
+      "front": "De projectregel",
+      "back": "1 project = 1 Git-repo = 1 venv = 1 `pyproject.toml`. `.venv` commit je nooit.",
+      "simple": "Elk project krijgt zijn eigen kamer: een eigen Git-repo, een eigen venv en een eigen `pyproject.toml`. De `.venv` zelf stuur je nooit mee, alleen het lijstje van wat erin moet."
+    },
+    {
+      "id": "2-f4",
+      "front": "File modes",
+      "back": "`'r'` lezen · `'w'` overschrijven · `'a'` toevoegen. Altijd `with open(..., encoding=\"utf-8\")`.",
+      "simple": "`'r'` is alleen lezen, `'w'` is gummen en opnieuw schrijven, en `'a'` is onderaan bijschrijven. Gebruik altijd `with`, zodat het bestand vanzelf dicht gaat, en `encoding=\"utf-8\"`, zodat letters als é goed blijven."
+    },
+    {
+      "id": "2-f5",
+      "front": "JSON ↔ Python",
+      "back": "object→dict · array→list · string→str · number→int/float · true/false→True/False · null→None. Datums: `.isoformat()`.",
+      "simple": "JSON en Python zeggen hetzelfde met andere woorden, zoals Nederlands en Engels: object wordt dict, array wordt list, true wordt True en null wordt None. Een datum kent JSON niet, dus die maak je eerst tekst met `.isoformat()`."
+    },
+    {
+      "id": "2-f6",
+      "front": "`loads` vs `load`",
+      "back": "`json.loads(str)` en `json.dumps(obj)` werken met strings. `json.load(f)` en `json.dump(obj, f)` met bestanden.",
+      "simple": "Met een s aan het eind (`loads`, `dumps`) werk je met tekst in je geheugen. Zonder s (`load`, `dump`) lees je uit of schrijf je naar een bestand."
+    },
+    {
+      "id": "2-f7",
+      "front": "try / except / else / finally",
+      "back": "except: bij die fout · else: alleen als er géén fout was · finally: altijd, voor cleanup.",
+      "simple": "`try` is iets proberen, `except` is wat je doet als het misgaat, `else` draait alleen als alles goed ging, en `finally` draait altijd, zoals altijd je fiets op slot zetten, wat er ook gebeurde."
+    },
+    {
+      "id": "2-f8",
+      "front": "Exception-regels",
+      "back": "Vang specifieke exceptions, nooit een kale `except:`. Vang alleen waar je iets zinnigs kunt doen. Eigen domeinfouten: `class InsufficientStock(Exception)`.",
+      "simple": "Vang alleen de fout die je verwacht, en alleen waar je er iets zinnigs mee kunt; een kale `except:` verstopt ook fouten die je wilt zien. Voor fouten uit je eigen vakgebied maak je een eigen soort, zoals `class InsufficientStock(Exception)`."
+    },
+    {
+      "id": "2-f9",
+      "front": "Traceback lezen",
+      "back": "Van onder naar boven. Onderste regel = de fout, daarboven = waar het gebeurde.",
+      "simple": "Lees een traceback van onder naar boven. Onderaan staat wat er misging, en daarboven het spoor van waar Python langs kwam."
+    },
+    {
+      "id": "2-f10",
+      "front": "`__repr__` vs `__str__`",
+      "back": "repr is voor developers (`Task('x', priority=1)`), str voor gebruikers (wat `print` toont).",
+      "simple": "`__repr__` is het technische etiket voor ontwikkelaars, zoals `Task('x', priority=1)`. `__str__` is het nette etiket voor gebruikers, en dat laat `print` zien."
+    },
+    {
+      "id": "2-f11",
+      "front": "property · classmethod · staticmethod",
+      "back": "`@property` toont een berekende waarde als attribuut · `@classmethod` alternatieve constructor met `cls` · `@staticmethod` utility zonder self of cls.",
+      "simple": "`@property` laat een uitgerekende waarde eruitzien als een gewoon veld. `@classmethod` krijgt de class (`cls`) en dient vaak als extra ingang om een object te maken. `@staticmethod` is een hulpje dat bij de class hoort, maar `self` en `cls` niet nodig heeft."
+    },
+    {
+      "id": "2-f12",
+      "front": "Inheritance of composition?",
+      "back": "Inheritance alleen bij een echte 'is-een'-relatie. Anders composition: TaskService krijgt een store in zijn constructor.",
+      "simple": "Gebruik inheritance alleen als iets echt een soort van iets anders is, zoals een hond een dier is. Anders geef je het ene object het andere mee, zoals een TaskService die een store krijgt in zijn constructor; dat heet composition."
+    },
+    {
+      "id": "2-f13",
+      "front": "@dataclass",
+      "back": "Schrijft `__init__`, `__repr__` en `__eq__`. Lijst-default: `field(default_factory=list)`. Validatie in `__post_init__`.",
+      "simple": "`@dataclass` schrijft `__init__`, `__repr__` en `__eq__` voor je. Een lege lijst als default geef je met `field(default_factory=list)`, zodat elk object zijn eigen lijst krijgt. Controleren doe je in `__post_init__`, dat meteen na het maken draait."
+    },
+    {
+      "id": "2-f14",
+      "front": "Comprehensions",
+      "back": "`[x for x in xs if c]` lijst · `{k: v for ...}` dict · `{x for ...}` set · `(x for ...)` generator",
+      "simple": "Een comprehension is een korte manier om een verzameling te vullen. De haakjes bepalen wat je krijgt: `[]` een lijst, `{k: v}` een dict, `{x}` een set en `()` een generator die pas rekent als je erom vraagt."
+    },
+    {
+      "id": "2-f15",
+      "front": "Generator",
+      "back": "Functie met `yield`: geeft waarden één voor één, lazy. Voor grote bestanden, database-cursors en LLM-streams.",
+      "simple": "Een generator is een functie met `yield` die waarden één voor één geeft, zoals een kraan in plaats van een volle emmer. Daardoor past zelfs een heel groot bestand of een lange stroom tekst in weinig geheugen."
+    },
+    {
+      "id": "2-f16",
+      "front": "Decorator",
+      "back": "Een functie die een functie wrapt: `def timed(fn): @functools.wraps(fn) def wrapper(*args, **kwargs): ... return wrapper`.",
+      "simple": "Een decorator is een cadeauverpakking om een functie: de wrapper doet iets ervoor of erna, en roept daartussen de echte functie aan. Met `functools.wraps` blijft de naam van de originele functie op de verpakking staan."
+    },
+    {
+      "id": "2-f17",
+      "front": "Context manager",
+      "back": "`with` garandeert cleanup. Zelf maken met `@contextmanager` en `try: yield finally: ...`.",
+      "simple": "`with` zorgt dat er altijd wordt opgeruimd, zoals een deur die vanzelf dichtvalt. Zelf maak je er een met `@contextmanager`: klaarzetten vóór `yield`, opruimen in `finally`."
+    },
+    {
+      "id": "2-f18",
+      "front": "Goede tests",
+      "back": "Snel, onafhankelijk (geen gedeelde state, geen netwerk), naam = gedrag. Bug gevonden? Eerst een falende test.",
+      "simple": "Goede tests zijn snel, staan los van elkaar en hebben een naam die zegt wat ze controleren. Vind je een bug, schrijf dan eerst een test die faalt; dan kan die bug nooit ongemerkt terugkomen."
+    },
+    {
+      "id": "2-f19",
+      "front": "pytest-gereedschap",
+      "back": "`pytest.raises` · `@pytest.mark.parametrize` · `@pytest.fixture` · `tmp_path` · `pytest -q -k naam` · `--cov`",
+      "simple": "Dit is de gereedschapskist van pytest: `pytest.raises` checkt of er een fout komt, `parametrize` draait één test met veel inputs, `fixture` zet dingen klaar, `tmp_path` geeft een kladmap, `-k` kiest tests op naam en `--cov` laat zien hoeveel code je test."
+    },
+    {
+      "id": "2-f20",
+      "front": "Git-workflow",
+      "back": "`git switch -c feature/x` → commits → `git push -u origin feature/x` → PR → review → CI groen → merge → `git switch main && git pull`",
+      "simple": "Je werkt op je eigen zijspoor (`git switch -c`), stuurt je werk op (`git push`), en vraagt via een PR of het mag worden samengevoegd. Na review en groene tests wordt het gemerged, en haal je met `git pull` de nieuwe `main` binnen."
+    },
+    {
+      "id": "2-f21",
+      "front": "`.gitignore` basis",
+      "back": "`.venv/`, `__pycache__/`, `.env`, `*.pyc`, `.pytest_cache/`",
+      "simple": "`.gitignore` is een lijstje met dingen die Git moet negeren, zoals je venv, tijdelijke Python-bestanden en je geheime `.env`. Die horen niet in de repo, omdat ze vanzelf opnieuw ontstaan of geheim zijn."
+    }
+  ],
+  "typing": [
+    {
+      "id": "2-t0",
+      "type": "type",
+      "question": "Met welk commando activeer je de venv in de map `.venv` (Linux of WSL)?",
+      "answers": [
+        "source .venv/bin/activate",
+        ". .venv/bin/activate"
+      ],
+      "explanation": "`source .venv/bin/activate` zet de venv aan in je huidige shell. Je prompt toont dan `(.venv)`. Uitzetten doe je met `deactivate`.",
+      "simple": "Je zegt tegen je terminal: gebruik vanaf nu de Python en packages uit dit project, niet die van de hele computer."
+    },
+    {
+      "id": "2-t1",
+      "type": "type",
+      "question": "Welke file-mode gebruik je om een bestand te overschrijven?",
+      "answers": [
+        "w",
+        "'w'",
+        "\"w\""
+      ],
+      "exact": true,
+      "explanation": "`'w'` maakt het bestand leeg en schrijft opnieuw. `'a'` voegt toe aan het eind, `'r'` leest alleen.",
+      "simple": "`w` is schrijven op een schoon vel: wat er stond, gaat weg."
+    },
+    {
+      "id": "2-t2",
+      "type": "type",
+      "question": "Welke functie zet een JSON-string om naar een Python-object?",
+      "answers": [
+        "json.loads",
+        "json.loads()",
+        "loads"
+      ],
+      "exact": true,
+      "explanation": "`json.loads` werkt met een string (de s staat voor string). `json.load` leest uit een bestand.",
+      "simple": "De s in `loads` staat voor string: je geeft tekst en krijgt een Python-dict of -lijst terug."
+    },
+    {
+      "id": "2-t3",
+      "type": "type",
+      "question": "In welke methode van een dataclass valideer je de velden?",
+      "answers": [
+        "__post_init__",
+        "__post_init__()",
+        "post_init"
+      ],
+      "explanation": "`__post_init__` draait direct na de gegenereerde `__init__`. Daar check je de waarden en gooi je een `ValueError` als iets niet klopt.",
+      "simple": "Eerst bouwt de dataclass het object, en meteen daarna krijg je in `__post_init__` de kans om te controleren of alles klopt."
+    },
+    {
+      "id": "2-t4",
+      "type": "type",
+      "question": "Welk keyword maakt van een functie een generator?",
+      "answers": [
+        "yield"
+      ],
+      "explanation": "Een functie met `yield` geeft waarden één voor één en pauzeert tussendoor. Dat is lazy en kost weinig geheugen.",
+      "simple": "`yield` geeft één ding af en wacht dan, als een kassamedewerker die steeds één klant tegelijk helpt."
+    },
+    {
+      "id": "2-t5",
+      "type": "type",
+      "question": "Met welke pytest-functie test je dat er een exception wordt gegooid?",
+      "answers": [
+        "pytest.raises",
+        "with pytest.raises",
+        "raises"
+      ],
+      "exact": true,
+      "explanation": "`with pytest.raises(ValueError):` slaagt alleen als de code in het blok die exception gooit.",
+      "simple": "Je zegt tegen de test: hier móet het misgaan. Gaat het niet mis, dan faalt de test."
+    },
+    {
+      "id": "2-t6",
+      "type": "sentence",
+      "question": "Waarom krijgt elk project een eigen virtual environment?",
+      "model": "Zo heeft elk project zijn eigen packages en versies, zonder dat projecten elkaar breken. Je legt die set vast (bijvoorbeeld in `pyproject.toml`) en kunt hem op een andere machine opnieuw opbouwen.",
+      "points": [
+        "Eigen packages en versies per project",
+        "Projecten breken elkaar niet",
+        "Je kunt de omgeving op een andere machine opnieuw opbouwen"
+      ]
+    },
+    {
+      "id": "2-t7",
+      "type": "sentence",
+      "question": "Wat doen `else` en `finally` in een try-blok?",
+      "model": "`else` draait alleen als er geen exception was. `finally` draait altijd, met of zonder fout, en is bedoeld voor opruimen, zoals een bestand of verbinding sluiten.",
+      "points": [
+        "`else` draait alleen zonder exception",
+        "`finally` draait altijd",
+        "`finally` gebruik je om op te ruimen"
+      ]
+    },
+    {
+      "id": "2-t8",
+      "type": "sentence",
+      "question": "Wanneer gebruik je inheritance en wanneer composition?",
+      "model": "Inheritance alleen bij een echte 'is-een'-relatie. In andere gevallen gebruik je composition: je geeft een object een ander object mee, bijvoorbeeld een store in de constructor van een `TaskService`.",
+      "points": [
+        "Inheritance bij een echte 'is-een'-relatie",
+        "Anders composition",
+        "Voorbeeld: een store meegeven aan een service"
+      ]
+    },
+    {
+      "id": "2-t9",
+      "type": "sentence",
+      "question": "Je vindt een bug. Wat doe je eerst, en waarom?",
+      "model": "Eerst schrijf je een test die faalt door de bug. Dan weet je zeker dat je de bug kunt reproduceren, zie je dat je fix werkt, en merk je het meteen als de bug ooit terugkomt.",
+      "points": [
+        "Eerst een test die faalt",
+        "Zo weet je dat je de bug kunt reproduceren",
+        "De test vangt de bug als hij terugkomt"
+      ]
+    }
+  ]
+}

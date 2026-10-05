@@ -1,0 +1,849 @@
+{
+  "week": 6,
+  "level": "Advanced",
+  "title": "Productie & capstone",
+  "topics": "Agents, async, logging, config, security, Docker, CI/CD, deployment",
+  "questions": [
+    {
+      "id": "6-0",
+      "type": "choice",
+      "question": "Wat is een agent volgens het workbook?",
+      "correct": "Een loop met tools en limieten",
+      "wrong": [
+        "Een groter model",
+        "Een fine-tuned model",
+        "Een chat-interface"
+      ],
+      "explanation": "Model aanroepen → tool nodig? uitvoeren en terugsturen → herhalen tot het antwoordt.",
+      "simple": "Een agent is als een kok die een recept volgt: hij kijkt wat er nodig is, pakt een gereedschap (een tool), kijkt naar het resultaat en gaat door tot het gerecht klaar is. Dat steeds herhalen is de loop, en de limieten zorgen dat hij niet eindeloos blijft doorgaan.",
+      "why_wrong": [
+        "Een groter model is alleen een slimmer brein; zonder loop en tools geeft het nog steeds één antwoord per keer.",
+        "Fine-tunen leert een model nieuwe gewoontes aan, maar maakt er nog geen loop met tools van.",
+        "Een chat-interface is alleen het venster waarin je praat; daarachter kan ook gewoon één losse modelaanroep zitten."
+      ]
+    },
+    {
+      "id": "6-1",
+      "type": "choice",
+      "question": "Wanneer kies je een vaste workflow in plaats van een agent?",
+      "correct": "Als de stappen vooraf bekend zijn",
+      "wrong": [
+        "Nooit",
+        "Alleen als het duur mag zijn",
+        "Als je geen tools hebt"
+      ],
+      "explanation": "Deterministisch, testbaar, goedkoop.",
+      "simple": "Als je precies weet welke stappen er komen, is een vast stappenplan als een bouwhandleiding: elke keer hetzelfde, makkelijk te testen en goedkoop. Een agent laat het model zelf kiezen, en dat heb je alleen nodig als je de stappen vooraf niet weet.",
+      "why_wrong": [
+        "Een vaste workflow is juist vaak de beste keuze, omdat hij voorspelbaar en goedkoop is.",
+        "Het is andersom: een vaste workflow is meestal goedkoper dan een agent.",
+        "Ook een vaste workflow kan tools gebruiken; het verschil is dat jij de volgorde bepaalt in plaats van het model."
+      ]
+    },
+    {
+      "id": "6-2",
+      "type": "choice",
+      "question": "Wat doet het router-patroon?",
+      "correct": "Een goedkoop model kiest welke gespecialiseerde prompt of agent het verzoek afhandelt",
+      "wrong": [
+        "Het verdeelt netwerkverkeer",
+        "Het is een load balancer",
+        "Het is FastAPI's APIRouter"
+      ],
+      "explanation": "Bijvoorbeeld billing, technisch of planning.",
+      "simple": "Denk aan de receptie van een ziekenhuis: die stuurt je meteen naar de juiste afdeling. Een goedkoop model doet hetzelfde met een vraag en stuurt hem door naar de prompt of agent die daar goed in is, bijvoorbeeld billing, techniek of planning.",
+      "why_wrong": [
+        "Netwerkverkeer verdelen is iets voor netwerkapparatuur; dit patroon gaat over welke prompt of agent een vraag krijgt.",
+        "Een load balancer verdeelt werk over gelijke servers, terwijl een router kiest op basis van wat de vraag inhoudt.",
+        "`APIRouter` is een manier om FastAPI-routes te groeperen en heeft niets met dit agent-patroon te maken."
+      ]
+    },
+    {
+      "id": "6-3",
+      "type": "choice",
+      "question": "Wanneer gebruik je orchestrator + workers?",
+      "correct": "Alleen als de taak echt planning nodig heeft",
+      "wrong": [
+        "Altijd, het is de standaard",
+        "Als het goedkoop moet",
+        "Voor elke chatbot"
+      ],
+      "explanation": "Krachtig maar duur en moeilijk te debuggen.",
+      "simple": "Een orchestrator is als een projectleider die het werk opdeelt en aan meerdere helpers (workers) geeft. Dat is krachtig, maar ook duur en lastig na te gaan als er iets misgaat, dus je doet het alleen als de taak echt een plan nodig heeft.",
+      "why_wrong": [
+        "De standaard is juist één eenvoudige agent met tools; orchestrator + workers is de zware uitzondering.",
+        "Meerdere modellen die samenwerken kosten juist meer aanroepen en dus meer geld.",
+        "De meeste chatbots hebben genoeg aan één agent met tools; een hele ploeg workers is daar overbodig."
+      ]
+    },
+    {
+      "id": "6-4",
+      "type": "choice",
+      "question": "Een tool met side effects in een klantsysteem. Wat is de regel?",
+      "correct": "Human in the loop: de tool geeft een voorstel dat een mens bevestigt",
+      "wrong": [
+        "Direct uitvoeren",
+        "Alleen loggen",
+        "Verbieden"
+      ],
+      "explanation": "Niet onderhandelbaar voor klantsystemen.",
+      "simple": "Het is als een bankmedewerker die een overboeking klaarzet, die jij daarna zelf nog moet goedkeuren. De tool maakt alleen een voorstel en een mens bevestigt, zodat een vergissing van het model niet meteen echte schade doet in het systeem van een klant.",
+      "why_wrong": [
+        "Direct uitvoeren betekent dat een vergissing van het model meteen echt gebeurt in het klantsysteem.",
+        "Loggen schrijft alleen op wat er gebeurde; de actie zelf is dan al uitgevoerd.",
+        "Verbieden is niet nodig: met een bevestigingsstap kun je de tool veilig gebruiken."
+      ]
+    },
+    {
+      "id": "6-5",
+      "type": "choice",
+      "question": "Waar komt de `user_id` vandaan die een tool krijgt?",
+      "correct": "Uit jouw code, nooit van het model",
+      "wrong": [
+        "Van het model",
+        "Uit de prompt",
+        "Uit de vorige tool-output"
+      ],
+      "explanation": "Anders kan een gebruiker het model overhalen een ander id te gebruiken.",
+      "simple": "Het is als een portier die zelf je pasje controleert in plaats van te geloven wat je zegt. Jouw code weet wie er echt is ingelogd; komt de `user_id` van het model, dan kan een gebruiker het model ompraten om het id van iemand anders te gebruiken.",
+      "why_wrong": [
+        "Het model herhaalt wat het leest, dus een slimme gebruiker kan het een ander id laten invullen.",
+        "In de prompt staat tekst die de gebruiker zelf kan beïnvloeden, dus daar kun je een identiteit niet op vertrouwen.",
+        "Tool-output is ook gewoon data die via het model loopt; wie er echt is ingelogd weet alleen jouw code."
+      ]
+    },
+    {
+      "id": "6-6",
+      "type": "choice",
+      "question": "Een tool gooit een exception in de agent-loop. Wat doe je?",
+      "correct": "Als tekst teruggeven aan het model zodat het kan herstellen",
+      "wrong": [
+        "De hele request laten crashen",
+        "Negeren",
+        "De gebruiker om hulp vragen"
+      ],
+      "explanation": "`output = {\"error\": str(exc)}`.",
+      "simple": "Als een kok merkt dat de oven kapot is, vertel je hem dat, zodat hij een ander plan kan bedenken. Zo geef je de foutmelding als tekst terug aan het model (bijvoorbeeld in een `error`-veld), en kan het zelf iets anders proberen.",
+      "why_wrong": [
+        "Dan stopt alles door één fout, terwijl het model het misschien zelf had kunnen oplossen.",
+        "Als je de fout negeert, weet het model niet dat de tool mislukte en gaat het verder met verkeerde aannames.",
+        "De gebruiker kan meestal niets met een technische fout; het model kan vaak zelf een andere aanpak proberen."
+      ]
+    },
+    {
+      "id": "6-7",
+      "type": "choice",
+      "question": "Waarvoor dient `MAX_STEPS`?",
+      "correct": "Een stap-limiet tegen eindeloze loops",
+      "wrong": [
+        "Snelheid",
+        "Het aantal tools",
+        "De token-cache"
+      ],
+      "explanation": "Plus een tokenbudget.",
+      "simple": "Het is als een kookwekker: hoe druk de kok ook bezig is, na een vast aantal rondes stopt het. Zo kan een agent nooit eindeloos tools blijven aanroepen en geld verbranden; daarnaast zet je ook een tokenbudget.",
+      "why_wrong": [
+        "Een limiet maakt de agent niet sneller; hij zorgt alleen dat de loop ergens ophoudt.",
+        "Hoeveel tools er zijn staat los van hoeveel stappen de agent mag zetten.",
+        "Met een cache voor tokens heeft dit niets te maken; het telt alleen de rondes in de loop."
+      ]
+    },
+    {
+      "id": "6-8",
+      "type": "choice",
+      "question": "Wat doet `asyncio.Semaphore(5)`?",
+      "correct": "Maximaal 5 taken tegelijk in flight",
+      "wrong": [
+        "5 retries",
+        "Een timeout van 5 seconden",
+        "5 workers"
+      ],
+      "explanation": "Begrensde concurrency, bijvoorbeeld bij embeddings.",
+      "simple": "Een semaphore is als een parkeergarage met 5 plekken: er mogen maar 5 auto's tegelijk in, de rest wacht tot er een plek vrijkomt. Zo stuur je bijvoorbeeld nooit meer dan 5 embedding-verzoeken tegelijk en overbelast je de API niet.",
+      "why_wrong": [
+        "Opnieuw proberen regel je met retry-logica; een semaphore telt alleen hoeveel taken er tegelijk mogen.",
+        "Een timeout zet je met `asyncio.wait_for`; de 5 hier is een aantal plekken, geen seconden.",
+        "Er worden geen 5 werkers gestart; je mag zoveel taken hebben als je wilt, maar er zijn er maximaal 5 tegelijk bezig."
+      ]
+    },
+    {
+      "id": "6-9",
+      "type": "choice",
+      "question": "Hoe voer je CPU-zwaar werk (PDF parsen) uit in async code?",
+      "correct": "`await asyncio.to_thread(...)`",
+      "wrong": [
+        "Gewoon in de `async def`",
+        "Met `time.sleep`",
+        "Met `asyncio.gather`"
+      ],
+      "explanation": "Anders blokkeer je de event loop.",
+      "simple": "De event loop is als één ober die alle tafels bedient; als hij zelf een uur gaat afwassen, wacht iedereen. Met `await asyncio.to_thread(...)` geef je dat zware werk aan een helper in een aparte thread, zodat de ober door kan met de andere tafels.",
+      "why_wrong": [
+        "Dan blokkeert het zware werk de event loop en moeten alle andere requests wachten.",
+        "`time.sleep` laat alles stilstaan en doet niets aan het zware werk zelf.",
+        "`asyncio.gather` laat meerdere coroutines tegelijk wachten, maar zwaar rekenwerk in een coroutine blokkeert de loop nog steeds."
+      ]
+    },
+    {
+      "id": "6-10",
+      "type": "choice",
+      "question": "Hoe zet je een timeout op een coroutine?",
+      "correct": "`asyncio.wait_for(coro, timeout=30)`",
+      "wrong": [
+        "`time.timeout(30)`",
+        "`signal.alarm`",
+        "`asyncio.sleep(30)`"
+      ],
+      "explanation": "Vang `TimeoutError`.",
+      "simple": "Het is als een eierwekker naast de pan: is het na 30 seconden nog niet klaar, dan stop je ermee. `asyncio.wait_for` breekt de coroutine dan af en gooit een `TimeoutError`, die je kunt opvangen.",
+      "why_wrong": [
+        "`time.timeout` bestaat niet in Python.",
+        "`signal.alarm` is een oude Unix-truc voor het hele proces, niet voor één coroutine, en werkt niet op Windows.",
+        "`asyncio.sleep(30)` wacht gewoon 30 seconden en zet geen limiet op een andere coroutine."
+      ]
+    },
+    {
+      "id": "6-11",
+      "type": "truefalse",
+      "question": "`print()` is prima voor logging in een service.",
+      "answer": false,
+      "explanation": "Gestructureerde JSON-logs via `logging` naar stdout, met een request id.",
+      "simple": "`print()` is als een briefje op de koelkast: geen tijd, geen ernst en lastig terug te zoeken. Met `logging` schrijf je nette JSON-regels naar stdout, met een level en een request id, zodat je later precies kunt terugvinden wat er gebeurde, net als in het logboek van een schip."
+    },
+    {
+      "id": "6-12",
+      "type": "choice",
+      "question": "Welk log level hoort bij 'retrying LLM call'?",
+      "correct": "WARNING",
+      "wrong": [
+        "INFO",
+        "ERROR",
+        "DEBUG"
+      ],
+      "explanation": "WARNING = herstelbaar probleem.",
+      "simple": "Een WARNING is als een oranje lampje in de auto: er ging iets mis, maar je kunt nog verder. Een LLM-call die opnieuw wordt geprobeerd is precies zo'n herstelbaar probleem.",
+      "why_wrong": [
+        "INFO is voor gewone gebeurtenissen die goed gaan, zoals een afgeronde order.",
+        "ERROR is voor als een request echt mislukt; bij een retry kan het nog goed komen.",
+        "DEBUG is voor fijne details die je alleen aanzet als je een bug zoekt, dus dan mis je dit signaal in productie."
+      ]
+    },
+    {
+      "id": "6-13",
+      "type": "choice",
+      "question": "Welk log level hoort bij 'order completed'?",
+      "correct": "INFO",
+      "wrong": [
+        "DEBUG",
+        "WARNING",
+        "CRITICAL"
+      ],
+      "explanation": "INFO = business events.",
+      "simple": "INFO is als een regel in het kasboek van een winkel: er is een bestelling afgerond. Het is geen probleem maar wel een belangrijke gebeurtenis voor het bedrijf, en daar is INFO voor.",
+      "why_wrong": [
+        "DEBUG is voor technische details bij het zoeken naar bugs, niet voor belangrijke bedrijfsgebeurtenissen.",
+        "WARNING is voor een herstelbaar probleem, en een afgeronde order is juist goed nieuws.",
+        "CRITICAL is voor als de hele service niet meer kan draaien."
+      ]
+    },
+    {
+      "id": "6-14",
+      "type": "choice",
+      "question": "Waarom een request-id middleware?",
+      "correct": "Alle logs van één request aan elkaar koppelen",
+      "wrong": [
+        "Voor authenticatie",
+        "Voor caching",
+        "Voor CORS"
+      ],
+      "explanation": "De id gaat ook terug in de `X-Request-ID` header.",
+      "simple": "Het is als het nummertje dat je bij de garderobe krijgt: alles met hetzelfde nummer hoort bij dezelfde jas. Elke logregel krijgt het id van zijn request, zodat je alle stappen van één verzoek terugvindt; het id gaat ook mee terug in de `X-Request-ID` header.",
+      "why_wrong": [
+        "Wie iemand is controleer je met authenticatie, bijvoorbeeld met een JWT; een request id zegt niets over wie het is.",
+        "Caching bewaart antwoorden om tijd te sparen; een request id is alleen een label om logs te koppelen.",
+        "CORS bepaalt welke websites je API vanuit de browser mogen aanroepen en heeft niets met logs te maken."
+      ]
+    },
+    {
+      "id": "6-15",
+      "type": "choice",
+      "question": "Wat zegt de 12-factor regel over configuratie?",
+      "correct": "Alleen via environment variables",
+      "wrong": [
+        "Config-bestanden in Git",
+        "Per omgeving hardcoded",
+        "In de database"
+      ],
+      "explanation": "Eén codebase, meerdere omgevingen.",
+      "simple": "Het is als één recept dat je in elke keuken gebruikt, waarbij alleen het briefje met de hoeveelheden verschilt. Je code blijft overal hetzelfde, en per omgeving (laptop, test, productie) geef je andere environment variables mee.",
+      "why_wrong": [
+        "Config in Git betekent dat secrets in je repository kunnen belanden en dat je de code per omgeving moet aanpassen.",
+        "Hardcoden betekent dat je per omgeving andere code nodig hebt, terwijl het idee juist één codebase is.",
+        "Om bij de database te komen heb je al config nodig, zoals de database-URL, dus daar kan die niet in staan."
+      ]
+    },
+    {
+      "id": "6-16",
+      "type": "choice",
+      "question": "Wat doe je met `.env.example`?",
+      "correct": "In Git, met placeholder-waarden",
+      "wrong": [
+        "Nooit in Git",
+        "Met de echte secrets erin",
+        "Alleen op de server"
+      ],
+      "explanation": "De echte `.env` verlaat je machine nooit.",
+      "simple": "`.env.example` is als een leeg invulformulier: iedereen ziet welke velden er zijn, maar er staan geen echte gegevens in. Daarom mag het in Git, terwijl de echte `.env` met je geheime sleutels je eigen computer nooit verlaat.",
+      "why_wrong": [
+        "Juist het voorbeeldbestand hoort in Git, zodat andere ontwikkelaars weten welke variabelen ze moeten invullen.",
+        "Dan staan je geheime sleutels in Git en kan iedereen met toegang ze lezen.",
+        "Collega's hebben het juist nodig op hun eigen laptop om te zien welke variabelen er zijn."
+      ]
+    },
+    {
+      "id": "6-17",
+      "type": "choice",
+      "question": "Wat geeft `/health` terug als Redis onbereikbaar is?",
+      "correct": "503",
+      "wrong": [
+        "200",
+        "404",
+        "401"
+      ],
+      "explanation": "Compose, Kubernetes en load balancers gebruiken dit om te bepalen of je container leeft.",
+      "simple": "Een health check is als een rookmelder die laat weten of alles in orde is. Zonder Redis kan je service niet goed werken, dus `/health` geeft 503 (service niet beschikbaar), zodat Compose, Kubernetes of een load balancer weten dat er iets mis is.",
+      "why_wrong": [
+        "200 betekent dat alles in orde is, en dan denkt iedereen ten onrechte dat je service gezond is.",
+        "404 betekent dat de pagina niet bestaat, terwijl `/health` er wel gewoon is.",
+        "401 betekent dat je niet bent ingelogd, en dat heeft niets met Redis te maken."
+      ]
+    },
+    {
+      "id": "6-18",
+      "type": "choice",
+      "question": "Je hebt per ongeluk een API-key naar GitHub gepusht. Wat doe je?",
+      "correct": "Direct roteren: ga ervan uit dat hij gelekt is",
+      "wrong": [
+        "`git filter-repo` is genoeg",
+        "De repo private maken",
+        "De commit reverten"
+      ],
+      "explanation": "Een push is niet terug te draaien.",
+      "simple": "Het is als een huissleutel die je op straat hebt laten vallen: ook als je hem terugvindt, weet je niet of iemand er een kopie van heeft gemaakt. Dus vervang je het slot: maak meteen een nieuwe key en zet de oude uit, want bots zoeken GitHub voortdurend af naar gelekte sleutels.",
+      "why_wrong": [
+        "`git filter-repo` haalt de key uit de geschiedenis, maar wie hem al gekopieerd heeft, heeft hem nog steeds.",
+        "Private maken helpt niet meer: de key kan al gezien of gekopieerd zijn toen hij openbaar stond.",
+        "Een revert maakt een nieuwe commit, maar de oude commit met de key staat nog gewoon in de geschiedenis."
+      ]
+    },
+    {
+      "id": "6-19",
+      "type": "choice",
+      "question": "Hoe stel je CORS in?",
+      "correct": "Beperkt tot je eigen front-end origins",
+      "wrong": [
+        "`allow_origins=[\"*\"]`",
+        "Helemaal uit",
+        "Alleen GET toestaan"
+      ],
+      "explanation": "Met `CORSMiddleware`.",
+      "simple": "CORS is als een gastenlijst bij de deur: alleen websites op de lijst mogen vanuit de browser met je API praten. Zet je daar alleen je eigen front-end op (met `CORSMiddleware`), dan kunnen vreemde websites niet zomaar namens je gebruikers verzoeken doen.",
+      "why_wrong": [
+        "Met `*` staat de deur open voor elke website, en dan heb je eigenlijk geen gastenlijst meer.",
+        "Zonder CORS-instelling mag je eigen front-end op een ander domein je API vanuit de browser ook niet gebruiken.",
+        "Alleen GET toestaan zegt iets over het soort verzoek, niet over welke websites er binnen mogen."
+      ]
+    },
+    {
+      "id": "6-20",
+      "type": "choice",
+      "question": "Wat is de best practice voor containers?",
+      "correct": "Non-root user, minimaal base image, geen secrets in het image",
+      "wrong": [
+        "Root voor het gemak",
+        "Secrets als ENV in de Dockerfile",
+        "Zo veel mogelijk tools erin"
+      ],
+      "explanation": "Scannen met docker scout of trivy.",
+      "simple": "Zie een container als een hotelkamer voor je app: je geeft de gast geen loper van het hele hotel (non-root), je zet er alleen in wat nodig is (minimaal image) en je laat geen kluiscodes op het bureau liggen (geen secrets in het image). Hoe minder erin zit, hoe minder er mis kan gaan.",
+      "why_wrong": [
+        "Als iemand je app overneemt terwijl die als root draait, heeft hij meteen alle rechten in de container.",
+        "Alles wat in een Dockerfile staat zit in het image, en iedereen die het image heeft kan die secrets uitlezen.",
+        "Elke extra tool is een extra plek waar een beveiligingslek in kan zitten, en het image wordt er groter van."
+      ]
+    },
+    {
+      "id": "6-21",
+      "type": "choice",
+      "question": "Waarom een multi-stage Dockerfile?",
+      "correct": "Een klein runtime-image zonder build-tools",
+      "wrong": [
+        "Snellere tests",
+        "Meer lagen is veiliger",
+        "Het is verplicht"
+      ],
+      "explanation": "De builder-stage maakt de venv, de runtime-stage kopieert alleen die.",
+      "simple": "Het is als een taart bakken in een rommelige keuken en daarna alleen de taart naar het feest brengen. De builder-stage maakt de venv met alle bouwgereedschap, en de runtime-stage kopieert alleen die venv, zodat het eindimage klein en schoon blijft.",
+      "why_wrong": [
+        "Tests worden er niet sneller van; het gaat om een kleiner image voor productie.",
+        "Meer lagen maakt een image niet veiliger; het gaat erom dat build-tools niet in het eindimage zitten.",
+        "Het is niet verplicht; een gewone Dockerfile werkt ook, alleen wordt het image dan groter."
+      ]
+    },
+    {
+      "id": "6-22",
+      "type": "choice",
+      "question": "Hoe groot is een normaal slim FastAPI-image?",
+      "correct": "150–250 MB",
+      "wrong": [
+        "1–2 GB",
+        "5 MB",
+        "10 GB"
+      ],
+      "explanation": "Is het een gigabyte? Dan klopt er iets niet.",
+      "simple": "Een slim image is als een goed ingepakte rugzak: alleen wat je echt nodig hebt, en dan kom je uit op ongeveer 150 tot 250 MB. Is het een gigabyte of meer, dan zitten er waarschijnlijk build-tools of andere overbodige spullen in.",
+      "why_wrong": [
+        "Een image van 1 tot 2 GB is een teken dat er overbodige dingen in zitten, zoals build-tools.",
+        "Python zelf is al veel groter dan 5 MB, dus dat lukt niet met een FastAPI-app.",
+        "10 GB is extreem groot en wijst op een flinke fout, zoals data of caches die in het image terecht zijn gekomen."
+      ]
+    },
+    {
+      "id": "6-23",
+      "type": "choice",
+      "question": "Wat hoort in `.dockerignore`?",
+      "correct": "`.venv`, `.git`, `tests`, `.env`, `__pycache__`",
+      "wrong": [
+        "`app/`",
+        "`pyproject.toml`",
+        "`alembic.ini`"
+      ],
+      "explanation": "Kleiner en geen secrets in je build-context.",
+      "simple": "`.dockerignore` is als een lijstje van wat je niet in je verhuisdoos stopt: rommel en geheimen. Zonder die mappen wordt je build kleiner en sneller, en komt je `.env` met secrets niet per ongeluk in het image terecht.",
+      "why_wrong": [
+        "`app/` is je eigen code, en die moet juist in het image zitten.",
+        "`pyproject.toml` heb je nodig om tijdens de build je dependencies te installeren.",
+        "`alembic.ini` is nodig om vanuit de container databasemigraties te draaien."
+      ]
+    },
+    {
+      "id": "6-24",
+      "type": "type",
+      "question": "In welke map staan GitHub Actions workflows?",
+      "answers": [
+        ".github/workflows",
+        ".github/workflows/"
+      ],
+      "explanation": "Bijvoorbeeld `.github/workflows/ci.yml`.",
+      "simple": "GitHub kijkt op een vaste plek of er automatische taken zijn, net zoals de postbode altijd in dezelfde brievenbus kijkt. Zet je YAML-bestand, bijvoorbeeld `ci.yml`, in `.github/workflows`, dan voert GitHub Actions het vanzelf uit."
+    },
+    {
+      "id": "6-25",
+      "type": "choice",
+      "question": "Horen tests die een echte LLM aanroepen in CI?",
+      "correct": "Nee: mock de llm-module en draai evals apart of 's nachts",
+      "wrong": [
+        "Ja, altijd",
+        "Alleen op main",
+        "Alleen met caching"
+      ],
+      "explanation": "CI moet snel, gratis en deterministisch zijn.",
+      "simple": "CI is een controle bij elke push, dus die moet snel, gratis en elke keer met dezelfde uitkomst werken. Een echte LLM is traag, kost geld en geeft niet altijd hetzelfde antwoord, dus in tests vervang je hem door een nep-versie (een mock) en draai je echte evals apart, bijvoorbeeld 's nachts.",
+      "why_wrong": [
+        "Dan wordt elke push traag en duur, en kunnen tests zomaar falen omdat het model niet altijd hetzelfde antwoordt.",
+        "Ook op main wil je snelle, gratis en voorspelbare tests; echte evals draai je apart.",
+        "Caching helpt een beetje, maar je blijft afhankelijk van een externe dienst en een API-key in je tests."
+      ]
+    },
+    {
+      "id": "6-26",
+      "type": "choice",
+      "question": "Welke volgorde van CI-stappen gebruikt het workbook?",
+      "correct": "ruff → pip-audit → alembic upgrade → pytest",
+      "wrong": [
+        "pytest → ruff",
+        "deploy → test",
+        "build → audit → lint"
+      ],
+      "explanation": "Met echte Postgres en Redis als services.",
+      "simple": "Je begint met de snelle, goedkope checks en eindigt met de zwaarste, zoals een piloot die eerst de checklist afloopt en pas dan opstijgt. Eerst `ruff` (stijl en simpele fouten), dan `pip-audit` (onveilige pakketten), dan de database klaarzetten met `alembic upgrade`, en pas daarna `pytest`.",
+      "why_wrong": [
+        "Dan draai je eerst de trage tests, terwijl een snelle lint-check meteen had kunnen laten zien dat er iets mis is.",
+        "Eerst deployen en daarna pas testen betekent dat kapotte code al bij gebruikers staat.",
+        "In deze volgorde ontbreken de tests, en de snelle lint-check komt pas helemaal aan het eind."
+      ]
+    },
+    {
+      "id": "6-27",
+      "type": "choice",
+      "question": "Wat doet `pip-audit`?",
+      "correct": "Checkt dependencies op bekende kwetsbaarheden",
+      "wrong": [
+        "Formatteert code",
+        "Installeert sneller",
+        "Meet coverage"
+      ],
+      "explanation": "Plus Dependabot op GitHub.",
+      "simple": "`pip-audit` is als iemand die je boodschappen naast de lijst met terugroepacties legt: hij vergelijkt je pakketten met een lijst van bekende problemen. Zit er een pakket met een bekend beveiligingslek tussen, dan hoor je het meteen.",
+      "why_wrong": [
+        "Code formatteren doe je met een tool als `ruff`, niet met `pip-audit`.",
+        "`pip-audit` installeert niets; hij controleert alleen wat je al gebruikt.",
+        "Coverage meet je met een tool als `pytest-cov`, niet met `pip-audit`."
+      ]
+    },
+    {
+      "id": "6-28",
+      "type": "choice",
+      "question": "Hoe doe je een rollback bij deployment?",
+      "correct": "De vorige image-tag draaien",
+      "wrong": [
+        "Op de server opnieuw bouwen",
+        "De database droppen",
+        "Dat kan niet"
+      ],
+      "explanation": "Het image wordt één keer gebouwd door CI.",
+      "simple": "Het is als een oude versie van een document terugpakken: CI heeft elk image één keer gebouwd en met een tag bewaard. Gaat de nieuwe versie mis, dan start je gewoon de vorige tag weer, zonder iets opnieuw te bouwen.",
+      "why_wrong": [
+        "Opnieuw bouwen op de server is traag en kan iets anders opleveren dan wat CI heeft getest.",
+        "Dan ben je al je data kwijt, en dat maakt het probleem alleen maar groter.",
+        "Omdat elk image een eigen tag heeft, kun je juist heel makkelijk terug naar een vorige versie."
+      ]
+    },
+    {
+      "id": "6-29",
+      "type": "choice",
+      "question": "Wat doet Caddy in `compose.prod.yaml`?",
+      "correct": "Reverse proxy met automatische HTTPS",
+      "wrong": [
+        "Database",
+        "Cache",
+        "CI-runner"
+      ],
+      "explanation": "Let's Encrypt-certificaten zonder gedoe.",
+      "simple": "Caddy is als de receptie bij de voordeur: alle bezoekers komen daar binnen en worden doorgestuurd naar je app. Daarbij haalt Caddy zelf HTTPS-certificaten bij Let's Encrypt, zodat de verbinding versleuteld is zonder dat jij er werk aan hebt.",
+      "why_wrong": [
+        "De database is Postgres; Caddy slaat geen gegevens op.",
+        "De cache is Redis; Caddy stuurt alleen verkeer door.",
+        "CI draait op GitHub Actions, niet op je server."
+      ]
+    },
+    {
+      "id": "6-30",
+      "type": "choice",
+      "question": "Hoe ziet een deploy eruit?",
+      "correct": "pull + `up -d` + `alembic upgrade head`",
+      "wrong": [
+        "git clone en pip install op de server",
+        "Bestanden kopiëren met scp",
+        "Bouwen op de server"
+      ],
+      "explanation": "Secrets staan alleen op de server.",
+      "simple": "Een deploy is als een kant-en-klaarmaaltijd ophalen in plaats van zelf koken: je haalt het image op dat CI al gebouwd heeft (`pull`), start het (`up -d`) en werkt de database bij (`alembic upgrade head`). De secrets staan alleen op de server en zitten niet in het image.",
+      "why_wrong": [
+        "Dan installeer je op de server misschien andere versies dan wat CI heeft getest.",
+        "Losse bestanden kopiëren is foutgevoelig en je weet niet zeker welke versie er dan draait.",
+        "Bouwen op de server gebeurt buiten CI, dus draait er iets dat niet precies zo getest is."
+      ]
+    },
+    {
+      "id": "6-31",
+      "type": "choice",
+      "question": "Hoe regel je backups?",
+      "correct": "Dagelijks `pg_dump` en één keer een restore testen",
+      "wrong": [
+        "Niet nodig met volumes",
+        "Alleen Redis back-uppen",
+        "Wekelijks een screenshot"
+      ],
+      "explanation": "Een backup die je nooit hebt teruggezet is geen backup.",
+      "simple": "Een reservesleutel die je nooit hebt geprobeerd, past misschien helemaal niet. Daarom maak je elke dag een `pg_dump` van je database en test je minstens één keer of je die echt kunt terugzetten.",
+      "why_wrong": [
+        "Een volume staat op dezelfde machine; gaat die kapot of wis je per ongeluk iets, dan ben je alles kwijt.",
+        "De belangrijke data staat in Postgres; Redis is vooral een cache.",
+        "Een screenshot bevat geen echte data die je kunt terugzetten."
+      ]
+    },
+    {
+      "id": "6-32",
+      "type": "choice",
+      "question": "Hoe werkt de `complete_work_order`-tool in de capstone?",
+      "correct": "Eerst een voorstel; een tweede call met `confirm=true` voert het uit",
+      "wrong": [
+        "Direct uitvoeren",
+        "Alleen voor office-gebruikers, zonder bevestiging",
+        "Die tool mag niet bestaan"
+      ],
+      "explanation": "Human in the loop.",
+      "simple": "Het werkt als een bestelling die je eerst nog even laat zien voordat je op betalen drukt: de eerste call geeft alleen een voorstel. Pas als er een tweede call komt met `confirm=true`, nadat een mens akkoord gaf, wordt de work order echt afgerond.",
+      "why_wrong": [
+        "Direct uitvoeren slaat de menselijke bevestiging over, en die is verplicht voor tools met side effects.",
+        "Ook voor office-gebruikers geldt dat een mens de actie eerst bevestigt.",
+        "De tool mag best bestaan, zolang er maar een bevestigingsstap in zit."
+      ]
+    },
+    {
+      "id": "6-33",
+      "type": "choice",
+      "question": "Welk onderdeel weegt het zwaarst in de capstone-beoordeling?",
+      "correct": "It works (30%)",
+      "wrong": [
+        "Code quality",
+        "Tests & evals",
+        "Operations & security"
+      ],
+      "explanation": "Clean clone → draaiende stack → demo slaagt.",
+      "simple": "Het belangrijkste is dat het gewoon werkt: iemand haalt je project vers op, start de stack en de demo slaagt. Mooie code helpt weinig als het niet draait, daarom telt dit onderdeel met 30% het zwaarst.",
+      "why_wrong": [
+        "Code quality telt 20%, dus minder dan It works.",
+        "Tests & evals tellen 20%, dus minder dan It works.",
+        "Operations & security telt 15%, dus minder dan It works."
+      ]
+    },
+    {
+      "id": "6-34",
+      "type": "choice",
+      "question": "Welke testeis heeft de capstone?",
+      "correct": "Minstens 30 tests met de LLM gemockt en minstens 20 eval-cases",
+      "wrong": [
+        "10 tests",
+        "Alleen evals",
+        "Geen eisen"
+      ],
+      "explanation": "Resultaten in EVAL.md.",
+      "simple": "Je hebt twee soorten controles nodig: veel snelle tests waarin de LLM is vervangen door een nep-versie (minstens 30), en eval-cases die checken of de AI goede antwoorden geeft (minstens 20). De uitkomsten van de evals zet je in `EVAL.md`.",
+      "why_wrong": [
+        "10 tests is te weinig; de eis is minstens 30 tests plus minstens 20 eval-cases.",
+        "Alleen evals is niet genoeg; je hebt ook gewone tests met een gemockte LLM nodig.",
+        "Er zijn wel duidelijke eisen: minstens 30 tests en minstens 20 eval-cases."
+      ]
+    },
+    {
+      "id": "6-35",
+      "type": "choice",
+      "question": "Technicians in de capstone zien...",
+      "correct": "Alleen hun eigen work orders",
+      "wrong": [
+        "Alle work orders",
+        "Geen work orders",
+        "Alleen documenten"
+      ],
+      "explanation": "Office-gebruikers zien alles. De rol zit als claim in de JWT.",
+      "simple": "Het is als een monteur die alleen zijn eigen klussenlijst krijgt, terwijl het kantoor het hele overzicht ziet. De rol staat als claim in de JWT, en jouw code filtert daarop, zodat een technician alleen zijn eigen work orders te zien krijgt.",
+      "why_wrong": [
+        "Alle work orders zien is alleen voor office-gebruikers.",
+        "Dan kunnen technicians hun werk niet doen; ze zien wel hun eigen work orders.",
+        "Ze zien hun eigen work orders, niet alleen documenten."
+      ]
+    }
+  ],
+  "flashcards": [
+    {
+      "id": "6-f0",
+      "front": "Agent",
+      "back": "Loop + tools + limieten. Kies een vaste workflow als de stappen bekend zijn. Side effects → mens bevestigt. Alles wordt getraced.",
+      "simple": "Een agent is een loop: het model denkt na, gebruikt een tool, kijkt naar het resultaat en gaat door, met limieten zodat het ooit stopt. Weet je de stappen al, dan is een vast stappenplan beter; acties met gevolgen laat je door een mens bevestigen, en je legt alles vast (tracen) zodat je later kunt nagaan wat er gebeurde."
+    },
+    {
+      "id": "6-f1",
+      "front": "Vijf agent-patronen",
+      "back": "Single agent met tools (80%) · workflow/pipeline · router · orchestrator + workers · human in the loop",
+      "simple": "Er zijn vijf manieren om een agent op te bouwen, van simpel tot zwaar. Meestal (zo'n 80% van de gevallen) is één agent met tools genoeg; de andere patronen, zoals een router of een orchestrator met workers, pak je alleen als het echt nodig is."
+    },
+    {
+      "id": "6-f2",
+      "front": "Agent-checklist",
+      "back": "Stap-limiet en tokenbudget · tool-input valideren met Pydantic · identiteit uit jouw code · tool-errors terug naar het model · volledige trace · eval set",
+      "simple": "Dit is de checklist voor elke agent, zoals een piloot die voor vertrek alles nakijkt. Je zet limieten, controleert tool-input met Pydantic, haalt de identiteit uit je eigen code, geeft fouten terug aan het model, bewaart een volledige trace en test met een eval set."
+    },
+    {
+      "id": "6-f3",
+      "front": "Async-patronen",
+      "back": "`asyncio.Semaphore(5)` begrenst · `gather(..., return_exceptions=True)` · `wait_for(..., timeout=30)` · CPU-werk via `asyncio.to_thread`",
+      "simple": "Met async kan je programma op veel dingen tegelijk wachten, zoals een ober met veel tafels. `Semaphore` begrenst hoeveel er tegelijk gebeurt, `gather` met `return_exceptions=True` zorgt dat één fout niet alles stopt, `wait_for` zet een tijdslimiet, en zwaar rekenwerk geef je met `to_thread` aan een aparte thread."
+    },
+    {
+      "id": "6-f4",
+      "front": "Logging",
+      "back": "Nooit print. JSON naar stdout met request id. DEBUG detail · INFO business event · WARNING herstelbaar · ERROR request faalt · CRITICAL service kan niet draaien",
+      "simple": "Logs zijn het logboek van je service, dus gebruik `logging` in plaats van `print` en schrijf JSON naar stdout met een request id. Het level zegt hoe ernstig iets is: van DEBUG (details) via INFO (normale gebeurtenis), WARNING (herstelbaar) en ERROR (request mislukt) tot CRITICAL (service kan niet draaien)."
+    },
+    {
+      "id": "6-f5",
+      "front": "Wat log je nooit",
+      "back": "Wachtwoorden, tokens, API-keys, volledige prompts met persoonsgegevens.",
+      "simple": "Logs worden door veel mensen en systemen gelezen en lang bewaard, dus wat erin staat kan uitlekken. Daarom schrijf je nooit wachtwoorden, tokens, API-keys of prompts met persoonsgegevens in je logs."
+    },
+    {
+      "id": "6-f6",
+      "front": "Configuratie",
+      "back": "Alleen via environment variables (12-factor). pydantic-settings valideert bij opstarten. `.env.example` in Git, `.env` nooit.",
+      "simple": "Instellingen geef je mee via environment variables, zodat dezelfde code overal kan draaien. pydantic-settings controleert bij het opstarten of alles klopt, zodat je meteen een fout ziet in plaats van later; `.env.example` gaat als voorbeeld in Git, de echte `.env` nooit."
+    },
+    {
+      "id": "6-f7",
+      "front": "/health",
+      "back": "Check Postgres (`SELECT 1`) en Redis (`ping`). Alles ok → 200, anders 503. Verplicht.",
+      "simple": "`/health` is als een rookmelder voor je service: hij checkt of Postgres (`SELECT 1`) en Redis (`ping`) antwoorden. Gaat alles goed, dan krijg je 200; gaat er iets mis, dan 503, zodat Docker of een load balancer weet dat er iets aan de hand is."
+    },
+    {
+      "id": "6-f8",
+      "front": "Security",
+      "back": "Secrets nergens (code, Git, logs, prompts) · Pydantic op alle input · parametrized SQL · bcrypt + korte JWT's · HTTPS · CORS beperkt · pip-audit · non-root containers",
+      "simple": "Beveiliging bestaat uit veel kleine sloten op verschillende deuren. Geheimen staan nergens waar anderen ze kunnen zien, alle input wordt gecontroleerd, SQL gebruikt parameters, wachtwoorden worden met bcrypt opgeslagen, en verbindingen, CORS, dependencies en containers zijn allemaal goed dichtgezet."
+    },
+    {
+      "id": "6-f9",
+      "front": "LLM-security",
+      "back": "Prompt injection: tekst is data · tenant-filter in de query · tools met side effects achter bevestiging · model-output nooit ongecontroleerd uitvoeren",
+      "simple": "Tekst die het model leest, zoals een document of e-mail, is gewone data en geen opdracht, ook als er 'doe dit' in staat. Daarom filter je in je eigen query op de juiste klant (tenant), laat je acties met gevolgen bevestigen en voer je wat het model teruggeeft nooit zomaar uit."
+    },
+    {
+      "id": "6-f10",
+      "front": "Productie-Dockerfile",
+      "back": "Multi-stage: builder maakt venv · runtime kopieert venv, `useradd` non-root, `USER appuser`, `HEALTHCHECK`, `.dockerignore`",
+      "simple": "Een productie-Dockerfile bouwt in twee stappen: eerst een rommelige werkplaats die de venv maakt, daarna een schoon image dat alleen die venv overneemt. Je app draait als gewone gebruiker (niet als root), met een `HEALTHCHECK`, en `.dockerignore` houdt rommel en geheimen buiten."
+    },
+    {
+      "id": "6-f11",
+      "front": "CI met GitHub Actions",
+      "back": "Op elke push/PR: checkout → setup-python → `pip install -e \".[dev]\"` → ruff → pip-audit → alembic upgrade → pytest. Op main: image naar GHCR.",
+      "simple": "GitHub Actions is als een robot die bij elke push of pull request je code controleert: installeren, `ruff`, `pip-audit`, database-migraties en `pytest`. Op main bouwt hij daarna het image en zet het in GHCR, de opslag van GitHub voor container-images."
+    },
+    {
+      "id": "6-f12",
+      "front": "LLM in CI",
+      "back": "Mock de llm-module (monkeypatch). Evals met een echte key handmatig of 's nachts, key als GitHub secret.",
+      "simple": "In CI vervang je de echte LLM met `monkeypatch` door een nep-versie, zodat tests snel, gratis en voorspelbaar zijn. Evals met het echte model draai je los, met de hand of 's nachts, en de API-key bewaar je veilig als GitHub secret."
+    },
+    {
+      "id": "6-f13",
+      "front": "Deployment",
+      "back": "Linux-VM met Compose achter Caddy (HTTPS). Deploy = pull + `up -d` + `alembic upgrade head`. Rollback = vorige image-tag.",
+      "simple": "Je service draait op een Linux-server met Docker Compose, en Caddy staat ervoor als portier die HTTPS regelt. Deployen is het nieuwe image ophalen, starten en de database bijwerken; terug naar de vorige versie is gewoon de vorige image-tag starten."
+    },
+    {
+      "id": "6-f14",
+      "front": "Capstone-weging",
+      "back": "It works 30% · code quality 20% · tests & evals 20% · AI-engineering 15% · operations & security 15%",
+      "simple": "Zo wordt je cijfer opgebouwd, net als een rapport waarop sommige vakken zwaarder tellen. Dat het werkt telt het zwaarst (30%), daarna code quality en tests & evals (elk 20%), en AI-engineering en operations & security (elk 15%)."
+    },
+    {
+      "id": "6-f15",
+      "front": "Capstone-demo",
+      "back": "10 min: gedeployde service, één gegrond antwoord met bronnen, één tool-call met bevestiging, de CI-run, de eval-tabel. Dan 10 min code review.",
+      "simple": "In 10 minuten laat je zien dat alles echt werkt: de draaiende service, een antwoord met bronnen, een tool-call met bevestiging, de CI-run en de eval-tabel. Daarna kijken jullie 10 minuten samen naar je code, zodat je kunt uitleggen waarom je het zo gebouwd hebt."
+    }
+  ],
+  "typing": [
+    {
+      "id": "6-t0",
+      "type": "type",
+      "question": "Naar welke stream schrijft een service in een container zijn logs?",
+      "answers": [
+        "stdout"
+      ],
+      "explanation": "Logs gaan als JSON naar stdout. Docker en je hostingplatform vangen ze daar op; je schrijft zelf geen logbestanden.",
+      "simple": "Je app roept zijn logs gewoon hardop. Docker luistert mee en bewaart ze."
+    },
+    {
+      "id": "6-t1",
+      "type": "type",
+      "question": "Welk configuratiebestand met voorbeeldwaarden zet je wél in Git?",
+      "answers": [
+        ".env.example",
+        "env.example"
+      ],
+      "explanation": "`.env.example` laat zien welke variabelen nodig zijn, zonder echte secrets. `.env` zelf commit je nooit.",
+      "simple": "Je deelt het lege formulier, niet het ingevulde formulier met je wachtwoorden."
+    },
+    {
+      "id": "6-t2",
+      "type": "type",
+      "question": "Welk endpoint gebruik je om te checken of je service gezond is?",
+      "answers": [
+        "/health",
+        "health",
+        "GET /health"
+      ],
+      "explanation": "`/health` checkt Postgres (`SELECT 1`) en Redis (`ping`). Alles ok geeft 200, anders 503.",
+      "simple": "Een snelle vraag aan je service: leef je nog, en kun je bij je database?"
+    },
+    {
+      "id": "6-t3",
+      "type": "type",
+      "question": "Welke statuscode geeft `/health` als Postgres of Redis niet bereikbaar is?",
+      "answers": [
+        "503",
+        "503 Service Unavailable"
+      ],
+      "explanation": "`503 Service Unavailable` vertelt de load balancer of orchestrator dat deze instantie nu geen verkeer moet krijgen.",
+      "simple": "503 betekent: ik ben er wel, maar ik kan je nu niet helpen."
+    },
+    {
+      "id": "6-t4",
+      "type": "type",
+      "question": "Met welke asyncio-klasse begrens je hoeveel taken tegelijk draaien?",
+      "answers": [
+        "asyncio.Semaphore",
+        "Semaphore",
+        "asyncio.Semaphore(5)"
+      ],
+      "explanation": "`asyncio.Semaphore(5)` laat maximaal vijf taken tegelijk door. Zo overspoel je een API of database niet.",
+      "simple": "Een uitsmijter die maar vijf mensen tegelijk binnenlaat. De rest wacht netjes."
+    },
+    {
+      "id": "6-t5",
+      "type": "type",
+      "question": "Met welk commando check je je dependencies op bekende kwetsbaarheden?",
+      "answers": [
+        "pip-audit"
+      ],
+      "explanation": "`pip-audit` vergelijkt je geïnstalleerde packages met databases van bekende kwetsbaarheden. Draai het in CI.",
+      "simple": "Een controle die al je gebruikte packages naloopt op bekende lekken."
+    },
+    {
+      "id": "6-t6",
+      "type": "sentence",
+      "question": "Wanneer kies je een vaste workflow in plaats van een agent?",
+      "model": "Als de stappen vooraf bekend zijn. Een vaste workflow is voorspelbaarder, goedkoper en makkelijker te testen. Een agent gebruik je pas als het model zelf moet kiezen welke stappen nodig zijn.",
+      "points": [
+        "Als de stappen vooraf bekend zijn",
+        "Voorspelbaarder, goedkoper, beter te testen",
+        "Agent alleen als het model zelf moet kiezen"
+      ]
+    },
+    {
+      "id": "6-t7",
+      "type": "sentence",
+      "question": "Noem drie dingen die je nooit logt, en leg uit waarom.",
+      "model": "Wachtwoorden, tokens en API-keys, en volledige prompts met persoonsgegevens. Logs worden door veel mensen en systemen gelezen en lang bewaard, dus alles wat erin staat kan uitlekken.",
+      "points": [
+        "Wachtwoorden, tokens en API-keys",
+        "Persoonsgegevens, ook in prompts",
+        "Logs worden breed gelezen en lang bewaard"
+      ]
+    },
+    {
+      "id": "6-t8",
+      "type": "sentence",
+      "question": "Waarom draait een container in productie niet als root?",
+      "model": "Komt iemand via een lek in je app binnen, dan heeft die persoon niet meteen alle rechten. Je maakt een eigen gebruiker aan met `useradd` en zet `USER appuser` in de Dockerfile.",
+      "points": [
+        "Minder schade als iemand binnenkomt",
+        "Eigen gebruiker met `useradd`",
+        "`USER appuser` in de Dockerfile"
+      ]
+    },
+    {
+      "id": "6-t9",
+      "type": "sentence",
+      "question": "Hoe test je code die een LLM aanroept in CI?",
+      "model": "Je mockt de LLM-module, bijvoorbeeld met monkeypatch, zodat tests snel, gratis en voorspelbaar zijn. Evals met een echte API-key draai je apart, handmatig of 's nachts, met de key als GitHub secret.",
+      "points": [
+        "De LLM-module mocken",
+        "Tests blijven snel, gratis en voorspelbaar",
+        "Echte evals apart, key als GitHub secret"
+      ]
+    }
+  ]
+}

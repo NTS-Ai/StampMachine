@@ -1,0 +1,821 @@
+{
+  "week": 4,
+  "level": "Intermediate",
+  "title": "Backend met FastAPI & Redis",
+  "topics": "HTTP & REST, Pydantic, Depends, async, JWT, caching, queues, Docker",
+  "questions": [
+    {
+      "id": "4-0",
+      "type": "choice",
+      "question": "Welke HTTP-methode is voor lezen zonder side effects?",
+      "correct": "GET",
+      "wrong": [
+        "POST",
+        "PATCH",
+        "DELETE"
+      ],
+      "explanation": "POST maakt aan of triggert een actie, PATCH werkt gedeeltelijk bij, DELETE verwijdert.",
+      "simple": "`GET` is als in de bibliotheek een boek inkijken: je kijkt alleen, je verandert niets. Daarom mag je een GET zo vaak herhalen als je wilt zonder dat er iets kapotgaat.",
+      "why_wrong": [
+        "`POST` maakt iets nieuws aan of zet een actie in gang, dus er verandert wel iets.",
+        "`PATCH` past een deel van iets bestaands aan, dus dat is schrijven en geen lezen.",
+        "`DELETE` gooit iets weg, en dat is precies het tegenovergestelde van alleen kijken."
+      ]
+    },
+    {
+      "id": "4-1",
+      "type": "choice",
+      "question": "Wat is het verschil tussen PUT en PATCH?",
+      "correct": "PUT vervangt, PATCH werkt gedeeltelijk bij",
+      "wrong": [
+        "PATCH vervangt, PUT werkt deels bij",
+        "Geen verschil",
+        "PUT is om te verwijderen"
+      ],
+      "explanation": "Daarom heb je een aparte `NoteUpdate` met alle velden optioneel.",
+      "simple": "`PUT` is een hele nieuwe poster ophangen over de oude heen: alles wordt vervangen. `PATCH` is één woord op de poster overplakken met een stickertje: de rest blijft staan.",
+      "why_wrong": [
+        "Dit is precies omgedraaid: PUT vervangt het geheel en PATCH doet maar een stukje.",
+        "Er is wel verschil: bij PUT stuur je alles mee, bij PATCH alleen wat verandert.",
+        "Verwijderen doe je met `DELETE`; PUT zet juist een complete nieuwe versie neer."
+      ]
+    },
+    {
+      "id": "4-2",
+      "type": "choice",
+      "question": "Welke statuscode hoort bij een succesvol aangemaakte resource?",
+      "correct": "201 Created",
+      "wrong": [
+        "200 OK",
+        "204 No Content",
+        "302 Found"
+      ],
+      "explanation": "204 gebruik je bijvoorbeeld bij een DELETE zonder body.",
+      "simple": "`201 Created` is als een bakker die zegt: 'Je taart is gebakken, hier is hij.' Het vertelt de client niet alleen dat het gelukt is, maar ook dat er echt iets nieuws bestaat.",
+      "why_wrong": [
+        "`200 OK` betekent alleen 'gelukt', maar zegt niet dat er iets nieuws is aangemaakt.",
+        "`204 No Content` betekent 'gelukt, maar ik stuur niets terug', handig bij een DELETE.",
+        "`302 Found` is een doorverwijzing naar een ander adres, geen melding dat iets is aangemaakt."
+      ]
+    },
+    {
+      "id": "4-3",
+      "type": "choice",
+      "question": "Een request faalt op Pydantic-validatie. Wat stuurt FastAPI terug?",
+      "correct": "422 Unprocessable Entity",
+      "wrong": [
+        "400 Bad Request",
+        "500 Internal Server Error",
+        "404 Not Found"
+      ],
+      "explanation": "Met een foutmelding die je niet zelf hoefde te schrijven.",
+      "simple": "Pydantic is als een portier die je formulier checkt: staat er tekst waar een getal hoort, dan word je teruggestuurd met `422`. FastAPI schrijft er zelf netjes bij welk veld fout was, zodat de client weet wat hij moet verbeteren.",
+      "why_wrong": [
+        "`400` is een algemene 'foute aanvraag', maar FastAPI geeft bij een validatiefout standaard 422.",
+        "`500` betekent dat de server zelf crasht, terwijl hier juist de input van de client niet klopt.",
+        "`404` betekent dat het adres niet bestaat, maar het adres klopte; alleen de inhoud niet."
+      ]
+    },
+    {
+      "id": "4-4",
+      "type": "choice",
+      "question": "Wat is het verschil tussen 401 en 403?",
+      "correct": "401 = wie ben jij? 403 = jij mag dit niet",
+      "wrong": [
+        "401 = je mag niet, 403 = niet ingelogd",
+        "Ze zijn hetzelfde",
+        "403 is een serverfout"
+      ],
+      "explanation": "Een notitie van iemand anders opvragen met een geldige token = 403.",
+      "simple": "Op een festival krijg je `401` als je geen polsbandje hebt: 'Wie ben jij eigenlijk?' Je krijgt `403` als je wel een bandje hebt, maar de backstage in wilt: 'Ik weet wie je bent, maar hier mag je niet komen.'",
+      "why_wrong": [
+        "Dit is omgedraaid: 401 gaat over niet ingelogd zijn en 403 over geen toestemming hebben.",
+        "Ze verschillen wel: de ene keer weet de server niet wie je bent, de andere keer wel maar mag je het niet.",
+        "Serverfouten beginnen met een 5; 403 begint met een 4 en is dus een antwoord over de client."
+      ]
+    },
+    {
+      "id": "4-5",
+      "type": "choice",
+      "question": "Wat betekent 429?",
+      "correct": "Too Many Requests: rate limited",
+      "wrong": [
+        "Not Found",
+        "Conflict",
+        "Timeout"
+      ],
+      "explanation": "Je rate limiter geeft dit terug.",
+      "simple": "`429` is de ijscoman die zegt: 'Je hebt al vijf keer gevraagd, wacht even.' Je rate limiter stuurt dit terug als iemand te vaak achter elkaar een request doet.",
+      "why_wrong": [
+        "'Not Found' heeft code `404`: het adres bestaat niet.",
+        "'Conflict' heeft code `409`: je verzoek botst met wat er al is.",
+        "Een timeout heeft eigen codes, zoals `408` of `504`, en gaat over te lang wachten, niet over te vaak vragen."
+      ]
+    },
+    {
+      "id": "4-6",
+      "type": "choice",
+      "question": "Wat betekent een 500?",
+      "correct": "Onze bug",
+      "wrong": [
+        "De fout van de client",
+        "Rate limit",
+        "Niet ingelogd"
+      ],
+      "explanation": "5xx = de server, 4xx = de client.",
+      "simple": "Een `500` is als een keuken waar de kok de pan laat vallen: de klant bestelde gewoon iets normaals, maar het ging mis bij ons. Codes met een 5 gaan over de server, codes met een 4 over de client.",
+      "why_wrong": [
+        "Fouten van de client krijgen een code met een 4, zoals 400 of 422.",
+        "Te veel requests krijgen `429`, en dat is een 4xx-code.",
+        "Niet ingelogd zijn geeft `401`, ook een 4xx-code."
+      ]
+    },
+    {
+      "id": "4-7",
+      "type": "choice",
+      "question": "Welke URL volgt REST?",
+      "correct": "`/customers/7/orders`",
+      "wrong": [
+        "`/getCustomerOrders?id=7`",
+        "`/api?action=orders`",
+        "`/customers/getOrders/7`"
+      ],
+      "explanation": "Resources zijn zelfstandige naamwoorden; de HTTP-methode is het werkwoord.",
+      "simple": "In REST is de URL een adres van een ding, zoals 'klant 7, zijn bestellingen'. Wat je ermee doet (lezen, toevoegen, weggooien) zeg je met de HTTP-methode, net zoals je op een adres kunt aanbellen, een brief bezorgen of iets ophalen.",
+      "why_wrong": [
+        "Hier zit het werkwoord 'get' in de URL, terwijl de HTTP-methode dat al zegt.",
+        "Eén adres met `?action=` is als één brievenbus voor alles; je ziet niet meer welk ding je bedoelt.",
+        "Ook hier staat een werkwoord (`getOrders`) in het pad, en dat hoort bij de methode, niet in de URL."
+      ]
+    },
+    {
+      "id": "4-8",
+      "type": "choice",
+      "question": "Wat doet `r.raise_for_status()` in httpx?",
+      "correct": "Gooit een exception bij 4xx en 5xx",
+      "wrong": [
+        "Print de statuscode",
+        "Probeert het opnieuw",
+        "Niets bij een 4xx"
+      ],
+      "explanation": "Lees eerst de status, dan de body.",
+      "simple": "`raise_for_status()` is als een rookmelder: gaat het goed, dan hoor je niets, maar bij een 4xx of 5xx gaat hij af met een exception. Zo ga je niet per ongeluk verder met een foutmelding alsof het echte data is.",
+      "why_wrong": [
+        "Hij print niets; je moet zelf `r.status_code` bekijken als je de code wilt zien.",
+        "Hij probeert niets opnieuw; daarvoor heb je aparte retry-logica nodig.",
+        "Bij een 4xx gooit hij juist wel een exception, net als bij een 5xx."
+      ]
+    },
+    {
+      "id": "4-9",
+      "type": "choice",
+      "question": "Waar vind je de automatisch gegenereerde API-docs van FastAPI?",
+      "correct": "`/docs`",
+      "wrong": [
+        "`/api`",
+        "`/help`",
+        "`/readme`"
+      ],
+      "explanation": "Swagger UI, gegenereerd uit je code. Je kunt daar elke endpoint proberen.",
+      "simple": "FastAPI maakt uit je code automatisch een handleiding, zoals een menukaart die zichzelf schrijft uit wat de keuken kan maken. Op `/docs` zie je die kaart en kun je elke endpoint meteen uitproberen.",
+      "why_wrong": [
+        "`/api` is geen standaardpagina van FastAPI; daar staat niets tenzij je het zelf maakt.",
+        "`/help` bestaat niet vanzelf in FastAPI.",
+        "`/readme` maakt FastAPI niet aan; de automatische docs staan op `/docs`."
+      ]
+    },
+    {
+      "id": "4-10",
+      "type": "choice",
+      "question": "Waarom maak je aparte modellen `NoteIn`, `NoteOut` en `NoteUpdate`?",
+      "correct": "Input, output en update hebben elk een ander contract, en zo lek je geen internals",
+      "wrong": [
+        "Pydantic vereist het",
+        "Het is sneller",
+        "Voor de database-migrations"
+      ],
+      "explanation": "Een password hash hoort nooit in een output-model.",
+      "simple": "Een bestelbon, een kassabon en een wijzigingsbriefje zien er anders uit, omdat ze elk een ander doel hebben. Zo heeft `NoteIn` alleen wat de client mag sturen, `NoteOut` alleen wat hij mag zien, en `NoteUpdate` alles optioneel; daardoor lekt er bijvoorbeeld nooit een password hash naar buiten.",
+      "why_wrong": [
+        "Pydantic verplicht niets; je kunt één model gebruiken, maar dan lek je makkelijk velden.",
+        "Het gaat niet om snelheid, maar om duidelijke afspraken over wat erin en eruit mag.",
+        "Database-migrations gaan over je SQLAlchemy-tabellen, niet over je Pydantic-modellen."
+      ]
+    },
+    {
+      "id": "4-11",
+      "type": "choice",
+      "question": "Wat doet `db: Session = Depends(get_db)`?",
+      "correct": "Injecteert een databasesessie in de route, en die kun je in tests vervangen",
+      "wrong": [
+        "Maakt een tabel aan",
+        "Start één globale transactie",
+        "Importeert de database-module"
+      ],
+      "explanation": "Dependency injection: de route krijgt wat hij nodig heeft.",
+      "simple": "`Depends(get_db)` is als een ober die je bord brengt: de route hoeft niet zelf naar de keuken, hij krijgt de databasesessie aangereikt. In een test kun je een andere ober sturen die een testdatabase brengt.",
+      "why_wrong": [
+        "Tabellen maak je met migrations of `create_all`, niet met `Depends`.",
+        "Elke request krijgt zijn eigen sessie; er is geen gedeelde globale transactie.",
+        "Importeren doe je met `import`; `Depends` regelt wat een route krijgt als hij wordt aangeroepen."
+      ]
+    },
+    {
+      "id": "4-12",
+      "type": "choice",
+      "question": "Waarvoor is `payload.model_dump(exclude_unset=True)` handig bij een PATCH?",
+      "correct": "Alleen de meegestuurde velden bijwerken",
+      "wrong": [
+        "Alle velden resetten",
+        "Validatie overslaan",
+        "Er JSON van maken"
+      ],
+      "explanation": "Velden die de client niet stuurde blijven ongemoeid.",
+      "simple": "Stel je stuurt een briefje 'verander alleen mijn telefoonnummer'. `exclude_unset=True` zorgt dat alleen de velden die je echt meestuurde in de dict komen, zodat de rest niet per ongeluk op leeg wordt gezet.",
+      "why_wrong": [
+        "Het doet juist het omgekeerde: velden die je niet stuurde blijven zoals ze waren.",
+        "De validatie is al gebeurd toen Pydantic het model maakte; dit slaat niets over.",
+        "`model_dump` geeft een Python-dict terug; voor JSON gebruik je `model_dump_json`."
+      ]
+    },
+    {
+      "id": "4-13",
+      "type": "choice",
+      "question": "Wat heeft `NoteOut` nodig om een SQLAlchemy-object te lezen?",
+      "correct": "`model_config = ConfigDict(from_attributes=True)`",
+      "wrong": [
+        "`orm=False`",
+        "`response_model=None`",
+        "`model_validate_json`"
+      ],
+      "explanation": "Dan leest Pydantic attributen in plaats van alleen dict-keys.",
+      "simple": "Normaal leest Pydantic een dict, zoals een lijstje met 'titel: ...'. Een SQLAlchemy-object is meer een doos met vakjes (`note.title`); met `from_attributes=True` leert Pydantic die vakjes te openen.",
+      "why_wrong": [
+        "`orm=False` bestaat niet als instelling en zou het lezen van objecten ook niet aanzetten.",
+        "`response_model=None` zet het output-model juist uit, dus dan wordt er niets gecontroleerd.",
+        "`model_validate_json` leest een JSON-tekst in, geen SQLAlchemy-object."
+      ]
+    },
+    {
+      "id": "4-14",
+      "type": "choice",
+      "question": "Hoe lees je settings uit `.env` in deze training?",
+      "correct": "Met pydantic-settings `BaseSettings`",
+      "wrong": [
+        "Met `os.getenv` overal in de code",
+        "Uit een JSON-bestand in Git",
+        "Hardcoded"
+      ],
+      "explanation": "Een ontbrekende `JWT_SECRET` faalt dan direct bij het opstarten.",
+      "simple": "`BaseSettings` is als een checklist bij het inpakken voor een reis: alle instellingen staan op één plek en worden meteen gecontroleerd. Ontbreekt er iets belangrijks zoals `JWT_SECRET`, dan merk je dat al bij het opstarten en niet pas midden in de nacht.",
+      "why_wrong": [
+        "Met `os.getenv` overal raak je het overzicht kwijt en krijg je stil `None` als iets ontbreekt.",
+        "Een JSON-bestand in Git zet je geheimen zichtbaar voor iedereen die de code heeft.",
+        "Hardcoded waarden staan in je code en Git, en je kunt ze niet per omgeving aanpassen."
+      ]
+    },
+    {
+      "id": "4-15",
+      "type": "choice",
+      "question": "Volgens de regel van deze training: een route met synchrone SQLAlchemy-code wordt...",
+      "correct": "`def`",
+      "wrong": [
+        "`async def`",
+        "Maakt niet uit",
+        "Een lambda"
+      ],
+      "explanation": "`async def` gebruik je als je externe API's of Redis aanroept.",
+      "simple": "Synchrone SQLAlchemy-code wacht stilletjes op de database. Met gewone `def` zet FastAPI zo'n route in een aparte thread, zodat hij de andere requests niet ophoudt.",
+      "why_wrong": [
+        "In `async def` blokkeert synchrone databasecode de hele event loop, en dan wacht iedereen.",
+        "Het maakt wel uit: de verkeerde keuze kan je hele server laten haperen.",
+        "Een lambda is geen manier om een FastAPI-route te schrijven."
+      ]
+    },
+    {
+      "id": "4-16",
+      "type": "truefalse",
+      "question": "`time.sleep()` in een `async def`-route is geen probleem.",
+      "answer": false,
+      "explanation": "Een blokkerende call in async code bevriest de hele server.",
+      "simple": "Een async server is als één ober die tussen veel tafels heen en weer loopt. `time.sleep()` laat die ober stil staan dutten, zodat geen enkele tafel geholpen wordt; gebruik daarom `await asyncio.sleep()`, dan kan hij ondertussen verder."
+    },
+    {
+      "id": "4-17",
+      "type": "choice",
+      "question": "Vijf requests van elk 1 seconde met `asyncio.gather`. Hoe lang duurt het ongeveer?",
+      "correct": "1 seconde",
+      "wrong": [
+        "5 seconden",
+        "0 seconden",
+        "10 seconden"
+      ],
+      "explanation": "Ze wachten tegelijk.",
+      "simple": "Het is als vijf pizza's tegelijk in vijf ovens zetten: ze zijn allemaal na ongeveer dezelfde tijd klaar. `asyncio.gather` laat de vijf requests tegelijk wachten, dus het duurt ongeveer 1 seconde.",
+      "why_wrong": [
+        "5 seconden krijg je als je ze één voor één doet, zonder `gather`.",
+        "Je moet nog steeds wachten tot het antwoord terugkomt, dus het kan niet 0 seconden zijn.",
+        "10 seconden is zelfs langzamer dan ze één voor één doen; daar is geen reden voor."
+      ]
+    },
+    {
+      "id": "4-18",
+      "type": "choice",
+      "question": "Hoe vervang je de echte database in API-tests?",
+      "correct": "`app.dependency_overrides[get_db] = override_get_db`",
+      "wrong": [
+        "Je past `DATABASE_URL` in productie aan",
+        "Je maakt een tweede app",
+        "Dat kan niet"
+      ],
+      "explanation": "Daarna `app.dependency_overrides.clear()`.",
+      "simple": "Met `dependency_overrides` zeg je tegen FastAPI: 'Als iemand om `get_db` vraagt, geef dan deze testversie.' Het is als een stuntman die tijdens de opnames de echte acteur vervangt; de film (je app) blijft verder hetzelfde.",
+      "why_wrong": [
+        "Productie aanpassen voor een test is gevaarlijk; je kunt echte data kapotmaken.",
+        "Met een tweede app test je niet meer de app die je echt gebruikt.",
+        "Het kan wel, precies met `app.dependency_overrides`."
+      ]
+    },
+    {
+      "id": "4-19",
+      "type": "choice",
+      "question": "Hoe sla je wachtwoorden op?",
+      "correct": "Als bcrypt-hash",
+      "wrong": [
+        "Versleuteld met AES",
+        "In plain text in een aparte tabel",
+        "Base64-gecodeerd"
+      ],
+      "explanation": "Nooit plain. Hashen met bcrypt.",
+      "simple": "Een hash is als een gehaktmolen: van een biefstuk kun je gehakt maken, maar van gehakt nooit meer de biefstuk terug. Je slaat alleen het 'gehakt' van het wachtwoord op en vergelijkt bij inloggen opnieuw; bcrypt is daarbij expres traag, zodat raden heel lang duurt.",
+      "why_wrong": [
+        "Versleutelen kun je terugdraaien met de sleutel; lekt die sleutel, dan liggen alle wachtwoorden open.",
+        "Plain text kan iedereen met toegang tot de database gewoon lezen, ook in een aparte tabel.",
+        "Base64 is geen beveiliging, alleen een andere schrijfwijze die iedereen zo terugvertaalt."
+      ]
+    },
+    {
+      "id": "4-20",
+      "type": "choice",
+      "question": "Hoe stuurt de client een JWT mee?",
+      "correct": "`Authorization: Bearer <token>`",
+      "wrong": [
+        "In de URL als `?token=`",
+        "In de body van elk request",
+        "Altijd in een cookie"
+      ],
+      "explanation": "De server verifieert alleen de handtekening; geen sessie-opslag nodig.",
+      "simple": "De token is je polsbandje, en de `Authorization`-header is de plek op je pols waar de beveiliging altijd kijkt. Met `Bearer <token>` zeg je: 'Wie dit bandje draagt, mag naar binnen.' De server checkt alleen of het bandje echt is.",
+      "why_wrong": [
+        "In de URL komt de token in logs en browsergeschiedenis terecht, waar anderen hem kunnen vinden.",
+        "Een GET heeft meestal geen body, en de afspraak is juist dat de token in de header staat.",
+        "Cookies kunnen soms, maar niet altijd; in deze API gaat het via de `Authorization`-header."
+      ]
+    },
+    {
+      "id": "4-21",
+      "type": "choice",
+      "question": "Wat zit er in de JWT-payload in het workbook?",
+      "correct": "`sub` (user id) en `exp`",
+      "wrong": [
+        "Het wachtwoord",
+        "De hele users-tabel",
+        "De secret"
+      ],
+      "explanation": "Een JWT is een ondertekende claim: 'user 7, geldig tot 15:00'.",
+      "simple": "Een JWT is als een toegangskaartje met daarop 'gebruiker 7, geldig tot 15:00' en een stempel. `sub` zegt wie je bent en `exp` wanneer het kaartje verloopt; meer heeft de server niet nodig.",
+      "why_wrong": [
+        "Iedereen kan een JWT lezen, dus een wachtwoord erin zetten is alsof je het op een ansichtkaart schrijft.",
+        "Een hele tabel past er niet zinnig in en zou bovendien andermans gegevens lekken.",
+        "Met de secret kan iedereen nep-tokens maken, dus die blijft altijd alleen op de server."
+      ]
+    },
+    {
+      "id": "4-22",
+      "type": "truefalse",
+      "question": "Een JWT is versleuteld, dus niemand kan de inhoud lezen.",
+      "answer": false,
+      "explanation": "Een JWT is ondertekend, niet versleuteld. Zet er nooit geheimen in.",
+      "simple": "Een JWT is als een ansichtkaart met een lakzegel: iedereen kan lezen wat erop staat, maar niemand kan het veranderen zonder dat het zegel breekt. Hij is ondertekend, niet versleuteld, dus zet er nooit geheimen in."
+    },
+    {
+      "id": "4-23",
+      "type": "choice",
+      "question": "Hoe maak je een goede `JWT_SECRET`?",
+      "correct": "`openssl rand -hex 32`",
+      "wrong": [
+        "`\"secret\"`",
+        "Je naam plus het jaartal",
+        "Een uuid4 in de code"
+      ],
+      "explanation": "Lang, random, en alleen in `.env`.",
+      "simple": "Je secret is de stempel waarmee je tokens ondertekent; wie hem kan raden, kan nep-tokens maken. `openssl rand -hex 32` maakt 32 bytes pure toeval, zo lang en willekeurig dat niemand het kan raden, en die zet je alleen in `.env`.",
+      "why_wrong": [
+        "`\"secret\"` is het eerste wat een aanvaller probeert; dat is in een seconde geraden.",
+        "Je naam plus het jaartal is makkelijk te raden voor iedereen die je een beetje kent.",
+        "Als hij in de code staat, staat hij ook in Git en kan iedereen met de code hem lezen."
+      ]
+    },
+    {
+      "id": "4-24",
+      "type": "choice",
+      "question": "Wat check je voordat je een note teruggeeft of wijzigt?",
+      "correct": "`note.owner_id == user.id`",
+      "wrong": [
+        "Alleen of de note bestaat",
+        "Of de token lang genoeg is",
+        "Niets"
+      ],
+      "explanation": "Anders 403.",
+      "simple": "Een geldige token bewijst alleen wie je bent, niet dat de notitie van jou is. Het is als een kluisje op school: je moet checken of het kluisje echt bij deze leerling hoort, anders kan iedereen met een pasje overal in; is het niet van hem, dan geef je `403`.",
+      "why_wrong": [
+        "Dat de note bestaat zegt niets over van wie hij is; zo kan iedereen andermans notities lezen.",
+        "De lengte van de token zegt niets over wie de eigenaar van de note is.",
+        "Niets checken betekent dat elke ingelogde gebruiker elke notitie kan zien en wijzigen."
+      ]
+    },
+    {
+      "id": "4-25",
+      "type": "choice",
+      "question": "`SET greeting \"hello\" EX 60` in Redis betekent...",
+      "correct": "De key verloopt na 60 seconden",
+      "wrong": [
+        "60 kopieën",
+        "Maximaal 60 tekens",
+        "Database 60"
+      ],
+      "explanation": "TTL maakt Redis perfect voor tijdelijke dingen.",
+      "simple": "`EX 60` is als een briefje dat na 60 seconden vanzelf verdwijnt. Die houdbaarheid heet TTL, en daardoor is Redis heel handig voor tijdelijke dingen zoals een cache of een teller.",
+      "why_wrong": [
+        "Redis maakt geen kopieën; er komt één key met één waarde.",
+        "`EX` zegt niets over de lengte van de tekst, alleen over hoe lang de key blijft bestaan.",
+        "Een andere database kies je met `SELECT`, niet met `EX`."
+      ]
+    },
+    {
+      "id": "4-26",
+      "type": "truefalse",
+      "question": "`KEYS *` is prima in productie.",
+      "answer": false,
+      "explanation": "Blokkeert Redis op een grote dataset. Gebruik SCAN.",
+      "simple": "Redis doet één ding tegelijk. `KEYS *` is alsof de kassière alle producten in de hele winkel gaat tellen terwijl de rij wacht; bij veel keys staat alles stil. `SCAN` telt in kleine stukjes, zodat anderen tussendoor geholpen worden."
+    },
+    {
+      "id": "4-27",
+      "type": "choice",
+      "question": "Welke Redis-structuur gebruik je als queue?",
+      "correct": "Een list (`LPUSH` / `BRPOP`)",
+      "wrong": [
+        "Een hash",
+        "Een string",
+        "Een set"
+      ],
+      "explanation": "De worker blokkeert op `brpop` tot er een job binnenkomt.",
+      "simple": "Een Redis-list werkt als een rij bij de bakker: de API zet nieuwe jobs aan de ene kant (`LPUSH`), de worker pakt ze aan de andere kant (`BRPOP`). Met `BRPOP` wacht de worker rustig tot er iemand in de rij staat, in plaats van steeds te kijken.",
+      "why_wrong": [
+        "Een hash is een setje velden met waarden, zoals een klein object, en geen rij om op te wachten.",
+        "Een string bevat één waarde, dus je kunt er geen reeks jobs in zetten.",
+        "Een set heeft geen vaste volgorde, dus je weet niet welke job eerst aan de beurt is."
+      ]
+    },
+    {
+      "id": "4-28",
+      "type": "choice",
+      "question": "Rate limiter met `INCR`. Wat doe je als `INCR` 1 teruggeeft?",
+      "correct": "`EXPIRE` zetten op de window",
+      "wrong": [
+        "Direct 429 geven",
+        "De key verwijderen",
+        "Niets"
+      ],
+      "explanation": "Bij de eerste hit start de window. Boven de limiet: 429.",
+      "simple": "`INCR` geeft 1 terug als dit de eerste request in het tijdsvak is, zoals de eerste stempel op een stempelkaart. Op dat moment zet je met `EXPIRE` een wekker, zodat de kaart na het tijdsvak vanzelf weer leeg is.",
+      "why_wrong": [
+        "1 betekent dat dit de eerste request is, en die zit ruim onder de limiet.",
+        "Verwijder je de key, dan begint de teller steeds opnieuw en wordt er nooit iemand begrensd.",
+        "Zonder `EXPIRE` blijft de teller voor altijd oplopen en zit iemand straks permanent vast."
+      ]
+    },
+    {
+      "id": "4-29",
+      "type": "choice",
+      "question": "Een note wordt bijgewerkt. Wat doe je met de cache?",
+      "correct": "De key verwijderen (`redis.delete`)",
+      "wrong": [
+        "Altijd wachten tot de TTL afloopt",
+        "Redis herstarten",
+        "Niets"
+      ],
+      "explanation": "En liever korte TTL's dan slimme invalidatie.",
+      "simple": "De cache is als een briefje op de koelkast met 'er is nog melk'. Als de melk op is, gooi je dat briefje weg (`redis.delete`), zodat de volgende keer de echte stand opnieuw wordt opgehaald.",
+      "why_wrong": [
+        "Tot de TTL afloopt krijgen gebruikers dan de oude versie van de note te zien.",
+        "Redis herstarten gooit alle cache van iedereen weg voor één wijziging; veel te grof.",
+        "Niets doen betekent dat de cache oude data blijft teruggeven alsof die klopt."
+      ]
+    },
+    {
+      "id": "4-30",
+      "type": "choice",
+      "question": "Waarom een Redis-queue met een aparte worker in plaats van `BackgroundTasks`?",
+      "correct": "Overleeft restarts en schaalt los van de API",
+      "wrong": [
+        "BackgroundTasks is robuuster",
+        "Ze zijn hetzelfde",
+        "Workers zijn alleen voor tests"
+      ],
+      "explanation": "BackgroundTasks is prima voor klein fire-and-forget werk in hetzelfde proces.",
+      "simple": "`BackgroundTasks` is als een klusje dat de ober zelf nog even doet; valt hij om, dan is het klusje weg. Een Redis-queue is een bestellijst aan de muur waar aparte koks (workers) mee werken: de lijst blijft bestaan als de ober herstart, en je kunt gewoon extra koks inzetten.",
+      "why_wrong": [
+        "BackgroundTasks draait in hetzelfde proces als de API, dus bij een restart is het werk weg.",
+        "Ze verschillen wel: de ene draait in de API zelf, de andere in een los proces met een wachtrij.",
+        "Workers draaien juist in productie om echt werk op de achtergrond te doen."
+      ]
+    },
+    {
+      "id": "4-31",
+      "type": "choice",
+      "question": "Waarom kopieer je `pyproject.toml` vóór de broncode in de Dockerfile?",
+      "correct": "Zo wordt de dependency-laag gecachet",
+      "wrong": [
+        "Dat is verplicht",
+        "Kleiner image",
+        "Veiliger"
+      ],
+      "explanation": "Code wijzigen betekent dan niet alles opnieuw installeren.",
+      "simple": "Docker bouwt een image laag voor laag en onthoudt lagen die niet veranderd zijn. Kopieer je eerst alleen `pyproject.toml` en installeer je dan, dan hoeft Docker bij een codewijziging niet alles opnieuw te downloaden, net als dat je de fundering niet opnieuw legt als je alleen het behang verandert.",
+      "why_wrong": [
+        "Het werkt ook in een andere volgorde, alleen wordt het bouwen dan veel trager.",
+        "Het image bevat dezelfde bestanden, dus het wordt er niet kleiner van.",
+        "De volgorde verandert niets aan de beveiliging; het gaat om de cache."
+      ]
+    },
+    {
+      "id": "4-32",
+      "type": "choice",
+      "question": "Welke `DATABASE_URL` krijgt de api-container in Compose?",
+      "correct": "`postgresql://app:secret@db:5432/notes`",
+      "wrong": [
+        "`postgresql://app:secret@localhost:5432/notes`",
+        "`postgresql://app:secret@127.0.0.1:5432/notes`",
+        "`postgresql://app:secret@api:5432/notes`"
+      ],
+      "explanation": "Binnen het Compose-netwerk is de servicenaam de hostnaam.",
+      "simple": "In Compose is elke service een eigen huisje in een straat, en de servicenaam is het huisnummer. De database woont in het huisje `db`, dus daar stuur je de api naartoe.",
+      "why_wrong": [
+        "`localhost` is binnen de api-container de container zelf, en daar draait geen Postgres.",
+        "`127.0.0.1` is hetzelfde als localhost, dus ook dat wijst naar de api-container zelf.",
+        "`api` is de api-container zelf; de database woont in `db`."
+      ]
+    },
+    {
+      "id": "4-33",
+      "type": "choice",
+      "question": "Wat doet `depends_on: db: { condition: service_healthy }`?",
+      "correct": "Wacht tot de healthcheck van db slaagt",
+      "wrong": [
+        "Start db na de api",
+        "Herstart bij een crash",
+        "Niets"
+      ],
+      "explanation": "Zonder healthcheck start de API misschien voordat Postgres klaar is.",
+      "simple": "Een container die gestart is, is nog niet per se klaar, zoals een oven die aan staat maar nog niet heet is. Met `service_healthy` wacht de api tot de healthcheck van `db` zegt 'ik ben er klaar voor'.",
+      "why_wrong": [
+        "Het is juist andersom: db start eerst en de api wacht daarop.",
+        "Herstarten bij een crash regel je met `restart:`, niet met `depends_on`.",
+        "Het doet wel iets: zonder dit kan de api starten voordat Postgres verbindingen aanneemt."
+      ]
+    },
+    {
+      "id": "4-34",
+      "type": "choice",
+      "question": "Waarvoor dient de header `X-Total-Count` in het assessment?",
+      "correct": "Het totale aantal resultaten bij paginatie",
+      "wrong": [
+        "De rate limit",
+        "Authenticatie",
+        "Cache-status"
+      ],
+      "explanation": "Samen met `limit` en `offset`.",
+      "simple": "Bij paginatie krijg je steeds één bladzijde resultaten, zoals tien producten in een webshop. `X-Total-Count` vertelt hoeveel er in totaal zijn, zodat de client weet hoeveel bladzijden er nog komen.",
+      "why_wrong": [
+        "Over de rate limit gaat deze header niet; bij te veel requests krijg je een 429.",
+        "Authenticatie gaat via de `Authorization`-header, niet via deze.",
+        "Deze header zegt niets over of een antwoord uit de cache kwam."
+      ]
+    }
+  ],
+  "flashcards": [
+    {
+      "id": "4-f0",
+      "front": "HTTP in één zin",
+      "back": "Methode + pad + headers + body erin, status + headers + body eruit. Lees de status voor de body.",
+      "simple": "HTTP is als een brief sturen en een brief terugkrijgen: jij stuurt wat je wilt (methode), naar welk adres (pad), met extra info (headers) en eventueel inhoud (body). Het antwoord begint met een status die zegt of het gelukt is, dus die lees je eerst."
+    },
+    {
+      "id": "4-f1",
+      "front": "HTTP-methodes",
+      "back": "GET lezen · POST aanmaken of actie · PUT vervangen · PATCH deels bijwerken · DELETE verwijderen",
+      "simple": "De methodes zijn de werkwoorden van HTTP: `GET` kijken, `POST` iets nieuws maken of een actie starten, `PUT` alles vervangen, `PATCH` een stukje aanpassen, `DELETE` weggooien. Zo weet de server meteen wat je met een ding wilt doen."
+    },
+    {
+      "id": "4-f2",
+      "front": "Statuscodes",
+      "back": "200 OK · 201 Created · 204 No Content · 400/422 foute input · 401 wie ben jij · 403 mag niet · 404 bestaat niet · 429 te veel · 500 onze bug",
+      "simple": "Statuscodes zijn korte seintjes: 2xx betekent gelukt, 4xx betekent dat de client iets fout deed, 5xx betekent dat de server zelf faalde. Aan het eerste cijfer zie je dus meteen bij wie je het probleem moet zoeken."
+    },
+    {
+      "id": "4-f3",
+      "front": "REST",
+      "back": "Resources als zelfstandige naamwoorden (`/customers/7/orders`), HTTP-methodes als werkwoorden, query-params voor filteren en pagineren.",
+      "simple": "In REST is een URL een adres van een ding, zoals `/customers/7/orders` voor 'de bestellingen van klant 7'. Wat je ermee doet, zeg je met de HTTP-methode, en met query-params (`?limit=10`) filter je of blader je door de lijst."
+    },
+    {
+      "id": "4-f4",
+      "front": "Pydantic-modellen",
+      "back": "Apart voor input (`NoteIn`), output (`NoteOut`) en partial update (`NoteUpdate`, alles optioneel). Nooit internals in output.",
+      "simple": "Net als een bestelbon, kassabon en wijzigingsbriefje heeft elk model zijn eigen taak: `NoteIn` voor wat binnenkomt, `NoteOut` voor wat je teruggeeft, `NoteUpdate` met alles optioneel. Zo komen geheime velden nooit per ongeluk in een antwoord."
+    },
+    {
+      "id": "4-f5",
+      "front": "Validators",
+      "back": "`@field_validator(\"name\")` + `@classmethod`: waarde opschonen of `ValueError` gooien. `Field(min_length=1, max_length=120)`.",
+      "simple": "Een validator is een controleur bij de ingang van je model: hij kan een waarde opschonen (bijvoorbeeld spaties weghalen) of met een `ValueError` zeggen dat het niet goed is. Met `Field(min_length=1, max_length=120)` stel je simpele regels in zonder eigen code."
+    },
+    {
+      "id": "4-f6",
+      "front": "Depends()",
+      "back": "Injecteert sessie, huidige user of settings in een route. In tests vervang je ze via `app.dependency_overrides`.",
+      "simple": "`Depends()` is een ober die de route brengt wat hij nodig heeft, zoals een databasesessie, de ingelogde gebruiker of de settings. In tests vervang je die ober met `app.dependency_overrides`, zodat je bijvoorbeeld een testdatabase gebruikt."
+    },
+    {
+      "id": "4-f7",
+      "front": "Projectstructuur",
+      "back": "main · config · db · models (SQLAlchemy) · schemas (Pydantic) · repositories (DB) · services (regels) · routers (per resource) · core",
+      "simple": "Een goede projectstructuur is als een keuken met vaste plekken: elk bestand heeft één taak. Routers nemen bestellingen aan, services bewaken de regels, repositories praten met de database, en schemas en models beschrijven de data."
+    },
+    {
+      "id": "4-f8",
+      "front": "def of async def?",
+      "back": "`async def` als je externe API's of Redis aanroept. `def` voor synchrone SQLAlchemy. Nooit `time.sleep` of `requests.get` in async.",
+      "simple": "Gebruik `async def` als je moet wachten op iets buiten je programma, zoals een externe API of Redis, zodat de server ondertussen verder kan. Voor synchrone SQLAlchemy gebruik je `def`, en blokkerende dingen zoals `time.sleep` of `requests.get` horen nooit in async code, want die laten iedereen wachten."
+    },
+    {
+      "id": "4-f9",
+      "front": "JWT-flow",
+      "back": "POST `/auth/token` met wachtwoord → ondertekende JWT → elke request `Authorization: Bearer <token>` → `Depends(current_user)`.",
+      "simple": "Je logt één keer in met je wachtwoord bij `/auth/token` en krijgt een ondertekende JWT terug, zoals een polsbandje bij de ingang van een festival. Daarna laat je bij elke request dat bandje zien in de `Authorization`-header, en `Depends(current_user)` checkt het."
+    },
+    {
+      "id": "4-f10",
+      "front": "Security-regels",
+      "back": "bcrypt-hashes · JWT_SECRET in `.env` (`openssl rand -hex 32`) · HTTPS · ownership checken · 401 voor wie, 403 voor mag-niet",
+      "simple": "Deze regels zijn de sloten op je deur: wachtwoorden alleen als bcrypt-hash, een lang random `JWT_SECRET` dat alleen in `.env` staat, verkeer via HTTPS, en altijd checken of iets echt van de gebruiker is. Geef `401` als je niet weet wie iemand is, en `403` als je het wel weet maar hij het niet mag."
+    },
+    {
+      "id": "4-f11",
+      "front": "Redis-datatypes",
+      "back": "strings (waarden, `INCR`-tellers) · hashes (kleine objecten) · lists (queues) · sets/sorted sets (uniek, leaderboards) · pub/sub en streams",
+      "simple": "Redis heeft verschillende bakjes voor verschillende soorten spullen: strings voor losse waarden en tellers, hashes voor kleine objecten, lists voor wachtrijen, sets voor unieke dingen en sorted sets voor ranglijsten. Kies het bakje dat past bij wat je wilt doen."
+    },
+    {
+      "id": "4-f12",
+      "front": "Cache-patroon",
+      "back": "`get(key)` → hit? teruggeven. Anders berekenen, `set(key, json, ex=ttl)`. Bij wijzigen: `delete(key)`. Korte TTL's.",
+      "simple": "Een cache is een spiekbriefje: eerst kijk je of het antwoord er al op staat. Zo niet, dan reken je het uit en schrijf je het op met een houdbaarheid (`ex=ttl`); verandert de data, dan gooi je het briefje weg met `delete`."
+    },
+    {
+      "id": "4-f13",
+      "front": "Rate limiting",
+      "back": "`count = incr(key)` · eerste keer `expire(key, window)` · boven de limiet → 429.",
+      "simple": "Rate limiting werkt als een stempelkaart: elke request geeft een stempel (`incr`). Bij de eerste stempel zet je een wekker (`expire`) zodat de kaart na het tijdsvak leeg is, en wie boven de limiet komt krijgt `429`."
+    },
+    {
+      "id": "4-f14",
+      "front": "Background jobs",
+      "back": "Klein: FastAPI `BackgroundTasks`. Robuust: `lpush` op een Redis-list en een worker die `brpop` doet.",
+      "simple": "Voor een klein klusje na het antwoord is `BackgroundTasks` genoeg, maar dat draait in dezelfde API en is weg bij een restart. Voor belangrijk werk zet je een job in een Redis-list met `lpush`, en een aparte worker pakt hem op met `brpop`, zoals een bestellijst waar koks mee werken."
+    },
+    {
+      "id": "4-f15",
+      "front": "Dockerfile",
+      "back": "`python:3.12-slim` · eerst `pyproject.toml` kopiëren en installeren (cache) · dan code · `EXPOSE 8000` · `CMD fastapi run`",
+      "simple": "Een Dockerfile is een bouwplan in lagen. Je begint met een klein Python-image, installeert eerst de dependencies uit `pyproject.toml` zodat Docker die laag kan onthouden, kopieert daarna pas je code, en start de app met `fastapi run` op poort 8000."
+    },
+    {
+      "id": "4-f16",
+      "front": "Compose-netwerk",
+      "back": "Services bereiken elkaar via de servicenaam (`db`, `redis`), niet via localhost. Je `.env` wijst lokaal naar localhost; Compose overschrijft dat.",
+      "simple": "In Compose zijn services buren in dezelfde straat, en ze vinden elkaar via hun naam, zoals `db` of `redis`. `localhost` betekent in een container 'ik zelf', dus Compose geeft de api een andere `DATABASE_URL` dan je lokale `.env`."
+    }
+  ],
+  "typing": [
+    {
+      "id": "4-t0",
+      "type": "type",
+      "question": "Welke HTTP-statuscode betekent 'aangemaakt'?",
+      "answers": [
+        "201",
+        "201 Created"
+      ],
+      "explanation": "`201 Created` stuur je na een geslaagde POST die iets nieuws heeft gemaakt.",
+      "simple": "200 betekent: gelukt. 201 betekent: gelukt, en er is iets nieuws gemaakt."
+    },
+    {
+      "id": "4-t1",
+      "type": "type",
+      "question": "Welke statuscode geef je als de server niet weet wie je bent?",
+      "answers": [
+        "401",
+        "401 Unauthorized"
+      ],
+      "explanation": "`401` betekent: niet (goed) ingelogd. `403` betekent: we weten wie je bent, maar je mag dit niet.",
+      "simple": "401 is de portier die zegt: ik ken jou niet, laat eerst je pasje zien."
+    },
+    {
+      "id": "4-t2",
+      "type": "type",
+      "question": "Welke HTTP-methode gebruik je om een resource gedeeltelijk bij te werken?",
+      "answers": [
+        "PATCH"
+      ],
+      "explanation": "`PATCH` werkt alleen de velden bij die je meestuurt. `PUT` vervangt de hele resource.",
+      "simple": "Met PATCH plak je een pleister op één plek. Met PUT vervang je het hele ding."
+    },
+    {
+      "id": "4-t3",
+      "type": "type",
+      "question": "Met welke FastAPI-functie injecteer je bijvoorbeeld de database-sessie in een route?",
+      "answers": [
+        "Depends",
+        "Depends()"
+      ],
+      "explanation": "`Depends()` laat FastAPI een sessie, de huidige user of settings aanleveren. In tests vervang je ze via `app.dependency_overrides`.",
+      "simple": "Je route zegt: ik heb een sessie nodig. FastAPI regelt die voor je, en in tests kun je hem makkelijk vervangen."
+    },
+    {
+      "id": "4-t4",
+      "type": "type",
+      "question": "Met welk Redis-commando verhoog je een teller met 1?",
+      "answers": [
+        "INCR"
+      ],
+      "explanation": "`INCR key` verhoogt een getal atomair met 1 en geeft de nieuwe waarde terug. Handig voor tellers en rate limiting.",
+      "simple": "Redis telt voor je één op, ook als veel requests tegelijk komen, zonder dat er tellingen verloren gaan."
+    },
+    {
+      "id": "4-t5",
+      "type": "type",
+      "question": "In welke HTTP-header stuurt de client een JWT mee? Typ alleen de naam van de header.",
+      "answers": [
+        "Authorization",
+        "Authorization:"
+      ],
+      "explanation": "De client stuurt `Authorization: Bearer <token>`. FastAPI leest die header uit in een dependency zoals `current_user`.",
+      "simple": "Bij elke vraag laat je je toegangspasje zien in een vaste header: `Authorization`."
+    },
+    {
+      "id": "4-t6",
+      "type": "sentence",
+      "question": "Waarom maak je aparte Pydantic-modellen voor input en output?",
+      "model": "Zo bepaal je per richting precies welke velden mogen. Een gebruiker kan dan geen velden meesturen die niet gezet mogen worden, zoals een id of rol, en je lekt geen interne velden, zoals een wachtwoord-hash, in de output.",
+      "points": [
+        "Per richting bepalen welke velden mogen",
+        "Gebruikers kunnen geen verboden velden zetten",
+        "Geen interne velden in de output"
+      ]
+    },
+    {
+      "id": "4-t7",
+      "type": "sentence",
+      "question": "Wanneer schrijf je een route als `async def`, en wanneer als gewone `def`?",
+      "model": "`async def` als je in de route wacht op dingen die async ondersteunen, zoals een externe API of Redis. Gewone `def` bij synchrone code, zoals synchrone SQLAlchemy; FastAPI draait die in een thread. Zet nooit blokkerende calls als `time.sleep` of `requests.get` in een async route.",
+      "points": [
+        "`async def` voor async I/O zoals API's of Redis",
+        "`def` voor synchrone code zoals SQLAlchemy",
+        "Geen blokkerende calls in een async route"
+      ]
+    },
+    {
+      "id": "4-t8",
+      "type": "sentence",
+      "question": "Leg het cache-patroon met Redis uit in je eigen woorden.",
+      "model": "Eerst kijk je of de key in Redis staat. Zo ja, dan geef je die waarde terug. Zo nee, dan bereken je het antwoord, sla je het op met een korte TTL en geef je het terug. Verandert de data, dan verwijder je de key.",
+      "points": [
+        "Eerst in de cache kijken",
+        "Bij een miss berekenen en opslaan met een TTL",
+        "Bij een wijziging de key verwijderen"
+      ]
+    },
+    {
+      "id": "4-t9",
+      "type": "sentence",
+      "question": "Wat is het verschil tussen statuscode 401 en 403?",
+      "model": "401 betekent dat de server niet weet wie je bent: je bent niet of niet goed ingelogd. 403 betekent dat de server wel weet wie je bent, maar dat je dit niet mag.",
+      "points": [
+        "401: niet ingelogd, wie ben jij?",
+        "403: ingelogd, maar geen toestemming"
+      ]
+    }
+  ]
+}
