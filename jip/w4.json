@@ -1,0 +1,318 @@
+{
+  "4-0": {
+    "jip": "`GET` is als in de bibliotheek een boek inkijken: je kijkt alleen, je verandert niets. Daarom mag je een GET zo vaak herhalen als je wilt zonder dat er iets kapotgaat.",
+    "nee": [
+      "`POST` maakt iets nieuws aan of zet een actie in gang, dus er verandert wel iets.",
+      "`PATCH` past een deel van iets bestaands aan, dus dat is schrijven en geen lezen.",
+      "`DELETE` gooit iets weg, en dat is precies het tegenovergestelde van alleen kijken."
+    ]
+  },
+  "4-1": {
+    "jip": "`PUT` is een hele nieuwe poster ophangen over de oude heen: alles wordt vervangen. `PATCH` is één woord op de poster overplakken met een stickertje: de rest blijft staan.",
+    "nee": [
+      "Dit is precies omgedraaid: PUT vervangt het geheel en PATCH doet maar een stukje.",
+      "Er is wel verschil: bij PUT stuur je alles mee, bij PATCH alleen wat verandert.",
+      "Verwijderen doe je met `DELETE`; PUT zet juist een complete nieuwe versie neer."
+    ]
+  },
+  "4-2": {
+    "jip": "`201 Created` is als een bakker die zegt: 'Je taart is gebakken, hier is hij.' Het vertelt de client niet alleen dat het gelukt is, maar ook dat er echt iets nieuws bestaat.",
+    "nee": [
+      "`200 OK` betekent alleen 'gelukt', maar zegt niet dat er iets nieuws is aangemaakt.",
+      "`204 No Content` betekent 'gelukt, maar ik stuur niets terug', handig bij een DELETE.",
+      "`302 Found` is een doorverwijzing naar een ander adres, geen melding dat iets is aangemaakt."
+    ]
+  },
+  "4-3": {
+    "jip": "Pydantic is als een portier die je formulier checkt: staat er tekst waar een getal hoort, dan word je teruggestuurd met `422`. FastAPI schrijft er zelf netjes bij welk veld fout was, zodat de client weet wat hij moet verbeteren.",
+    "nee": [
+      "`400` is een algemene 'foute aanvraag', maar FastAPI geeft bij een validatiefout standaard 422.",
+      "`500` betekent dat de server zelf crasht, terwijl hier juist de input van de client niet klopt.",
+      "`404` betekent dat het adres niet bestaat, maar het adres klopte; alleen de inhoud niet."
+    ]
+  },
+  "4-4": {
+    "jip": "Op een festival krijg je `401` als je geen polsbandje hebt: 'Wie ben jij eigenlijk?' Je krijgt `403` als je wel een bandje hebt, maar de backstage in wilt: 'Ik weet wie je bent, maar hier mag je niet komen.'",
+    "nee": [
+      "Dit is omgedraaid: 401 gaat over niet ingelogd zijn en 403 over geen toestemming hebben.",
+      "Ze verschillen wel: de ene keer weet de server niet wie je bent, de andere keer wel maar mag je het niet.",
+      "Serverfouten beginnen met een 5; 403 begint met een 4 en is dus een antwoord over de client."
+    ]
+  },
+  "4-5": {
+    "jip": "`429` is de ijscoman die zegt: 'Je hebt al vijf keer gevraagd, wacht even.' Je rate limiter stuurt dit terug als iemand te vaak achter elkaar een request doet.",
+    "nee": [
+      "'Not Found' heeft code `404`: het adres bestaat niet.",
+      "'Conflict' heeft code `409`: je verzoek botst met wat er al is.",
+      "Een timeout heeft eigen codes, zoals `408` of `504`, en gaat over te lang wachten, niet over te vaak vragen."
+    ]
+  },
+  "4-6": {
+    "jip": "Een `500` is als een keuken waar de kok de pan laat vallen: de klant bestelde gewoon iets normaals, maar het ging mis bij ons. Codes met een 5 gaan over de server, codes met een 4 over de client.",
+    "nee": [
+      "Fouten van de client krijgen een code met een 4, zoals 400 of 422.",
+      "Te veel requests krijgen `429`, en dat is een 4xx-code.",
+      "Niet ingelogd zijn geeft `401`, ook een 4xx-code."
+    ]
+  },
+  "4-7": {
+    "jip": "In REST is de URL een adres van een ding, zoals 'klant 7, zijn bestellingen'. Wat je ermee doet (lezen, toevoegen, weggooien) zeg je met de HTTP-methode, net zoals je op een adres kunt aanbellen, een brief bezorgen of iets ophalen.",
+    "nee": [
+      "Hier zit het werkwoord 'get' in de URL, terwijl de HTTP-methode dat al zegt.",
+      "Eén adres met `?action=` is als één brievenbus voor alles; je ziet niet meer welk ding je bedoelt.",
+      "Ook hier staat een werkwoord (`getOrders`) in het pad, en dat hoort bij de methode, niet in de URL."
+    ]
+  },
+  "4-8": {
+    "jip": "`raise_for_status()` is als een rookmelder: gaat het goed, dan hoor je niets, maar bij een 4xx of 5xx gaat hij af met een exception. Zo ga je niet per ongeluk verder met een foutmelding alsof het echte data is.",
+    "nee": [
+      "Hij print niets; je moet zelf `r.status_code` bekijken als je de code wilt zien.",
+      "Hij probeert niets opnieuw; daarvoor heb je aparte retry-logica nodig.",
+      "Bij een 4xx gooit hij juist wel een exception, net als bij een 5xx."
+    ]
+  },
+  "4-9": {
+    "jip": "FastAPI maakt uit je code automatisch een handleiding, zoals een menukaart die zichzelf schrijft uit wat de keuken kan maken. Op `/docs` zie je die kaart en kun je elke endpoint meteen uitproberen.",
+    "nee": [
+      "`/api` is geen standaardpagina van FastAPI; daar staat niets tenzij je het zelf maakt.",
+      "`/help` bestaat niet vanzelf in FastAPI.",
+      "`/readme` maakt FastAPI niet aan; de automatische docs staan op `/docs`."
+    ]
+  },
+  "4-10": {
+    "jip": "Een bestelbon, een kassabon en een wijzigingsbriefje zien er anders uit, omdat ze elk een ander doel hebben. Zo heeft `NoteIn` alleen wat de client mag sturen, `NoteOut` alleen wat hij mag zien, en `NoteUpdate` alles optioneel; daardoor lekt er bijvoorbeeld nooit een password hash naar buiten.",
+    "nee": [
+      "Pydantic verplicht niets; je kunt één model gebruiken, maar dan lek je makkelijk velden.",
+      "Het gaat niet om snelheid, maar om duidelijke afspraken over wat erin en eruit mag.",
+      "Database-migrations gaan over je SQLAlchemy-tabellen, niet over je Pydantic-modellen."
+    ]
+  },
+  "4-11": {
+    "jip": "`Depends(get_db)` is als een ober die je bord brengt: de route hoeft niet zelf naar de keuken, hij krijgt de databasesessie aangereikt. In een test kun je een andere ober sturen die een testdatabase brengt.",
+    "nee": [
+      "Tabellen maak je met migrations of `create_all`, niet met `Depends`.",
+      "Elke request krijgt zijn eigen sessie; er is geen gedeelde globale transactie.",
+      "Importeren doe je met `import`; `Depends` regelt wat een route krijgt als hij wordt aangeroepen."
+    ]
+  },
+  "4-12": {
+    "jip": "Stel je stuurt een briefje 'verander alleen mijn telefoonnummer'. `exclude_unset=True` zorgt dat alleen de velden die je echt meestuurde in de dict komen, zodat de rest niet per ongeluk op leeg wordt gezet.",
+    "nee": [
+      "Het doet juist het omgekeerde: velden die je niet stuurde blijven zoals ze waren.",
+      "De validatie is al gebeurd toen Pydantic het model maakte; dit slaat niets over.",
+      "`model_dump` geeft een Python-dict terug; voor JSON gebruik je `model_dump_json`."
+    ]
+  },
+  "4-13": {
+    "jip": "Normaal leest Pydantic een dict, zoals een lijstje met 'titel: ...'. Een SQLAlchemy-object is meer een doos met vakjes (`note.title`); met `from_attributes=True` leert Pydantic die vakjes te openen.",
+    "nee": [
+      "`orm=False` bestaat niet als instelling en zou het lezen van objecten ook niet aanzetten.",
+      "`response_model=None` zet het output-model juist uit, dus dan wordt er niets gecontroleerd.",
+      "`model_validate_json` leest een JSON-tekst in, geen SQLAlchemy-object."
+    ]
+  },
+  "4-14": {
+    "jip": "`BaseSettings` is als een checklist bij het inpakken voor een reis: alle instellingen staan op één plek en worden meteen gecontroleerd. Ontbreekt er iets belangrijks zoals `JWT_SECRET`, dan merk je dat al bij het opstarten en niet pas midden in de nacht.",
+    "nee": [
+      "Met `os.getenv` overal raak je het overzicht kwijt en krijg je stil `None` als iets ontbreekt.",
+      "Een JSON-bestand in Git zet je geheimen zichtbaar voor iedereen die de code heeft.",
+      "Hardcoded waarden staan in je code en Git, en je kunt ze niet per omgeving aanpassen."
+    ]
+  },
+  "4-15": {
+    "jip": "Synchrone SQLAlchemy-code wacht stilletjes op de database. Met gewone `def` zet FastAPI zo'n route in een aparte thread, zodat hij de andere requests niet ophoudt.",
+    "nee": [
+      "In `async def` blokkeert synchrone databasecode de hele event loop, en dan wacht iedereen.",
+      "Het maakt wel uit: de verkeerde keuze kan je hele server laten haperen.",
+      "Een lambda is geen manier om een FastAPI-route te schrijven."
+    ]
+  },
+  "4-16": {
+    "jip": "Een async server is als één ober die tussen veel tafels heen en weer loopt. `time.sleep()` laat die ober stil staan dutten, zodat geen enkele tafel geholpen wordt; gebruik daarom `await asyncio.sleep()`, dan kan hij ondertussen verder."
+  },
+  "4-17": {
+    "jip": "Het is als vijf pizza's tegelijk in vijf ovens zetten: ze zijn allemaal na ongeveer dezelfde tijd klaar. `asyncio.gather` laat de vijf requests tegelijk wachten, dus het duurt ongeveer 1 seconde.",
+    "nee": [
+      "5 seconden krijg je als je ze één voor één doet, zonder `gather`.",
+      "Je moet nog steeds wachten tot het antwoord terugkomt, dus het kan niet 0 seconden zijn.",
+      "10 seconden is zelfs langzamer dan ze één voor één doen; daar is geen reden voor."
+    ]
+  },
+  "4-18": {
+    "jip": "Met `dependency_overrides` zeg je tegen FastAPI: 'Als iemand om `get_db` vraagt, geef dan deze testversie.' Het is als een stuntman die tijdens de opnames de echte acteur vervangt; de film (je app) blijft verder hetzelfde.",
+    "nee": [
+      "Productie aanpassen voor een test is gevaarlijk; je kunt echte data kapotmaken.",
+      "Met een tweede app test je niet meer de app die je echt gebruikt.",
+      "Het kan wel, precies met `app.dependency_overrides`."
+    ]
+  },
+  "4-19": {
+    "jip": "Een hash is als een gehaktmolen: van een biefstuk kun je gehakt maken, maar van gehakt nooit meer de biefstuk terug. Je slaat alleen het 'gehakt' van het wachtwoord op en vergelijkt bij inloggen opnieuw; bcrypt is daarbij expres traag, zodat raden heel lang duurt.",
+    "nee": [
+      "Versleutelen kun je terugdraaien met de sleutel; lekt die sleutel, dan liggen alle wachtwoorden open.",
+      "Plain text kan iedereen met toegang tot de database gewoon lezen, ook in een aparte tabel.",
+      "Base64 is geen beveiliging, alleen een andere schrijfwijze die iedereen zo terugvertaalt."
+    ]
+  },
+  "4-20": {
+    "jip": "De token is je polsbandje, en de `Authorization`-header is de plek op je pols waar de beveiliging altijd kijkt. Met `Bearer <token>` zeg je: 'Wie dit bandje draagt, mag naar binnen.' De server checkt alleen of het bandje echt is.",
+    "nee": [
+      "In de URL komt de token in logs en browsergeschiedenis terecht, waar anderen hem kunnen vinden.",
+      "Een GET heeft meestal geen body, en de afspraak is juist dat de token in de header staat.",
+      "Cookies kunnen soms, maar niet altijd; in deze API gaat het via de `Authorization`-header."
+    ]
+  },
+  "4-21": {
+    "jip": "Een JWT is als een toegangskaartje met daarop 'gebruiker 7, geldig tot 15:00' en een stempel. `sub` zegt wie je bent en `exp` wanneer het kaartje verloopt; meer heeft de server niet nodig.",
+    "nee": [
+      "Iedereen kan een JWT lezen, dus een wachtwoord erin zetten is alsof je het op een ansichtkaart schrijft.",
+      "Een hele tabel past er niet zinnig in en zou bovendien andermans gegevens lekken.",
+      "Met de secret kan iedereen nep-tokens maken, dus die blijft altijd alleen op de server."
+    ]
+  },
+  "4-22": {
+    "jip": "Een JWT is als een ansichtkaart met een lakzegel: iedereen kan lezen wat erop staat, maar niemand kan het veranderen zonder dat het zegel breekt. Hij is ondertekend, niet versleuteld, dus zet er nooit geheimen in."
+  },
+  "4-23": {
+    "jip": "Je secret is de stempel waarmee je tokens ondertekent; wie hem kan raden, kan nep-tokens maken. `openssl rand -hex 32` maakt 32 bytes pure toeval, zo lang en willekeurig dat niemand het kan raden, en die zet je alleen in `.env`.",
+    "nee": [
+      "`\"secret\"` is het eerste wat een aanvaller probeert; dat is in een seconde geraden.",
+      "Je naam plus het jaartal is makkelijk te raden voor iedereen die je een beetje kent.",
+      "Als hij in de code staat, staat hij ook in Git en kan iedereen met de code hem lezen."
+    ]
+  },
+  "4-24": {
+    "jip": "Een geldige token bewijst alleen wie je bent, niet dat de notitie van jou is. Het is als een kluisje op school: je moet checken of het kluisje echt bij deze leerling hoort, anders kan iedereen met een pasje overal in; is het niet van hem, dan geef je `403`.",
+    "nee": [
+      "Dat de note bestaat zegt niets over van wie hij is; zo kan iedereen andermans notities lezen.",
+      "De lengte van de token zegt niets over wie de eigenaar van de note is.",
+      "Niets checken betekent dat elke ingelogde gebruiker elke notitie kan zien en wijzigen."
+    ]
+  },
+  "4-25": {
+    "jip": "`EX 60` is als een briefje dat na 60 seconden vanzelf verdwijnt. Die houdbaarheid heet TTL, en daardoor is Redis heel handig voor tijdelijke dingen zoals een cache of een teller.",
+    "nee": [
+      "Redis maakt geen kopieën; er komt één key met één waarde.",
+      "`EX` zegt niets over de lengte van de tekst, alleen over hoe lang de key blijft bestaan.",
+      "Een andere database kies je met `SELECT`, niet met `EX`."
+    ]
+  },
+  "4-26": {
+    "jip": "Redis doet één ding tegelijk. `KEYS *` is alsof de kassière alle producten in de hele winkel gaat tellen terwijl de rij wacht; bij veel keys staat alles stil. `SCAN` telt in kleine stukjes, zodat anderen tussendoor geholpen worden."
+  },
+  "4-27": {
+    "jip": "Een Redis-list werkt als een rij bij de bakker: de API zet nieuwe jobs aan de ene kant (`LPUSH`), de worker pakt ze aan de andere kant (`BRPOP`). Met `BRPOP` wacht de worker rustig tot er iemand in de rij staat, in plaats van steeds te kijken.",
+    "nee": [
+      "Een hash is een setje velden met waarden, zoals een klein object, en geen rij om op te wachten.",
+      "Een string bevat één waarde, dus je kunt er geen reeks jobs in zetten.",
+      "Een set heeft geen vaste volgorde, dus je weet niet welke job eerst aan de beurt is."
+    ]
+  },
+  "4-28": {
+    "jip": "`INCR` geeft 1 terug als dit de eerste request in het tijdsvak is, zoals de eerste stempel op een stempelkaart. Op dat moment zet je met `EXPIRE` een wekker, zodat de kaart na het tijdsvak vanzelf weer leeg is.",
+    "nee": [
+      "1 betekent dat dit de eerste request is, en die zit ruim onder de limiet.",
+      "Verwijder je de key, dan begint de teller steeds opnieuw en wordt er nooit iemand begrensd.",
+      "Zonder `EXPIRE` blijft de teller voor altijd oplopen en zit iemand straks permanent vast."
+    ]
+  },
+  "4-29": {
+    "jip": "De cache is als een briefje op de koelkast met 'er is nog melk'. Als de melk op is, gooi je dat briefje weg (`redis.delete`), zodat de volgende keer de echte stand opnieuw wordt opgehaald.",
+    "nee": [
+      "Tot de TTL afloopt krijgen gebruikers dan de oude versie van de note te zien.",
+      "Redis herstarten gooit alle cache van iedereen weg voor één wijziging; veel te grof.",
+      "Niets doen betekent dat de cache oude data blijft teruggeven alsof die klopt."
+    ]
+  },
+  "4-30": {
+    "jip": "`BackgroundTasks` is als een klusje dat de ober zelf nog even doet; valt hij om, dan is het klusje weg. Een Redis-queue is een bestellijst aan de muur waar aparte koks (workers) mee werken: de lijst blijft bestaan als de ober herstart, en je kunt gewoon extra koks inzetten.",
+    "nee": [
+      "BackgroundTasks draait in hetzelfde proces als de API, dus bij een restart is het werk weg.",
+      "Ze verschillen wel: de ene draait in de API zelf, de andere in een los proces met een wachtrij.",
+      "Workers draaien juist in productie om echt werk op de achtergrond te doen."
+    ]
+  },
+  "4-31": {
+    "jip": "Docker bouwt een image laag voor laag en onthoudt lagen die niet veranderd zijn. Kopieer je eerst alleen `pyproject.toml` en installeer je dan, dan hoeft Docker bij een codewijziging niet alles opnieuw te downloaden, net als dat je de fundering niet opnieuw legt als je alleen het behang verandert.",
+    "nee": [
+      "Het werkt ook in een andere volgorde, alleen wordt het bouwen dan veel trager.",
+      "Het image bevat dezelfde bestanden, dus het wordt er niet kleiner van.",
+      "De volgorde verandert niets aan de beveiliging; het gaat om de cache."
+    ]
+  },
+  "4-32": {
+    "jip": "In Compose is elke service een eigen huisje in een straat, en de servicenaam is het huisnummer. De database woont in het huisje `db`, dus daar stuur je de api naartoe.",
+    "nee": [
+      "`localhost` is binnen de api-container de container zelf, en daar draait geen Postgres.",
+      "`127.0.0.1` is hetzelfde als localhost, dus ook dat wijst naar de api-container zelf.",
+      "`api` is de api-container zelf; de database woont in `db`."
+    ]
+  },
+  "4-33": {
+    "jip": "Een container die gestart is, is nog niet per se klaar, zoals een oven die aan staat maar nog niet heet is. Met `service_healthy` wacht de api tot de healthcheck van `db` zegt 'ik ben er klaar voor'.",
+    "nee": [
+      "Het is juist andersom: db start eerst en de api wacht daarop.",
+      "Herstarten bij een crash regel je met `restart:`, niet met `depends_on`.",
+      "Het doet wel iets: zonder dit kan de api starten voordat Postgres verbindingen aanneemt."
+    ]
+  },
+  "4-34": {
+    "jip": "Bij paginatie krijg je steeds één bladzijde resultaten, zoals tien producten in een webshop. `X-Total-Count` vertelt hoeveel er in totaal zijn, zodat de client weet hoeveel bladzijden er nog komen.",
+    "nee": [
+      "Over de rate limit gaat deze header niet; bij te veel requests krijg je een 429.",
+      "Authenticatie gaat via de `Authorization`-header, niet via deze.",
+      "Deze header zegt niets over of een antwoord uit de cache kwam."
+    ]
+  },
+  "4-f0": {
+    "jip": "HTTP is als een brief sturen en een brief terugkrijgen: jij stuurt wat je wilt (methode), naar welk adres (pad), met extra info (headers) en eventueel inhoud (body). Het antwoord begint met een status die zegt of het gelukt is, dus die lees je eerst."
+  },
+  "4-f1": {
+    "jip": "De methodes zijn de werkwoorden van HTTP: `GET` kijken, `POST` iets nieuws maken of een actie starten, `PUT` alles vervangen, `PATCH` een stukje aanpassen, `DELETE` weggooien. Zo weet de server meteen wat je met een ding wilt doen."
+  },
+  "4-f2": {
+    "jip": "Statuscodes zijn korte seintjes: 2xx betekent gelukt, 4xx betekent dat de client iets fout deed, 5xx betekent dat de server zelf faalde. Aan het eerste cijfer zie je dus meteen bij wie je het probleem moet zoeken."
+  },
+  "4-f3": {
+    "jip": "In REST is een URL een adres van een ding, zoals `/customers/7/orders` voor 'de bestellingen van klant 7'. Wat je ermee doet, zeg je met de HTTP-methode, en met query-params (`?limit=10`) filter je of blader je door de lijst."
+  },
+  "4-f4": {
+    "jip": "Net als een bestelbon, kassabon en wijzigingsbriefje heeft elk model zijn eigen taak: `NoteIn` voor wat binnenkomt, `NoteOut` voor wat je teruggeeft, `NoteUpdate` met alles optioneel. Zo komen geheime velden nooit per ongeluk in een antwoord."
+  },
+  "4-f5": {
+    "jip": "Een validator is een controleur bij de ingang van je model: hij kan een waarde opschonen (bijvoorbeeld spaties weghalen) of met een `ValueError` zeggen dat het niet goed is. Met `Field(min_length=1, max_length=120)` stel je simpele regels in zonder eigen code."
+  },
+  "4-f6": {
+    "jip": "`Depends()` is een ober die de route brengt wat hij nodig heeft, zoals een databasesessie, de ingelogde gebruiker of de settings. In tests vervang je die ober met `app.dependency_overrides`, zodat je bijvoorbeeld een testdatabase gebruikt."
+  },
+  "4-f7": {
+    "jip": "Een goede projectstructuur is als een keuken met vaste plekken: elk bestand heeft één taak. Routers nemen bestellingen aan, services bewaken de regels, repositories praten met de database, en schemas en models beschrijven de data."
+  },
+  "4-f8": {
+    "jip": "Gebruik `async def` als je moet wachten op iets buiten je programma, zoals een externe API of Redis, zodat de server ondertussen verder kan. Voor synchrone SQLAlchemy gebruik je `def`, en blokkerende dingen zoals `time.sleep` of `requests.get` horen nooit in async code, want die laten iedereen wachten."
+  },
+  "4-f9": {
+    "jip": "Je logt één keer in met je wachtwoord bij `/auth/token` en krijgt een ondertekende JWT terug, zoals een polsbandje bij de ingang van een festival. Daarna laat je bij elke request dat bandje zien in de `Authorization`-header, en `Depends(current_user)` checkt het."
+  },
+  "4-f10": {
+    "jip": "Deze regels zijn de sloten op je deur: wachtwoorden alleen als bcrypt-hash, een lang random `JWT_SECRET` dat alleen in `.env` staat, verkeer via HTTPS, en altijd checken of iets echt van de gebruiker is. Geef `401` als je niet weet wie iemand is, en `403` als je het wel weet maar hij het niet mag."
+  },
+  "4-f11": {
+    "jip": "Redis heeft verschillende bakjes voor verschillende soorten spullen: strings voor losse waarden en tellers, hashes voor kleine objecten, lists voor wachtrijen, sets voor unieke dingen en sorted sets voor ranglijsten. Kies het bakje dat past bij wat je wilt doen."
+  },
+  "4-f12": {
+    "jip": "Een cache is een spiekbriefje: eerst kijk je of het antwoord er al op staat. Zo niet, dan reken je het uit en schrijf je het op met een houdbaarheid (`ex=ttl`); verandert de data, dan gooi je het briefje weg met `delete`."
+  },
+  "4-f13": {
+    "jip": "Rate limiting werkt als een stempelkaart: elke request geeft een stempel (`incr`). Bij de eerste stempel zet je een wekker (`expire`) zodat de kaart na het tijdsvak leeg is, en wie boven de limiet komt krijgt `429`."
+  },
+  "4-f14": {
+    "jip": "Voor een klein klusje na het antwoord is `BackgroundTasks` genoeg, maar dat draait in dezelfde API en is weg bij een restart. Voor belangrijk werk zet je een job in een Redis-list met `lpush`, en een aparte worker pakt hem op met `brpop`, zoals een bestellijst waar koks mee werken."
+  },
+  "4-f15": {
+    "jip": "Een Dockerfile is een bouwplan in lagen. Je begint met een klein Python-image, installeert eerst de dependencies uit `pyproject.toml` zodat Docker die laag kan onthouden, kopieert daarna pas je code, en start de app met `fastapi run` op poort 8000."
+  },
+  "4-f16": {
+    "jip": "In Compose zijn services buren in dezelfde straat, en ze vinden elkaar via hun naam, zoals `db` of `redis`. `localhost` betekent in een container 'ik zelf', dus Compose geeft de api een andere `DATABASE_URL` dan je lokale `.env`."
+  }
+}

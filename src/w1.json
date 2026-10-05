@@ -1,0 +1,438 @@
+{
+ "week": 1,
+ "title": "Python basis & developer setup",
+ "questions": [
+  {
+   "id": "1-0",
+   "kind": "m",
+   "question": "Wat print `print(7 / 2)`?",
+   "correct": "`3.5`",
+   "wrong": [
+    "`3`",
+    "`4`",
+    "`3.0`"
+   ],
+   "current_explanation": "`/` geeft altijd een float. Wil je delen zonder rest, gebruik dan `//`."
+  },
+  {
+   "id": "1-1",
+   "kind": "m",
+   "question": "Wat print `print(7 // 2, 7 % 2)`?",
+   "correct": "`3 1`",
+   "wrong": [
+    "`3.5 1`",
+    "`3 0`",
+    "`4 1`"
+   ],
+   "current_explanation": "`//` is floor division (3), `%` is de rest (1)."
+  },
+  {
+   "id": "1-2",
+   "kind": "m",
+   "question": "Wat geeft `round(2.5)`?",
+   "correct": "`2`",
+   "wrong": [
+    "`3`",
+    "`2.5`",
+    "Een error"
+   ],
+   "current_explanation": "Banker's rounding: Python rondt .5 af naar het dichtstbijzijnde even getal. `round(3.5)` is 4."
+  },
+  {
+   "id": "1-3",
+   "kind": "m",
+   "question": "Wat geeft `int(3.99)`?",
+   "correct": "`3`",
+   "wrong": [
+    "`4`",
+    "`3.99`",
+    "Een error"
+   ],
+   "current_explanation": "`int()` kapt af, het rondt niet."
+  },
+  {
+   "id": "1-4",
+   "kind": "t",
+   "question": "`0.1 + 0.2 == 0.3` geeft `True`.",
+   "correct": "Niet waar",
+   "current_explanation": "Floats zijn binair. `0.1 + 0.2` is `0.30000000000000004`. Daarom reken je geld in centen."
+  },
+  {
+   "id": "1-5",
+   "kind": "m",
+   "question": "`word = \"Python\"`. Wat is `word[0:3]`?",
+   "correct": "`'Pyt'`",
+   "wrong": [
+    "`'Pyth'`",
+    "`'yth'`",
+    "`'Py'`"
+   ],
+   "current_explanation": "Slicing is 0-based: begin telt mee, eind niet."
+  },
+  {
+   "id": "1-6",
+   "kind": "m",
+   "question": "Wat is `\"Python\"[::-1]`?",
+   "correct": "`'nohtyP'`",
+   "wrong": [
+    "`'Python'`",
+    "`'n'`",
+    "Een error"
+   ],
+   "current_explanation": "Stap -1 loopt achteruit en keert de string om."
+  },
+  {
+   "id": "1-7",
+   "kind": "t",
+   "question": "Met `word[0] = \"J\"` pas je een string aan.",
+   "correct": "Niet waar",
+   "current_explanation": "Strings zijn immutable. Elke string-methode geeft een nieuwe string terug."
+  },
+  {
+   "id": "1-8",
+   "kind": "m",
+   "question": "Wat geeft `input()` altijd terug?",
+   "correct": "Een `str`",
+   "wrong": [
+    "Een `int`",
+    "Het type dat de gebruiker typt",
+    "`None`"
+   ],
+   "current_explanation": "Altijd een str. Getallen cast je zelf met `int()` of `float()`."
+  },
+  {
+   "id": "1-9",
+   "kind": "m",
+   "question": "Welke f-string geeft `1,234.50` als `price = 1234.5`?",
+   "correct": "`f\"{price:,.2f}\"`",
+   "wrong": [
+    "`f\"{price:.2}\"`",
+    "`f\"{price:2f,}\"`",
+    "`f\"{price:,}\"`"
+   ],
+   "current_explanation": "`,` is de duizendtalscheiding, `.2f` betekent twee decimalen."
+  },
+  {
+   "id": "1-10",
+   "kind": "m",
+   "question": "Welke waarde is truthy?",
+   "correct": "`[0]`",
+   "wrong": [
+    "`0`",
+    "`\"\"`",
+    "`None`"
+   ],
+   "current_explanation": "Lege dingen, 0 en None zijn falsy. `[0]` is een lijst met één element, dus truthy."
+  },
+  {
+   "id": "1-11",
+   "kind": "m",
+   "question": "Wanneer draait de `else` onder een `while`-loop?",
+   "correct": "Als de loop eindigt zonder `break`",
+   "wrong": [
+    "Altijd na de loop",
+    "Alleen na een `break`",
+    "Nooit, dat is een syntaxfout"
+   ],
+   "current_explanation": "while/else: het else-blok draait alleen als de loop níet met break is verlaten."
+  },
+  {
+   "id": "1-12",
+   "kind": "m",
+   "question": "Wat is `list(range(2, 11, 2))`?",
+   "correct": "`[2, 4, 6, 8, 10]`",
+   "wrong": [
+    "`[2, 4, 6, 8]`",
+    "`[2, 4, 6, 8, 10, 12]`",
+    "`[0, 2, 4, 6, 8, 10]`"
+   ],
+   "current_explanation": "`range(start, stop, stap)`: stop telt niet mee."
+  },
+  {
+   "id": "1-13",
+   "kind": "m",
+   "question": "Wat doet `continue`?",
+   "correct": "Springt naar de volgende iteratie",
+   "wrong": [
+    "Stopt de loop",
+    "Stopt het programma",
+    "Herhaalt dezelfde iteratie"
+   ],
+   "current_explanation": "`break` verlaat de loop, `continue` slaat de rest van deze ronde over."
+  },
+  {
+   "id": "1-14",
+   "kind": "m",
+   "question": "Wat print dit?",
+   "code": "a = [1, 2, 3]\nb = a\nb.append(4)\nprint(a)",
+   "correct": "`[1, 2, 3, 4]`",
+   "wrong": [
+    "`[1, 2, 3]`",
+    "Een error",
+    "`[4]`"
+   ],
+   "current_explanation": "`b = a` kopieert niet: beide namen wijzen naar dezelfde lijst. Gebruik `a.copy()`, `list(a)` of `a[:]`."
+  },
+  {
+   "id": "1-15",
+   "kind": "m",
+   "question": "Welke collectie is geordend, immutable en mag duplicaten bevatten?",
+   "correct": "tuple",
+   "wrong": [
+    "list",
+    "set",
+    "dict"
+   ],
+   "current_explanation": "Tuple = vaste record. Handig voor meerdere returnwaarden en als dict-key."
+  },
+  {
+   "id": "1-16",
+   "kind": "m",
+   "question": "Je moet vaak checken of een waarde in een grote verzameling unieke waarden zit. Wat gebruik je?",
+   "correct": "Een set",
+   "wrong": [
+    "Een list",
+    "Een tuple",
+    "Een str"
+   ],
+   "current_explanation": "Membership in een set is O(1), veel sneller dan in een lijst."
+  },
+  {
+   "id": "1-17",
+   "kind": "m",
+   "question": "`a = {1, 2, 3, 4}` en `b = {3, 4, 5}`. Wat is `a - b`?",
+   "correct": "`{1, 2}`",
+   "wrong": [
+    "`{5}`",
+    "`{3, 4}`",
+    "`{1, 2, 5}`"
+   ],
+   "current_explanation": "`-` is verschil, `&` doorsnede, `|` vereniging."
+  },
+  {
+   "id": "1-18",
+   "kind": "m",
+   "question": "`customer.get(\"phone\", \"unknown\")` terwijl `phone` ontbreekt. Resultaat?",
+   "correct": "`'unknown'`",
+   "wrong": [
+    "KeyError",
+    "`None`",
+    "`''`"
+   ],
+   "current_explanation": "`get` met default is de veilige lookup. `customer[\"phone\"]` zou een KeyError geven."
+  },
+  {
+   "id": "1-19",
+   "kind": "m",
+   "question": "Wat print de laatste regel?",
+   "code": "def add_item(item, basket=[]):\n    basket.append(item)\n    return basket\n\nadd_item(\"a\")\nprint(add_item(\"b\"))",
+   "correct": "`['a', 'b']`",
+   "wrong": [
+    "`['b']`",
+    "`['a']`",
+    "Een error"
+   ],
+   "current_explanation": "De mutable-default trap: de lijst wordt één keer gemaakt en bij elke aanroep hergebruikt. Gebruik `basket=None`."
+  },
+  {
+   "id": "1-20",
+   "kind": "m",
+   "question": "Wat geeft een functie zonder `return` terug?",
+   "correct": "`None`",
+   "wrong": [
+    "`0`",
+    "`False`",
+    "Een lege string"
+   ],
+   "current_explanation": "Elke functie geeft iets terug; zonder return is dat None."
+  },
+  {
+   "id": "1-21",
+   "kind": "m",
+   "question": "Wat print dit?",
+   "code": "def describe(name, *hobbies, **details):\n    print(name, hobbies, details)\n\ndescribe(\"Aisha\", \"chess\", city=\"Rotterdam\")",
+   "correct": "`Aisha ('chess',) {'city': 'Rotterdam'}`",
+   "wrong": [
+    "`Aisha ['chess'] {'city': 'Rotterdam'}`",
+    "`Aisha chess Rotterdam`",
+    "TypeError"
+   ],
+   "current_explanation": "`*args` wordt een tuple, `**kwargs` een dict."
+  },
+  {
+   "id": "1-22",
+   "kind": "m",
+   "question": "Hoe schrijf je een class-naam volgens PEP 8?",
+   "correct": "PascalCase",
+   "wrong": [
+    "snake_case",
+    "UPPER_CASE",
+    "kebab-case"
+   ],
+   "current_explanation": "snake_case voor variabelen en functies, UPPER_CASE voor constanten, PascalCase voor classes."
+  },
+  {
+   "id": "1-23",
+   "kind": "i",
+   "question": "Welk Git-commando laat zien wat er veranderd is?",
+   "correct": "git status",
+   "current_explanation": "De dagelijkse cyclus: `git status` → `git add -A` → `git commit -m \"...\"` → `git push`."
+  },
+  {
+   "id": "1-24",
+   "kind": "m",
+   "question": "Waar bewaar je je projectbestanden als je in WSL werkt?",
+   "correct": "`~/projects`, in je Linux home",
+   "wrong": [
+    "`/mnt/c/Users/...`",
+    "`C:\\Program Files`",
+    "Maakt niet uit"
+   ],
+   "current_explanation": "Onder `/mnt/c` is het veel trager en krijg je permissieproblemen."
+  },
+  {
+   "id": "1-25",
+   "kind": "i",
+   "question": "Welk shell-commando print de map waarin je nu zit?",
+   "correct": "pwd",
+   "current_explanation": "pwd = print working directory."
+  },
+  {
+   "id": "1-26",
+   "kind": "t",
+   "question": "`rm -r map` zet de map in de prullenbak.",
+   "correct": "Niet waar",
+   "current_explanation": "De shell heeft geen prullenbak. Weg is weg."
+  },
+  {
+   "id": "1-27",
+   "kind": "m",
+   "question": "`git push` klaagt over permissies. Wat heb je waarschijnlijk nodig?",
+   "correct": "Een SSH key in je GitHub-account",
+   "wrong": [
+    "Een nieuwe repo",
+    "`sudo git push`",
+    "Een andere branch"
+   ],
+   "current_explanation": "`ssh-keygen -t ed25519`, en de inhoud van `~/.ssh/id_ed25519.pub` in GitHub zetten."
+  },
+  {
+   "id": "1-28",
+   "kind": "m",
+   "question": "Wat doet `global counter` in een functie?",
+   "correct": "Je mag de globale variabele opnieuw toewijzen",
+   "wrong": [
+    "Je maakt een lokale kopie",
+    "Je exporteert hem naar andere modules",
+    "Je maakt hem read-only"
+   ],
+   "current_explanation": "Alleen nodig om een global te herassigneren. Beter: waarde meegeven en returnen."
+  },
+  {
+   "id": "1-29",
+   "kind": "m",
+   "question": "Hoe heet `status = \"open\" if hour < 17 else \"closed\"`?",
+   "correct": "Conditional expression (ternary)",
+   "wrong": [
+    "List comprehension",
+    "Lambda",
+    "Decorator"
+   ],
+   "current_explanation": "Een if/else in één expressie."
+  },
+  {
+   "id": "1-30",
+   "kind": "m",
+   "question": "Wat print `print(\"AI\" in \" Fayora AI builds \")`?",
+   "correct": "`True`",
+   "wrong": [
+    "`False`",
+    "`1`",
+    "Een error"
+   ],
+   "current_explanation": "`in` op strings is een substring-test."
+  }
+ ],
+ "flashcards": [
+  {
+   "id": "1-f0",
+   "front": "`/` vs `//` vs `%`",
+   "back": "`/` geeft altijd een float (7/2 = 3.5). `//` is floor division (3). `%` is de rest (1). `**` is macht."
+  },
+  {
+   "id": "1-f1",
+   "front": "Slicing",
+   "back": "0-based, eind telt niet mee, negatief telt vanaf achter. `word[0:3]` = 'Pyt', `word[-1]` = 'n', `[::-1]` keert om."
+  },
+  {
+   "id": "1-f2",
+   "front": "De vier collecties",
+   "back": "list = reeks die je wijzigt · tuple = vaste record · dict = opzoeken op key (JSON-vorm) · set = uniek en snelle membership"
+  },
+  {
+   "id": "1-f3",
+   "front": "Mutable default trap",
+   "back": "`def f(x, basket=[])` deelt één lijst tussen alle aanroepen. Gebruik `basket=None` en maak binnen de functie een nieuwe lijst."
+  },
+  {
+   "id": "1-f4",
+   "front": "`b = a` bij een lijst",
+   "back": "Kopieert niet, het is hetzelfde object. Kopie: `a.copy()`, `list(a)` of `a[:]`."
+  },
+  {
+   "id": "1-f5",
+   "front": "Truthiness",
+   "back": "Falsy: `0`, `\"\"`, `[]`, `{}`, `None`, `False`. Al het andere is truthy."
+  },
+  {
+   "id": "1-f6",
+   "front": "break, continue, while/else",
+   "back": "break verlaat de loop · continue gaat naar de volgende ronde · else draait alleen als er geen break was"
+  },
+  {
+   "id": "1-f7",
+   "front": "`*args` en `**kwargs`",
+   "back": "`*args` verzamelt extra positionele argumenten als tuple, `**kwargs` keyword-argumenten als dict."
+  },
+  {
+   "id": "1-f8",
+   "front": "Dagelijkse Git-cyclus",
+   "back": "`git status` → `git add -A` → `git commit -m \"...\"` → `git push`. Elke sessie, af of niet."
+  },
+  {
+   "id": "1-f9",
+   "front": "PEP 8-namen",
+   "back": "snake_case variabelen en functies · UPPER_CASE constanten · PascalCase classes. Functies krijgen een werkwoord: `load_config`."
+  },
+  {
+   "id": "1-f10",
+   "front": "Je ontwikkelomgeving",
+   "back": "Windows = desktop, Ubuntu in WSL2 = code, VS Code = de brug. Bestanden in `~/projects`, niet in `/mnt/c`."
+  },
+  {
+   "id": "1-f11",
+   "front": "Afronden",
+   "back": "`round(2.5)` = 2 en `round(3.5)` = 4 (banker's rounding). `int(3.99)` = 3 (afkappen)."
+  },
+  {
+   "id": "1-f12",
+   "front": "f-string formats",
+   "back": "`{price:,.2f}` → 1,234.50 · `{x:<10}` links · `{x:>5}` rechts · `{0.256:.1%}` → 25.6%"
+  },
+  {
+   "id": "1-f13",
+   "front": "Een goede functie",
+   "back": "Doet één ding, past op één scherm, heeft een werkwoord als naam, een docstring en type hints, en geen global."
+  },
+  {
+   "id": "1-f14",
+   "front": "`dict.get` vs `dict[key]`",
+   "back": "`d[\"x\"]` geeft KeyError als de key ontbreekt. `d.get(\"x\", default)` geeft dan de default."
+  },
+  {
+   "id": "1-f15",
+   "front": "Strings zijn immutable",
+   "back": "`s.upper()` verandert `s` niet; het geeft een nieuwe string terug. Toewijzen: `s = s.upper()`."
+  }
+ ]
+}

@@ -1,0 +1,537 @@
+{
+ "week": 2,
+ "title": "Echte programma's schrijven",
+ "questions": [
+  {
+   "id": "2-0",
+   "kind": "m",
+   "question": "Wat is een package in Python?",
+   "correct": "Een map met modules en een `__init__.py`",
+   "wrong": [
+    "Eén `.py`-bestand",
+    "Alleen iets dat je met pip installeert",
+    "Een virtual environment"
+   ],
+   "current_explanation": "Module = één .py-bestand. Package = map met modules plus `__init__.py`."
+  },
+  {
+   "id": "2-1",
+   "kind": "m",
+   "question": "Wanneer is `__name__ == \"__main__\"` True?",
+   "correct": "Als het bestand direct wordt uitgevoerd",
+   "wrong": [
+    "Als het bestand geïmporteerd wordt",
+    "Altijd",
+    "Alleen tijdens tests"
+   ],
+   "current_explanation": "Zo is een bestand zowel importeerbaar als uitvoerbaar."
+  },
+  {
+   "id": "2-2",
+   "kind": "m",
+   "question": "Waarom krijgt elk project een eigen virtual environment?",
+   "correct": "Zodat elk project zijn eigen packages en versies heeft",
+   "wrong": [
+    "Python wordt er sneller van",
+    "Anders werkt Git niet",
+    "pip werkt alleen in een venv"
+   ],
+   "current_explanation": "Project A kan requests 2.31 gebruiken en project B 2.32."
+  },
+  {
+   "id": "2-3",
+   "kind": "i",
+   "question": "Met welk commando maak je een venv in de map `.venv`?",
+   "correct": "python3 -m venv .venv",
+   "current_explanation": "Daarna activeren met `source .venv/bin/activate`."
+  },
+  {
+   "id": "2-4",
+   "kind": "t",
+   "question": "Je commit `.venv/` naar Git zodat je teamgenoten dezelfde packages krijgen.",
+   "correct": "Niet waar",
+   "current_explanation": "Een venv commit je nooit. Afhankelijkheden staan in `pyproject.toml` (of `requirements.txt` via `pip freeze`)."
+  },
+  {
+   "id": "2-5",
+   "kind": "m",
+   "question": "Wat doet `pip install -e \".[dev]\"`?",
+   "correct": "Editable install van je eigen package plus de dev-tools",
+   "wrong": [
+    "Installeert alleen pytest",
+    "Maakt een nieuwe venv",
+    "Schrijft requirements.txt"
+   ],
+   "current_explanation": "Editable betekent dat wijzigingen in je code direct gelden zonder opnieuw te installeren."
+  },
+  {
+   "id": "2-6",
+   "kind": "m",
+   "question": "Welke file-mode voegt toe aan het eind van een bestand?",
+   "correct": "`'a'`",
+   "wrong": [
+    "`'w'`",
+    "`'r'`",
+    "`'x'`"
+   ],
+   "current_explanation": "Let op: `'w'` overschrijft het hele bestand."
+  },
+  {
+   "id": "2-7",
+   "kind": "m",
+   "question": "Waarom schrijf je `with open(...) as f:`?",
+   "correct": "Het bestand wordt altijd gesloten, ook bij een fout",
+   "wrong": [
+    "Het is sneller",
+    "Het leest alles in één keer",
+    "Het maakt het bestand altijd aan"
+   ],
+   "current_explanation": "Een context manager garandeert de cleanup."
+  },
+  {
+   "id": "2-8",
+   "kind": "m",
+   "question": "JSON `null` wordt in Python...",
+   "correct": "`None`",
+   "wrong": [
+    "`null`",
+    "`0`",
+    "`''`"
+   ],
+   "current_explanation": "object→dict, array→list, true→True, null→None."
+  },
+  {
+   "id": "2-9",
+   "kind": "m",
+   "question": "Wat is het verschil tussen `json.loads` en `json.load`?",
+   "correct": "`loads` leest een string, `load` een bestand-object",
+   "wrong": [
+    "`loads` is sneller",
+    "`load` geeft een string terug",
+    "Er is geen verschil"
+   ],
+   "current_explanation": "De s staat voor string. Bij `dumps` en `dump` is het net zo."
+  },
+  {
+   "id": "2-10",
+   "kind": "t",
+   "question": "Een `datetime` kun je zonder meer met `json.dumps` opslaan.",
+   "correct": "Niet waar",
+   "current_explanation": "Datums zijn geen JSON. Converteer ze zelf, bijvoorbeeld met `.isoformat()`."
+  },
+  {
+   "id": "2-11",
+   "kind": "m",
+   "question": "`csv.DictReader` geeft elke rij als...",
+   "correct": "Een dict met strings",
+   "wrong": [
+    "Een dict met de juiste types",
+    "Een tuple",
+    "Een lijst met ints"
+   ],
+   "current_explanation": "Alles komt binnen als str. Getallen converteer je zelf met `float()`."
+  },
+  {
+   "id": "2-12",
+   "kind": "m",
+   "question": "Hoe lees je een traceback?",
+   "correct": "Van onder naar boven: de onderste regel is de fout",
+   "wrong": [
+    "Van boven naar beneden",
+    "Alleen de eerste regel",
+    "Alleen het regelnummer"
+   ],
+   "current_explanation": "De regels erboven laten zien waar het gebeurde."
+  },
+  {
+   "id": "2-13",
+   "kind": "m",
+   "question": "Wanneer draait het `else`-blok van try/except?",
+   "correct": "Alleen als er géén exception was",
+   "wrong": [
+    "Altijd",
+    "Alleen bij een exception",
+    "Na finally"
+   ],
+   "current_explanation": "`finally` draait altijd, ook bij een fout."
+  },
+  {
+   "id": "2-14",
+   "kind": "t",
+   "question": "Een kale `except:` is een prima vangnet.",
+   "correct": "Niet waar",
+   "current_explanation": "Vang specifieke exceptions op de plek waar je er iets zinnigs mee kunt. Laat de rest doorgaan."
+  },
+  {
+   "id": "2-15",
+   "kind": "m",
+   "question": "Wat doet een kale `raise` binnen een except-blok?",
+   "correct": "Gooit de huidige exception opnieuw",
+   "wrong": [
+    "Stopt het programma zonder melding",
+    "Maakt een nieuwe lege Exception",
+    "Niets"
+   ],
+   "current_explanation": "Gebruik het als je de fout wilt loggen maar niet kunt herstellen."
+  },
+  {
+   "id": "2-16",
+   "kind": "m",
+   "question": "Wat is `self` in een methode?",
+   "correct": "De instantie waarop de methode wordt aangeroepen",
+   "wrong": [
+    "De class zelf",
+    "Een keyword dat je moet importeren",
+    "De parent class"
+   ],
+   "current_explanation": "Python geeft `self` automatisch mee."
+  },
+  {
+   "id": "2-17",
+   "kind": "m",
+   "question": "Waarvoor dienen `__repr__` en `__str__`?",
+   "correct": "repr voor developers, str voor gebruikers (wat print toont)",
+   "wrong": [
+    "str voor developers, repr voor print",
+    "Ze doen hetzelfde",
+    "repr werkt alleen in dataclasses"
+   ],
+   "current_explanation": "`repr` toont iets als `Task('x', priority=1)`, `str` iets als `[ ] x (P1)`."
+  },
+  {
+   "id": "2-18",
+   "kind": "m",
+   "question": "`@classmethod def from_gross(cls, gross)` is typisch...",
+   "correct": "Een alternatieve constructor",
+   "wrong": [
+    "Een getter",
+    "Een validator",
+    "Een test"
+   ],
+   "current_explanation": "Bijvoorbeeld `Invoice.from_gross(121)`."
+  },
+  {
+   "id": "2-19",
+   "kind": "m",
+   "question": "Wanneer gebruik je inheritance?",
+   "correct": "Bij een echte 'is-een'-relatie",
+   "wrong": [
+    "Altijd als je code wilt delen",
+    "Nooit",
+    "Bij een 'heeft-een'-relatie"
+   ],
+   "current_explanation": "Anders gebruik je composition: een object heeft een ander object."
+  },
+  {
+   "id": "2-20",
+   "kind": "m",
+   "question": "Wat schrijft `@dataclass` voor je?",
+   "correct": "`__init__`, `__repr__` en `__eq__`",
+   "wrong": [
+    "Alleen `__init__`",
+    "Een databasetabel",
+    "Tests"
+   ],
+   "current_explanation": "Daardoor heb je gratis value equality: twee Tasks met dezelfde velden zijn `==`."
+  },
+  {
+   "id": "2-21",
+   "kind": "m",
+   "question": "Hoe geef je een dataclass-veld een lege lijst als default?",
+   "correct": "`tags: list[str] = field(default_factory=list)`",
+   "wrong": [
+    "`tags: list[str] = []`",
+    "`tags: list[str] = list`",
+    "Dat kan niet"
+   ],
+   "current_explanation": "Een kale `[]` is een mutable default; dataclass weigert dat."
+  },
+  {
+   "id": "2-22",
+   "kind": "m",
+   "question": "Waar valideer je de velden van een dataclass?",
+   "correct": "In `__post_init__`",
+   "wrong": [
+    "In `__repr__`",
+    "In `__validate__`",
+    "In de test"
+   ],
+   "current_explanation": "Bijvoorbeeld: lege titel of priority buiten 1–3 → `ValueError`."
+  },
+  {
+   "id": "2-23",
+   "kind": "m",
+   "question": "Wat betekent `-> Task | None` als return type?",
+   "correct": "De functie geeft een Task of None terug",
+   "wrong": [
+    "De functie gooit een error bij None",
+    "De functie geeft altijd een Task",
+    "Er zijn twee Task-classes"
+   ],
+   "current_explanation": "Type hints veranderen niets aan de uitvoering, maar je editor vangt er fouten mee."
+  },
+  {
+   "id": "2-24",
+   "kind": "m",
+   "question": "Wat is `ruff`?",
+   "correct": "Linter en formatter",
+   "wrong": [
+    "Testrunner",
+    "Package manager",
+    "Database-driver"
+   ],
+   "current_explanation": "`ruff check .` vindt problemen, `ruff format .` formatteert volgens PEP 8."
+  },
+  {
+   "id": "2-25",
+   "kind": "m",
+   "question": "Wat is `(n * n for n in range(10**9))`?",
+   "correct": "Een generator expression: lazy, kost bijna geen geheugen",
+   "wrong": [
+    "Een lijst met een miljard getallen",
+    "Een set",
+    "Een SyntaxError"
+   ],
+   "current_explanation": "Ronde haakjes = generator. Pas bij itereren wordt er gerekend."
+  },
+  {
+   "id": "2-26",
+   "kind": "m",
+   "question": "Wat doet `yield`?",
+   "correct": "Geeft een waarde en pauzeert de functie tot de volgende `next()`",
+   "wrong": [
+    "Beëindigt de functie definitief",
+    "Geeft een lijst terug",
+    "Start een thread"
+   ],
+   "current_explanation": "Daarmee bouw je streams: grote files, database-cursors, LLM-antwoorden."
+  },
+  {
+   "id": "2-27",
+   "kind": "m",
+   "question": "Waarom staat `@functools.wraps(fn)` in een decorator?",
+   "correct": "Zo behoudt de wrapper de naam en docstring van de originele functie",
+   "wrong": [
+    "Dan wordt hij sneller",
+    "Dan wordt het resultaat gecachet",
+    "Zonder werkt de decorator niet"
+   ],
+   "current_explanation": "Anders heet elke gedecoreerde functie ineens `wrapper`."
+  },
+  {
+   "id": "2-28",
+   "kind": "m",
+   "question": "Wat doet `@functools.lru_cache`?",
+   "correct": "Memoïsatie: resultaten onthouden voor dezelfde input",
+   "wrong": [
+    "Logging",
+    "Timing",
+    "Thread-safety"
+   ],
+   "current_explanation": "`fib(80)` wordt daardoor direct berekend."
+  },
+  {
+   "id": "2-29",
+   "kind": "m",
+   "question": "In een `@contextmanager`-functie: waar draait de body van het `with`-blok?",
+   "correct": "Op de plek van `yield`",
+   "wrong": [
+    "Voor de functie",
+    "Na het finally-blok",
+    "In een aparte thread"
+   ],
+   "current_explanation": "Code voor yield = setup, finally na yield = cleanup."
+  },
+  {
+   "id": "2-30",
+   "kind": "m",
+   "question": "Welke testnaam is goed?",
+   "correct": "`test_empty_title_rejected`",
+   "wrong": [
+    "`test_1`",
+    "`test_task`",
+    "`check()`"
+   ],
+   "current_explanation": "Een testnaam beschrijft het gedrag dat getest wordt."
+  },
+  {
+   "id": "2-31",
+   "kind": "m",
+   "question": "Welke pytest-feature draait één test met meerdere inputs?",
+   "correct": "`@pytest.mark.parametrize`",
+   "wrong": [
+    "`@pytest.fixture`",
+    "`pytest.raises`",
+    "`-k`"
+   ],
+   "current_explanation": "Bijvoorbeeld priority 0, 4 en -1 die allemaal een ValueError moeten geven."
+  },
+  {
+   "id": "2-32",
+   "kind": "m",
+   "question": "Welke fixture geeft je een tijdelijke map voor bestandstests?",
+   "correct": "`tmp_path`",
+   "wrong": [
+    "`tempdir`",
+    "`files`",
+    "`os.tmp`"
+   ],
+   "current_explanation": "Zo raken je tests nooit je echte data."
+  },
+  {
+   "id": "2-33",
+   "kind": "i",
+   "question": "Met welk commando maak je een nieuwe branch en switch je er meteen naar? (zonder branchnaam)",
+   "correct": "git switch -c",
+   "current_explanation": "Bijvoorbeeld `git switch -c feature/week2-taskman`."
+  },
+  {
+   "id": "2-34",
+   "kind": "m",
+   "question": "Hoe herken je een merge conflict in een bestand?",
+   "correct": "`<<<<<<<`, `=======` en `>>>>>>>`",
+   "wrong": [
+    "`###` en `---`",
+    "`CONFLICT:` en `END`",
+    "Het bestand is leeg"
+   ],
+   "current_explanation": "Maak er de juiste versie van, dan `git add` en commit."
+  },
+  {
+   "id": "2-35",
+   "kind": "m",
+   "question": "Welke commit message volgt de conventie?",
+   "correct": "Add JSON storage for tasks",
+   "wrong": [
+    "fixed stuff",
+    "Added JSON storage for tasks.",
+    "update"
+   ],
+   "current_explanation": "Imperatief, en zeg wat en waarom."
+  },
+  {
+   "id": "2-36",
+   "kind": "m",
+   "question": "Je fixt een bug. Wat schrijf je eerst?",
+   "correct": "Een test die faalt",
+   "wrong": [
+    "De fix",
+    "De README",
+    "De commit message"
+   ],
+   "current_explanation": "Test faalt, je fixt, test slaagt. Dan kan de bug nooit ongemerkt terugkomen."
+  }
+ ],
+ "flashcards": [
+  {
+   "id": "2-f0",
+   "front": "Module vs package",
+   "back": "Module = één `.py`-bestand. Package = map met modules plus `__init__.py`."
+  },
+  {
+   "id": "2-f1",
+   "front": "`if __name__ == \"__main__\":`",
+   "back": "Alleen True als het bestand direct draait, niet bij import. Zo is een bestand importeerbaar én uitvoerbaar."
+  },
+  {
+   "id": "2-f2",
+   "front": "venv in vijf stappen",
+   "back": "`python3 -m venv .venv` · `source .venv/bin/activate` · `pip install ...` · `pip freeze > requirements.txt` · `deactivate`"
+  },
+  {
+   "id": "2-f3",
+   "front": "De projectregel",
+   "back": "1 project = 1 Git-repo = 1 venv = 1 `pyproject.toml`. `.venv` commit je nooit."
+  },
+  {
+   "id": "2-f4",
+   "front": "File modes",
+   "back": "`'r'` lezen · `'w'` overschrijven · `'a'` toevoegen. Altijd `with open(..., encoding=\"utf-8\")`."
+  },
+  {
+   "id": "2-f5",
+   "front": "JSON ↔ Python",
+   "back": "object→dict · array→list · string→str · number→int/float · true/false→True/False · null→None. Datums: `.isoformat()`."
+  },
+  {
+   "id": "2-f6",
+   "front": "`loads` vs `load`",
+   "back": "`json.loads(str)` en `json.dumps(obj)` werken met strings. `json.load(f)` en `json.dump(obj, f)` met bestanden."
+  },
+  {
+   "id": "2-f7",
+   "front": "try / except / else / finally",
+   "back": "except: bij die fout · else: alleen als er géén fout was · finally: altijd, voor cleanup."
+  },
+  {
+   "id": "2-f8",
+   "front": "Exception-regels",
+   "back": "Vang specifieke exceptions, nooit een kale `except:`. Vang alleen waar je iets zinnigs kunt doen. Eigen domeinfouten: `class InsufficientStock(Exception)`."
+  },
+  {
+   "id": "2-f9",
+   "front": "Traceback lezen",
+   "back": "Van onder naar boven. Onderste regel = de fout, daarboven = waar het gebeurde."
+  },
+  {
+   "id": "2-f10",
+   "front": "`__repr__` vs `__str__`",
+   "back": "repr is voor developers (`Task('x', priority=1)`), str voor gebruikers (wat `print` toont)."
+  },
+  {
+   "id": "2-f11",
+   "front": "property · classmethod · staticmethod",
+   "back": "`@property` toont een berekende waarde als attribuut · `@classmethod` alternatieve constructor met `cls` · `@staticmethod` utility zonder self of cls."
+  },
+  {
+   "id": "2-f12",
+   "front": "Inheritance of composition?",
+   "back": "Inheritance alleen bij een echte 'is-een'-relatie. Anders composition: TaskService krijgt een store in zijn constructor."
+  },
+  {
+   "id": "2-f13",
+   "front": "@dataclass",
+   "back": "Schrijft `__init__`, `__repr__` en `__eq__`. Lijst-default: `field(default_factory=list)`. Validatie in `__post_init__`."
+  },
+  {
+   "id": "2-f14",
+   "front": "Comprehensions",
+   "back": "`[x for x in xs if c]` lijst · `{k: v for ...}` dict · `{x for ...}` set · `(x for ...)` generator"
+  },
+  {
+   "id": "2-f15",
+   "front": "Generator",
+   "back": "Functie met `yield`: geeft waarden één voor één, lazy. Voor grote bestanden, database-cursors en LLM-streams."
+  },
+  {
+   "id": "2-f16",
+   "front": "Decorator",
+   "back": "Een functie die een functie wrapt: `def timed(fn): @functools.wraps(fn) def wrapper(*args, **kwargs): ... return wrapper`."
+  },
+  {
+   "id": "2-f17",
+   "front": "Context manager",
+   "back": "`with` garandeert cleanup. Zelf maken met `@contextmanager` en `try: yield finally: ...`."
+  },
+  {
+   "id": "2-f18",
+   "front": "Goede tests",
+   "back": "Snel, onafhankelijk (geen gedeelde state, geen netwerk), naam = gedrag. Bug gevonden? Eerst een falende test."
+  },
+  {
+   "id": "2-f19",
+   "front": "pytest-gereedschap",
+   "back": "`pytest.raises` · `@pytest.mark.parametrize` · `@pytest.fixture` · `tmp_path` · `pytest -q -k naam` · `--cov`"
+  },
+  {
+   "id": "2-f20",
+   "front": "Git-workflow",
+   "back": "`git switch -c feature/x` → commits → `git push -u origin feature/x` → PR → review → CI groen → merge → `git switch main && git pull`"
+  },
+  {
+   "id": "2-f21",
+   "front": "`.gitignore` basis",
+   "back": "`.venv/`, `__pycache__/`, `.env`, `*.pyc`, `.pytest_cache/`"
+  }
+ ]
+}
