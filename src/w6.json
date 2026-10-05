@@ -1,0 +1,510 @@
+{
+ "week": 6,
+ "title": "Productie & capstone",
+ "questions": [
+  {
+   "id": "6-0",
+   "kind": "m",
+   "question": "Wat is een agent volgens het workbook?",
+   "correct": "Een loop met tools en limieten",
+   "wrong": [
+    "Een groter model",
+    "Een fine-tuned model",
+    "Een chat-interface"
+   ],
+   "current_explanation": "Model aanroepen → tool nodig? uitvoeren en terugsturen → herhalen tot het antwoordt."
+  },
+  {
+   "id": "6-1",
+   "kind": "m",
+   "question": "Wanneer kies je een vaste workflow in plaats van een agent?",
+   "correct": "Als de stappen vooraf bekend zijn",
+   "wrong": [
+    "Nooit",
+    "Alleen als het duur mag zijn",
+    "Als je geen tools hebt"
+   ],
+   "current_explanation": "Deterministisch, testbaar, goedkoop."
+  },
+  {
+   "id": "6-2",
+   "kind": "m",
+   "question": "Wat doet het router-patroon?",
+   "correct": "Een goedkoop model kiest welke gespecialiseerde prompt of agent het verzoek afhandelt",
+   "wrong": [
+    "Het verdeelt netwerkverkeer",
+    "Het is een load balancer",
+    "Het is FastAPI's APIRouter"
+   ],
+   "current_explanation": "Bijvoorbeeld billing, technisch of planning."
+  },
+  {
+   "id": "6-3",
+   "kind": "m",
+   "question": "Wanneer gebruik je orchestrator + workers?",
+   "correct": "Alleen als de taak echt planning nodig heeft",
+   "wrong": [
+    "Altijd, het is de standaard",
+    "Als het goedkoop moet",
+    "Voor elke chatbot"
+   ],
+   "current_explanation": "Krachtig maar duur en moeilijk te debuggen."
+  },
+  {
+   "id": "6-4",
+   "kind": "m",
+   "question": "Een tool met side effects in een klantsysteem. Wat is de regel?",
+   "correct": "Human in the loop: de tool geeft een voorstel dat een mens bevestigt",
+   "wrong": [
+    "Direct uitvoeren",
+    "Alleen loggen",
+    "Verbieden"
+   ],
+   "current_explanation": "Niet onderhandelbaar voor klantsystemen."
+  },
+  {
+   "id": "6-5",
+   "kind": "m",
+   "question": "Waar komt de `user_id` vandaan die een tool krijgt?",
+   "correct": "Uit jouw code, nooit van het model",
+   "wrong": [
+    "Van het model",
+    "Uit de prompt",
+    "Uit de vorige tool-output"
+   ],
+   "current_explanation": "Anders kan een gebruiker het model overhalen een ander id te gebruiken."
+  },
+  {
+   "id": "6-6",
+   "kind": "m",
+   "question": "Een tool gooit een exception in de agent-loop. Wat doe je?",
+   "correct": "Als tekst teruggeven aan het model zodat het kan herstellen",
+   "wrong": [
+    "De hele request laten crashen",
+    "Negeren",
+    "De gebruiker om hulp vragen"
+   ],
+   "current_explanation": "`output = {\"error\": str(exc)}`."
+  },
+  {
+   "id": "6-7",
+   "kind": "m",
+   "question": "Waarvoor dient `MAX_STEPS`?",
+   "correct": "Een stap-limiet tegen eindeloze loops",
+   "wrong": [
+    "Snelheid",
+    "Het aantal tools",
+    "De token-cache"
+   ],
+   "current_explanation": "Plus een tokenbudget."
+  },
+  {
+   "id": "6-8",
+   "kind": "m",
+   "question": "Wat doet `asyncio.Semaphore(5)`?",
+   "correct": "Maximaal 5 taken tegelijk in flight",
+   "wrong": [
+    "5 retries",
+    "Een timeout van 5 seconden",
+    "5 workers"
+   ],
+   "current_explanation": "Begrensde concurrency, bijvoorbeeld bij embeddings."
+  },
+  {
+   "id": "6-9",
+   "kind": "m",
+   "question": "Hoe voer je CPU-zwaar werk (PDF parsen) uit in async code?",
+   "correct": "`await asyncio.to_thread(...)`",
+   "wrong": [
+    "Gewoon in de `async def`",
+    "Met `time.sleep`",
+    "Met `asyncio.gather`"
+   ],
+   "current_explanation": "Anders blokkeer je de event loop."
+  },
+  {
+   "id": "6-10",
+   "kind": "m",
+   "question": "Hoe zet je een timeout op een coroutine?",
+   "correct": "`asyncio.wait_for(coro, timeout=30)`",
+   "wrong": [
+    "`time.timeout(30)`",
+    "`signal.alarm`",
+    "`asyncio.sleep(30)`"
+   ],
+   "current_explanation": "Vang `TimeoutError`."
+  },
+  {
+   "id": "6-11",
+   "kind": "t",
+   "question": "`print()` is prima voor logging in een service.",
+   "correct": "Niet waar",
+   "current_explanation": "Gestructureerde JSON-logs via `logging` naar stdout, met een request id."
+  },
+  {
+   "id": "6-12",
+   "kind": "m",
+   "question": "Welk log level hoort bij 'retrying LLM call'?",
+   "correct": "WARNING",
+   "wrong": [
+    "INFO",
+    "ERROR",
+    "DEBUG"
+   ],
+   "current_explanation": "WARNING = herstelbaar probleem."
+  },
+  {
+   "id": "6-13",
+   "kind": "m",
+   "question": "Welk log level hoort bij 'order completed'?",
+   "correct": "INFO",
+   "wrong": [
+    "DEBUG",
+    "WARNING",
+    "CRITICAL"
+   ],
+   "current_explanation": "INFO = business events."
+  },
+  {
+   "id": "6-14",
+   "kind": "m",
+   "question": "Waarom een request-id middleware?",
+   "correct": "Alle logs van één request aan elkaar koppelen",
+   "wrong": [
+    "Voor authenticatie",
+    "Voor caching",
+    "Voor CORS"
+   ],
+   "current_explanation": "De id gaat ook terug in de `X-Request-ID` header."
+  },
+  {
+   "id": "6-15",
+   "kind": "m",
+   "question": "Wat zegt de 12-factor regel over configuratie?",
+   "correct": "Alleen via environment variables",
+   "wrong": [
+    "Config-bestanden in Git",
+    "Per omgeving hardcoded",
+    "In de database"
+   ],
+   "current_explanation": "Eén codebase, meerdere omgevingen."
+  },
+  {
+   "id": "6-16",
+   "kind": "m",
+   "question": "Wat doe je met `.env.example`?",
+   "correct": "In Git, met placeholder-waarden",
+   "wrong": [
+    "Nooit in Git",
+    "Met de echte secrets erin",
+    "Alleen op de server"
+   ],
+   "current_explanation": "De echte `.env` verlaat je machine nooit."
+  },
+  {
+   "id": "6-17",
+   "kind": "m",
+   "question": "Wat geeft `/health` terug als Redis onbereikbaar is?",
+   "correct": "503",
+   "wrong": [
+    "200",
+    "404",
+    "401"
+   ],
+   "current_explanation": "Compose, Kubernetes en load balancers gebruiken dit om te bepalen of je container leeft."
+  },
+  {
+   "id": "6-18",
+   "kind": "m",
+   "question": "Je hebt per ongeluk een API-key naar GitHub gepusht. Wat doe je?",
+   "correct": "Direct roteren: ga ervan uit dat hij gelekt is",
+   "wrong": [
+    "`git filter-repo` is genoeg",
+    "De repo private maken",
+    "De commit reverten"
+   ],
+   "current_explanation": "Een push is niet terug te draaien."
+  },
+  {
+   "id": "6-19",
+   "kind": "m",
+   "question": "Hoe stel je CORS in?",
+   "correct": "Beperkt tot je eigen front-end origins",
+   "wrong": [
+    "`allow_origins=[\"*\"]`",
+    "Helemaal uit",
+    "Alleen GET toestaan"
+   ],
+   "current_explanation": "Met `CORSMiddleware`."
+  },
+  {
+   "id": "6-20",
+   "kind": "m",
+   "question": "Wat is de best practice voor containers?",
+   "correct": "Non-root user, minimaal base image, geen secrets in het image",
+   "wrong": [
+    "Root voor het gemak",
+    "Secrets als ENV in de Dockerfile",
+    "Zo veel mogelijk tools erin"
+   ],
+   "current_explanation": "Scannen met docker scout of trivy."
+  },
+  {
+   "id": "6-21",
+   "kind": "m",
+   "question": "Waarom een multi-stage Dockerfile?",
+   "correct": "Een klein runtime-image zonder build-tools",
+   "wrong": [
+    "Snellere tests",
+    "Meer lagen is veiliger",
+    "Het is verplicht"
+   ],
+   "current_explanation": "De builder-stage maakt de venv, de runtime-stage kopieert alleen die."
+  },
+  {
+   "id": "6-22",
+   "kind": "m",
+   "question": "Hoe groot is een normaal slim FastAPI-image?",
+   "correct": "150–250 MB",
+   "wrong": [
+    "1–2 GB",
+    "5 MB",
+    "10 GB"
+   ],
+   "current_explanation": "Is het een gigabyte? Dan klopt er iets niet."
+  },
+  {
+   "id": "6-23",
+   "kind": "m",
+   "question": "Wat hoort in `.dockerignore`?",
+   "correct": "`.venv`, `.git`, `tests`, `.env`, `__pycache__`",
+   "wrong": [
+    "`app/`",
+    "`pyproject.toml`",
+    "`alembic.ini`"
+   ],
+   "current_explanation": "Kleiner en geen secrets in je build-context."
+  },
+  {
+   "id": "6-24",
+   "kind": "i",
+   "question": "In welke map staan GitHub Actions workflows?",
+   "correct": ".github/workflows",
+   "current_explanation": "Bijvoorbeeld `.github/workflows/ci.yml`."
+  },
+  {
+   "id": "6-25",
+   "kind": "m",
+   "question": "Horen tests die een echte LLM aanroepen in CI?",
+   "correct": "Nee: mock de llm-module en draai evals apart of 's nachts",
+   "wrong": [
+    "Ja, altijd",
+    "Alleen op main",
+    "Alleen met caching"
+   ],
+   "current_explanation": "CI moet snel, gratis en deterministisch zijn."
+  },
+  {
+   "id": "6-26",
+   "kind": "m",
+   "question": "Welke volgorde van CI-stappen gebruikt het workbook?",
+   "correct": "ruff → pip-audit → alembic upgrade → pytest",
+   "wrong": [
+    "pytest → ruff",
+    "deploy → test",
+    "build → audit → lint"
+   ],
+   "current_explanation": "Met echte Postgres en Redis als services."
+  },
+  {
+   "id": "6-27",
+   "kind": "m",
+   "question": "Wat doet `pip-audit`?",
+   "correct": "Checkt dependencies op bekende kwetsbaarheden",
+   "wrong": [
+    "Formatteert code",
+    "Installeert sneller",
+    "Meet coverage"
+   ],
+   "current_explanation": "Plus Dependabot op GitHub."
+  },
+  {
+   "id": "6-28",
+   "kind": "m",
+   "question": "Hoe doe je een rollback bij deployment?",
+   "correct": "De vorige image-tag draaien",
+   "wrong": [
+    "Op de server opnieuw bouwen",
+    "De database droppen",
+    "Dat kan niet"
+   ],
+   "current_explanation": "Het image wordt één keer gebouwd door CI."
+  },
+  {
+   "id": "6-29",
+   "kind": "m",
+   "question": "Wat doet Caddy in `compose.prod.yaml`?",
+   "correct": "Reverse proxy met automatische HTTPS",
+   "wrong": [
+    "Database",
+    "Cache",
+    "CI-runner"
+   ],
+   "current_explanation": "Let's Encrypt-certificaten zonder gedoe."
+  },
+  {
+   "id": "6-30",
+   "kind": "m",
+   "question": "Hoe ziet een deploy eruit?",
+   "correct": "pull + `up -d` + `alembic upgrade head`",
+   "wrong": [
+    "git clone en pip install op de server",
+    "Bestanden kopiëren met scp",
+    "Bouwen op de server"
+   ],
+   "current_explanation": "Secrets staan alleen op de server."
+  },
+  {
+   "id": "6-31",
+   "kind": "m",
+   "question": "Hoe regel je backups?",
+   "correct": "Dagelijks `pg_dump` en één keer een restore testen",
+   "wrong": [
+    "Niet nodig met volumes",
+    "Alleen Redis back-uppen",
+    "Wekelijks een screenshot"
+   ],
+   "current_explanation": "Een backup die je nooit hebt teruggezet is geen backup."
+  },
+  {
+   "id": "6-32",
+   "kind": "m",
+   "question": "Hoe werkt de `complete_work_order`-tool in de capstone?",
+   "correct": "Eerst een voorstel; een tweede call met `confirm=true` voert het uit",
+   "wrong": [
+    "Direct uitvoeren",
+    "Alleen voor office-gebruikers, zonder bevestiging",
+    "Die tool mag niet bestaan"
+   ],
+   "current_explanation": "Human in the loop."
+  },
+  {
+   "id": "6-33",
+   "kind": "m",
+   "question": "Welk onderdeel weegt het zwaarst in de capstone-beoordeling?",
+   "correct": "It works (30%)",
+   "wrong": [
+    "Code quality",
+    "Tests & evals",
+    "Operations & security"
+   ],
+   "current_explanation": "Clean clone → draaiende stack → demo slaagt."
+  },
+  {
+   "id": "6-34",
+   "kind": "m",
+   "question": "Welke testeis heeft de capstone?",
+   "correct": "Minstens 30 tests met de LLM gemockt en minstens 20 eval-cases",
+   "wrong": [
+    "10 tests",
+    "Alleen evals",
+    "Geen eisen"
+   ],
+   "current_explanation": "Resultaten in EVAL.md."
+  },
+  {
+   "id": "6-35",
+   "kind": "m",
+   "question": "Technicians in de capstone zien...",
+   "correct": "Alleen hun eigen work orders",
+   "wrong": [
+    "Alle work orders",
+    "Geen work orders",
+    "Alleen documenten"
+   ],
+   "current_explanation": "Office-gebruikers zien alles. De rol zit als claim in de JWT."
+  }
+ ],
+ "flashcards": [
+  {
+   "id": "6-f0",
+   "front": "Agent",
+   "back": "Loop + tools + limieten. Kies een vaste workflow als de stappen bekend zijn. Side effects → mens bevestigt. Alles wordt getraced."
+  },
+  {
+   "id": "6-f1",
+   "front": "Vijf agent-patronen",
+   "back": "Single agent met tools (80%) · workflow/pipeline · router · orchestrator + workers · human in the loop"
+  },
+  {
+   "id": "6-f2",
+   "front": "Agent-checklist",
+   "back": "Stap-limiet en tokenbudget · tool-input valideren met Pydantic · identiteit uit jouw code · tool-errors terug naar het model · volledige trace · eval set"
+  },
+  {
+   "id": "6-f3",
+   "front": "Async-patronen",
+   "back": "`asyncio.Semaphore(5)` begrenst · `gather(..., return_exceptions=True)` · `wait_for(..., timeout=30)` · CPU-werk via `asyncio.to_thread`"
+  },
+  {
+   "id": "6-f4",
+   "front": "Logging",
+   "back": "Nooit print. JSON naar stdout met request id. DEBUG detail · INFO business event · WARNING herstelbaar · ERROR request faalt · CRITICAL service kan niet draaien"
+  },
+  {
+   "id": "6-f5",
+   "front": "Wat log je nooit",
+   "back": "Wachtwoorden, tokens, API-keys, volledige prompts met persoonsgegevens."
+  },
+  {
+   "id": "6-f6",
+   "front": "Configuratie",
+   "back": "Alleen via environment variables (12-factor). pydantic-settings valideert bij opstarten. `.env.example` in Git, `.env` nooit."
+  },
+  {
+   "id": "6-f7",
+   "front": "/health",
+   "back": "Check Postgres (`SELECT 1`) en Redis (`ping`). Alles ok → 200, anders 503. Verplicht."
+  },
+  {
+   "id": "6-f8",
+   "front": "Security",
+   "back": "Secrets nergens (code, Git, logs, prompts) · Pydantic op alle input · parametrized SQL · bcrypt + korte JWT's · HTTPS · CORS beperkt · pip-audit · non-root containers"
+  },
+  {
+   "id": "6-f9",
+   "front": "LLM-security",
+   "back": "Prompt injection: tekst is data · tenant-filter in de query · tools met side effects achter bevestiging · model-output nooit ongecontroleerd uitvoeren"
+  },
+  {
+   "id": "6-f10",
+   "front": "Productie-Dockerfile",
+   "back": "Multi-stage: builder maakt venv · runtime kopieert venv, `useradd` non-root, `USER appuser`, `HEALTHCHECK`, `.dockerignore`"
+  },
+  {
+   "id": "6-f11",
+   "front": "CI met GitHub Actions",
+   "back": "Op elke push/PR: checkout → setup-python → `pip install -e \".[dev]\"` → ruff → pip-audit → alembic upgrade → pytest. Op main: image naar GHCR."
+  },
+  {
+   "id": "6-f12",
+   "front": "LLM in CI",
+   "back": "Mock de llm-module (monkeypatch). Evals met een echte key handmatig of 's nachts, key als GitHub secret."
+  },
+  {
+   "id": "6-f13",
+   "front": "Deployment",
+   "back": "Linux-VM met Compose achter Caddy (HTTPS). Deploy = pull + `up -d` + `alembic upgrade head`. Rollback = vorige image-tag."
+  },
+  {
+   "id": "6-f14",
+   "front": "Capstone-weging",
+   "back": "It works 30% · code quality 20% · tests & evals 20% · AI-engineering 15% · operations & security 15%"
+  },
+  {
+   "id": "6-f15",
+   "front": "Capstone-demo",
+   "back": "10 min: gedeployde service, één gegrond antwoord met bronnen, één tool-call met bevestiging, de CI-run, de eval-tabel. Dan 10 min code review."
+  }
+ ]
+}

@@ -1,0 +1,474 @@
+{
+ "3-0": {
+  "jip": "Een image is als een recept in een kookboek: het verandert niet, je gebruikt het alleen. Een container is de taart die je ervan bakt, en van één recept kun je tien taarten bakken. Wat je op de taart zet, verdwijnt als je hem weggooit, tenzij je het in een aparte doos bewaart: een volume.",
+  "nee": [
+   "Dit is precies andersom: het recept (image) blijft vast, de container is wat er draait.",
+   "Er is wel verschil: van één image kun je veel containers starten, net als veel taarten van één recept.",
+   "Een volume is een opslagdoos voor data; een image is het vaste recept waar een container uit komt."
+  ]
+ },
+ "3-1": {
+  "jip": "`docker rm -f` gooit de container weg, maar een named volume is een aparte kluis buiten de container. Je databasebestanden staan in die kluis, dus als je een nieuwe container start met hetzelfde volume, is alles er weer.",
+  "nee": [
+   "Het named volume blijft bestaan; alleen de container zelf is weg.",
+   "De container is juist wat `docker rm -f` verwijdert.",
+   "Environment variables horen bij de container en verdwijnen mee; je geeft ze opnieuw mee bij de volgende `docker run`."
+  ]
+ },
+ "3-2": {
+  "jip": "Denk aan twee deuren met een gang ertussen: het eerste nummer is de deur van je laptop, het tweede de deur van de container. Alles wat op poort 5432 van je laptop aanklopt, wordt doorgestuurd naar poort 5432 in de container.",
+  "nee": [
+   "De volgorde is andersom: links staat altijd je laptop (host), rechts de container.",
+   "Het gaat om één database; de twee getallen zijn de twee kanten van dezelfde verbinding.",
+   "De getallen zijn poortnummers, geen protocol."
+  ]
+ },
+ "3-3": {
+  "jip": "`latest` is als 'het nieuwste model' bestellen: morgen kan dat een ander model zijn dan vandaag. Met `postgres:16` weet je precies wat je krijgt, op elke laptop en elke dag. Een nieuwe hoofdversie kan je oude data bovendien niet zomaar openen."
+ },
+ "3-4": {
+  "jip": "Als je auto raar doet, kijk je eerst naar de lampjes op het dashboard voordat je de motor uit elkaar haalt. `docker logs -f` laat zien wat de container zelf zegt, en meestal staat de foutmelding daar gewoon in.",
+  "nee": [
+   "Dan gooi je de container weg, en daarmee ook zijn logs, voordat je weet wat er mis was.",
+   "Dan verwijder je ook je volumes, dus al je data, terwijl je de oorzaak nog niet kent.",
+   "Herstarten lost het probleem in de container meestal niet op en je leert er niets van."
+  ]
+ },
+ "3-5": {
+  "jip": "`down` is als de winkel sluiten en opruimen; de spullen in het magazijn (de named volumes) blijven liggen. `down -v` gooit ook het magazijn leeg, dus daarna is je database weg.",
+  "nee": [
+   "Bij `docker compose down` betekent `-v` 'volumes', niet 'verbose'.",
+   "Het verschil is groot: met `-v` ben je je data kwijt.",
+   "Alleen stoppen doe je met `docker compose stop`; `-v` verwijdert juist méér."
+  ]
+ },
+ "3-6": {
+  "jip": "Elke container is als een eigen huis, en `localhost` betekent 'mijn eigen huis'. Compose geeft elk huis in het straatje een naam, dus je API vindt de database door naar het huis `db` te gaan.",
+  "nee": [
+   "`localhost` wijst in een container naar die container zelf, en daar draait geen database.",
+   "`127.0.0.1` is hetzelfde als localhost, dus ook weer de container zelf.",
+   "Er is geen service die `host` heet; je gebruikt de servicenaam uit je compose-bestand."
+  ]
+ },
+ "3-7": {
+  "jip": "Een database die net start is als een oven die nog opwarmt: hij staat aan, maar je kunt er nog niet in bakken. `pg_isready` vraagt steeds 'ben je klaar?', en pas bij 'ja' start Compose de diensten die wachten met `condition: service_healthy`.",
+  "nee": [
+   "Een healthcheck kijkt alleen of de database antwoordt; backups maak je met iets als `pg_dump`.",
+   "Een healthcheck kijkt alleen mee en maakt de database niet sneller.",
+   "Een healthcheck meldt alleen gezond of ongezond; herstarten regel je apart met `restart`."
+  ]
+ },
+ "3-8": {
+  "jip": "`\\dt` kun je onthouden als 'describe tables': het is de inhoudsopgave van je database. De backslash vertelt psql dat het een commando van psql zelf is en geen SQL."
+ },
+ "3-9": {
+  "jip": "Een FLOAT rekent bij benadering, een beetje zoals een liniaal met speling: 0,1 + 0,2 wordt net niet precies 0,3. Bij geld wil je elke cent exact, dus tel je in hele centen (`INTEGER`) of gebruik je `NUMERIC`, dat precies rekent.",
+  "nee": [
+   "FLOAT rekent bij benadering, dus er sluipen kleine afrondingsfouten in je bedragen.",
+   "`REAL` is ook een float, alleen nog minder precies, dus net zo slecht voor geld.",
+   "Met `TEXT` kun je niet rekenen, en '12,50' en '12.5' zijn dan zomaar twee verschillende dingen."
+  ]
+ },
+ "3-10": {
+  "jip": "`TIMESTAMPTZ` is als een poststempel: je weet precies op welk moment een brief is verstuurd, waar ter wereld je ook bent. Postgres bewaart het als één moment in UTC en laat het zien in jouw tijdzone. Een gewone `TIMESTAMP` zegt alleen '14:00', maar niet 14:00 waar.",
+  "nee": [
+   "Beide zijn even nauwkeurig; het verschil zit in de tijdzone.",
+   "TIMESTAMP weet niet welke tijdzone bedoeld is, TIMESTAMPTZ legt een echt moment vast.",
+   "TIMESTAMPTZ bewaart datum én tijd; alleen een datum is het type `DATE`."
+  ]
+ },
+ "3-11": {
+  "jip": "Een primary key is als het pasnummer in de bibliotheek: elk nummer bestaat maar één keer en iedereen heeft er een. Zo kun je altijd precies één rij aanwijzen; met een lege of dubbele pas zou dat niet lukken.",
+  "nee": [
+   "Alleen uniek is `UNIQUE`; een primary key mag daarbovenop ook nooit leeg (NULL) zijn.",
+   "Postgres maakt een index op de primary key zelf, niet op een foreign key.",
+   "Een primary key bepaalt geen volgorde; die krijg je alleen met `ORDER BY`."
+  ]
+ },
+ "3-12": {
+  "jip": "Echte waarden zoals een e-mailadres kunnen veranderen, en dan moet je ze overal aanpassen waar ernaar verwezen wordt. Een saai nummer (`SERIAL id`) verandert nooit, en met een `UNIQUE` op de e-mail voorkom je toch dubbele."
+ },
+ "3-13": {
+  "jip": "Een `UPDATE` zonder `WHERE` is als tegen de hele klas zeggen 'jullie hebben allemaal een 0', terwijl je één leerling bedoelde. Postgres vraagt niet 'weet je het zeker?', hij doet het meteen bij elke rij.",
+  "nee": [
+   "De query is geldige SQL, dus Postgres voert hem gewoon uit.",
+   "Zonder `WHERE` geldt de wijziging voor alle rijen, niet alleen de eerste.",
+   "In psql staat autocommit standaard aan, dus de wijziging is meteen definitief."
+  ]
+ },
+ "3-14": {
+  "jip": "Je moet eerst weten uit welke kast je pakt (`FROM`), voordat je kunt kiezen welke spullen je wilt (`WHERE`) en wat je laat zien (`SELECT`). Daarom begint Postgres bij `FROM`, ook al schrijf je `SELECT` bovenaan.",
+  "nee": [
+   "`SELECT` schrijf je wel als eerste, maar Postgres voert het pas na `WHERE`, `GROUP BY` en `HAVING` uit.",
+   "`WHERE` kan pas filteren als `FROM` heeft gezegd uit welke tabel de rijen komen.",
+   "`ORDER BY` komt bijna als laatste: sorteren kan pas als je weet welke rijen er zijn."
+  ]
+ },
+ "3-15": {
+  "jip": "`WHERE` draait eerder dan `SELECT`, dus de bijnaam die je in `SELECT` geeft, bestaat dan nog niet. Het is alsof je iemand roept met een bijnaam die hij pas later op de dag krijgt. `ORDER BY` komt na `SELECT` en kent de bijnaam wel."
+ },
+ "3-16": {
+  "jip": "Een tabel is geen stapel die netjes op volgorde blijft liggen, maar meer een grote doos waar Postgres dingen in en uit schuift. Zonder `ORDER BY` pakt hij de rijen op de handigste manier, en die volgorde kan zomaar veranderen."
+ },
+ "3-17": {
+  "jip": "NULL betekent 'onbekend', en je kunt niet zeggen of iets onbekends gelijk is aan iets anders. Daarom heeft SQL een aparte vraag: `IS NULL`, oftewel 'is dit vakje leeg?'.",
+  "nee": [
+   "`= NULL` geeft altijd 'onbekend' in plaats van true, dus je krijgt nul rijen terug.",
+   "0 is een echte waarde en niet hetzelfde als leeg; rijen met NULL vind je zo niet.",
+   "`NOT` werkt alleen op true/false en niet op een getal, dus Postgres geeft hier een error."
+  ]
+ },
+ "3-18": {
+  "jip": "NULL is 'weet ik niet'. Op de vraag 'is iets onbekends anders dan 3?' is het antwoord ook 'weet ik niet', en `WHERE` laat alleen rijen door met een duidelijk 'ja'. Wil je ze toch, zet er dan `OR technician_id IS NULL` bij.",
+  "nee": [
+   "`NULL <> 3` is niet true maar onbekend, en `WHERE` laat alleen true door.",
+   "Er komt geen foutmelding; de rijen verdwijnen stilletjes, en dat maakt het juist gevaarlijk.",
+   "Alle NULL-rijen worden hetzelfde behandeld, dus er komt er niet één mee."
+  ]
+ },
+ "3-19": {
+  "jip": "`count(*)` telt hoeveel leerlingen er in de klas zitten. `count(technician_id)` telt hoeveel leerlingen hun vakje op het lijstje hebben ingevuld. Lege vakjes (NULL) tellen bij de tweede niet mee.",
+  "nee": [
+   "Ze verschillen zodra de kolom NULLs bevat; dan is `count(col)` kleiner.",
+   "`count(col)` slaat NULL juist over; alleen ingevulde waarden tellen.",
+   "`count(*)` telt elke rij, ook rijen waar kolommen NULL zijn."
+  ]
+ },
+ "3-20": {
+  "jip": "Als je de prijzen optelt in een lege boodschappentas, zegt SQL niet 0 maar 'geen antwoord' (NULL), omdat er niets was om op te tellen. `COALESCE(sum(x), 0)` betekent: als er niets uitkomt, maak er dan 0 van.",
+  "nee": [
+   "SQL geeft hier NULL in plaats van 0; daarom heb je `COALESCE` nodig.",
+   "Optellen over nul rijen mag gewoon en geeft geen error, alleen NULL.",
+   "`sum()` geeft een getal of NULL, nooit een string."
+  ]
+ },
+ "3-21": {
+  "jip": "Als je twee hele getallen deelt, geeft Postgres ook een heel getal terug en laat de rest weg, zoals 5 koekjes verdelen over 2 kinderen: ieder krijgt er 2. Wil je 2.5, maak dan één van de twee een kommagetal: `5 / 2.0`.",
+  "nee": [
+   "2.5 krijg je alleen als minstens één van de getallen een kommagetal is, zoals `5 / 2.0`.",
+   "Postgres rondt hier niet naar boven af; het deel achter de komma valt gewoon weg.",
+   "Hele getallen delen mag gewoon; alleen delen door nul geeft een error."
+  ]
+ },
+ "3-22": {
+  "jip": "Stel dat je knikkers per kleur in bakjes sorteert. `WHERE` gooit de kapotte knikkers weg vóór het sorteren; `HAVING` gooit daarna hele bakjes weg, bijvoorbeeld bakjes met minder dan 5 knikkers. Daarom kan `HAVING` kijken naar dingen als `count(*)`, die pas bestaan na het groeperen.",
+  "nee": [
+   "`WHERE` werkt op losse rijen en `HAVING` op groepen, dus ze filteren op een ander moment.",
+   "`HAVING` draait juist ná `GROUP BY`, en `WHERE` ervoor.",
+   "`WHERE` werkt in elke query, ook zonder join."
+  ]
+ },
+ "3-23": {
+  "jip": "Als je per kleur één bakje knikkers maakt, kan elk bakje maar één regel in het antwoord geven. Een kolom uit `GROUP BY` is per bakje hetzelfde, en een aggregate zoals `count()` vat het bakje samen. Elke andere kolom heeft meerdere waarden per bakje, en dan weet Postgres niet welke hij moet laten zien.",
+  "nee": [
+   "Je mag op meerdere kolommen tegelijk groeperen, bijvoorbeeld `GROUP BY status, technician_id`.",
+   "`ORDER BY` is optioneel; `GROUP BY` werkt ook zonder.",
+   "`SELECT *` haalt ook kolommen op die niet in `GROUP BY` staan, en dat geeft meestal een error."
+  ]
+ },
+ "3-24": {
+  "jip": "Een `LEFT JOIN` houdt elke work order op de lijst, ook als er geen technician bij hoort; dat vakje wordt dan NULL. Het is als een klassenlijst waarop leerlingen zonder mentor gewoon blijven staan, met een leeg vakje erachter.",
+  "nee": [
+   "Een `INNER JOIN` gooit work orders zonder technician weg, terwijl je die juist wilt zien.",
+   "Een `CROSS JOIN` koppelt elke work order aan élke technician, dus je krijgt veel te veel rijen.",
+   "Een subquery is niet nodig; een `LEFT JOIN` doet dit direct."
+  ]
+ },
+ "3-25": {
+  "jip": "Je zet alle parts op een lijst en schrijft ernaast waar ze gebruikt zijn (`LEFT JOIN`). Parts die nergens gebruikt zijn, hebben een leeg vakje ernaast, en die vind je met `WHERE wop.part_id IS NULL`.",
+  "nee": [
+   "Een gewone `JOIN` gooit ongebruikte parts al weg, dus er zijn geen NULL-rijen meer over om te vinden.",
+   "Na een gewone `JOIN` heeft elk overgebleven part minstens één regel, dus `count(*)` is nooit 0.",
+   "Dit koppelt elk part aan de regels van ándere parts, dus ook gebruikte parts komen erin."
+  ]
+ },
+ "3-26": {
+  "jip": "Een `INNER JOIN` houdt alleen rijen over die aan beide kanten een match hebben. Ontbreekt de andere kant, dan verdwijnt de rij stil, zoals een brief zonder adres die gewoon niet bezorgd wordt zonder dat iemand het je vertelt."
+ },
+ "3-27": {
+  "jip": "Een CTE is als een kladblaadje waar je een tussenantwoord op schrijft, met een naam erboven. In de rest van je query kun je naar die naam verwijzen, zodat een lange query leesbaar blijft. Na de query is het blaadje weer weg.",
+  "nee": [
+   "Een CTE bestaat alleen tijdens die ene query; daarna is hij weg.",
+   "Een CTE maakt geen index; die maak je met `CREATE INDEX`.",
+   "Een transactie start je met `BEGIN`; een CTE is gewoon een stukje van één query."
+  ]
+ },
+ "3-28": {
+  "jip": "`GROUP BY` is als alle knikkers per kleur in één bakje gooien: je houdt één rij per kleur over. `OVER ()` laat elke knikker op zijn plek liggen en plakt er een briefje op met het antwoord, zoals het totaal of een rangnummer.",
+  "nee": [
+   "`GROUP BY` maakt minder rijen, `OVER ()` houdt alle rijen; dat is een groot verschil.",
+   "Het gaat niet om snelheid: ze geven een ander soort resultaat.",
+   "Postgres heeft wel window functions, zoals `rank()` en `sum(...) OVER ()`."
+  ]
+ },
+ "3-29": {
+  "jip": "Delen door 0 geeft in Postgres een error en dan stopt je query. `NULLIF(x, 0)` maakt van een 0 een NULL, en delen door NULL geeft gewoon NULL ('weet ik niet') in plaats van een crash.",
+  "nee": [
+   "Alleen als de som precies 0 is, wordt het NULL; andere waarden blijven gewoon staan.",
+   "Afronden doe je met `round()`; `NULLIF` rondt niets af.",
+   "Sorteren doe je met `ORDER BY`; `NULLIF` verandert alleen een 0 in NULL."
+  ]
+ },
+ "3-30": {
+  "jip": "Elke regel in `work_order_parts` betekent 'dit part hoort bij deze job'. Door die twee samen als key te nemen, kan hetzelfde part maar één keer per job op de lijst staan, net als één regel per product op je kassabon, met een aantal erbij.",
+  "nee": [
+   "Met alleen een `id` mag hetzelfde part meerdere keren op één job staan, en dat wil je niet.",
+   "`qty` is een hoeveelheid; die mag best op meerdere regels hetzelfde zijn.",
+   "Met alleen `part_id` zou elk part maar op één job ooit gebruikt kunnen worden."
+  ]
+ },
+ "3-31": {
+  "jip": "Op een kassabon staat niet drie keer 'melk', maar één keer 'melk × 3'. Zo werkt `work_order_parts` ook: één regel per part per job, en `qty` zegt hoeveel.",
+  "nee": [
+   "De samengestelde primary key verbiedt drie rijen met hetzelfde part op één job.",
+   "`parts.stock` is hoeveel er nog in het magazijn ligt, niet hoeveel één job gebruikt.",
+   "Een work order kan veel verschillende parts hebben, dus een aantal per part past daar niet."
+  ]
+ },
+ "3-32": {
+  "jip": "De regels in `work_order_parts` zijn als de regels op een bon: zonder de bon betekenen ze niets. Gooi je de job weg, dan moeten de regels mee, en dat regelt `CASCADE` automatisch.",
+  "nee": [
+   "`RESTRICT` blokkeert het verwijderen van de job zolang er regels zijn, terwijl die regels zonder job toch niets betekenen.",
+   "`SET NULL` kan hier niet, want `work_order_id` zit in de primary key en mag dus nooit NULL zijn.",
+   "Kies je niets, dan blokkeert Postgres het verwijderen, net als `RESTRICT`; dit hoort bij het ontwerp, niet bij later."
+  ]
+ },
+ "3-33": {
+  "jip": "'Nog niet toegewezen' betekent dat het vakje voorlopig leeg mag blijven. In de database heet dat nullable: `technician_id` mag NULL zijn tot er iemand gekozen is.",
+  "nee": [
+   "Er bestaat geen technician met id 0, dus de foreign key weigert die waarde.",
+   "Een aparte tabel is niet nodig; een lege foreign key zegt al 'nog niemand'.",
+   "`technician_id` is een getal dat naar een rij wijst; een lege string is geen geldig id."
+  ]
+ },
+ "3-34": {
+  "jip": "Een kassabon van vorige maand laat de prijs van toen zien, ook als de melk nu duurder is. Door `unit_price_cents` op de regel te kopiëren, blijft een oude factuur kloppen als je later de prijs van een part verandert.",
+  "nee": [
+   "Het gaat niet om joins vermijden, maar om de prijs van dat moment vast te houden.",
+   "Normalisatie zegt juist 'één feit op één plek'; dit is een bewuste uitzondering.",
+   "Snelheid is niet de reden; het gaat erom dat de geschiedenis niet verandert."
+  ]
+ },
+ "3-35": {
+  "jip": "Met `%s` geef je de query en de waarde in twee aparte enveloppen aan de database. Wat in de waarde-envelop zit, wordt altijd als gewone tekst gelezen en nooit als SQL-opdracht, dus niemand kan er stiekem een eigen commando in smokkelen.",
+  "nee": [
+   "Een f-string plakt de tekst in je SQL, dus iemand kan via `sku` eigen SQL meesturen (SQL injection).",
+   "Zelf tekens weghalen vergeet altijd wel een truc en kan ook echte waarden kapotmaken.",
+   "`str.format` plakt de waarde net als een f-string in de SQL, met hetzelfde gevaar."
+  ]
+ },
+ "3-36": {
+  "jip": "Haakjes alleen zijn in Python gewoon haakjes, zoals in `(2 + 3)`. Pas de komma maakt er een tuple van: `(sku,)`. Zonder komma krijgt psycopg een losse string in plaats van een tuple, en dan gaat het mis.",
+  "nee": [
+   "Een tuple met één element heeft een komma nodig: `(sku,)`.",
+   "Een lijst schrijf je met blokhaken: `[sku]`.",
+   "Een set schrijf je met accolades: `{sku}`."
+  ]
+ },
+ "3-37": {
+  "jip": "`%s` is bedoeld voor waarden, zoals een getal of tekst, niet voor namen van tabellen of kolommen. `sql.Identifier` zet zo'n naam netjes tussen dubbele aanhalingstekens, zodat hij altijd als naam gelezen wordt en nooit als extra SQL.",
+  "nee": [
+   "Een `%s` wordt een waarde tussen quotes, en een tabelnaam als waarde geeft een SQL-error.",
+   "Een f-string plakt de naam rauw in je SQL en zet de deur open voor SQL injection.",
+   "Het kan wel, met `psycopg.sql.Identifier`."
+  ]
+ },
+ "3-38": {
+  "jip": "`int | None` betekent in Python 'een getal of niets'. SQLAlchemy leest die type hint en maakt er een kolom van die leeg (NULL) mag zijn. Zonder `| None` wordt het `NOT NULL`.",
+  "nee": [
+   "NOT NULL krijg je met gewoon `Mapped[int]`, zonder `| None`.",
+   "Een primary key geef je aan met `mapped_column(primary_key=True)`.",
+   "Een foreign key geef je aan met `ForeignKey(...)` in `mapped_column`."
+  ]
+ },
+ "3-39": {
+  "jip": "Python's `is` kun je niet aanpassen, dus SQLAlchemy kan er geen SQL van maken. Daarom heeft een kolom de methode `.is_(None)`, die netjes `IS NULL` in je query zet.",
+  "nee": [
+   "`== None` vertaalt SQLAlchemy wel, maar linters keuren het af en het leest verwarrend; het workbook kiest `.is_(None)`.",
+   "Een methode `.equals(None)` bestaat niet in SQLAlchemy.",
+   "`is None` is gewoon Python: het vergelijkt meteen en wordt nooit SQL."
+  ]
+ },
+ "3-40": {
+  "jip": "`scalars()` pakt uit elke rij het eerste vakje, en bij `select(Part)` is dat het hele Part-object. Met `.all()` krijg je ze allemaal in een lijst, als een stapel kaartjes uit de bak.",
+  "nee": [
+   "Dit geeft rijen met losse kolommen (naam en sku), geen Part-objecten.",
+   "`get` haalt één object op via de primary key, geen lijst.",
+   "`scalar` (zonder s) geeft maar één object terug, of None."
+  ]
+ },
+ "3-41": {
+  "jip": "`session.get` is als in de bibliotheek een boek opvragen met het precieze boeknummer: je krijgt meteen dat ene boek, of niets. Heeft de session het object al in zijn geheugen, dan hoeft hij de database niet eens te vragen.",
+  "nee": [
+   "Dit haalt alle rijen op als lijst, niet één rij op id.",
+   "Een `session.find` bestaat niet in SQLAlchemy.",
+   "Een model heeft geen eigen `get`; ophalen gaat via de session."
+  ]
+ },
+ "3-42": {
+  "jip": "Het is als 100 keer apart naar de winkel lopen voor één ding, in plaats van één keer met een boodschappenlijstje. `selectinload` of `joinedload` haalt alle klanten in één keer mee, dus je houdt een vast klein aantal queries over in plaats van 101.",
+  "nee": [
+   "Indexes maken elke query iets sneller, maar het blijven er 101.",
+   "Committen in de loop maakt het eerder erger, en het aantal queries blijft gelijk.",
+   "`echo=False` verbergt alleen de logging; de 101 queries gebeuren nog steeds."
+  ]
+ },
+ "3-43": {
+  "jip": "`flush()` is je boodschappen op de band bij de kassa leggen: de kassa scant alles en ziet meteen als iets niet mag (een constraint). `commit()` is betalen: pas dan is het echt van jou. Tot je betaalt, kun je nog alles terugleggen met een rollback.",
+  "nee": [
+   "Ze doen iets anders: flush stuurt de SQL, commit maakt het definitief.",
+   "Het is andersom: flush stuurt, commit maakt permanent.",
+   "Terugdraaien doe je met `rollback()`; flush stuurt juist wijzigingen naar de database."
+  ]
+ },
+ "3-44": {
+  "jip": "De repository is de helper die de boodschappen op de band legt (flush), de caller is degene die betaalt (commit). Zo kan de caller meerdere stappen samen doen en pas aan het eind alles in één keer goedkeuren, of alles terugzetten als er iets misgaat.",
+  "nee": [
+   "Als de repository na elke methode commit, kun je meerdere stappen niet meer als één geheel terugdraaien.",
+   "Alembic regelt veranderingen aan het schema, niet het opslaan van je data.",
+   "SQLAlchemy commit niet vanzelf; zonder `commit()` gaat je werk verloren."
+  ]
+ },
+ "3-45": {
+  "jip": "Als je een taart bakt, kijk je eerst of je álle ingrediënten hebt voordat je de eieren breekt. `complete_order` doet hetzelfde: eerst checken of er van elk part genoeg is, en pas dan de voorraad verlagen. Zo krijg je een duidelijke fout (`InsufficientStock`) in plaats van een half afgemaakte klus.",
+  "nee": [
+   "Twee loops is juist iets meer werk; het gaat om veiligheid, niet om snelheid.",
+   "SQLAlchemy schrijft niet voor hoeveel loops je gebruikt.",
+   "N+1 los je op met `selectinload` of `joinedload`, niet met een extra loop."
+  ]
+ },
+ "3-46": {
+  "jip": "De test speelt in een zandbak binnen een grote doos: hij mag alles bouwen en zelfs 'opslaan' (commit), maar dat is alleen een savepoint. Na de test wordt de hele doos teruggedraaid, zodat de volgende test weer met een schone database begint.",
+  "nee": [
+   "Snelheid is niet het doel; het gaat erom dat elke test niets achterlaat.",
+   "Tabellen maak je apart aan, bijvoorbeeld met migrations of `create_all`.",
+   "Het is bedoeld om elke test op te ruimen, niet om tests tegelijk te laten draaien."
+  ]
+ },
+ "3-47": {
+  "jip": "Het is alsof je een verplicht vakje aan een formulier toevoegt, terwijl de oude formulieren dat vakje leeg hebben. Postgres weigert dat met `NotNullViolation`. Met een `server_default` zeg je wat de bestaande rijen in dat vakje krijgen.",
+  "nee": [
+   "Zonder default krijgen bestaande rijen NULL, en dat mag niet in een NOT NULL-kolom.",
+   "Postgres maakt je kolom niet stiekem nullable; hij geeft een error.",
+   "Postgres verwijdert nooit zomaar rijen; de upgrade faalt gewoon."
+  ]
+ },
+ "3-48": {
+  "jip": "Een gemergde migration is als een bladzijde in een gedeeld logboek die anderen al hebben uitgevoerd. Hun database heeft hem al gedraaid en kijkt er niet meer naar, dus een aanpassing komt daar nooit aan. Wil je iets veranderen, schrijf dan een nieuwe bladzijde: een nieuwe migration."
+ },
+ "3-49": {
+  "jip": "Autogenerate vergelijkt een foto van je models met een foto van de database. Een hernoemde kolom ziet eruit als 'oude weg, nieuwe erbij', dus hij maakt drop + add en je data verdwijnt. CHECK constraints ziet hij vaak niet, dus lees elke migration voordat je hem draait.",
+  "nee": [
+   "Nieuwe tabellen ziet autogenerate juist goed.",
+   "Nieuwe kolommen ziet autogenerate ook goed.",
+   "Autogenerate werkt prima voor de meeste dingen; je moet het resultaat alleen altijd nalezen."
+  ]
+ },
+ "3-50": {
+  "jip": "`head` is de nieuwste migration, het bovenste blad van de stapel. `alembic upgrade head` voert alle migrations uit die je database nog niet heeft, tot hij helemaal bij is."
+ },
+ "3-51": {
+  "jip": "Alembic legt in je database een klein briefje in de tabel `alembic_version`, met het nummer van de laatste migration. Omdat dat briefje in de database zelf ligt, weet elke database apart hoe ver hij is.",
+  "nee": [
+   "`alembic.ini` bevat de instellingen van Alembic zelf, niet de stand van een database.",
+   "`env.py` vertelt Alembic hoe hij verbinding maakt, niet welke versie er draait.",
+   "`.env` bevat instellingen zoals de database-URL, niet de migration-versie."
+  ]
+ },
+ "3-52": {
+  "jip": "Python is als de juf die vriendelijk zegt 'niet rennen in de gang'. De constraint is het hek dat er altijd staat, ook als de juf er niet is. Python geeft een nette foutmelding, en de database zorgt dat de regel echt nooit gebroken wordt, ook niet door een ander script om 3 uur 's nachts.",
+  "nee": [
+   "Een ander script of een handmatige query kan om Python heen, en dan wordt de regel toch gebroken.",
+   "Alleen de database geeft vaak een onduidelijke foutmelding aan de gebruiker.",
+   "Zonder controle komt er rommel in je database die je later moeilijk opruimt."
+  ]
+ },
+ "3-53": {
+  "jip": "SQLAlchemy slaat een Python-enum standaard op met zijn naam (`PLANNED`) in plaats van zijn waarde (`planned`). Dan zoekt je SQL naar 'planned' en vindt niets, omdat er 'PLANNED' staat. Hoofdletters tellen mee, net als bij een wachtwoord.",
+  "nee": [
+   "Postgres ondersteunt enums gewoon, met `CREATE TYPE ... AS ENUM`.",
+   "Of er een index is, staat los van het enum-type; dat is niet de valkuil.",
+   "Een Postgres-enum werkt met tekstlabels zoals `planned`, niet met getallen."
+  ]
+ },
+ "3-54": {
+  "jip": "Met een `LEFT JOIN` krijgt een technician zonder open orders één rij met lege vakjes. Zet je de statusfilter in `WHERE`, dan gooit die filter juist die lege rij weg en verdwijnt de technician. In de `ON`-conditie bepaal je alleen welke orders er worden aangeplakt, en blijft elke technician op de lijst.",
+  "nee": [
+   "In `WHERE` faalt de check op de rij met lege vakjes, dus technicians zonder open orders verdwijnen.",
+   "`HAVING` filtert pas groepen ná het tellen; dan zijn orders met een andere status al meegeteld.",
+   "`ORDER BY` sorteert alleen en filtert niets."
+  ]
+ },
+ "3-f0": {
+  "jip": "Een image is het recept dat nooit verandert. Een container is het koken volgens dat recept; als je klaar bent en opruimt, is alles op het aanrecht weg. Een volume is de koelkast: wat daarin staat, blijft bewaard."
+ },
+ "3-f1": {
+  "jip": "Je laptop en elke container zijn aparte huizen. Vanaf je laptop klop je op je eigen deur (`localhost:5432`), en die deur is doorverbonden met de database. Vanuit een container gebruik je de naam van het huis van de database: `db`."
+ },
+ "3-f2": {
+  "jip": "`up -d` zet alles aan op de achtergrond, `ps` laat zien wat er draait en `logs` laat horen wat een dienst zegt. `down` ruimt de containers op maar laat je data staan; `down -v` gooit ook de data weg, dus daar ben je voorzichtig mee."
+ },
+ "3-f3": {
+  "jip": "Commando's met een backslash zijn snelknoppen van psql zelf, geen SQL. `\\dt` is de inhoudsopgave, `\\d` bekijkt één tabel, `\\x` zet brede rijen onder elkaar, `\\timing` toont hoe lang een query duurt, `\\i` draait een bestand en `\\q` sluit af."
+ },
+ "3-f4": {
+  "jip": "Kies het type dat past bij wat je bewaart, net als het juiste bakje in de keuken. Tekst in `TEXT`, hele getallen in `INTEGER`, geld in centen of `NUMERIC` omdat FLOAT kleine afrondingsfoutjes maakt, en tijdstippen in `TIMESTAMPTZ` zodat de tijdzone klopt."
+ },
+ "3-f5": {
+  "jip": "Constraints zijn huisregels die de database zelf bewaakt. `NOT NULL`: niet leeg laten. `PRIMARY KEY`: elk nummer één keer en nooit leeg. `UNIQUE`: geen dubbele. `REFERENCES`: moet naar iets bestaands wijzen. `CHECK`: moet aan een voorwaarde voldoen, zoals `qty > 0`."
+ },
+ "3-f6": {
+  "jip": "Je schrijft `SELECT` bovenaan, maar Postgres pakt eerst de kast (`FROM`), filtert (`WHERE`), maakt groepjes (`GROUP BY`, `HAVING`) en kiest pas dan wat je ziet (`SELECT`). Een bijnaam uit `SELECT` bestaat daarom nog niet in `WHERE`, maar wel in `ORDER BY`."
+ },
+ "3-f7": {
+  "jip": "NULL is 'weet ik niet', niet 0 en ook geen lege tekst. Of iets onbekends gelijk is aan iets anders onbekends, weet je ook niet, dus `NULL = NULL` is niet true. Daarom vraag je het met `IS NULL`, en daarom vallen NULL-rijen weg bij `x <> 3`."
+ },
+ "3-f8": {
+  "jip": "`count(*)` telt alle rijen, `count(col)` alleen de ingevulde vakjes. Optellen van niets geeft NULL in plaats van 0, dus gebruik `COALESCE`. `avg()` slaat lege vakjes over, en twee hele getallen delen geeft een heel getal: `5 / 2` is 2."
+ },
+ "3-f9": {
+  "jip": "Vraag jezelf: moet deze rij blijven als er aan de andere kant niets bij hoort? Zo ja, dan neem je een `LEFT JOIN`, die de rij laat staan met lege vakjes. Een `INNER JOIN` gooit zulke rijen stil weg."
+ },
+ "3-f10": {
+  "jip": "Je zet naast elk part waar het gebruikt is. Staat er niets naast, dan is dat vakje NULL, en die parts vind je met `IS NULL`. Zo zoek je wat ergens níet in voorkomt."
+ },
+ "3-f11": {
+  "jip": "Een CTE is een kladblaadje met een naam voor een tussenantwoord binnen je query. Een window function met `OVER ()` laat alle rijen staan en schrijft op elke rij het antwoord over het geheel, zoals het totaal."
+ },
+ "3-f12": {
+  "jip": "Bij elke kolom loop je een checklist af, zoals voordat je op reis gaat. Mag het leeg zijn? Wat maakt de rij uniek? Wat gebeurt er als iets waarnaar je verwijst verdwijnt? Staat hier één feit of twee? En zoek je hier vaak op, zodat een index helpt (maar meet eerst)?"
+ },
+ "3-f13": {
+  "jip": "Lees de opdracht als een taalles. Dingen (zelfstandige naamwoorden) worden tabellen, wat ze met elkaar doen (werkwoorden) wordt een foreign key, 'veel bij veel' wordt een link table met een aantal, en woorden als 'nog niet' betekenen dat een kolom leeg mag zijn."
+ },
+ "3-f14": {
+  "jip": "De link table is de kassabon tussen jobs en parts: één regel per part per job, met een aantal (`qty`) dat groter dan 0 moet zijn. De samengestelde primary key voorkomt dubbele regels, en `CASCADE` ruimt de regels op als de job verdwijnt."
+ },
+ "3-f15": {
+  "jip": "Normaliseren betekent dat je elk feit maar op één plek opschrijft, zodat het nooit op twee plekken anders kan zijn. De uitzondering is een feit over een moment, zoals de prijs op een oude kassabon; die kopieer je bewust naar de regel."
+ },
+ "3-f16": {
+  "jip": "SQL injection is als iemand die op een bestelbriefje stiekem 'en geef me ook de kluis' bijschrijft. Met `%s` en een aparte tuple blijft de waarde altijd gewoon een waarde. Vergeet de komma in `(sku,)` niet, en gebruik `sql.Identifier` voor tabelnamen."
+ },
+ "3-f17": {
+  "jip": "In SQLAlchemy is de type hint het schema: `Mapped[int]` moet altijd ingevuld zijn, `Mapped[int | None]` mag leeg blijven. `__table_args__` moet een tuple zijn, dus vergeet de komma niet. Op NULL filter je met `.is_(None)`, omdat Python's `is` geen SQL kan worden."
+ },
+ "3-f18": {
+  "jip": "Kies de aanroep op basis van wat je terug wilt. Een lijst objecten: `scalars(...).all()`. Precies één of niets: `scalar(...)`. Eén op nummer: `get(Model, id)`. Rijen met losse kolommen: `execute(...).all()`."
+ },
+ "3-f19": {
+  "jip": "N+1 is 100 keer apart naar de winkel lopen in plaats van één keer met een lijstje. `selectinload` of `joinedload` haalt de gekoppelde objecten in één keer mee. Met `echo=True` zie je alle queries voorbijkomen en kun je ze tellen."
+ },
+ "3-f20": {
+  "jip": "`flush()` is je boodschappen op de band leggen: de kassa checkt alles al. `commit()` is betalen: dan is het definitief. De repository legt op de band, alleen de caller betaalt, zodat meerdere stappen samen slagen of samen mislukken."
+ },
+ "3-f21": {
+  "jip": "Elke test speelt in een zandbak die na afloop helemaal wordt gladgestreken. Je opent een transactie, de test mag daarbinnen committen via savepoints, en aan het eind draai je alles terug. Gebruik wel een aparte testdatabase, zodat je echte data nooit geraakt wordt."
+ },
+ "3-f22": {
+  "jip": "`init` zet de map voor migrations klaar, `revision --autogenerate` schrijft een nieuwe stap op basis van je models, `upgrade head` voert alle stappen uit, `current` en `history` laten zien waar je bent, en `downgrade -1` zet één stap terug."
+ },
+ "3-f23": {
+  "jip": "Migrations zijn als een recept dat iedereen stap voor stap volgt. Lees elke stap na, verander nooit een stap die anderen al gedaan hebben, probeer het uit op een database met echte rijen, en bedenk bij een nieuw verplicht vakje wat de oude rijen erin krijgen."
+ }
+}

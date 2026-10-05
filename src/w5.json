@@ -1,0 +1,496 @@
+{
+ "week": 5,
+ "title": "AI-engineering met LLM's",
+ "questions": [
+  {
+   "id": "5-0",
+   "kind": "m",
+   "question": "Wat voorspelt een LLM?",
+   "correct": "Het volgende token",
+   "wrong": [
+    "De volgende zin in één keer",
+    "De waarheid",
+    "Een SQL-query"
+   ],
+   "current_explanation": "Chat-modellen zijn daarna getraind om instructies te volgen."
+  },
+  {
+   "id": "5-1",
+   "kind": "m",
+   "question": "Hoeveel is één token ongeveer?",
+   "correct": "Zo'n driekwart woord",
+   "wrong": [
+    "Eén letter",
+    "Eén zin",
+    "Eén alinea"
+   ],
+   "current_explanation": "Een woorddeel. Tokens zijn je kosten."
+  },
+  {
+   "id": "5-2",
+   "kind": "m",
+   "question": "Onthoudt het model het gesprek tussen twee API-calls?",
+   "correct": "Nee, je stuurt elke keer de hele history mee",
+   "wrong": [
+    "Ja, automatisch",
+    "Alleen bij temperature 0",
+    "Alleen bij grote modellen"
+   ],
+   "current_explanation": "De API is stateless. Opslaan is jouw werk."
+  },
+  {
+   "id": "5-3",
+   "kind": "m",
+   "question": "Welke temperature gebruik je voor extractie en classificatie?",
+   "correct": "0",
+   "wrong": [
+    "1",
+    "2",
+    "Maakt niet uit"
+   ],
+   "current_explanation": "Hoger is voor creatief schrijven."
+  },
+  {
+   "id": "5-4",
+   "kind": "m",
+   "question": "Hoe beperk je hallucinaties?",
+   "correct": "Gronden in opgehaalde feiten, citaties vragen en outputs valideren",
+   "wrong": [
+    "Een hogere temperature",
+    "Langere prompts",
+    "Meer max_tokens"
+   ],
+   "current_explanation": "En een ongecontroleerd antwoord mag nooit een onomkeerbare actie uitvoeren."
+  },
+  {
+   "id": "5-5",
+   "kind": "m",
+   "question": "Waar zet je de modelnaam?",
+   "correct": "In settings/config",
+   "wrong": [
+    "Hardcoded in elke call",
+    "In de prompt",
+    "In de README"
+   ],
+   "current_explanation": "Modellen worden om de paar maanden vervangen."
+  },
+  {
+   "id": "5-6",
+   "kind": "m",
+   "question": "Waarom wrap je de SDK in je eigen `ask()`-functie?",
+   "correct": "Dan kun je van vendor wisselen zonder de rest aan te passen",
+   "wrong": [
+    "Het is sneller",
+    "Dat eist de provider",
+    "Alleen voor streaming"
+   ],
+   "current_explanation": "Later zit alle LLM-code achter je eigen `llm/`-module."
+  },
+  {
+   "id": "5-7",
+   "kind": "m",
+   "question": "Hoe bereken je de kosten van een call?",
+   "correct": "`input_tokens × prijs_in + output_tokens × prijs_out`",
+   "wrong": [
+    "Vaste prijs per request",
+    "Alleen output telt",
+    "Per karakter"
+   ],
+   "current_explanation": "Log usage bij elke call."
+  },
+  {
+   "id": "5-8",
+   "kind": "m",
+   "question": "Waarom zet je altijd `max_tokens`?",
+   "correct": "Om kosten en op hol geslagen loops te begrenzen",
+   "wrong": [
+    "Het model wordt er slimmer van",
+    "Het is verplicht voor streaming",
+    "Het heeft geen effect"
+   ],
+   "current_explanation": "Een loop die blijft aanroepen is de snelste manier om een klantbudget op te maken."
+  },
+  {
+   "id": "5-9",
+   "kind": "m",
+   "question": "Waarom zet je documenten in tags als `<document>...</document>`?",
+   "correct": "Het scheidt instructies van data en dempt prompt injection",
+   "wrong": [
+    "Het model kan alleen HTML lezen",
+    "Het is sneller",
+    "Voor JSON-output"
+   ],
+   "current_explanation": "Behandel elke tekst die het model binnenkomt als data."
+  },
+  {
+   "id": "5-10",
+   "kind": "m",
+   "question": "Wat is few-shot prompting?",
+   "correct": "Twee of drie voorbeelden van input → output in de prompt",
+   "wrong": [
+    "Weinig tokens gebruiken",
+    "Een lage temperature",
+    "Eén API-call doen"
+   ],
+   "current_explanation": "Voorbeelden werken beter dan een alinea regels."
+  },
+  {
+   "id": "5-11",
+   "kind": "m",
+   "question": "Wat is het patroon voor structured output?",
+   "correct": "Schema in de prompt + Pydantic-validatie + retry met de fout",
+   "wrong": [
+    "Een regex op de tekst",
+    "Vertrouwen op het model",
+    "Temperature op 1"
+   ],
+   "current_explanation": "Libraries als instructor doen de retry-loop voor je."
+  },
+  {
+   "id": "5-12",
+   "kind": "m",
+   "question": "De output faalt op Pydantic-validatie. Wat stuur je terug in de retry?",
+   "correct": "De ruwe output als assistant-bericht en de fout als user-bericht",
+   "wrong": [
+    "Niets, gewoon dezelfde call opnieuw",
+    "Een nieuwe system prompt",
+    "Een error naar de gebruiker"
+   ],
+   "current_explanation": "Dan kan het model zijn eigen fout zien en verbeteren."
+  },
+  {
+   "id": "5-13",
+   "kind": "m",
+   "question": "Wie voert bij tool calling de functie echt uit?",
+   "correct": "Jouw code",
+   "wrong": [
+    "Het model",
+    "De provider",
+    "De gebruiker"
+   ],
+   "current_explanation": "Het model vraagt; jouw code beslist óf en hoe."
+  },
+  {
+   "id": "5-14",
+   "kind": "m",
+   "question": "Wanneer stopt de `agent_turn`-loop?",
+   "correct": "Als `stop_reason` niet `\"tool_use\"` is",
+   "wrong": [
+    "Altijd na één call",
+    "Zodra er tekst in het antwoord zit",
+    "Nooit"
+   ],
+   "current_explanation": "Daarna stuur je de tekst-blokken terug als antwoord."
+  },
+  {
+   "id": "5-15",
+   "kind": "m",
+   "question": "Wat doe je met tools die iets veranderen (versturen, verwijderen, betalen)?",
+   "correct": "Bevestiging vragen of een allow-list gebruiken",
+   "wrong": [
+    "Vrij laten aanroepen",
+    "Alleen bij temperature 0 toestaan",
+    "Nooit gebruiken"
+   ],
+   "current_explanation": "Lees-tools mag het model vrij aanroepen."
+  },
+  {
+   "id": "5-16",
+   "kind": "m",
+   "question": "Waar bewaar je de history van een actief gesprek?",
+   "correct": "In Redis met een TTL (en Postgres voor het permanente record)",
+   "wrong": [
+    "In het model",
+    "In een globale Python-lijst",
+    "In de JWT"
+   ],
+   "current_explanation": "En meng nooit de histories van twee gebruikers."
+  },
+  {
+   "id": "5-17",
+   "kind": "m",
+   "question": "Wat zijn de drie stappen van RAG?",
+   "correct": "Index, retrieve, generate",
+   "wrong": [
+    "Train, test, deploy",
+    "Chunk, train, serve",
+    "Prompt, parse, print"
+   ],
+   "current_explanation": "Chunken en embedden → vergelijkbare chunks zoeken → antwoorden uit die chunks."
+  },
+  {
+   "id": "5-18",
+   "kind": "m",
+   "question": "Wat is een embedding?",
+   "correct": "Een lijst floats die de betekenis van een tekst voorstelt",
+   "wrong": [
+    "Een samenvatting",
+    "Een token",
+    "Een hash"
+   ],
+   "current_explanation": "Teksten met vergelijkbare betekenis wijzen dezelfde kant op, ook in verschillende talen."
+  },
+  {
+   "id": "5-19",
+   "kind": "m",
+   "question": "Waarmee meet je hoe vergelijkbaar twee embeddings zijn?",
+   "correct": "Cosine similarity",
+   "wrong": [
+    "Levenshtein-afstand",
+    "SHA-256",
+    "De lengte van de tekst"
+   ],
+   "current_explanation": "~0.8 bij dezelfde betekenis, ~0.1 bij iets anders."
+  },
+  {
+   "id": "5-20",
+   "kind": "m",
+   "question": "Wat betekent de pgvector-operator `<=>`?",
+   "correct": "Cosine distance: kleiner is dichterbij",
+   "wrong": [
+    "Gelijkheid",
+    "Groter dan",
+    "Een JSON-pad"
+   ],
+   "current_explanation": "Similarity = `1 - (embedding <=> query)`."
+  },
+  {
+   "id": "5-21",
+   "kind": "m",
+   "question": "Waarom overlap bij het chunken?",
+   "correct": "Zinnen op de grens komen dan in beide chunks",
+   "wrong": [
+    "Meer tokens geeft altijd betere antwoorden",
+    "Het is sneller",
+    "Het is verplicht"
+   ],
+   "current_explanation": "Bijvoorbeeld chunks van 800 tekens met 150 overlap."
+  },
+  {
+   "id": "5-22",
+   "kind": "m",
+   "question": "Welke index maak je voor snelle vectorsearch?",
+   "correct": "HNSW met `vector_cosine_ops`",
+   "wrong": [
+    "B-tree",
+    "GIN met trigrammen",
+    "Geen index nodig"
+   ],
+   "current_explanation": "Approximate nearest neighbour."
+  },
+  {
+   "id": "5-23",
+   "kind": "m",
+   "question": "Multi-tenant RAG: hoe voorkom je dat klant A de documenten van klant B ziet?",
+   "correct": "Een WHERE op tenant id in de retrieval-query",
+   "wrong": [
+    "Het model vragen dat niet te doen",
+    "Een aparte prompt per klant",
+    "Een hogere similarity-drempel"
+   ],
+   "current_explanation": "Dat filter hoort in de query, niet in de prompt."
+  },
+  {
+   "id": "5-24",
+   "kind": "m",
+   "question": "Wat moet de RAG-prompt afdwingen?",
+   "correct": "Alleen antwoorden uit de chunks, met citaties, en anders 'weet ik niet'",
+   "wrong": [
+    "Zo lang mogelijk antwoorden",
+    "Eigen kennis gebruiken",
+    "Geen bronnen noemen"
+   ],
+   "current_explanation": "Test ook de onbeantwoordbare vragen."
+  },
+  {
+   "id": "5-25",
+   "kind": "m",
+   "question": "Hoe stream je een antwoord in FastAPI?",
+   "correct": "Een generator in een `StreamingResponse` (SSE)",
+   "wrong": [
+    "Een lijst teruggeven",
+    "Alleen via WebSockets",
+    "Via polling"
+   ],
+   "current_explanation": "Na het streamen voeg je het volledige antwoord toe aan de history."
+  },
+  {
+   "id": "5-26",
+   "kind": "m",
+   "question": "Hoe ziet een Server-Sent Events-frame eruit?",
+   "correct": "`data: {...}\\n\\n`",
+   "wrong": [
+    "Een JSON-array",
+    "Een CSV-regel",
+    "Een HTTP-header"
+   ],
+   "current_explanation": "Afsluiten met `data: [DONE]`."
+  },
+  {
+   "id": "5-27",
+   "kind": "m",
+   "question": "Er staat 'ignore previous instructions' in een geüploade PDF. Wat is dat?",
+   "correct": "Prompt injection",
+   "wrong": [
+    "Een bug in pypdf",
+    "Onschuldig",
+    "Een feature van het model"
+   ],
+   "current_explanation": "Behandel opgehaalde tekst als onbetrouwbaar."
+  },
+  {
+   "id": "5-28",
+   "kind": "m",
+   "question": "Wat meet recall@k?",
+   "correct": "Of de juiste chunk in de top k zit",
+   "wrong": [
+    "De snelheid",
+    "De kosten",
+    "De toon"
+   ],
+   "current_explanation": "Retrieval en generatie meet je apart."
+  },
+  {
+   "id": "5-29",
+   "kind": "m",
+   "question": "Wat log je per LLM-call?",
+   "correct": "request_id, user_id, model, prompt_version, tokens, latency, chunk ids",
+   "wrong": [
+    "Alleen errors",
+    "De API-key",
+    "Niets"
+   ],
+   "current_explanation": "Dan kun je precies terugzien wat het model zag."
+  },
+  {
+   "id": "5-30",
+   "kind": "t",
+   "question": "Je bouwt de eval set pas nadat je de prompt hebt getuned.",
+   "correct": "Niet waar",
+   "current_explanation": "Eerst de eval set, dan tunen. Anders weet je niet of je verbetert."
+  },
+  {
+   "id": "5-31",
+   "kind": "m",
+   "question": "Hoeveel onbeantwoordbare vragen moeten minimaal in de Week 5 eval set?",
+   "correct": "3 (van minstens 15)",
+   "wrong": [
+    "0",
+    "1",
+    "15"
+   ],
+   "current_explanation": "De assistent moet ook 'weet ik niet' kunnen zeggen."
+  },
+  {
+   "id": "5-32",
+   "kind": "m",
+   "question": "Wat combineert hybrid search?",
+   "correct": "Vector search en Postgres full-text search (`tsvector`)",
+   "wrong": [
+    "Twee LLM's",
+    "Redis en Postgres",
+    "SQL en regex"
+   ],
+   "current_explanation": "Bijvoorbeeld met reciprocal rank fusion."
+  },
+  {
+   "id": "5-33",
+   "kind": "m",
+   "question": "Hoe verlaag je LLM-kosten?",
+   "correct": "Goedkoper model voor classificatie, prompt caching, max_tokens, dagbudget per gebruiker",
+   "wrong": [
+    "Hogere temperature",
+    "Meer context meesturen",
+    "Een langere system prompt"
+   ],
+   "current_explanation": "Tel het dagbudget in Redis."
+  }
+ ],
+ "flashcards": [
+  {
+   "id": "5-f0",
+   "front": "LLM in vier regels",
+   "back": "De prompt is het programma · de context is het geheugen · output is waarschijnlijkheid (temperature) · modellen hallucineren"
+  },
+  {
+   "id": "5-f1",
+   "front": "Eerste API-call",
+   "back": "`client.messages.create(model=settings.llm_model, max_tokens=..., temperature=0, system=..., messages=[...])`. Log `usage`."
+  },
+  {
+   "id": "5-f2",
+   "front": "Kosten",
+   "back": "`input_tokens × prijs_in + output_tokens × prijs_out`. Altijd `max_tokens`. Schat tokens vooraf met tiktoken."
+  },
+  {
+   "id": "5-f3",
+   "front": "Zeven prompt-regels",
+   "back": "Rol en doel · format expliciet · data in tags · voorbeelden (few-shot) · redeneren bij moeilijke taken · beperken en dan valideren · itereren met een testset"
+  },
+  {
+   "id": "5-f4",
+   "front": "Structured output",
+   "back": "Schema in de prompt → `Model.model_validate_json(raw)` → bij `ValidationError` de fout terugsturen en opnieuw proberen."
+  },
+  {
+   "id": "5-f5",
+   "front": "Tool calling",
+   "back": "Jij beschrijft tools als JSON-schema → model vraagt om een call → jouw code voert uit en stuurt `tool_result` terug → herhalen tot `stop_reason != \"tool_use\"`."
+  },
+  {
+   "id": "5-f6",
+   "front": "Tool-veiligheid",
+   "back": "Lees-tools vrij. Tools met side effects: bevestiging of allow-list. Argumenten altijd valideren met Pydantic."
+  },
+  {
+   "id": "5-f7",
+   "front": "Conversation state",
+   "back": "API is stateless. Actief gesprek in Redis met TTL, permanent in Postgres. Trimmen of samenvatten als het lang wordt."
+  },
+  {
+   "id": "5-f8",
+   "front": "RAG",
+   "back": "Index (chunk → embed → opslaan) · retrieve (vraag embedden → dichtstbijzijnde chunks) · generate (alleen uit die chunks, met citaties)"
+  },
+  {
+   "id": "5-f9",
+   "front": "Embedding",
+   "back": "Lijst floats (bv. 1536) die betekenis voorstelt. Vergelijken met cosine similarity."
+  },
+  {
+   "id": "5-f10",
+   "front": "pgvector",
+   "back": "`CREATE EXTENSION vector` · kolom `vector(1536)` · `ORDER BY embedding <=> $1 LIMIT 5` · `USING hnsw (embedding vector_cosine_ops)`"
+  },
+  {
+   "id": "5-f11",
+   "front": "Chunking",
+   "back": "Stukken met overlap (bv. 800/150). Beter: structuur volgen (koppen, pagina's) en metadata opslaan voor citaties."
+  },
+  {
+   "id": "5-f12",
+   "front": "RAG verbeteren",
+   "back": "Hybrid search (+ tsvector) · re-ranking · metadata-filters (tenant id!) · query rewriting"
+  },
+  {
+   "id": "5-f13",
+   "front": "Streaming",
+   "back": "Generator die `data: {json}\\n\\n` yieldt → `StreamingResponse(..., media_type=\"text/event-stream\")`."
+  },
+  {
+   "id": "5-f14",
+   "front": "Productieklaar",
+   "back": "Timeouts en retries · caching op hash van de prompt · async + gather · guard-rails tegen prompt injection · kostenbeheer"
+  },
+  {
+   "id": "5-f15",
+   "front": "Evaluatie",
+   "back": "Retrieval: recall@k · generatie: correct, gegrond, toon · structured: schema-valid rate · systeem: latency p50/p95, tokens, errors"
+  },
+  {
+   "id": "5-f16",
+   "front": "Observability",
+   "back": "Elke call één record: request_id, user_id, model, prompt_version, tokens, latency_ms, chunk ids. Prompts versioneren in Git."
+  }
+ ]
+}

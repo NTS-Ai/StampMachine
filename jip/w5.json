@@ -1,0 +1,320 @@
+{
+  "5-0": {
+    "jip": "Een LLM werkt als de woordvoorspelling op je telefoon, maar dan heel slim: het kiest steeds het stukje tekst (token) dat het meest waarschijnlijk volgt. Dat stukje plakt het erachter en dan voorspelt het het volgende, net zo lang tot het antwoord af is.",
+    "nee": [
+      "Het model maakt geen hele zin in één keer; het bouwt de zin stukje voor stukje op.",
+      "Het model weet niet wat waar is; het kiest wat waarschijnlijk klinkt, en dat kan ook onzin zijn.",
+      "Een SQL-query kan het wel schrijven, maar dat doet het ook token voor token, net als elke andere tekst."
+    ]
+  },
+  "5-1": {
+    "jip": "Het model knipt tekst in kleine stukjes, zoals puzzelstukjes van woorden. Een kort woord is vaak één stukje, een lang woord wordt in een paar stukjes geknipt, dus gemiddeld is een token ongeveer driekwart woord. Je betaalt per stukje, dus dit bepaalt je kosten.",
+    "nee": [
+      "Eén letter is te klein; meestal zitten er meerdere letters in één token.",
+      "Een zin bestaat uit veel tokens, niet uit één.",
+      "Een alinea is nog veel groter en bevat tientallen tot honderden tokens."
+    ]
+  },
+  "5-2": {
+    "jip": "Het model is als iemand zonder geheugen die elke keer een nieuwe brief krijgt. Wil je dat hij weet wat er eerder gezegd is, dan moet je het hele gesprek opnieuw in de brief zetten. Het gesprek bewaren is dus jouw taak.",
+    "nee": [
+      "De API onthoudt niets tussen calls; zonder history begint het model elke keer blanco.",
+      "Temperature gaat over hoe willekeurig het model kiest, niet over geheugen.",
+      "Ook grote modellen zijn stateless; groot betekent niet dat ze je gesprek bewaren."
+    ]
+  },
+  "5-3": {
+    "jip": "Temperature is een soort durf-knop: hoe hoger, hoe meer het model ook minder voor de hand liggende woorden kiest. Bij uithalen of sorteren wil je elke keer hetzelfde, nette antwoord, dus zet je de knop op 0.",
+    "nee": [
+      "Bij 1 kiest het model gevarieerder, en dat wil je juist niet als je steeds hetzelfde etiket of veld wilt.",
+      "Bij 2 wordt de output erg willekeurig en vaak rommelig, dat past bij geen enkele extractie.",
+      "Het maakt wel uit: een hogere temperature geeft wisselende antwoorden op dezelfde vraag."
+    ]
+  },
+  "5-4": {
+    "jip": "Een model dat uit zijn hoofd antwoordt, verzint soms dingen. Geef het daarom een open-boek-toets: stop de echte feiten in de prompt, laat het zeggen waar het antwoord staat, en controleer de uitkomst. En laat een niet-gecontroleerd antwoord nooit iets doen dat je niet kunt terugdraaien.",
+    "nee": [
+      "Een hogere temperature maakt het model juist wilder, dus eerder meer verzinsels.",
+      "Een langere prompt zonder echte feiten voorkomt niet dat het model iets verzint.",
+      "Meer max_tokens geeft het model alleen meer ruimte om te praten, niet om gelijk te hebben."
+    ]
+  },
+  "5-5": {
+    "jip": "Modellen worden om de paar maanden vervangen door nieuwere. Als de naam op één plek in je instellingen staat, verander je één regel en klaar, net zoals je één adres in je contacten aanpast in plaats van op elke brief.",
+    "nee": [
+      "Hardcoded in elke call betekent dat je bij een nieuw model overal in je code moet gaan zoeken en wijzigen.",
+      "In de prompt doet de naam niets; de API kiest het model via de `model`-parameter, niet via tekst.",
+      "De README is documentatie voor mensen; je code leest daar niets uit."
+    ]
+  },
+  "5-6": {
+    "jip": "Met je eigen `ask()`-functie maak je een soort stekkerdoos: de rest van je code prikt alleen in jouw doos. Wil je een andere provider, dan wissel je alleen wat er achter de doos zit en hoeft de rest niets te merken.",
+    "nee": [
+      "Een extra functie maakt de call niet sneller; het gaat om makkelijk kunnen wisselen.",
+      "De provider eist dit niet; je kunt de SDK ook direct gebruiken, het is jouw eigen keuze voor nette code.",
+      "Het helpt bij alles, niet alleen bij streaming: ook bij logging, retries en van model wisselen."
+    ]
+  },
+  "5-7": {
+    "jip": "Je betaalt zoals bij een taxi met twee meters: één voor wat je erin stopt (input-tokens) en één voor wat eruit komt (output-tokens). Elke meter heeft een eigen prijs, dus je telt die twee bedragen op. Log daarom bij elke call hoeveel tokens het waren.",
+    "nee": [
+      "Er is geen vaste prijs per request; een lange vraag kost meer dan een korte.",
+      "De input telt ook mee, en bij lange prompts of veel context is dat vaak het grootste deel.",
+      "Je betaalt per token, niet per karakter."
+    ]
+  },
+  "5-8": {
+    "jip": "`max_tokens` is een rem: het model mag niet langer praten dan jij toestaat. Zo kan één antwoord of een loop die maar blijft doorgaan niet ongemerkt je hele budget opmaken.",
+    "nee": [
+      "Een limiet maakt het model niet slimmer; het kapt het antwoord alleen af als het te lang wordt.",
+      "Het is niet speciaal voor streaming; je zet het bij elke call als veiligheidsgrens.",
+      "Het heeft wel effect: het model stopt zodra het de limiet bereikt."
+    ]
+  },
+  "5-9": {
+    "jip": "Met tags zet je de tekst van een document als het ware in een doos met een etiket: dit is materiaal, geen opdracht. Staat er in dat document iets als 'doe nu iets anders', dan weet het model beter dat dit gewoon inhoud is. Het helpt, maar is geen perfecte bescherming.",
+    "nee": [
+      "Het model leest gewone tekst prima; de tags zijn alleen een duidelijke scheiding, geen HTML-eis.",
+      "Tags maken niets sneller; ze voegen zelfs een paar tokens toe.",
+      "Tags rond een document zijn er om data van instructies te scheiden, niet om JSON terug te krijgen."
+    ]
+  },
+  "5-10": {
+    "jip": "Few-shot is voordoen in plaats van uitleggen: je laat twee of drie voorbeelden zien van 'dit gaat erin, dit komt eruit'. Net als bij een nieuw spelletje snapt het model het sneller van een paar voorbeelden dan van een lange lijst regels.",
+    "nee": [
+      "Weinig tokens gebruiken is zuinig zijn, dat heeft niets met voorbeelden te maken.",
+      "Een lage temperature gaat over hoe willekeurig het model kiest, niet over voorbeelden in de prompt.",
+      "Het aantal API-calls staat los van few-shot; het gaat om voorbeelden binnen de prompt."
+    ]
+  },
+  "5-11": {
+    "jip": "Je vertelt het model precies welk formulier je terug wilt (schema), je controleert het formulier met Pydantic, en klopt het niet, dan geef je het terug met de fout erbij. Zoals een juf die een opdracht teruggeeft met 'hier mist je naam'.",
+    "nee": [
+      "Een regex is broos: een klein verschil in de tekst en je patroon matcht niet meer, en het checkt geen types.",
+      "Blind vertrouwen gaat mis, want het model levert soms kapotte of incomplete JSON.",
+      "Temperature 1 maakt de output juist wisselender, dus eerder fouten in het formaat."
+    ]
+  },
+  "5-12": {
+    "jip": "Je laat het model zien wat het zelf schreef en vertelt erbij wat er mis was. Zo kan het zijn eigen werk nakijken en verbeteren, net als jij met een nagekeken toets.",
+    "nee": [
+      "Dezelfde call opnieuw doen geeft het model geen aanwijzing, dus het maakt vaak dezelfde fout weer.",
+      "Een nieuwe system prompt vertelt het model niet wat er precies fout ging in dit antwoord.",
+      "Meteen een error naar de gebruiker sturen geeft het model geen kans om het te herstellen."
+    ]
+  },
+  "5-13": {
+    "jip": "Het model is als een klant die een bestelbriefje schrijft: 'zoek het weer op voor Utrecht'. Het briefje zelf doet niets; jouw code leest het, beslist of het mag, voert het uit en geeft het resultaat terug.",
+    "nee": [
+      "Het model kan zelf niets uitvoeren; het schrijft alleen een verzoek in tekst.",
+      "De provider stuurt alleen het verzoek terug; de functie draait niet bij hen maar in jouw code.",
+      "De gebruiker drukt niet zelf op de knop; jouw code voert de tool automatisch uit (en vraagt alleen bevestiging bij gevaarlijke acties)."
+    ]
+  },
+  "5-14": {
+    "jip": "Zolang het model zegt 'ik wil nog een tool gebruiken' (`stop_reason` is `\"tool_use\"`), voer je die uit en vraag je opnieuw. Zegt het iets anders, dan is het klaar en geef je de tekst als antwoord terug.",
+    "nee": [
+      "Na één call is het model vaak nog niet klaar, omdat het eerst het resultaat van een tool nodig heeft.",
+      "Het model kan tekst sturen en tegelijk om een tool vragen, dus tekst betekent nog niet dat het klaar is.",
+      "Een loop die nooit stopt blijft calls doen en tokens kosten; hij moet stoppen zodra er geen tool meer gevraagd wordt."
+    ]
+  },
+  "5-15": {
+    "jip": "Kijken mag altijd, maar iets veranderen niet zomaar, net als in een winkel. Bij versturen, verwijderen of betalen vraag je eerst 'weet je het zeker?' of laat je alleen toe wat op een vaste lijst staat. Een model kan zich vergissen of misleid worden.",
+    "nee": [
+      "Vrij laten aanroepen betekent dat één fout of één trucje in de tekst echte schade kan doen.",
+      "Temperature 0 maakt het model voorspelbaarder, maar niet betrouwbaar genoeg voor gevaarlijke acties.",
+      "Nooit gebruiken is te streng; met bevestiging of een allow-list kun je ze veilig inzetten."
+    ]
+  },
+  "5-16": {
+    "jip": "Redis is als een whiteboard: snel en handig voor het gesprek van nu, en met een TTL wordt het na een tijdje vanzelf uitgeveegd. Postgres is het archief waar je het blijvend bewaart. Zorg wel dat elke gebruiker zijn eigen whiteboard heeft.",
+    "nee": [
+      "Het model onthoudt niets tussen calls, dus daar kun je niets bewaren.",
+      "Een globale Python-lijst is weg bij een herstart, wordt niet gedeeld tussen meerdere servers en mengt snel gebruikers door elkaar.",
+      "Een JWT is een soort pasje om te laten zien wie je bent; een heel gesprek past daar niet in en hoort daar niet."
+    ]
+  },
+  "5-17": {
+    "jip": "RAG is als een bibliotheek gebruiken. Eerst zet je alle boeken geordend in de kast (index), dan pak je de paar bladzijden die bij de vraag passen (retrieve), en daarna schrijft het model een antwoord uit die bladzijden (generate).",
+    "nee": [
+      "Train, test, deploy is het stappenplan voor zelf een model trainen; bij RAG train je niets.",
+      "Bij RAG train je het model niet; je zoekt de juiste stukken tekst op en geeft die mee.",
+      "Prompt, parse, print beschrijft gewoon een call doen en de output tonen, zonder iets op te zoeken."
+    ]
+  },
+  "5-18": {
+    "jip": "Een embedding is een soort adres op een betekenis-kaart, geschreven als een lange rij getallen. Teksten die ongeveer hetzelfde betekenen liggen dicht bij elkaar op die kaart, ook als ze in een andere taal zijn of andere woorden gebruiken.",
+    "nee": [
+      "Een samenvatting is gewone tekst; een embedding is een rij getallen.",
+      "Een token is een stukje tekst; een embedding beschrijft de betekenis van een heel stuk tekst.",
+      "Een hash verandert compleet bij één andere letter, terwijl een embedding juist gelijk blijft bij dezelfde betekenis."
+    ]
+  },
+  "5-19": {
+    "jip": "Elke embedding wijst als een pijl een kant op. Cosine similarity kijkt of twee pijlen dezelfde kant op wijzen: ongeveer dezelfde richting betekent ongeveer dezelfde betekenis (rond 0.8), heel andere richting betekent iets anders (rond 0.1).",
+    "nee": [
+      "Levenshtein telt hoeveel letters je moet veranderen; dat zegt iets over spelling, niet over betekenis.",
+      "SHA-256 is een hash: elke kleine wijziging geeft een totaal ander resultaat, dus je kunt er geen gelijkenis mee meten.",
+      "De lengte van een tekst zegt niets over waar die tekst over gaat."
+    ]
+  },
+  "5-20": {
+    "jip": "`<=>` meet de afstand tussen twee embeddings: hoe kleiner het getal, hoe meer ze op elkaar lijken. Daarom sorteer je ermee van klein naar groot en pak je de bovenste. Wil je de similarity, dan reken je `1 - afstand`.",
+    "nee": [
+      "Gelijkheid schrijf je in SQL gewoon met `=`.",
+      "Groter dan is `>`; `<=>` vergelijkt geen getallen maar vectoren.",
+      "Een JSON-pad schrijf je in Postgres met operators als `->` en `->>`."
+    ]
+  },
+  "5-21": {
+    "jip": "Als je een tekst in stukken knipt, kan een belangrijke zin precies op de knip vallen. Door de stukken een beetje te laten overlappen, zoals dakpannen, staat die zin in allebei de stukken heel en kan hij gevonden worden.",
+    "nee": [
+      "Meer tokens maken een antwoord niet vanzelf beter; overlap is er alleen om zinnen niet doormidden te knippen.",
+      "Overlap maakt het juist iets trager en groter, omdat je meer tekst opslaat.",
+      "Het is niet verplicht; het is een slimme keuze om informatie op de grens niet kwijt te raken."
+    ]
+  },
+  "5-22": {
+    "jip": "HNSW is als een wegwijzer-netwerk door een grote stad: je springt snel van buurt naar buurt richting het goede adres, in plaats van elk huis langs te gaan. Het vindt bijna altijd de dichtstbijzijnde, en heel snel. Met `vector_cosine_ops` meet hij afstand op dezelfde manier als je query.",
+    "nee": [
+      "Een B-tree is goed voor sorteren en exacte waarden, maar kan niet 'lijkt het meest op' zoeken in honderden dimensies.",
+      "GIN met trigrammen zoekt op stukjes letters in tekst, niet op betekenis in vectoren.",
+      "Zonder index vergelijkt Postgres je vraag met elke rij, en dat wordt traag als je veel chunks hebt."
+    ]
+  },
+  "5-23": {
+    "jip": "Je zorgt dat de verkeerde documenten er niet eens bij komen: met een `WHERE` op tenant id haalt de database alleen de papieren van die klant op. Het model krijgt die van klant B dus nooit te zien, zoals een kluisje dat alleen met jouw sleutel opengaat.",
+    "nee": [
+      "Een model kun je vragen wat je wilt, maar het kan zich vergissen of misleid worden; het is geen slot.",
+      "Een aparte prompt houdt niet tegen dat de zoekopdracht documenten van een andere klant ophaalt.",
+      "Een strengere drempel filtert op hoe goed iets lijkt, niet op van wie het is; een document van klant B kan ook prima lijken."
+    ]
+  },
+  "5-24": {
+    "jip": "Het model krijgt een open-boek-toets met alleen de opgehaalde bladzijden. Het mag alleen antwoorden wat daarin staat, moet zeggen waar het stond, en als het er niet in staat zegt het eerlijk 'weet ik niet'. Test dus ook vragen waar geen antwoord op is.",
+    "nee": [
+      "Lange antwoorden zijn niet beter en geven meer ruimte voor verzinsels en kosten.",
+      "Eigen kennis van het model kan verouderd of verzonnen zijn; daarom wil je juist dat het bij de bronnen blijft.",
+      "Zonder bronnen kan niemand controleren of het antwoord echt uit de documenten komt."
+    ]
+  },
+  "5-25": {
+    "jip": "Met streaming krijg je het antwoord druppel voor druppel, zoals een kraan in plaats van een volle emmer. Een generator geeft steeds een stukje, en `StreamingResponse` stuurt elk stukje meteen door naar de browser. Als alles binnen is, zet je het hele antwoord in de history.",
+    "nee": [
+      "Een lijst teruggeven betekent wachten tot alles klaar is en het dan in één keer sturen.",
+      "WebSockets kunnen ook, maar zijn niet de enige manier; voor tekst naar de gebruiker is SSE met `StreamingResponse` simpeler.",
+      "Bij polling vraagt de browser steeds 'is er al iets nieuws?', wat trager en omslachtiger is."
+    ]
+  },
+  "5-26": {
+    "jip": "Elk berichtje begint met `data:` en eindigt met een lege regel (twee keer `\\n`). Die lege regel is als een punt aan het eind van een zin: zo weet de browser dat dit stukje compleet is. Aan het eind stuur je `data: [DONE]`.",
+    "nee": [
+      "Een JSON-array kun je pas lezen als hij helemaal af is, terwijl je bij streaming losse stukjes wilt sturen.",
+      "Een CSV-regel is een tabelformaat; SSE gebruikt regels die met `data:` beginnen.",
+      "Headers worden één keer aan het begin van het antwoord gestuurd, niet per stukje tekst."
+    ]
+  },
+  "5-27": {
+    "jip": "Iemand probeert stiekem het model nieuwe opdrachten te geven via de tekst van een document, zoals een briefje in een boek met 'negeer je juf'. Dat heet prompt injection. Behandel tekst uit documenten daarom altijd als data, niet als opdracht.",
+    "nee": [
+      "pypdf leest de tekst gewoon goed uit; de tekst staat echt in de PDF.",
+      "Het is niet onschuldig: zo'n zin kan het model laten afwijken van jouw instructies.",
+      "Het is geen feature maar een aanval die gebruikmaakt van het feit dat het model alle tekst leest."
+    ]
+  },
+  "5-28": {
+    "jip": "Recall@k kijkt of het goede stukje tekst bij de eerste k zoekresultaten zat, zoals checken of het juiste boek op de stapel van de bibliothecaris lag. Zit het er niet bij, dan kan het model het antwoord ook niet geven. Daarom meet je zoeken en antwoorden apart.",
+    "nee": [
+      "Snelheid meet je met latency, niet met recall@k.",
+      "Kosten tel je met tokens en prijzen, niet met recall@k.",
+      "De toon beoordeel je bij het antwoord zelf, niet bij het zoeken."
+    ]
+  },
+  "5-29": {
+    "jip": "Je houdt per call een soort logboek bij, zoals een vluchtrecorder in een vliegtuig. Met wie, welk model, welke promptversie, hoeveel tokens, hoe lang en welke chunks kun je later precies terugzien wat het model zag en waarom het iets zei.",
+    "nee": [
+      "Alleen errors loggen helpt niet als een antwoord wel lukte maar inhoudelijk fout was.",
+      "Een API-key is geheim en hoort nooit in een log, want wie het log leest kan dan op jouw kosten calls doen.",
+      "Zonder logs kun je problemen, kosten en rare antwoorden achteraf niet uitzoeken."
+    ]
+  },
+  "5-30": {
+    "jip": "Eerst maak je de toets, dan ga je oefenen. Als je de vragen pas achteraf bedenkt, kies je ongemerkt vragen die je prompt al goed doet, en weet je niet of een wijziging echt beter is."
+  },
+  "5-31": {
+    "jip": "In je testset van minstens 15 vragen zitten er minstens 3 waar het antwoord niet in de documenten staat. Zo test je of de assistent eerlijk 'weet ik niet' zegt in plaats van iets te verzinnen.",
+    "nee": [
+      "Met 0 test je nooit of de assistent durft te zeggen dat hij het niet weet.",
+      "Met maar 1 vraag is het toeval of hij goed of fout gaat; de afspraak is minstens 3.",
+      "15 is het minimale totaal van de hele set; dan zou er geen enkele beantwoordbare vraag meer in zitten."
+    ]
+  },
+  "5-32": {
+    "jip": "Hybrid search gebruikt twee zoekers tegelijk: één die op betekenis zoekt (vector search) en één die op precieze woorden zoekt (full-text met `tsvector`). Zo vind je zowel 'iets wat erop lijkt' als exacte namen of codes, en voeg je de lijstjes slim samen.",
+    "nee": [
+      "Twee LLM's laten praten is geen zoekmethode; hybrid search gaat over het ophalen van tekst.",
+      "Redis en Postgres zijn twee databases, maar hybrid search combineert twee zoekmanieren binnen Postgres.",
+      "Regex zoekt op letterpatronen en snapt geen betekenis; hybrid search gebruikt vectoren en full-text."
+    ]
+  },
+  "5-33": {
+    "jip": "Net als thuis bespaar je door slim te kiezen: een goedkoop model voor simpele sorteerklusjes, hergebruiken wat je al eens stuurde (prompt caching), een rem op de lengte (`max_tokens`) en een dagbudget per gebruiker. Zo groeit de rekening niet onverwacht.",
+    "nee": [
+      "Temperature verandert hoe het model kiest, niet hoeveel tokens je betaalt.",
+      "Meer context betekent meer input-tokens, dus juist hogere kosten.",
+      "Een langere system prompt gaat bij elke call mee en kost dus elke keer extra tokens."
+    ]
+  },
+  "5-f0": {
+    "jip": "Wat je in de prompt schrijft is je programma, en alles wat het model weet staat in de context die je meestuurt. Het antwoord is een kansspel dat je met temperature regelt, en het model kan dingen verzinnen, dus controleer altijd."
+  },
+  "5-f1": {
+    "jip": "Een eerste call is als een bestelformulier invullen: welk model (uit je settings), hoe lang het antwoord mag zijn, hoe voorspelbaar (temperature 0), de rol (system) en het gesprek (messages). Daarna schrijf je `usage` op, zodat je weet wat het kostte."
+  },
+  "5-f2": {
+    "jip": "Je betaalt apart voor wat erin gaat en wat eruit komt, elk met een eigen prijs per token. Zet altijd `max_tokens` als rem, en met tiktoken kun je vooraf al ongeveer tellen hoeveel tokens je tekst is."
+  },
+  "5-f3": {
+    "jip": "Een goede prompt is als een goede opdracht aan een nieuwe stagiair: zeg wie hij is en wat het doel is, hoe het resultaat eruit moet zien, wat data is (in tags), laat voorbeelden zien en laat hem bij lastige dingen eerst nadenken. Daarna controleer je het werk en verbeter je de opdracht met een vaste set testvragen."
+  },
+  "5-f4": {
+    "jip": "Je vertelt het model welke vorm de JSON moet hebben, en Pydantic controleert of het klopt. Zo niet, dan stuur je de foutmelding terug zodat het model het kan verbeteren, net als een formulier dat terugkomt met 'dit veld is verplicht'."
+  },
+  "5-f5": {
+    "jip": "Je geeft het model een menukaart met tools. Het model bestelt er een, jouw code maakt het klaar en brengt het resultaat terug (`tool_result`). Dat herhaal je tot het model geen nieuwe bestelling meer doet."
+  },
+  "5-f6": {
+    "jip": "Opzoeken mag het model vrij, want dat verandert niets. Iets veranderen (versturen, verwijderen, betalen) mag alleen na bevestiging of als het op een vaste lijst staat. En wat het model aan de tool meegeeft controleer je altijd met Pydantic, want het kan zich vergissen."
+  },
+  "5-f7": {
+    "jip": "De API onthoudt niets, dus jij bewaart het gesprek: het lopende gesprek op een snel whiteboard (Redis, met TTL), het blijvende verslag in het archief (Postgres). Wordt het gesprek te lang, dan knip je oude stukken weg of vat je ze samen."
+  },
+  "5-f8": {
+    "jip": "RAG is een bibliotheek voor je model: eerst knip je teksten in stukken, zet je ze om in getallen en sla je ze op. Bij een vraag zoek je de stukken die er het meest op lijken, en het model antwoordt alleen daaruit, met bronvermelding."
+  },
+  "5-f9": {
+    "jip": "Een embedding is een lange rij getallen (bijvoorbeeld 1536) die zegt waar een tekst over gaat, als een adres op een betekenis-kaart. Met cosine similarity kijk je of twee adressen dicht bij elkaar liggen."
+  },
+  "5-f10": {
+    "jip": "pgvector leert Postgres rekenen met embeddings. Je zet de extensie aan, maakt een kolom voor vectoren, sorteert met `<=>` op afstand (kleinst eerst) en zet er een HNSW-index op zodat zoeken snel blijft."
+  },
+  "5-f11": {
+    "jip": "Je knipt teksten in stukken die een beetje overlappen, zodat geen zin op de knip verloren gaat. Nog beter is knippen langs de natuurlijke grenzen zoals koppen en pagina's, en per stuk opschrijven waar het vandaan kwam, zodat je later netjes de bron kunt noemen."
+  },
+  "5-f12": {
+    "jip": "Je RAG wordt beter door slimmer te zoeken: ook op exacte woorden (hybrid search), de gevonden stukken nog eens netjes op volgorde zetten (re-ranking), filteren op wie iets mag zien (tenant id) en een rommelige vraag eerst herschrijven tot een goede zoekvraag."
+  },
+  "5-f13": {
+    "jip": "Een generator geeft steeds een klein stukje antwoord, elk in de vorm `data: ...` met een lege regel erachter. `StreamingResponse` met type `text/event-stream` stuurt die stukjes direct door, zodat de gebruiker het antwoord ziet verschijnen terwijl het nog geschreven wordt."
+  },
+  "5-f14": {
+    "jip": "Klaar voor echt gebruik betekent: niet eeuwig wachten (timeouts) en het nog eens proberen bij een hapering (retries), hetzelfde antwoord hergebruiken bij dezelfde prompt (caching), meerdere calls tegelijk doen (async), je beschermen tegen trucjes in teksten en de kosten in de gaten houden."
+  },
+  "5-f15": {
+    "jip": "Je kijkt elk onderdeel apart na, zoals een rapport met vakken: vond het zoeken het goede stuk (recall@k), klopt het antwoord en komt het uit de bronnen, is de JSON geldig, en hoe snel en duur is het geheel. Zo weet je precies waar het misgaat."
+  },
+  "5-f16": {
+    "jip": "Per call schrijf je één regel in het logboek met alles wat je later nodig hebt: wie, welk model, welke promptversie, hoeveel tokens, hoe lang het duurde en welke chunks erbij zaten. Je prompts bewaar je in Git, zodat je altijd weet welke versie welk antwoord gaf."
+  }
+}
