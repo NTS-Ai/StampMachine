@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Leergame voor het 6-weken Python- en AI-workbook: per week een quiz, flashcards, een speedrun en typvragen, plus een eindbaas met alle weken door elkaar.">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#ECEFF6" media="(prefers-color-scheme: light)" data-scheme="light">
-<meta name="theme-color" content="#0E1220" media="(prefers-color-scheme: dark)" data-scheme="dark">
+<meta name="theme-color" content="#F3F5FA" media="(prefers-color-scheme: light)" data-scheme="light">
+<meta name="theme-color" content="#0A0E1A" media="(prefers-color-scheme: dark)" data-scheme="dark">
 <title>NTS Stampmachine</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,7 +32,11 @@
       <span class="pill" id="dayStreak" title="Dagen op rij gespeeld">0 dagen op rij</span>
     </div>
     <div class="hud-tools">
-      <button class="iconbtn" id="themeBtn" type="button"></button>
+      <button class="iconbtn" id="searchBtn" type="button" aria-label="Zoeken (sneltoets /)" title="Zoeken  ( / )"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="btn-label">Zoeken</span><kbd class="keycap kbd">/</kbd></button>
+      <div class="menu-wrap">
+        <button class="iconbtn" id="themeBtn" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="themeMenu"></button>
+        <div class="menu" id="themeMenu" role="menu" aria-label="Thema" hidden></div>
+      </div>
       <button class="iconbtn" id="soundBtn" type="button" aria-pressed="true"></button>
     </div>
   </div>
@@ -45,7 +49,7 @@
       <div>
         <h1>Zes weken workbook.<br><em>Tot het erin zit.</em></h1>
         <p>Elke week heeft een quiz, flashcards, een speedrun van 60 seconden en typvragen. Wat je fout hebt komt vaker terug. Klaar met alle weken? Dan wacht de pager om 03:00.</p>
-        <button class="weak" id="weakBtn" type="button">Herhaal mijn zwakke plekken</button>
+        <button class="weak" id="weakBtn" type="button"><span>Herhaal mijn zwakke plekken</span></button>
         <p class="notice" id="clearedNotice" hidden>Je vorige voortgang is gewist, omdat je 30 dagen niet hebt gespeeld.</p>
       </div>
       <div class="meter">
@@ -55,6 +59,11 @@
         <small id="totalSub">0 van 0 vragen beheerst</small>
       </div>
     </div>
+    <form class="home-search" id="homeSearch" role="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="homeSearchIn" type="search" autocomplete="off" spellcheck="false" placeholder="Zoek een begrip, commando of vraag…" aria-label="Zoek in alle vragen en flashcards">
+      <kbd class="keycap kbd">/</kbd>
+    </form>
     <div class="grid" id="grid"></div>
     <div class="privacy">
       <p>Je voortgang wordt automatisch gewist als je 30 dagen niet speelt. Je kunt hem ook zelf meteen wissen.</p>
@@ -66,7 +75,7 @@
   <section id="play" class="wrap" hidden>
     <div class="stage">
       <div class="play-hud">
-        <button class="btn" id="quitBtn" type="button">Stoppen</button>
+        <button class="btn ghost" id="quitBtn" type="button" aria-label="Stoppen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg><span class="btn-label">Stoppen</span></button>
         <div class="grow">
           <div class="mode-tag" id="modeTag">Quiz</div>
           <div class="bar" style="--hue:var(--accent);margin-top:4px"><i id="progFill" style="width:0%"></i></div>
@@ -79,8 +88,11 @@
         <div class="lbl"><span>Pager om 03:00 — productie-incident</span><span id="bossHpText">25 / 25</span></div>
         <div class="bar"><i id="bossHp" style="width:100%"></i></div>
       </div>
-      <div class="timer" id="timer"><i id="timerFill"></i></div>
-      <div class="card" id="qcard"></div>
+      <!-- De timer loopt als dunne lijn over de bovenrand van de vraagkaart. -->
+      <div class="qwrap">
+        <div class="timer" id="timer" title="Tijd voor deze vraag"><i id="timerFill"></i></div>
+        <div class="card" id="qcard"></div>
+      </div>
     </div>
   </section>
 
@@ -88,7 +100,7 @@
   <section id="cards" class="wrap" hidden>
     <div class="stage">
       <div class="play-hud">
-        <button class="btn" id="fcQuit" type="button">Stoppen</button>
+        <button class="btn ghost" id="fcQuit" type="button" aria-label="Stoppen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg><span class="btn-label">Stoppen</span></button>
         <div class="grow">
           <div class="mode-tag" id="fcTag">Flashcards</div>
           <div class="bar" style="--hue:var(--good);margin-top:4px"><i id="fcProg" style="width:0%"></i></div>
@@ -100,7 +112,7 @@
           <div class="face front">
             <span class="chip" id="fcChip">Week 1</span>
             <h2 id="fcFront"></h2>
-            <span class="hint"><span class="kbd">Klik of spatie om om te draaien</span><span class="touch-only">Tik om om te draaien</span></span>
+            <span class="hint flip-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5M3 21v-5h5"/></svg><span class="kbd">Klik of spatie om om te draaien</span><span class="touch-only">Tik om om te draaien</span></span>
           </div>
           <div class="face back">
             <span class="chip">Antwoord</span>
@@ -114,6 +126,30 @@
         <button class="btn yes lg" id="fcYes" type="button">Zit erin<span class="kbd"> (2)</span></button>
         <span class="hint touch-only">Of veeg: naar links is nog niet, naar rechts is zit erin.</span>
       </div>
+    </div>
+  </section>
+
+  <!-- Opzoeken: alle vragen, uitleg en flashcards -->
+  <section id="search" class="wrap" hidden>
+    <div class="search-page">
+      <div class="search-head">
+        <button class="btn ghost" id="searchBack" type="button" aria-label="Terug naar het overzicht"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg><span class="btn-label">Overzicht</span></button>
+        <div>
+          <h2>Opzoeken</h2>
+          <p>Alle vragen, antwoorden, uitleg en flashcards van de zes weken.</p>
+        </div>
+      </div>
+      <form class="searchbar" id="searchForm" role="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="searchIn" type="search" autocomplete="off" spellcheck="false" enterkeyhint="search" placeholder="Zoek op begrip, commando of foutmelding…" aria-label="Zoekterm">
+        <button class="clear" id="searchClear" type="button" aria-label="Zoekterm wissen" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </form>
+      <div class="search-filters">
+        <div class="seg" id="searchKinds" role="radiogroup" aria-label="Soort"></div>
+        <div class="seg weeks" id="searchWeeks" role="radiogroup" aria-label="Week"></div>
+      </div>
+      <div class="search-status" id="searchStatus" aria-live="polite"></div>
+      <div class="search-results" id="searchResults"></div>
     </div>
   </section>
 
@@ -151,6 +187,7 @@
 <script src="js/screens/home.js"></script>
 <script src="js/screens/game.js"></script>
 <script src="js/screens/cards.js"></script>
+<script src="js/screens/search.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

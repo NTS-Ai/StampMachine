@@ -2,32 +2,58 @@
 
 /* ---------- kleuren en lettertypes ---------- */
 :root {
-  --bg: #ECEFF6; --surface: #FFFFFF; --sunk: #F5F7FB; --ink: #131A2F; --muted: #5B6383; --line: #D4D9E6;
-  --accent: #2B47F0; --on-accent: #FFFFFF; --good: #11815A; --bad: #CC3434; --gold: #B87A00;
+  --bg: #EFF2F9; --surface: #FFFFFF; --sunk: #F5F7FC; --ink: #0F1629; --muted: #5A6382;
+  --line: #E1E5EF; --line-strong: #CDD3E1;
+  --accent: #3550F0; --accent-2: #7C4DFF; --on-accent: #FFFFFF;
+  --good: #0F8A5F; --bad: #D33A3A; --gold: #B87A00;
   --w1: #0E8A7D; --w2: #7445D8; --w3: #2563EB; --w4: #0B8457; --w5: #C9561F; --w6: #B8326F;
+  --shadow-sm: 0 1px 2px rgb(16 24 48 / .06), 0 1px 1px rgb(16 24 48 / .03);
+  --shadow-md: 0 12px 28px -12px rgb(16 24 48 / .18), 0 2px 6px rgb(16 24 48 / .05);
+  --shadow-lg: 0 28px 64px -16px rgb(16 24 48 / .28), 0 4px 12px rgb(16 24 48 / .06);
+  --glow: 10%;
+  --surface-fill: var(--surface);
   --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
   --f-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
   --f-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
-  --r: 14px;
+  /* Vaste reeks afrondingen en overgangen, zodat alles als één geheel aanvoelt. */
+  --r-xs: 6px; --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 20px;
   --hud-h: 56px;
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --dur: .18s; --dur-slow: .28s;
   color-scheme: light;
 }
 
 /* Donker: volgt het systeem, tenzij de gebruiker zelf 'Licht' koos. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0E1220; --surface: #171C2E; --sunk: #121727; --ink: #E7EAF5; --muted: #9AA2BF; --line: #2A3150;
-    --accent: #7A8FFF; --on-accent: #0E1220; --good: #3CCB8A; --bad: #FF6F6F; --gold: #FFC84A;
-    --w1: #3CC9B8; --w2: #A88BFF; --w3: #6C9CFF; --w4: #38C98C; --w5: #FF9258; --w6: #FF79B0;
+    --bg: #0A0E1A; --surface: #131A2C; --sunk: #0F1424; --ink: #E8EBF6; --muted: #98A1C0;
+    --line: #232B46; --line-strong: #323C5E;
+    --accent: #8094FF; --accent-2: #B18CFF; --on-accent: #0A0E1A;
+    --good: #45C98F; --bad: #FF7575; --gold: #F7C552;
+    --w1: #4CC2B4; --w2: #A592F5; --w3: #78A2F5; --w4: #4FC393; --w5: #F29A6C; --w6: #EE86B3;
+    /* In donker geven een lichte bovenrand en een iets lichtere kaart de diepte, niet de schaduw. */
+    --shadow-sm: inset 0 1px 0 rgb(255 255 255 / .05), 0 1px 2px rgb(0 0 0 / .4);
+    --shadow-md: inset 0 1px 0 rgb(255 255 255 / .06), 0 16px 36px -14px rgb(0 0 0 / .7);
+    --shadow-lg: inset 0 1px 0 rgb(255 255 255 / .06), 0 30px 70px -16px rgb(0 0 0 / .75);
+    --surface-fill: linear-gradient(180deg, #182036, #131A2C 160px);
+    --glow: 16%;
     color-scheme: dark;
   }
 }
 
-/* Donker: zelf gekozen met de themaknop. */
+/* Donker: zelf gekozen in het themamenu. */
 :root[data-theme="dark"] {
-  --bg: #0E1220; --surface: #171C2E; --sunk: #121727; --ink: #E7EAF5; --muted: #9AA2BF; --line: #2A3150;
-  --accent: #7A8FFF; --on-accent: #0E1220; --good: #3CCB8A; --bad: #FF6F6F; --gold: #FFC84A;
-  --w1: #3CC9B8; --w2: #A88BFF; --w3: #6C9CFF; --w4: #38C98C; --w5: #FF9258; --w6: #FF79B0;
+  --bg: #0A0E1A; --surface: #131A2C; --sunk: #0F1424; --ink: #E8EBF6; --muted: #98A1C0;
+  --line: #232B46; --line-strong: #323C5E;
+  --accent: #8094FF; --accent-2: #B18CFF; --on-accent: #0A0E1A;
+  --good: #45C98F; --bad: #FF7575; --gold: #F7C552;
+  --w1: #4CC2B4; --w2: #A592F5; --w3: #78A2F5; --w4: #4FC393; --w5: #F29A6C; --w6: #EE86B3;
+  /* In donker geven een lichte bovenrand en een iets lichtere kaart de diepte, niet de schaduw. */
+  --shadow-sm: inset 0 1px 0 rgb(255 255 255 / .05), 0 1px 2px rgb(0 0 0 / .4);
+  --shadow-md: inset 0 1px 0 rgb(255 255 255 / .06), 0 16px 36px -14px rgb(0 0 0 / .7);
+  --shadow-lg: inset 0 1px 0 rgb(255 255 255 / .06), 0 30px 70px -16px rgb(0 0 0 / .75);
+  --surface-fill: linear-gradient(180deg, #182036, #131A2C 160px);
+  --glow: 16%;
   color-scheme: dark;
 }
 
@@ -37,6 +63,13 @@
 :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
 img { max-width: 100%; }
 html, body { min-height: 100%; }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--hud-h) + 16px);
+  /* Dunne scrollbalk in de kleuren van het thema. */
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
 body {
   background: var(--bg);
   color: var(--ink);
@@ -45,16 +78,25 @@ body {
   line-height: 1.5;
   margin: 0;
   -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
 }
+/* Zachte kleurgloed achter de pagina voor wat diepte. */
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(900px 480px at 8% -8%, color-mix(in srgb, var(--accent) var(--glow), transparent), transparent 70%),
+    radial-gradient(700px 420px at 100% 0%, color-mix(in srgb, var(--accent-2) calc(var(--glow) * .7), transparent), transparent 70%);
+}
+::selection { background: color-mix(in srgb, var(--accent) 28%, transparent); }
 button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulation; }
 button:focus-visible, input:focus-visible, textarea:focus-visible, .fc:focus-visible {
-  outline: 3px solid var(--accent);
+  outline: 3px solid color-mix(in srgb, var(--accent) 70%, transparent);
   outline-offset: 2px;
 }
 
 /* ---------- typografie ---------- */
 code, pre { font-family: var(--f-mono); font-size: .88em; }
-code { background: color-mix(in srgb, var(--accent) 10%, transparent); padding: .05em .35em; border-radius: 5px; }
+code { background: color-mix(in srgb, var(--accent) 10%, transparent); padding: .05em .35em; border-radius: var(--r-xs); }
 h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.1; }
 
 /* ---------- hulpklassen ---------- */
@@ -73,6 +115,14 @@ h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-
   .touch-only { display: inline; }
 }
 
+/* Schermen komen rustig in beeld. */
+main > section:not([hidden]) { animation: screen-in .35s var(--ease-out); }
+@keyframes screen-in { from { opacity: 0; transform: translateY(6px); } }
+
+/* Zachte overgang bij het wisselen van thema (browsers met View Transitions). */
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .35s; }
+
 @media (prefers-reduced-motion: reduce) {
-  * { animation: none !important; transition: none !important; }
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
 }

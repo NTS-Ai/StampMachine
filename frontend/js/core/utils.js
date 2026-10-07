@@ -51,6 +51,28 @@ const isTouch = () => window.matchMedia('(hover: none) and (pointer: coarse)').m
 /** Getal in Nederlandse notatie, bijvoorbeeld 1.234. @param {number} n */
 const nl = n => n.toLocaleString('nl-NL');
 
+/** @type {WeakMap<HTMLElement, number>} */
+const counting = new WeakMap();
+
+/**
+ * Telt een getal rustig op of af naar de eindwaarde, bijvoorbeeld gelijk met het vullen van een balk.
+ * @param {HTMLElement} el
+ * @param {number} to
+ * @param {{ from?: number, ms?: number, format?: (n: number) => string }} [opts]
+ */
+function countUp(el, to, { from = 0, ms = 1100, format = String } = {}) {
+  cancelAnimationFrame(counting.get(el) || 0);
+  const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (calm || from === to) { el.textContent = format(to); return; }
+  const start = performance.now();
+  const step = (/** @type {number} */ now) => {
+    const t = Math.min(1, (now - start) / ms);
+    el.textContent = format(Math.round(from + (to - from) * (1 - Math.pow(1 - t, 3))));
+    if (t < 1) counting.set(el, requestAnimationFrame(step));
+  };
+  counting.set(el, requestAnimationFrame(step));
+}
+
 /**
  * Levenshtein-afstand: hoeveel tekens je moet toevoegen, weghalen of vervangen.
  * Gebruikt om kleine typfouten bij typvragen goed te rekenen.
@@ -69,11 +91,12 @@ function editDistance(a, b) {
   return prev[b.length];
 }
 
-/** @typedef {'home' | 'play' | 'cards' | 'result'} ScreenId */
+/** @typedef {'home' | 'play' | 'cards' | 'result' | 'search'} ScreenId */
 
 /** Toont één scherm en verbergt de rest. @param {ScreenId} id */
 function showScreen(id) {
-  for (const s of ['home', 'play', 'cards', 'result']) $('#' + s).hidden = s !== id;
+  for (const s of ['home', 'play', 'cards', 'result', 'search']) $('#' + s).hidden = s !== id;
   document.body.dataset.screen = id;
-  window.scrollTo(0, 0);
+  // Direct naar boven, ook al scrolt de pagina verder vloeiend.
+  window.scrollTo({ top: 0, behavior: 'instant' });
 }

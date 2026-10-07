@@ -84,7 +84,10 @@ function finishCards() {
   showResult({
     title: `Alle ${f.total} kaarten gestampt.`,
     sub: "Elke kaart heb je minstens één keer als 'zit erin' gemarkeerd.",
-    stats: [[String(f.total), 'kaarten'], ['+' + xp, 'XP verdiend']],
+    stats: [
+      { value: f.total, label: 'kaarten', tone: 'good' },
+      { value: xp, label: 'XP verdiend', prefix: '+', tone: 'gold' },
+    ],
     buttons: [
       { label: f.week ? 'Nu de quiz van week ' + f.week : 'Nu de eindbaas', primary: true, week: f.week, onClick: () => startGame(f.week ? 'quiz' : 'boss', f.week) },
       { label: 'Kaarten opnieuw', onClick: () => startCards(f.week) },
