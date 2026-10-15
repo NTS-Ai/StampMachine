@@ -20,7 +20,8 @@
         "`POST` maakt iets nieuws aan of zet een actie in gang, dus er verandert wel iets.",
         "`PATCH` past een deel van iets bestaands aan, dus dat is schrijven en geen lezen.",
         "`DELETE` gooit iets weg, en dat is precies het tegenovergestelde van alleen kijken."
-      ]
+      ],
+      "section": "4.1"
     },
     {
       "id": "4-1",
@@ -38,7 +39,8 @@
         "Dit is precies omgedraaid: PUT vervangt het geheel en PATCH doet maar een stukje.",
         "Er is wel verschil: bij PUT stuur je alles mee, bij PATCH alleen wat verandert.",
         "Verwijderen doe je met `DELETE`; PUT zet juist een complete nieuwe versie neer."
-      ]
+      ],
+      "section": "4.1"
     },
     {
       "id": "4-2",
@@ -56,7 +58,8 @@
         "`200 OK` betekent alleen 'gelukt', maar zegt niet dat er iets nieuws is aangemaakt.",
         "`204 No Content` betekent 'gelukt, maar ik stuur niets terug', handig bij een DELETE.",
         "`302 Found` is een doorverwijzing naar een ander adres, geen melding dat iets is aangemaakt."
-      ]
+      ],
+      "section": "4.1"
     },
     {
       "id": "4-3",
@@ -74,7 +77,8 @@
         "`400` is een algemene 'foute aanvraag', maar FastAPI geeft bij een validatiefout standaard 422.",
         "`500` betekent dat de server zelf crasht, terwijl hier juist de input van de client niet klopt.",
         "`404` betekent dat het adres niet bestaat, maar het adres klopte; alleen de inhoud niet."
-      ]
+      ],
+      "section": "4.2"
     },
     {
       "id": "4-4",
@@ -92,7 +96,8 @@
         "Dit is omgedraaid: 401 gaat over niet ingelogd zijn en 403 over geen toestemming hebben.",
         "Ze verschillen wel: de ene keer weet de server niet wie je bent, de andere keer wel maar mag je het niet.",
         "Serverfouten beginnen met een 5; 403 begint met een 4 en is dus een antwoord over de client."
-      ]
+      ],
+      "section": "4.4"
     },
     {
       "id": "4-5",
@@ -110,7 +115,8 @@
         "'Not Found' heeft code `404`: het adres bestaat niet.",
         "'Conflict' heeft code `409`: je verzoek botst met wat er al is.",
         "Een timeout heeft eigen codes, zoals `408` of `504`, en gaat over te lang wachten, niet over te vaak vragen."
-      ]
+      ],
+      "section": "4.1"
     },
     {
       "id": "4-6",
@@ -128,7 +134,8 @@
         "Fouten van de client krijgen een code met een 4, zoals 400 of 422.",
         "Te veel requests krijgen `429`, en dat is een 4xx-code.",
         "Niet ingelogd zijn geeft `401`, ook een 4xx-code."
-      ]
+      ],
+      "section": "4.1"
     },
     {
       "id": "4-7",
@@ -146,7 +153,8 @@
         "Hier zit het werkwoord 'get' in de URL, terwijl de HTTP-methode dat al zegt.",
         "Eén adres met `?action=` is als één brievenbus voor alles; je ziet niet meer welk ding je bedoelt.",
         "Ook hier staat een werkwoord (`getOrders`) in het pad, en dat hoort bij de methode, niet in de URL."
-      ]
+      ],
+      "section": "4.1"
     },
     {
       "id": "4-8",
@@ -164,7 +172,8 @@
         "Hij print niets; je moet zelf `r.status_code` bekijken als je de code wilt zien.",
         "Hij probeert niets opnieuw; daarvoor heb je aparte retry-logica nodig.",
         "Bij een 4xx gooit hij juist wel een exception, net als bij een 5xx."
-      ]
+      ],
+      "section": "4.1"
     },
     {
       "id": "4-9",
@@ -182,7 +191,8 @@
         "`/api` is geen standaardpagina van FastAPI; daar staat niets tenzij je het zelf maakt.",
         "`/help` bestaat niet vanzelf in FastAPI.",
         "`/readme` maakt FastAPI niet aan; de automatische docs staan op `/docs`."
-      ]
+      ],
+      "section": "4.2"
     },
     {
       "id": "4-10",
@@ -200,7 +210,8 @@
         "Pydantic verplicht niets; je kunt één model gebruiken, maar dan lek je makkelijk velden.",
         "Het gaat niet om snelheid, maar om duidelijke afspraken over wat erin en eruit mag.",
         "Database-migrations gaan over je SQLAlchemy-tabellen, niet over je Pydantic-modellen."
-      ]
+      ],
+      "section": "4.2"
     },
     {
       "id": "4-11",
@@ -218,7 +229,8 @@
         "Tabellen maak je met migrations of `create_all`, niet met `Depends`.",
         "Elke request krijgt zijn eigen sessie; er is geen gedeelde globale transactie.",
         "Importeren doe je met `import`; `Depends` regelt wat een route krijgt als hij wordt aangeroepen."
-      ]
+      ],
+      "section": "4.2"
     },
     {
       "id": "4-12",
@@ -236,7 +248,8 @@
         "Het doet juist het omgekeerde: velden die je niet stuurde blijven zoals ze waren.",
         "De validatie is al gebeurd toen Pydantic het model maakte; dit slaat niets over.",
         "`model_dump` geeft een Python-dict terug; voor JSON gebruik je `model_dump_json`."
-      ]
+      ],
+      "section": "4.3"
     },
     {
       "id": "4-13",
@@ -254,7 +267,8 @@
         "`orm=False` bestaat niet als instelling en zou het lezen van objecten ook niet aanzetten.",
         "`response_model=None` zet het output-model juist uit, dus dan wordt er niets gecontroleerd.",
         "`model_validate_json` leest een JSON-tekst in, geen SQLAlchemy-object."
-      ]
+      ],
+      "section": "4.3"
     },
     {
       "id": "4-14",
@@ -272,7 +286,8 @@
         "Met `os.getenv` overal raak je het overzicht kwijt en krijg je stil `None` als iets ontbreekt.",
         "Een JSON-bestand in Git zet je geheimen zichtbaar voor iedereen die de code heeft.",
         "Hardcoded waarden staan in je code en Git, en je kunt ze niet per omgeving aanpassen."
-      ]
+      ],
+      "section": "4.3"
     },
     {
       "id": "4-15",
@@ -290,7 +305,8 @@
         "In `async def` blokkeert synchrone databasecode de hele event loop, en dan wacht iedereen.",
         "Het maakt wel uit: de verkeerde keuze kan je hele server laten haperen.",
         "Een lambda is geen manier om een FastAPI-route te schrijven."
-      ]
+      ],
+      "section": "4.3"
     },
     {
       "id": "4-16",
@@ -298,7 +314,8 @@
       "question": "`time.sleep()` in een `async def`-route is geen probleem.",
       "answer": false,
       "explanation": "Een blokkerende call in async code bevriest de hele server.",
-      "simple": "Een async server is als één ober die tussen veel tafels heen en weer loopt. `time.sleep()` laat die ober stil staan dutten, zodat geen enkele tafel geholpen wordt; gebruik daarom `await asyncio.sleep()`, dan kan hij ondertussen verder."
+      "simple": "Een async server is als één ober die tussen veel tafels heen en weer loopt. `time.sleep()` laat die ober stil staan dutten, zodat geen enkele tafel geholpen wordt; gebruik daarom `await asyncio.sleep()`, dan kan hij ondertussen verder.",
+      "section": "4.3"
     },
     {
       "id": "4-17",
@@ -316,7 +333,8 @@
         "5 seconden krijg je als je ze één voor één doet, zonder `gather`.",
         "Je moet nog steeds wachten tot het antwoord terugkomt, dus het kan niet 0 seconden zijn.",
         "10 seconden is zelfs langzamer dan ze één voor één doen; daar is geen reden voor."
-      ]
+      ],
+      "section": "4.3"
     },
     {
       "id": "4-18",
@@ -334,7 +352,8 @@
         "Productie aanpassen voor een test is gevaarlijk; je kunt echte data kapotmaken.",
         "Met een tweede app test je niet meer de app die je echt gebruikt.",
         "Het kan wel, precies met `app.dependency_overrides`."
-      ]
+      ],
+      "section": "4.3"
     },
     {
       "id": "4-19",
@@ -352,7 +371,8 @@
         "Versleutelen kun je terugdraaien met de sleutel; lekt die sleutel, dan liggen alle wachtwoorden open.",
         "Plain text kan iedereen met toegang tot de database gewoon lezen, ook in een aparte tabel.",
         "Base64 is geen beveiliging, alleen een andere schrijfwijze die iedereen zo terugvertaalt."
-      ]
+      ],
+      "section": "4.4"
     },
     {
       "id": "4-20",
@@ -370,7 +390,8 @@
         "In de URL komt de token in logs en browsergeschiedenis terecht, waar anderen hem kunnen vinden.",
         "Een GET heeft meestal geen body, en de afspraak is juist dat de token in de header staat.",
         "Cookies kunnen soms, maar niet altijd; in deze API gaat het via de `Authorization`-header."
-      ]
+      ],
+      "section": "4.4"
     },
     {
       "id": "4-21",
@@ -388,7 +409,8 @@
         "Iedereen kan een JWT lezen, dus een wachtwoord erin zetten is alsof je het op een ansichtkaart schrijft.",
         "Een hele tabel past er niet zinnig in en zou bovendien andermans gegevens lekken.",
         "Met de secret kan iedereen nep-tokens maken, dus die blijft altijd alleen op de server."
-      ]
+      ],
+      "section": "4.4"
     },
     {
       "id": "4-22",
@@ -396,7 +418,8 @@
       "question": "Een JWT is versleuteld, dus niemand kan de inhoud lezen.",
       "answer": false,
       "explanation": "Een JWT is ondertekend, niet versleuteld. Zet er nooit geheimen in.",
-      "simple": "Een JWT is als een ansichtkaart met een lakzegel: iedereen kan lezen wat erop staat, maar niemand kan het veranderen zonder dat het zegel breekt. Hij is ondertekend, niet versleuteld, dus zet er nooit geheimen in."
+      "simple": "Een JWT is als een ansichtkaart met een lakzegel: iedereen kan lezen wat erop staat, maar niemand kan het veranderen zonder dat het zegel breekt. Hij is ondertekend, niet versleuteld, dus zet er nooit geheimen in.",
+      "section": "4.4"
     },
     {
       "id": "4-23",
@@ -414,7 +437,8 @@
         "`\"secret\"` is het eerste wat een aanvaller probeert; dat is in een seconde geraden.",
         "Je naam plus het jaartal is makkelijk te raden voor iedereen die je een beetje kent.",
         "Als hij in de code staat, staat hij ook in Git en kan iedereen met de code hem lezen."
-      ]
+      ],
+      "section": "4.4"
     },
     {
       "id": "4-24",
@@ -432,7 +456,8 @@
         "Dat de note bestaat zegt niets over van wie hij is; zo kan iedereen andermans notities lezen.",
         "De lengte van de token zegt niets over wie de eigenaar van de note is.",
         "Niets checken betekent dat elke ingelogde gebruiker elke notitie kan zien en wijzigen."
-      ]
+      ],
+      "section": "4.4"
     },
     {
       "id": "4-25",
@@ -450,7 +475,8 @@
         "Redis maakt geen kopieën; er komt één key met één waarde.",
         "`EX` zegt niets over de lengte van de tekst, alleen over hoe lang de key blijft bestaan.",
         "Een andere database kies je met `SELECT`, niet met `EX`."
-      ]
+      ],
+      "section": "4.5"
     },
     {
       "id": "4-26",
@@ -458,7 +484,8 @@
       "question": "`KEYS *` is prima in productie.",
       "answer": false,
       "explanation": "Blokkeert Redis op een grote dataset. Gebruik SCAN.",
-      "simple": "Redis doet één ding tegelijk. `KEYS *` is alsof de kassière alle producten in de hele winkel gaat tellen terwijl de rij wacht; bij veel keys staat alles stil. `SCAN` telt in kleine stukjes, zodat anderen tussendoor geholpen worden."
+      "simple": "Redis doet één ding tegelijk. `KEYS *` is alsof de kassière alle producten in de hele winkel gaat tellen terwijl de rij wacht; bij veel keys staat alles stil. `SCAN` telt in kleine stukjes, zodat anderen tussendoor geholpen worden.",
+      "section": "4.5"
     },
     {
       "id": "4-27",
@@ -476,7 +503,8 @@
         "Een hash is een setje velden met waarden, zoals een klein object, en geen rij om op te wachten.",
         "Een string bevat één waarde, dus je kunt er geen reeks jobs in zetten.",
         "Een set heeft geen vaste volgorde, dus je weet niet welke job eerst aan de beurt is."
-      ]
+      ],
+      "section": "4.5"
     },
     {
       "id": "4-28",
@@ -494,7 +522,8 @@
         "1 betekent dat dit de eerste request is, en die zit ruim onder de limiet.",
         "Verwijder je de key, dan begint de teller steeds opnieuw en wordt er nooit iemand begrensd.",
         "Zonder `EXPIRE` blijft de teller voor altijd oplopen en zit iemand straks permanent vast."
-      ]
+      ],
+      "section": "4.5"
     },
     {
       "id": "4-29",
@@ -512,7 +541,8 @@
         "Tot de TTL afloopt krijgen gebruikers dan de oude versie van de note te zien.",
         "Redis herstarten gooit alle cache van iedereen weg voor één wijziging; veel te grof.",
         "Niets doen betekent dat de cache oude data blijft teruggeven alsof die klopt."
-      ]
+      ],
+      "section": "4.5"
     },
     {
       "id": "4-30",
@@ -530,7 +560,8 @@
         "BackgroundTasks draait in hetzelfde proces als de API, dus bij een restart is het werk weg.",
         "Ze verschillen wel: de ene draait in de API zelf, de andere in een los proces met een wachtrij.",
         "Workers draaien juist in productie om echt werk op de achtergrond te doen."
-      ]
+      ],
+      "section": "4.5"
     },
     {
       "id": "4-31",
@@ -548,7 +579,8 @@
         "Het werkt ook in een andere volgorde, alleen wordt het bouwen dan veel trager.",
         "Het image bevat dezelfde bestanden, dus het wordt er niet kleiner van.",
         "De volgorde verandert niets aan de beveiliging; het gaat om de cache."
-      ]
+      ],
+      "section": "4.5"
     },
     {
       "id": "4-32",
@@ -566,7 +598,8 @@
         "`localhost` is binnen de api-container de container zelf, en daar draait geen Postgres.",
         "`127.0.0.1` is hetzelfde als localhost, dus ook dat wijst naar de api-container zelf.",
         "`api` is de api-container zelf; de database woont in `db`."
-      ]
+      ],
+      "section": "4.5"
     },
     {
       "id": "4-33",
@@ -584,7 +617,8 @@
         "Het is juist andersom: db start eerst en de api wacht daarop.",
         "Herstarten bij een crash regel je met `restart:`, niet met `depends_on`.",
         "Het doet wel iets: zonder dit kan de api starten voordat Postgres verbindingen aanneemt."
-      ]
+      ],
+      "section": "4.5"
     },
     {
       "id": "4-34",
@@ -602,7 +636,8 @@
         "Over de rate limit gaat deze header niet; bij te veel requests krijg je een 429.",
         "Authenticatie gaat via de `Authorization`-header, niet via deze.",
         "Deze header zegt niets over of een antwoord uit de cache kwam."
-      ]
+      ],
+      "section": "4.A"
     }
   ],
   "flashcards": [
@@ -610,103 +645,120 @@
       "id": "4-f0",
       "front": "HTTP in één zin",
       "back": "Methode + pad + headers + body erin, status + headers + body eruit. Lees de status voor de body.",
-      "simple": "HTTP is als een brief sturen en een brief terugkrijgen: jij stuurt wat je wilt (methode), naar welk adres (pad), met extra info (headers) en eventueel inhoud (body). Het antwoord begint met een status die zegt of het gelukt is, dus die lees je eerst."
+      "simple": "HTTP is als een brief sturen en een brief terugkrijgen: jij stuurt wat je wilt (methode), naar welk adres (pad), met extra info (headers) en eventueel inhoud (body). Het antwoord begint met een status die zegt of het gelukt is, dus die lees je eerst.",
+      "section": "4.1"
     },
     {
       "id": "4-f1",
       "front": "HTTP-methodes",
       "back": "GET lezen · POST aanmaken of actie · PUT vervangen · PATCH deels bijwerken · DELETE verwijderen",
-      "simple": "De methodes zijn de werkwoorden van HTTP: `GET` kijken, `POST` iets nieuws maken of een actie starten, `PUT` alles vervangen, `PATCH` een stukje aanpassen, `DELETE` weggooien. Zo weet de server meteen wat je met een ding wilt doen."
+      "simple": "De methodes zijn de werkwoorden van HTTP: `GET` kijken, `POST` iets nieuws maken of een actie starten, `PUT` alles vervangen, `PATCH` een stukje aanpassen, `DELETE` weggooien. Zo weet de server meteen wat je met een ding wilt doen.",
+      "section": "4.1"
     },
     {
       "id": "4-f2",
       "front": "Statuscodes",
       "back": "200 OK · 201 Created · 204 No Content · 400/422 foute input · 401 wie ben jij · 403 mag niet · 404 bestaat niet · 429 te veel · 500 onze bug",
-      "simple": "Statuscodes zijn korte seintjes: 2xx betekent gelukt, 4xx betekent dat de client iets fout deed, 5xx betekent dat de server zelf faalde. Aan het eerste cijfer zie je dus meteen bij wie je het probleem moet zoeken."
+      "simple": "Statuscodes zijn korte seintjes: 2xx betekent gelukt, 4xx betekent dat de client iets fout deed, 5xx betekent dat de server zelf faalde. Aan het eerste cijfer zie je dus meteen bij wie je het probleem moet zoeken.",
+      "section": "4.1"
     },
     {
       "id": "4-f3",
       "front": "REST",
       "back": "Resources als zelfstandige naamwoorden (`/customers/7/orders`), HTTP-methodes als werkwoorden, query-params voor filteren en pagineren.",
-      "simple": "In REST is een URL een adres van een ding, zoals `/customers/7/orders` voor 'de bestellingen van klant 7'. Wat je ermee doet, zeg je met de HTTP-methode, en met query-params (`?limit=10`) filter je of blader je door de lijst."
+      "simple": "In REST is een URL een adres van een ding, zoals `/customers/7/orders` voor 'de bestellingen van klant 7'. Wat je ermee doet, zeg je met de HTTP-methode, en met query-params (`?limit=10`) filter je of blader je door de lijst.",
+      "section": "4.1"
     },
     {
       "id": "4-f4",
       "front": "Pydantic-modellen",
       "back": "Apart voor input (`NoteIn`), output (`NoteOut`) en partial update (`NoteUpdate`, alles optioneel). Nooit internals in output.",
-      "simple": "Net als een bestelbon, kassabon en wijzigingsbriefje heeft elk model zijn eigen taak: `NoteIn` voor wat binnenkomt, `NoteOut` voor wat je teruggeeft, `NoteUpdate` met alles optioneel. Zo komen geheime velden nooit per ongeluk in een antwoord."
+      "simple": "Net als een bestelbon, kassabon en wijzigingsbriefje heeft elk model zijn eigen taak: `NoteIn` voor wat binnenkomt, `NoteOut` voor wat je teruggeeft, `NoteUpdate` met alles optioneel. Zo komen geheime velden nooit per ongeluk in een antwoord.",
+      "section": "4.2"
     },
     {
       "id": "4-f5",
       "front": "Validators",
       "back": "`@field_validator(\"name\")` + `@classmethod`: waarde opschonen of `ValueError` gooien. `Field(min_length=1, max_length=120)`.",
-      "simple": "Een validator is een controleur bij de ingang van je model: hij kan een waarde opschonen (bijvoorbeeld spaties weghalen) of met een `ValueError` zeggen dat het niet goed is. Met `Field(min_length=1, max_length=120)` stel je simpele regels in zonder eigen code."
+      "simple": "Een validator is een controleur bij de ingang van je model: hij kan een waarde opschonen (bijvoorbeeld spaties weghalen) of met een `ValueError` zeggen dat het niet goed is. Met `Field(min_length=1, max_length=120)` stel je simpele regels in zonder eigen code.",
+      "section": "4.2"
     },
     {
       "id": "4-f6",
       "front": "Depends()",
       "back": "Injecteert sessie, huidige user of settings in een route. In tests vervang je ze via `app.dependency_overrides`.",
-      "simple": "`Depends()` is een ober die de route brengt wat hij nodig heeft, zoals een databasesessie, de ingelogde gebruiker of de settings. In tests vervang je die ober met `app.dependency_overrides`, zodat je bijvoorbeeld een testdatabase gebruikt."
+      "simple": "`Depends()` is een ober die de route brengt wat hij nodig heeft, zoals een databasesessie, de ingelogde gebruiker of de settings. In tests vervang je die ober met `app.dependency_overrides`, zodat je bijvoorbeeld een testdatabase gebruikt.",
+      "section": "4.2"
     },
     {
       "id": "4-f7",
       "front": "Projectstructuur",
       "back": "main · config · db · models (SQLAlchemy) · schemas (Pydantic) · repositories (DB) · services (regels) · routers (per resource) · core",
-      "simple": "Een goede projectstructuur is als een keuken met vaste plekken: elk bestand heeft één taak. Routers nemen bestellingen aan, services bewaken de regels, repositories praten met de database, en schemas en models beschrijven de data."
+      "simple": "Een goede projectstructuur is als een keuken met vaste plekken: elk bestand heeft één taak. Routers nemen bestellingen aan, services bewaken de regels, repositories praten met de database, en schemas en models beschrijven de data.",
+      "section": "4.3"
     },
     {
       "id": "4-f8",
       "front": "def of async def?",
       "back": "`async def` als je externe API's of Redis aanroept. `def` voor synchrone SQLAlchemy. Nooit `time.sleep` of `requests.get` in async.",
-      "simple": "Gebruik `async def` als je moet wachten op iets buiten je programma, zoals een externe API of Redis, zodat de server ondertussen verder kan. Voor synchrone SQLAlchemy gebruik je `def`, en blokkerende dingen zoals `time.sleep` of `requests.get` horen nooit in async code, want die laten iedereen wachten."
+      "simple": "Gebruik `async def` als je moet wachten op iets buiten je programma, zoals een externe API of Redis, zodat de server ondertussen verder kan. Voor synchrone SQLAlchemy gebruik je `def`, en blokkerende dingen zoals `time.sleep` of `requests.get` horen nooit in async code, want die laten iedereen wachten.",
+      "section": "4.3"
     },
     {
       "id": "4-f9",
       "front": "JWT-flow",
       "back": "POST `/auth/token` met wachtwoord → ondertekende JWT → elke request `Authorization: Bearer <token>` → `Depends(current_user)`.",
-      "simple": "Je logt één keer in met je wachtwoord bij `/auth/token` en krijgt een ondertekende JWT terug, zoals een polsbandje bij de ingang van een festival. Daarna laat je bij elke request dat bandje zien in de `Authorization`-header, en `Depends(current_user)` checkt het."
+      "simple": "Je logt één keer in met je wachtwoord bij `/auth/token` en krijgt een ondertekende JWT terug, zoals een polsbandje bij de ingang van een festival. Daarna laat je bij elke request dat bandje zien in de `Authorization`-header, en `Depends(current_user)` checkt het.",
+      "section": "4.4"
     },
     {
       "id": "4-f10",
       "front": "Security-regels",
       "back": "bcrypt-hashes · JWT_SECRET in `.env` (`openssl rand -hex 32`) · HTTPS · ownership checken · 401 voor wie, 403 voor mag-niet",
-      "simple": "Deze regels zijn de sloten op je deur: wachtwoorden alleen als bcrypt-hash, een lang random `JWT_SECRET` dat alleen in `.env` staat, verkeer via HTTPS, en altijd checken of iets echt van de gebruiker is. Geef `401` als je niet weet wie iemand is, en `403` als je het wel weet maar hij het niet mag."
+      "simple": "Deze regels zijn de sloten op je deur: wachtwoorden alleen als bcrypt-hash, een lang random `JWT_SECRET` dat alleen in `.env` staat, verkeer via HTTPS, en altijd checken of iets echt van de gebruiker is. Geef `401` als je niet weet wie iemand is, en `403` als je het wel weet maar hij het niet mag.",
+      "section": "4.4"
     },
     {
       "id": "4-f11",
       "front": "Redis-datatypes",
       "back": "strings (waarden, `INCR`-tellers) · hashes (kleine objecten) · lists (queues) · sets/sorted sets (uniek, leaderboards) · pub/sub en streams",
-      "simple": "Redis heeft verschillende bakjes voor verschillende soorten spullen: strings voor losse waarden en tellers, hashes voor kleine objecten, lists voor wachtrijen, sets voor unieke dingen en sorted sets voor ranglijsten. Kies het bakje dat past bij wat je wilt doen."
+      "simple": "Redis heeft verschillende bakjes voor verschillende soorten spullen: strings voor losse waarden en tellers, hashes voor kleine objecten, lists voor wachtrijen, sets voor unieke dingen en sorted sets voor ranglijsten. Kies het bakje dat past bij wat je wilt doen.",
+      "section": "4.5"
     },
     {
       "id": "4-f12",
       "front": "Cache-patroon",
       "back": "`get(key)` → hit? teruggeven. Anders berekenen, `set(key, json, ex=ttl)`. Bij wijzigen: `delete(key)`. Korte TTL's.",
-      "simple": "Een cache is een spiekbriefje: eerst kijk je of het antwoord er al op staat. Zo niet, dan reken je het uit en schrijf je het op met een houdbaarheid (`ex=ttl`); verandert de data, dan gooi je het briefje weg met `delete`."
+      "simple": "Een cache is een spiekbriefje: eerst kijk je of het antwoord er al op staat. Zo niet, dan reken je het uit en schrijf je het op met een houdbaarheid (`ex=ttl`); verandert de data, dan gooi je het briefje weg met `delete`.",
+      "section": "4.5"
     },
     {
       "id": "4-f13",
       "front": "Rate limiting",
       "back": "`count = incr(key)` · eerste keer `expire(key, window)` · boven de limiet → 429.",
-      "simple": "Rate limiting werkt als een stempelkaart: elke request geeft een stempel (`incr`). Bij de eerste stempel zet je een wekker (`expire`) zodat de kaart na het tijdsvak leeg is, en wie boven de limiet komt krijgt `429`."
+      "simple": "Rate limiting werkt als een stempelkaart: elke request geeft een stempel (`incr`). Bij de eerste stempel zet je een wekker (`expire`) zodat de kaart na het tijdsvak leeg is, en wie boven de limiet komt krijgt `429`.",
+      "section": "4.5"
     },
     {
       "id": "4-f14",
       "front": "Background jobs",
       "back": "Klein: FastAPI `BackgroundTasks`. Robuust: `lpush` op een Redis-list en een worker die `brpop` doet.",
-      "simple": "Voor een klein klusje na het antwoord is `BackgroundTasks` genoeg, maar dat draait in dezelfde API en is weg bij een restart. Voor belangrijk werk zet je een job in een Redis-list met `lpush`, en een aparte worker pakt hem op met `brpop`, zoals een bestellijst waar koks mee werken."
+      "simple": "Voor een klein klusje na het antwoord is `BackgroundTasks` genoeg, maar dat draait in dezelfde API en is weg bij een restart. Voor belangrijk werk zet je een job in een Redis-list met `lpush`, en een aparte worker pakt hem op met `brpop`, zoals een bestellijst waar koks mee werken.",
+      "section": "4.5"
     },
     {
       "id": "4-f15",
       "front": "Dockerfile",
       "back": "`python:3.12-slim` · eerst `pyproject.toml` kopiëren en installeren (cache) · dan code · `EXPOSE 8000` · `CMD fastapi run`",
-      "simple": "Een Dockerfile is een bouwplan in lagen. Je begint met een klein Python-image, installeert eerst de dependencies uit `pyproject.toml` zodat Docker die laag kan onthouden, kopieert daarna pas je code, en start de app met `fastapi run` op poort 8000."
+      "simple": "Een Dockerfile is een bouwplan in lagen. Je begint met een klein Python-image, installeert eerst de dependencies uit `pyproject.toml` zodat Docker die laag kan onthouden, kopieert daarna pas je code, en start de app met `fastapi run` op poort 8000.",
+      "section": "4.5"
     },
     {
       "id": "4-f16",
       "front": "Compose-netwerk",
       "back": "Services bereiken elkaar via de servicenaam (`db`, `redis`), niet via localhost. Je `.env` wijst lokaal naar localhost; Compose overschrijft dat.",
-      "simple": "In Compose zijn services buren in dezelfde straat, en ze vinden elkaar via hun naam, zoals `db` of `redis`. `localhost` betekent in een container 'ik zelf', dus Compose geeft de api een andere `DATABASE_URL` dan je lokale `.env`."
+      "simple": "In Compose zijn services buren in dezelfde straat, en ze vinden elkaar via hun naam, zoals `db` of `redis`. `localhost` betekent in een container 'ik zelf', dus Compose geeft de api een andere `DATABASE_URL` dan je lokale `.env`.",
+      "section": "4.5"
     }
   ],
   "typing": [
@@ -719,7 +771,8 @@
         "201 Created"
       ],
       "explanation": "`201 Created` stuur je na een geslaagde POST die iets nieuws heeft gemaakt.",
-      "simple": "200 betekent: gelukt. 201 betekent: gelukt, en er is iets nieuws gemaakt."
+      "simple": "200 betekent: gelukt. 201 betekent: gelukt, en er is iets nieuws gemaakt.",
+      "section": "4.1"
     },
     {
       "id": "4-t1",
@@ -730,7 +783,8 @@
         "401 Unauthorized"
       ],
       "explanation": "`401` betekent: niet (goed) ingelogd. `403` betekent: we weten wie je bent, maar je mag dit niet.",
-      "simple": "401 is de portier die zegt: ik ken jou niet, laat eerst je pasje zien."
+      "simple": "401 is de portier die zegt: ik ken jou niet, laat eerst je pasje zien.",
+      "section": "4.4"
     },
     {
       "id": "4-t2",
@@ -740,7 +794,8 @@
         "PATCH"
       ],
       "explanation": "`PATCH` werkt alleen de velden bij die je meestuurt. `PUT` vervangt de hele resource.",
-      "simple": "Met PATCH plak je een pleister op één plek. Met PUT vervang je het hele ding."
+      "simple": "Met PATCH plak je een pleister op één plek. Met PUT vervang je het hele ding.",
+      "section": "4.1"
     },
     {
       "id": "4-t3",
@@ -751,7 +806,8 @@
         "Depends()"
       ],
       "explanation": "`Depends()` laat FastAPI een sessie, de huidige user of settings aanleveren. In tests vervang je ze via `app.dependency_overrides`.",
-      "simple": "Je route zegt: ik heb een sessie nodig. FastAPI regelt die voor je, en in tests kun je hem makkelijk vervangen."
+      "simple": "Je route zegt: ik heb een sessie nodig. FastAPI regelt die voor je, en in tests kun je hem makkelijk vervangen.",
+      "section": "4.2"
     },
     {
       "id": "4-t4",
@@ -761,7 +817,8 @@
         "INCR"
       ],
       "explanation": "`INCR key` verhoogt een getal atomair met 1 en geeft de nieuwe waarde terug. Handig voor tellers en rate limiting.",
-      "simple": "Redis telt voor je één op, ook als veel requests tegelijk komen, zonder dat er tellingen verloren gaan."
+      "simple": "Redis telt voor je één op, ook als veel requests tegelijk komen, zonder dat er tellingen verloren gaan.",
+      "section": "4.5"
     },
     {
       "id": "4-t5",
@@ -772,7 +829,8 @@
         "Authorization:"
       ],
       "explanation": "De client stuurt `Authorization: Bearer <token>`. FastAPI leest die header uit in een dependency zoals `current_user`.",
-      "simple": "Bij elke vraag laat je je toegangspasje zien in een vaste header: `Authorization`."
+      "simple": "Bij elke vraag laat je je toegangspasje zien in een vaste header: `Authorization`.",
+      "section": "4.4"
     },
     {
       "id": "4-t6",
@@ -783,7 +841,8 @@
         "Per richting bepalen welke velden mogen",
         "Gebruikers kunnen geen verboden velden zetten",
         "Geen interne velden in de output"
-      ]
+      ],
+      "section": "4.2"
     },
     {
       "id": "4-t7",
@@ -794,7 +853,8 @@
         "`async def` voor async I/O zoals API's of Redis",
         "`def` voor synchrone code zoals SQLAlchemy",
         "Geen blokkerende calls in een async route"
-      ]
+      ],
+      "section": "4.3"
     },
     {
       "id": "4-t8",
@@ -805,7 +865,8 @@
         "Eerst in de cache kijken",
         "Bij een miss berekenen en opslaan met een TTL",
         "Bij een wijziging de key verwijderen"
-      ]
+      ],
+      "section": "4.5"
     },
     {
       "id": "4-t9",
@@ -815,7 +876,8 @@
       "points": [
         "401: niet ingelogd, wie ben jij?",
         "403: ingelogd, maar geen toestemming"
-      ]
+      ],
+      "section": "4.4"
     }
   ]
 }

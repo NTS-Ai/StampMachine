@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -37,6 +38,15 @@ def require(item: dict, field: str, kind: type | tuple[type, ...], where: str) -
     value = item.get(field)
     if not isinstance(value, kind) or value in ("", []):
         raise ContentError(f"{where}: veld '{field}' ontbreekt of is leeg")
+
+
+def check_section(item: dict, week: int, where: str) -> None:
+    """Elk item hoort bij een workbook-sectie van dezelfde week, bijvoorbeeld "3.2" of "3.A" (de eindopdracht)."""
+    section = item.get("section")
+    if not isinstance(section, str) or not re.fullmatch(r"[1-6]\.(?:[1-9]|A)", section):
+        raise ContentError(f"{where}: veld 'section' ontbreekt of is ongeldig (verwacht bv. \"{week}.2\")")
+    if int(section.split(".")[0]) != week:
+        raise ContentError(f"{where}: sectie '{section}' hoort niet bij week {week}")
 
 
 def check_question(q: dict, where: str) -> None:
@@ -94,6 +104,7 @@ def load_weeks() -> list[dict]:
             require(card, "back", str, where)
 
         for item in week["questions"] + week["typing"] + week["flashcards"]:
+            check_section(item, week["week"], f"{name} {item.get('id', '?')}")
             if item["id"] in seen_ids:
                 raise ContentError(f"{name}: id '{item['id']}' komt dubbel voor")
             seen_ids.add(item["id"])

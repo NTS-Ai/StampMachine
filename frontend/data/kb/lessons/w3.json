@@ -1,0 +1,1290 @@
+{
+  "week": 3,
+  "title": "Databases: Docker, SQL & SQLAlchemy",
+  "sections": [
+    {
+      "id": "3.1",
+      "title": "Docker: images, containers, volumes en Docker Compose",
+      "summary": "Je draait Postgres en andere services in Docker-containers en start een hele stack met één Compose-bestand.",
+      "minutes": 60,
+      "simple": "Simpel gezegd: Docker is een verhuisdoos waarin een programma samen met alles wat het nodig heeft is ingepakt. Waar je de doos ook openmaakt, op je eigen laptop of op een server, het programma gedraagt zich precies hetzelfde. De ingepakte doos heet een image, de uitgepakte en draaiende versie een container.",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Waarom Docker?"
+        },
+        {
+          "type": "p",
+          "text": "Als je Postgres, Redis en andere services rechtstreeks op je laptop installeert, krijg je al snel het bekende \"bij mij werkt het wel\"-probleem: iedereen heeft net een andere versie of instelling. Docker lost dat op door een applicatie met al haar afhankelijkheden te verpakken in een **image**. Start je zo'n image, dan krijg je een **container**: een afgeschermd proces dat overal hetzelfde draait."
+        },
+        {
+          "type": "p",
+          "text": "In deze training draait alle infrastructuur (databases, caches) in Docker. Later, in week 6, verpak je ook je eigen applicatie op deze manier."
+        },
+        {
+          "type": "table",
+          "head": [
+            "Begrip",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "Image",
+              "Read-only sjabloon, gedownload van Docker Hub of gebouwd uit een Dockerfile",
+              "`postgres:16`"
+            ],
+            [
+              "Container",
+              "Een draaiende kopie van een image; kun je stoppen, herstarten en weggooien",
+              "`pg`"
+            ],
+            [
+              "Volume",
+              "Opslag die blijft bestaan als de container verdwijnt; onmisbaar voor databases",
+              "`pgdata`"
+            ],
+            [
+              "Port mapping",
+              "Maakt een poort uit de container bereikbaar op je eigen machine",
+              "`-p 5432:5432`"
+            ],
+            [
+              "Docker Compose",
+              "Een `compose.yaml` die meerdere containers samen als één stack start",
+              "`docker compose up -d`"
+            ]
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Installeren en testen"
+        },
+        {
+          "type": "p",
+          "text": "Op Windows installeer je Docker Desktop. Zet in de instellingen de WSL 2-engine aan en schakel onder Resources de WSL-integratie voor je Ubuntu-distributie in. Daarna controleer je in de Ubuntu-terminal of alles werkt:"
+        },
+        {
+          "type": "code",
+          "lang": "bash",
+          "code": "docker --version\ndocker run hello-world",
+          "caption": "Werkt dit, dan kan Docker images downloaden en containers starten."
+        },
+        {
+          "type": "h",
+          "text": "De belangrijkste commando's"
+        },
+        {
+          "type": "p",
+          "text": "Met `docker run` start je een container uit een image. De vlag `-d` laat hem op de achtergrond draaien, `--name` geeft hem een naam, `-e` zet een environment variable en `-v` koppelt een volume aan de map waar Postgres zijn data bewaart."
+        },
+        {
+          "type": "code",
+          "lang": "bash",
+          "code": "docker pull postgres:16\ndocker run -d --name pg \\\n  -e POSTGRES_PASSWORD=geheim \\\n  -p 5432:5432 \\\n  -v pgdata:/var/lib/postgresql/data \\\n  postgres:16"
+        },
+        {
+          "type": "table",
+          "head": [
+            "Commando",
+            "Wat het doet"
+          ],
+          "rows": [
+            [
+              "`docker ps` / `docker ps -a`",
+              "draaiende containers tonen / ook de gestopte"
+            ],
+            [
+              "`docker logs -f pg`",
+              "de logs live volgen; je eerste stap als iets vreemd doet"
+            ],
+            [
+              "`docker exec -it pg psql -U postgres`",
+              "een commando uitvoeren binnen de container"
+            ],
+            [
+              "`docker stop pg` / `docker start pg`",
+              "container stoppen en weer starten"
+            ],
+            [
+              "`docker rm -f pg`",
+              "container weggooien; de data in volume `pgdata` blijft"
+            ],
+            [
+              "`docker images` / `docker volume ls`",
+              "lokale images en volumes bekijken"
+            ],
+            [
+              "`docker system prune`",
+              "opruimen van ongebruikte containers, netwerken en images"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "tone": "tip",
+          "text": "Gebruik altijd een vaste versie-tag, zoals `postgres:16`. Met `postgres:latest` kun je morgen ongemerkt een andere hoofdversie binnenhalen dan vandaag."
+        },
+        {
+          "type": "h",
+          "text": "Poorten en volumes"
+        },
+        {
+          "type": "p",
+          "text": "Bij `-p 5432:5432` staat links de poort op je eigen machine (host) en rechts de poort in de container. Schrijf je `-p 6543:5432`, dan bereik je dezelfde database op poort 6543 van je laptop."
+        },
+        {
+          "type": "p",
+          "text": "Alles wat een container in zijn eigen bestandssysteem schrijft, verdwijnt zodra je de container verwijdert. Daarom koppel je de datamap van Postgres aan een **named volume**: de container mag dan weg, je tabellen blijven bestaan."
+        },
+        {
+          "type": "h",
+          "text": "Docker Compose"
+        },
+        {
+          "type": "p",
+          "text": "Lange `docker run`-commando's overtypen gaat snel mis. Met Compose beschrijf je de complete stack in een `compose.yaml` en start je alles met één commando. Hieronder een database met een healthcheck:"
+        },
+        {
+          "type": "code",
+          "lang": "yaml",
+          "code": "services:\n  db:\n    image: postgres:16\n    environment:\n      POSTGRES_USER: app\n      POSTGRES_PASSWORD: geheim\n      POSTGRES_DB: inventory\n    ports:\n      - \"5432:5432\"\n    volumes:\n      - pgdata:/var/lib/postgresql/data\n    healthcheck:\n      test: [\"CMD-SHELL\", \"pg_isready -U app -d inventory\"]\n      interval: 5s\n      retries: 10",
+          "caption": "compose.yaml, deel 1: de database-service"
+        },
+        {
+          "type": "p",
+          "text": "Daaronder voeg je Adminer toe, een kleine web-interface voor je database op `http://localhost:8080`, en declareer je het volume:"
+        },
+        {
+          "type": "code",
+          "lang": "yaml",
+          "code": "  adminer:\n    image: adminer\n    ports:\n      - \"8080:8080\"\n    depends_on:\n      - db\n\nvolumes:\n  pgdata:",
+          "caption": "compose.yaml, deel 2: Adminer (nog onder services) en het volume"
+        },
+        {
+          "type": "code",
+          "lang": "bash",
+          "code": "docker compose up -d                              # alles op de achtergrond starten\ndocker compose ps                                 # status van de services\ndocker compose logs -f db                         # logs van één service volgen\ndocker compose exec db psql -U app -d inventory   # psql in de database-container\ndocker compose down                               # containers weg, volumes blijven\ndocker compose down -v                            # ook de volumes weg: je data is foetsie"
+        },
+        {
+          "type": "p",
+          "text": "De healthcheck draait elke paar seconden `pg_isready`. Zo weet Compose wanneer Postgres echt verbindingen accepteert, en niet alleen dat het proces gestart is."
+        },
+        {
+          "type": "note",
+          "tone": "info",
+          "text": "Vanaf je laptop bereik je de database via `localhost:5432`. Vanuit een andere container in dezelfde Compose-stack gebruik je de servicenaam: `db:5432`. Binnen een container verwijst `localhost` namelijk naar die container zelf."
+        },
+        {
+          "type": "note",
+          "tone": "warn",
+          "text": "`docker compose down -v` verwijdert ook de named volumes. Gebruik het alleen als je bewust met een lege database opnieuw wilt beginnen."
+        }
+      ],
+      "takeaways": [
+        "Een image is het sjabloon, een container is een draaiende kopie ervan, een volume bewaart data buiten de container.",
+        "`-p HOST:CONTAINER` maakt een containerpoort bereikbaar op je eigen machine.",
+        "Met `compose.yaml` en `docker compose up -d` start je de infrastructuur van elk project; wat niet in Compose staat, bestaat niet.",
+        "Bij problemen kijk je eerst in `docker logs` of `docker compose logs`."
+      ],
+      "links": [
+        {
+          "label": "Docker Docs — Get started",
+          "url": "https://docs.docker.com/get-started/"
+        },
+        {
+          "label": "Docker Docs — Docker Compose",
+          "url": "https://docs.docker.com/compose/"
+        }
+      ],
+      "tags": [
+        "docker",
+        "container",
+        "image",
+        "volume",
+        "docker compose",
+        "postgres",
+        "adminer"
+      ]
+    },
+    {
+      "id": "3.2",
+      "title": "SQL-basis met PostgreSQL",
+      "summary": "Je maakt tabellen, vult ze, vraagt data op met SELECT, groepeert, combineert tabellen met joins en werkt veilig met transacties.",
+      "minutes": 75,
+      "simple": "Simpel gezegd: een relationele database is een kast vol nette tabellen, en SQL is de taal waarmee je de archivaris een vraag stelt. Je zegt wat je wilt hebben (\"alle onderdelen zonder voorraad\"), niet hoe hij moet zoeken; dat zoekwerk regelt de database zelf.",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Tabellen maken en vullen"
+        },
+        {
+          "type": "p",
+          "text": "SQL (Structured Query Language) is de taal waarmee je een relationele database bevraagt. Zo'n database bewaart data in tabellen met rijen en getypeerde kolommen, en verbindt tabellen via keys. Anders dan Python is SQL **declaratief**: je beschrijft het resultaat, de database bedenkt de aanpak. Open `psql` in je container of Adminer in de browser en doe mee."
+        },
+        {
+          "type": "code",
+          "lang": "sql",
+          "code": "CREATE TABLE categories (\n    id   SERIAL PRIMARY KEY,\n    name TEXT NOT NULL UNIQUE\n);\n\nCREATE TABLE parts (\n    id          SERIAL PRIMARY KEY,\n    sku         VARCHAR(20) NOT NULL UNIQUE,\n    name        TEXT NOT NULL,\n    price_cents INTEGER NOT NULL CHECK (price_cents >= 0),\n    stock       INTEGER NOT NULL DEFAULT 0,\n    category_id INTEGER REFERENCES categories(id),\n    created_at  TIMESTAMPTZ NOT NULL DEFAULT now()\n);"
+        },
+        {
+          "type": "code",
+          "lang": "sql",
+          "code": "INSERT INTO categories (name) VALUES ('Sensoren'), ('Gateways'), ('Kabels');\n\nINSERT INTO parts (sku, name, price_cents, stock, category_id) VALUES\n    ('SEN-010', 'Druksensor',      3200, 25, 1),\n    ('GW-200',  '5G-gateway',     18900,  3, 2),\n    ('CAB-02',  'Kabel 2 m',        350,  0, 3);"
+        },
+        {
+          "type": "table",
+          "head": [
+            "Type",
+            "Gebruik",
+            "Let op"
+          ],
+          "rows": [
+            [
+              "`INTEGER` / `BIGINT`",
+              "hele getallen, tellers, id's",
+              "`BIGINT` voor heel grote aantallen"
+            ],
+            [
+              "`NUMERIC(10,2)`",
+              "exacte decimalen",
+              "geschikt voor geld; nooit `FLOAT` of `REAL`"
+            ],
+            [
+              "`TEXT` / `VARCHAR(n)`",
+              "tekst",
+              "`TEXT` is in Postgres even snel; `VARCHAR(n)` alleen als de limiet echt een regel is"
+            ],
+            [
+              "`BOOLEAN`",
+              "ja/nee",
+              "niet `'Y'`/`'N'` in een tekstkolom"
+            ],
+            [
+              "`DATE`",
+              "een dag",
+              "geen tijd erbij"
+            ],
+            [
+              "`TIMESTAMPTZ`",
+              "een moment in de tijd",
+              "altijd met tijdzone"
+            ],
+            [
+              "`JSONB`",
+              "flexibele JSON, ook te indexeren",
+              "alleen voor echt ongestructureerde data"
+            ],
+            [
+              "`UUID`",
+              "wereldwijd unieke id",
+              "alternatief voor `SERIAL`"
+            ]
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Bewaar geld als een geheel aantal centen (`INTEGER`) of als `NUMERIC`. Een float rekent bij benadering, en dat zie je zelfs in Python al:"
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "print(0.1 + 0.2)\nprint(10 + 20)  # in centen: exact",
+          "output": "0.30000000000000004\n30",
+          "run": true
+        },
+        {
+          "type": "table",
+          "head": [
+            "Constraint",
+            "Dwingt af",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`NOT NULL`",
+              "de kolom moet een waarde hebben",
+              "`name TEXT NOT NULL`"
+            ],
+            [
+              "`PRIMARY KEY`",
+              "uniek én nooit NULL; identificeert de rij",
+              "`id SERIAL PRIMARY KEY`"
+            ],
+            [
+              "`UNIQUE`",
+              "geen dubbele waarden",
+              "`sku ... UNIQUE`"
+            ],
+            [
+              "`REFERENCES`",
+              "de waarde moet bestaan in een andere tabel (foreign key)",
+              "`REFERENCES categories(id)`"
+            ],
+            [
+              "`CHECK`",
+              "een eigen voorwaarde",
+              "`CHECK (price_cents >= 0)`"
+            ]
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Constraints laten de database foute data weigeren. Dat is goedkoper dan welke bug ook. Handige psql-commando's: `\\dt` toont alle tabellen, `\\d parts` beschrijft één tabel, `\\x` schakelt verticale uitvoer in, `\\timing` meet querytijden, `\\i bestand.sql` voert een bestand uit en `\\q` sluit af."
+        },
+        {
+          "type": "h",
+          "text": "Opvragen en de uitvoervolgorde"
+        },
+        {
+          "type": "code",
+          "lang": "sql",
+          "code": "SELECT * FROM parts;\nSELECT name, price_cents / 100.0 AS price_eur FROM parts;\nSELECT * FROM parts WHERE stock = 0;\nSELECT * FROM parts WHERE price_cents BETWEEN 1000 AND 5000 AND name ILIKE '%sensor%';\nSELECT * FROM parts ORDER BY price_cents DESC LIMIT 2;\nSELECT DISTINCT category_id FROM parts;\nSELECT * FROM parts WHERE category_id IN (1, 3) OR category_id IS NULL;"
+        },
+        {
+          "type": "p",
+          "text": "Je schrijft een query altijd in dezelfde volgorde: `SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ... ORDER BY ... LIMIT`. Postgres voert hem echter in een andere volgorde uit:"
+        },
+        {
+          "type": "table",
+          "head": [
+            "Stap",
+            "Clausule",
+            "Wat er gebeurt"
+          ],
+          "rows": [
+            [
+              "1",
+              "`FROM` / `JOIN`",
+              "tabellen kiezen en combineren"
+            ],
+            [
+              "2",
+              "`WHERE`",
+              "losse rijen filteren"
+            ],
+            [
+              "3",
+              "`GROUP BY`",
+              "rijen samenvoegen tot groepen"
+            ],
+            [
+              "4",
+              "`HAVING`",
+              "groepen filteren"
+            ],
+            [
+              "5",
+              "`SELECT`",
+              "kolommen berekenen en aliassen maken"
+            ],
+            [
+              "6",
+              "`ORDER BY`",
+              "sorteren (aliassen mogen hier wel)"
+            ],
+            [
+              "7",
+              "`LIMIT`",
+              "het aantal rijen afkappen"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "tone": "warn",
+          "text": "Omdat `WHERE` vóór `SELECT` draait, kun je een alias als `price_eur` niet in `WHERE` gebruiken, wel in `ORDER BY`. En zonder `ORDER BY` is de volgorde van de rijen niet gegarandeerd, ook niet de volgorde van invoegen."
+        },
+        {
+          "type": "h",
+          "text": "Wijzigen, verwijderen en transacties"
+        },
+        {
+          "type": "p",
+          "text": "`UPDATE` en `DELETE` schrijf je altijd met een `WHERE`. Zonder `WHERE` raak je elke rij in de tabel, en de database vraagt niet om bevestiging. Een goede gewoonte: schrijf eerst de `WHERE`, draai hem als `SELECT` en kijk welke rijen je terugkrijgt."
+        },
+        {
+          "type": "code",
+          "lang": "sql",
+          "code": "UPDATE parts SET stock = stock - 2 WHERE sku = 'SEN-010';\nDELETE FROM parts WHERE stock = 0 AND created_at < now() - INTERVAL '1 year';\n\nBEGIN;\nUPDATE parts SET stock = stock - 1 WHERE sku = 'GW-200';\nINSERT INTO orders (part_id, qty) VALUES (2, 1);\nCOMMIT;   -- of ROLLBACK; om alles terug te draaien"
+        },
+        {
+          "type": "p",
+          "text": "Tussen `BEGIN` en `COMMIT` staat een **transactie**: alle stappen slagen samen of mislukken samen. Gaat er halverwege iets fout, dan zet `ROLLBACK` alles terug."
+        },
+        {
+          "type": "h",
+          "text": "Groeperen, aggregeren en NULL"
+        },
+        {
+          "type": "p",
+          "text": "Aggregate functions zoals `COUNT`, `SUM`, `AVG`, `MIN` en `MAX` vatten veel rijen samen tot één waarde. Met `GROUP BY` krijg je één uitkomst per groep."
+        },
+        {
+          "type": "code",
+          "lang": "sql",
+          "code": "SELECT c.name AS category,\n       COUNT(p.id) AS parts,\n       COALESCE(SUM(p.stock * p.price_cents), 0) / 100.0 AS stock_value\nFROM categories c\nLEFT JOIN parts p ON p.category_id = c.id\nGROUP BY c.name\nHAVING COUNT(p.id) > 0\nORDER BY stock_value DESC;"
+        },
+        {
+          "type": "p",
+          "text": "`WHERE` filtert rijen vóórdat er gegroepeerd wordt, `HAVING` filtert de groepen daarna. Elke kolom in `SELECT` moet in `GROUP BY` staan of in een aggregate zitten. `NULL` betekent \"onbekend\", en dat geeft een paar verrassingen:"
+        },
+        {
+          "type": "table",
+          "head": [
+            "Situatie",
+            "Resultaat",
+            "Gevolg"
+          ],
+          "rows": [
+            [
+              "`NULL = NULL`",
+              "niet true (onbekend)",
+              "test altijd met `IS NULL` / `IS NOT NULL`"
+            ],
+            [
+              "`WHERE category_id <> 3`",
+              "rijen met NULL vallen weg",
+              "voeg zo nodig `OR category_id IS NULL` toe"
+            ],
+            [
+              "`COUNT(*)` vs `COUNT(col)`",
+              "alle rijen vs alleen niet-NULL",
+              "het verschil is het aantal NULLs"
+            ],
+            [
+              "`SUM(x)` over nul rijen",
+              "`NULL`, niet 0",
+              "gebruik `COALESCE(SUM(x), 0)`"
+            ],
+            [
+              "`AVG(x)`",
+              "deelt alleen door niet-NULL waarden",
+              "NULL telt niet mee als 0"
+            ],
+            [
+              "`SELECT 5 / 2`",
+              "`2`",
+              "integer gedeeld door integer; schrijf `/ 100.0` voor decimalen"
+            ]
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Joins"
+        },
+        {
+          "type": "p",
+          "text": "Een join combineert rijen uit twee tabellen via een key. Teken het Venn-diagram één keer en je vergeet het nooit meer:"
+        },
+        {
+          "type": "table",
+          "head": [
+            "Join",
+            "Geeft terug"
+          ],
+          "rows": [
+            [
+              "`INNER JOIN`",
+              "alleen rijen met een match in beide tabellen"
+            ],
+            [
+              "`LEFT JOIN`",
+              "alle rijen van de linkertabel, met NULLs waar geen match is"
+            ],
+            [
+              "`RIGHT JOIN`",
+              "het spiegelbeeld van `LEFT JOIN`"
+            ],
+            [
+              "`FULL OUTER JOIN`",
+              "alles uit beide tabellen, gekoppeld waar dat kan"
+            ]
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "sql",
+          "code": "-- elk onderdeel met zijn categorie\nSELECT p.sku, p.name, c.name AS category\nFROM parts p\nINNER JOIN categories c ON c.id = p.category_id;\n\n-- anti-join: categorieën zonder onderdelen\nSELECT c.name\nFROM categories c\nLEFT JOIN parts p ON p.category_id = c.id\nWHERE p.id IS NULL;"
+        },
+        {
+          "type": "note",
+          "tone": "warn",
+          "text": "Een `INNER JOIN` is ook een filter: onderdelen zonder categorie verdwijnen stil uit het resultaat. Moet een rij blijven als de andere kant ontbreekt? Kies dan `LEFT JOIN`. Wil je bij een `LEFT JOIN` de rechterkant filteren (bijv. alleen onderdelen op voorraad), zet die voorwaarde dan in de `ON`: `LEFT JOIN parts p ON p.category_id = c.id AND p.stock > 0`. In `WHERE` gooi je de NULL-rijen weg en wordt het ongemerkt weer een inner join."
+        },
+        {
+          "type": "h",
+          "text": "Subqueries, CTE's en window functions"
+        },
+        {
+          "type": "p",
+          "text": "Een **subquery** is een query binnen een query. Een **CTE** (Common Table Expression, `WITH naam AS (...)`) geeft een tussenstap een naam, zodat een query in leesbare stappen opgedeeld wordt. Een **window function** met `OVER (...)` rekent over meerdere rijen, maar geeft het antwoord terug aan elke rij, in plaats van rijen samen te klappen zoals `GROUP BY`."
+        },
+        {
+          "type": "code",
+          "lang": "sql",
+          "code": "-- subquery: onderdelen duurder dan gemiddeld\nSELECT name FROM parts\nWHERE price_cents > (SELECT AVG(price_cents) FROM parts);\n\n-- CTE: eerst voorraad per categorie, dan de namen erbij\nWITH per_category AS (\n    SELECT category_id, SUM(stock) AS units FROM parts GROUP BY category_id\n)\nSELECT c.name, pc.units\nFROM per_category pc JOIN categories c ON c.id = pc.category_id\nORDER BY pc.units DESC;\n\n-- window functions: rang en aandeel per rij\nSELECT name,\n       RANK() OVER (ORDER BY price_cents DESC) AS price_rank,\n       round(100.0 * stock / NULLIF(SUM(stock) OVER (), 0), 1) AS pct_stock\nFROM parts;"
+        },
+        {
+          "type": "p",
+          "text": "`NULLIF(x, 0)` maakt van een 0 een NULL. Deel je door NULL, dan krijg je NULL in plaats van een deel-door-nul-fout."
+        }
+      ],
+      "takeaways": [
+        "Het skelet van elke query is `SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ... ORDER BY ... LIMIT`, maar uitgevoerd wordt vanaf `FROM`.",
+        "Constraints laten de database foute data weigeren.",
+        "Joins verbinden tabellen via keys; `LEFT JOIN` houdt rijen zonder match, `INNER JOIN` gooit ze weg.",
+        "NULL betekent onbekend: test met `IS NULL` en let op `COUNT` en `SUM`.",
+        "Nooit `UPDATE` of `DELETE` zonder `WHERE`; gebruik transacties voor wijzigingen in meerdere stappen."
+      ],
+      "exercise": "Maak in psql een tabel `orders` (id, product, aantal, besteldatum) met een foreign key, voeg acht orders toe en schrijf queries voor de omzet per categorie, de drie best verkochte producten, producten die nooit besteld zijn en de orders van de afgelopen week.",
+      "links": [
+        {
+          "label": "W3Schools — SQL Tutorial",
+          "url": "https://www.w3schools.com/sql/"
+        },
+        {
+          "label": "W3Schools — SQL Joins",
+          "url": "https://www.w3schools.com/sql/sql_join.asp"
+        },
+        {
+          "label": "W3Schools — SQL GROUP BY",
+          "url": "https://www.w3schools.com/sql/sql_groupby.asp"
+        },
+        {
+          "label": "W3Schools — SQL Constraints",
+          "url": "https://www.w3schools.com/sql/sql_constraints.asp"
+        },
+        {
+          "label": "W3Schools — PostgreSQL Tutorial",
+          "url": "https://www.w3schools.com/postgresql/"
+        },
+        {
+          "label": "PostgreSQL — Tutorial",
+          "url": "https://www.postgresql.org/docs/current/tutorial.html"
+        }
+      ],
+      "tags": [
+        "sql",
+        "postgresql",
+        "select",
+        "join",
+        "group by",
+        "null",
+        "transactie",
+        "cte",
+        "window function"
+      ]
+    },
+    {
+      "id": "3.3",
+      "title": "Schema design: keys, relaties, normaliseren en indexes",
+      "summary": "Je ontwerpt tabellen met goede primary keys, foreign keys, link tables, bewuste types en indexes.",
+      "minutes": 45,
+      "simple": "Simpel gezegd: een schema is de bouwtekening van je data. Net als bij een huis teken je eerst waar de kamers en deuren komen, voordat je gaat metselen. Een goede tekening voorkomt dat je later muren moet slopen.",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Een goed schema maakt het verschil tussen een applicatie die kan groeien en een die onder haar eigen bugs bezwijkt. Gelukkig zijn de regels overzichtelijk."
+        },
+        {
+          "type": "h",
+          "text": "Elke tabel een primary key"
+        },
+        {
+          "type": "p",
+          "text": "Geef elke tabel een technische primary key: een `SERIAL`/`BIGSERIAL`-id of een `UUID`. Gebruik geen business-waarde zoals een e-mailadres of SKU als primary key: zulke waarden kunnen veranderen, en dan moet je elke verwijzing meewijzigen. Zet op zo'n waarde liever een `UNIQUE`-constraint."
+        },
+        {
+          "type": "code",
+          "lang": "sql",
+          "code": "CREATE TABLE customers (\n    id    SERIAL PRIMARY KEY,          -- technische sleutel\n    email TEXT NOT NULL UNIQUE,        -- echte identifier, wel uniek\n    name  TEXT NOT NULL\n);"
+        },
+        {
+          "type": "h",
+          "text": "Relaties en link tables"
+        },
+        {
+          "type": "p",
+          "text": "Foreign keys leggen relaties vast. Bij **one-to-many** (één klant, veel orders) krijgt de \"veel\"-kant de foreign key: `orders.customer_id REFERENCES customers(id)`. Bij **many-to-many** (een onderdeel heeft meerdere tags, een tag hoort bij meerdere onderdelen) maak je een **link table** met een samengestelde primary key."
+        },
+        {
+          "type": "code",
+          "lang": "sql",
+          "code": "CREATE TABLE tags (id SERIAL PRIMARY KEY, name TEXT NOT NULL UNIQUE);\n\nCREATE TABLE part_tags (\n    part_id INTEGER REFERENCES parts(id) ON DELETE CASCADE,\n    tag_id  INTEGER REFERENCES tags(id)  ON DELETE CASCADE,\n    PRIMARY KEY (part_id, tag_id)\n);"
+        },
+        {
+          "type": "p",
+          "text": "Een link table kan ook eigen gegevens dragen. Gebruikt een order hetzelfde onderdeel drie keer, dan zet je die 3 in een kolom `qty` op de regel, niet drie aparte rijen:"
+        },
+        {
+          "type": "code",
+          "lang": "sql",
+          "code": "CREATE TABLE order_lines (\n    order_id         INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,\n    part_id          INTEGER NOT NULL REFERENCES parts(id),\n    qty              INTEGER NOT NULL CHECK (qty > 0),\n    unit_price_cents INTEGER NOT NULL,\n    PRIMARY KEY (order_id, part_id)\n);"
+        },
+        {
+          "type": "table",
+          "head": [
+            "ON DELETE",
+            "Wat gebeurt er als de ouderrij verdwijnt",
+            "Typisch voor"
+          ],
+          "rows": [
+            [
+              "`RESTRICT` / standaard",
+              "het verwijderen wordt geweigerd",
+              "onderdelen die nog op een order staan"
+            ],
+            [
+              "`CASCADE`",
+              "de verwijzende rijen gaan mee",
+              "regels van een order, koppelingen in een link table"
+            ],
+            [
+              "`SET NULL`",
+              "de foreign key wordt NULL",
+              "optionele relaties, zoals een toegewezen medewerker"
+            ]
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Mag een relatie (nog) ontbreken, bijvoorbeeld een order die nog niet aan een technicus is toegewezen? Dan maak je die foreign key-kolom nullable, dus zonder `NOT NULL`."
+        },
+        {
+          "type": "h",
+          "text": "Normaliseren: één feit op één plek"
+        },
+        {
+          "type": "p",
+          "text": "Sla elk feit maar één keer op. De naam van een categorie staat in `categories`, niet herhaald op elke onderdeelrij. Merk je dat je dezelfde waarde in vijftig rijen moet aanpassen, dan zit er een fout in je ontwerp."
+        },
+        {
+          "type": "p",
+          "text": "Er is één bewuste uitzondering: een feit over een bepaald moment. De prijs op een afgeronde order is de prijs van die dag. Daarom kopieer je hem als `unit_price_cents` naar de orderregel; anders verandert elke prijswijziging achteraf al je oude facturen."
+        },
+        {
+          "type": "h",
+          "text": "Kolommen: types en audit-kolommen"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "`TIMESTAMPTZ` voor momenten, `DATE` voor dagen.",
+            "Geld als integer in centen, of als `NUMERIC`.",
+            "`BOOLEAN` in plaats van `'Y'`/`'N'`.",
+            "`JSONB` alleen voor echt flexibele data, zoals de ruwe inhoud van een webhook.",
+            "Audit-kolommen `created_at` en `updated_at`, en vaak `deleted_at` voor **soft delete**: je markeert een rij als verwijderd in plaats van hem echt te wissen."
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "sql",
+          "code": "ALTER TABLE customers\n    ADD COLUMN created_at TIMESTAMPTZ NOT NULL DEFAULT now(),\n    ADD COLUMN updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),\n    ADD COLUMN deleted_at TIMESTAMPTZ;           -- NULL = niet verwijderd\n\nSELECT * FROM customers WHERE deleted_at IS NULL; -- alleen actieve klanten"
+        },
+        {
+          "type": "note",
+          "tone": "tip",
+          "text": "Valideer in Python én leg een constraint vast in de database. Python geeft de gebruiker een nette foutmelding; de constraint zorgt dat de regel altijd waar blijft, ook als er ooit iemand buiten je code om in de database schrijft."
+        },
+        {
+          "type": "h",
+          "text": "Indexes"
+        },
+        {
+          "type": "p",
+          "text": "Een index laat Postgres snel zoeken zonder de hele tabel door te lopen. De primary key en `UNIQUE`-kolommen krijgen automatisch een index. Voeg zelf indexes toe op foreign keys waarop je joint en op kolommen die vaak in `WHERE` of `ORDER BY` staan. Met `EXPLAIN ANALYZE` zie je of Postgres de index ook echt gebruikt."
+        },
+        {
+          "type": "code",
+          "lang": "sql",
+          "code": "CREATE INDEX idx_parts_category ON parts (category_id);\nCREATE INDEX ON order_lines (part_id);\n\n-- zoeken met ILIKE versnellen (vereist de extensie pg_trgm)\nCREATE EXTENSION IF NOT EXISTS pg_trgm;\nCREATE INDEX idx_parts_name_trgm ON parts USING gin (name gin_trgm_ops);\n\nEXPLAIN ANALYZE SELECT * FROM parts WHERE category_id = 2;"
+        },
+        {
+          "type": "note",
+          "tone": "info",
+          "text": "Indexes zijn niet gratis: elke `INSERT` en `UPDATE` moet ze bijwerken. Voeg ze toe op wat je echt vaak bevraagt, en meet eerst."
+        },
+        {
+          "type": "h",
+          "text": "Van verhaal naar schema"
+        },
+        {
+          "type": "p",
+          "text": "Schets je tabellen eerst op papier voordat je `CREATE TABLE` typt. Een handige vertaling van een opdrachtomschrijving:"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "Zelfstandige naamwoorden (klant, technicus, onderdeel) worden tabellen.",
+            "Werkwoorden die dingen verbinden (een klant plaatst een order) worden foreign keys.",
+            "\"Meerdere, en van elk een aantal\" wordt een link table met `qty`.",
+            "Bijvoeglijke bepalingen als \"nog niet toegewezen\" worden nullable kolommen."
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Stel jezelf daarna per kolom vijf vragen: kan deze waarde onbekend zijn (nullable)? Wat maakt de rij uniek (primary key en `UNIQUE`)? Wat moet er gebeuren als de rij waarnaar verwezen wordt verdwijnt (`ON DELETE`)? Is dit één feit of eigenlijk twee? En ga ik hierop zoeken (index)?"
+        }
+      ],
+      "takeaways": [
+        "Elke tabel krijgt een technische primary key; business-waarden krijgen een `UNIQUE`-constraint.",
+        "One-to-many: de \"veel\"-kant draagt de foreign key. Many-to-many: een link table met een samengestelde primary key.",
+        "Normaliseer: één feit op één plek, behalve feiten die bij een moment horen, zoals de prijs op een orderregel.",
+        "Kies types bewust en voeg audit-kolommen toe; soft delete via `deleted_at`.",
+        "Indexeer wat je filtert en joint, en controleer met `EXPLAIN ANALYZE`."
+      ],
+      "links": [
+        {
+          "label": "W3Schools — SQL PRIMARY KEY",
+          "url": "https://www.w3schools.com/sql/sql_primarykey.asp"
+        },
+        {
+          "label": "W3Schools — SQL FOREIGN KEY",
+          "url": "https://www.w3schools.com/sql/sql_foreignkey.asp"
+        },
+        {
+          "label": "W3Schools — SQL CREATE INDEX",
+          "url": "https://www.w3schools.com/sql/sql_create_index.asp"
+        },
+        {
+          "label": "W3Schools — SQL Keywords Reference",
+          "url": "https://www.w3schools.com/sql/sql_ref_keywords.asp"
+        },
+        {
+          "label": "PostgreSQL — Data Definition",
+          "url": "https://www.postgresql.org/docs/current/ddl.html"
+        }
+      ],
+      "tags": [
+        "schema design",
+        "primary key",
+        "foreign key",
+        "link table",
+        "normaliseren",
+        "index",
+        "soft delete"
+      ]
+    },
+    {
+      "id": "3.4",
+      "title": "PostgreSQL vanuit Python: psycopg en SQLAlchemy ORM",
+      "summary": "Je verbindt Python met Postgres via psycopg met veilige parameters, en daarna via SQLAlchemy-modellen, sessions en een repository.",
+      "minutes": 60,
+      "simple": "Simpel gezegd: de driver (psycopg) is de telefoonlijn tussen Python en de database. Een ORM zoals SQLAlchemy is een tolk aan die lijn: jij praat in Python-objecten, de tolk vertaalt dat naar SQL en de antwoorden weer terug naar objecten.",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "psycopg: de driver"
+        },
+        {
+          "type": "p",
+          "text": "Installeer in je virtual environment de driver, `python-dotenv` voor configuratie en alvast SQLAlchemy en Alembic:"
+        },
+        {
+          "type": "code",
+          "lang": "bash",
+          "code": "pip install \"psycopg[binary]\" python-dotenv sqlalchemy alembic"
+        },
+        {
+          "type": "p",
+          "text": "Zet wachtwoorden nooit in je code. Ze horen in een `.env`-bestand dat in `.gitignore` staat; `python-dotenv` laadt dat bestand in de environment variables."
+        },
+        {
+          "type": "code",
+          "lang": "ini",
+          "code": "# .env  (niet committen!)\nDATABASE_URL=postgresql://app:geheim@localhost:5432/inventory"
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "import os\nimport psycopg\nfrom dotenv import load_dotenv\n\nload_dotenv()\nwith psycopg.connect(os.environ[\"DATABASE_URL\"]) as conn:   # commit bij succes\n    with conn.cursor() as cur:\n        cur.execute(\"SELECT sku, name FROM parts WHERE stock < %s\", (5,))\n        for sku, name in cur.fetchall():\n            print(sku, name)\n        cur.execute(\n            \"INSERT INTO parts (sku, name, price_cents) VALUES (%s, %s, %s) RETURNING id\",\n            (\"CAB-20\", \"Kabel 20 m\", 1450),\n        )\n        print(\"nieuw id:\", cur.fetchone()[0])"
+        },
+        {
+          "type": "p",
+          "text": "De verbinding werkt als context manager: lukt het blok, dan wordt er gecommit; gaat er iets mis, dan wordt er teruggedraaid. `RETURNING id` geeft de nieuwe id direct terug."
+        },
+        {
+          "type": "h",
+          "text": "Parameters in plaats van f-strings"
+        },
+        {
+          "type": "p",
+          "text": "De `%s`-plekken zijn **parameters**: de driver stuurt de waarden los van de SQL-tekst naar de database. Daardoor kan een waarde nooit als SQL worden uitgevoerd en is SQL injection uitgesloten. Bouw je de query met een f-string, dan wordt invoer van een gebruiker gewoon onderdeel van je SQL:"
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "name = \"x' OR '1'='1\"\nquery = f\"SELECT * FROM parts WHERE name = '{name}'\"\nprint(query)",
+          "output": "SELECT * FROM parts WHERE name = 'x' OR '1'='1'",
+          "run": true,
+          "caption": "De voorwaarde is nu altijd waar: de query geeft elke rij terug."
+        },
+        {
+          "type": "p",
+          "text": "Let ook op de komma bij één parameter. Psycopg verwacht de parameters als tuple, en haakjes alleen maken nog geen tuple: `(sku)` is gewoon een string, pas `(sku,)` is een tuple met één element. Je kunt dat in Python zelf controleren met `type((\"CAB-02\",))`, wat `<class 'tuple'>` oplevert."
+        },
+        {
+          "type": "note",
+          "tone": "tip",
+          "text": "Tabel- en kolomnamen kun je niet als parameter meegeven. Moet zo'n naam dynamisch zijn, gebruik dan `psycopg.sql.Identifier` in plaats van een f-string."
+        },
+        {
+          "type": "h",
+          "text": "SQLAlchemy: tabellen als Python-klassen"
+        },
+        {
+          "type": "p",
+          "text": "Overal SQL-strings schrijven wordt snel repetitief en je krijgt er geen type-informatie bij. Een **ORM** (object-relational mapper) koppelt tabellen aan klassen en rijen aan objecten, en laat je toch naar SQL gaan als dat nodig is. SQLAlchemy 2.x is de standaard en wordt in FastAPI-projecten met Postgres vrijwel altijd gebruikt."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "# inventory/db.py\nimport os\nfrom sqlalchemy import create_engine\nfrom sqlalchemy.orm import DeclarativeBase, sessionmaker\n\nengine = create_engine(os.environ[\"DATABASE_URL\"], echo=False)\nSessionLocal = sessionmaker(bind=engine)\n\nclass Base(DeclarativeBase):\n    pass"
+        },
+        {
+          "type": "note",
+          "tone": "warn",
+          "text": "Bij een URL die begint met `postgresql://` kiest SQLAlchemy standaard de oudere driver psycopg2. Heb je alleen psycopg 3 geïnstalleerd, schrijf dan `postgresql+psycopg://...` in de URL die je aan `create_engine` geeft."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "# inventory/models.py\nfrom sqlalchemy import ForeignKey, String\nfrom sqlalchemy.orm import Mapped, mapped_column, relationship\nfrom .db import Base\n\nclass Category(Base):\n    __tablename__ = \"categories\"\n    id: Mapped[int] = mapped_column(primary_key=True)\n    name: Mapped[str] = mapped_column(unique=True)\n    parts: Mapped[list[\"Part\"]] = relationship(back_populates=\"category\")\n\nclass Part(Base):\n    __tablename__ = \"parts\"\n    id: Mapped[int] = mapped_column(primary_key=True)\n    sku: Mapped[str] = mapped_column(String(20), unique=True)\n    name: Mapped[str]\n    stock: Mapped[int] = mapped_column(default=0)\n    category_id: Mapped[int | None] = mapped_column(ForeignKey(\"categories.id\"))\n    category: Mapped[\"Category | None\"] = relationship(back_populates=\"parts\")"
+        },
+        {
+          "type": "table",
+          "head": [
+            "Schrijfwijze",
+            "Betekenis in de database"
+          ],
+          "rows": [
+            [
+              "`Mapped[int]`",
+              "kolom `NOT NULL`"
+            ],
+            [
+              "`Mapped[int | None]`",
+              "nullable kolom"
+            ],
+            [
+              "`mapped_column(primary_key=True)`",
+              "primary key"
+            ],
+            [
+              "`ForeignKey(\"categories.id\")`",
+              "foreign key naar een andere tabel"
+            ],
+            [
+              "`relationship(back_populates=...)`",
+              "navigeren tussen objecten, in beide richtingen"
+            ],
+            [
+              "`DateTime(timezone=True), server_default=func.now()`",
+              "een `TIMESTAMPTZ` die de database zelf invult"
+            ]
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Sessions en queries"
+        },
+        {
+          "type": "p",
+          "text": "De **session** is je unit of work: je voegt objecten toe of wijzigt ze, en `commit()` schrijft alles in één transactie weg (of `rollback()` bij een fout). `Base.metadata.create_all(engine)` maakt ontbrekende tabellen aan, maar dat is alleen voor een snelle start; echte projecten gebruiken Alembic (zie 3.5)."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "from sqlalchemy import func, select\nfrom inventory.db import SessionLocal\nfrom inventory.models import Category, Part\n\nwith SessionLocal() as session:\n    kabels = Category(name=\"Kabels\")\n    session.add(Part(sku=\"CAB-02\", name=\"Kabel 2 m\", category=kabels))\n    session.commit()\n\n    for part in session.scalars(select(Part).where(Part.stock < 5).order_by(Part.name)):\n        print(part.sku, part.category.name if part.category else \"-\")\n\n    part = session.scalar(select(Part).where(Part.sku == \"CAB-02\"))\n    part.stock += 10\n    session.commit()\n    total = session.scalar(select(func.sum(Part.stock)))"
+        },
+        {
+          "type": "table",
+          "head": [
+            "Aanroep",
+            "Geeft terug"
+          ],
+          "rows": [
+            [
+              "`session.scalars(stmt).all()`",
+              "een lijst objecten"
+            ],
+            [
+              "`session.scalar(stmt)`",
+              "één object of `None`"
+            ],
+            [
+              "`session.get(Part, 3)`",
+              "één object via de primary key"
+            ],
+            [
+              "`session.execute(stmt).all()`",
+              "rijen met meerdere kolommen"
+            ],
+            [
+              "`.where(Part.category_id.is_(None))`",
+              "filteren op NULL"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "tone": "info",
+          "text": "`flush()` stuurt de openstaande wijzigingen als SQL naar de database, dus daar vuren constraints en kun je een fout nog netjes afvangen. `commit()` maakt alles definitief. `flush()` gebeurt automatisch vóór een query en bij een commit."
+        },
+        {
+          "type": "note",
+          "tone": "warn",
+          "text": "Het **N+1-probleem**: je haalt 100 objecten op (1 query) en vraagt in een loop per object een relatie op (100 extra queries). Zet `echo=True` op de engine om het te zien. Oplossing: laad de relatie vooraf met `select(Category).options(selectinload(Category.parts))` voor lijsten, of `joinedload` voor many-to-one."
+        },
+        {
+          "type": "h",
+          "text": "Het repository-patroon"
+        },
+        {
+          "type": "p",
+          "text": "Het repository-patroon bundelt alle databasecode voor één soort object op één plek. De rest van je applicatie vraagt de repository om data en hoeft geen query's te kennen."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "# inventory/repository.py\nfrom sqlalchemy import select\nfrom .models import Part\n\nclass PartRepository:\n    def __init__(self, session):\n        self.session = session\n\n    def get_by_sku(self, sku: str) -> Part | None:\n        return self.session.scalar(select(Part).where(Part.sku == sku))\n\n    def add(self, part: Part) -> Part:\n        self.session.add(part)\n        self.session.flush()   # id is nu bekend; de caller beslist over commit\n        return part"
+        },
+        {
+          "type": "p",
+          "text": "Een gebruikelijke afspraak: de repository flusht hooguit, en de code die de repository aanroept beslist wanneer er gecommit wordt. Zo kun je meerdere repository-aanroepen in één transactie samenvoegen."
+        }
+      ],
+      "takeaways": [
+        "Geef waarden altijd als parameters mee (`%s` met een tuple), nooit via f-strings of stringopmaak.",
+        "Wachtwoorden en verbindingsgegevens staan in `.env`, nooit in je code.",
+        "In SQLAlchemy zijn modellen tabellen, is de session een transactie en is `select()` een query.",
+        "`flush()` stuurt SQL, `commit()` maakt het definitief.",
+        "Let op N+1-queries en laad relaties vooraf met `selectinload` of `joinedload`."
+      ],
+      "links": [
+        {
+          "label": "psycopg 3 — Basic module usage",
+          "url": "https://www.psycopg.org/psycopg3/docs/basic/usage.html"
+        },
+        {
+          "label": "SQLAlchemy 2.0 — ORM Quick Start",
+          "url": "https://docs.sqlalchemy.org/en/20/orm/quickstart.html"
+        },
+        {
+          "label": "W3Schools — SQL Injection",
+          "url": "https://www.w3schools.com/sql/sql_injection.asp"
+        }
+      ],
+      "tags": [
+        "psycopg",
+        "sql injection",
+        "dotenv",
+        "sqlalchemy",
+        "orm",
+        "session",
+        "repository",
+        "n+1"
+      ]
+    },
+    {
+      "id": "3.5",
+      "title": "Alembic-migrations",
+      "summary": "Je legt elke schemawijziging vast als een versiebeheerde migration die je op elke database op dezelfde manier toepast.",
+      "minutes": 60,
+      "simple": "Simpel gezegd: migrations zijn het logboek van alle verbouwingen aan je database. Elke verbouwing heeft een volgnummer, en wie het logboek van voor naar achter volgt, krijgt precies hetzelfde huis, op je eigen laptop, bij een collega en in productie.",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Waarom migrations?"
+        },
+        {
+          "type": "p",
+          "text": "`Base.metadata.create_all()` maakt tabellen aan die nog niet bestaan, maar een bestaande tabel met data kan hij nooit aanpassen. In echte projecten verandert het schema jarenlang: hier een kolom erbij, daar een tabel hernoemd. Elke wijziging moet op elke ontwikkelmachine en in productie op precies dezelfde manier worden doorgevoerd."
+        },
+        {
+          "type": "p",
+          "text": "Een **migration** is een script met een versie dat één zo'n stap beschrijft, met een `upgrade()` om vooruit te gaan en een `downgrade()` om terug te gaan. **Alembic** is de migratietool van SQLAlchemy."
+        },
+        {
+          "type": "h",
+          "text": "Alembic opzetten"
+        },
+        {
+          "type": "code",
+          "lang": "bash",
+          "code": "alembic init migrations"
+        },
+        {
+          "type": "p",
+          "text": "Dit maakt een map `migrations/` en een `alembic.ini`. Haal de vaste `sqlalchemy.url` uit `alembic.ini`, zodat er geen wachtwoord in je repository komt, en stel in `migrations/env.py` de URL en je modellen in:"
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "# migrations/env.py (fragment)\nimport os\nfrom inventory.db import Base\nfrom inventory import models  # noqa: F401  laadt alle modellen\n\nconfig.set_main_option(\"sqlalchemy.url\", os.environ[\"DATABASE_URL\"])\ntarget_metadata = Base.metadata"
+        },
+        {
+          "type": "p",
+          "text": "Doordat `models` geïmporteerd wordt, kent `Base.metadata` al je tabellen. Daar vergelijkt Alembic de database mee. Vergeet je die import, dan denkt autogenerate dat er geen modellen zijn en stelt het voor om tabellen te verwijderen; ook daarom lees je elke migration na."
+        },
+        {
+          "type": "h",
+          "text": "De belangrijkste commando's"
+        },
+        {
+          "type": "code",
+          "lang": "bash",
+          "code": "alembic revision --autogenerate -m \"create categories and parts\"\nalembic upgrade head      # alle openstaande migrations toepassen\nalembic downgrade -1      # de laatste migration terugdraaien\nalembic current           # op welke versie staat de database?\nalembic history           # alle migrations op een rij"
+        },
+        {
+          "type": "table",
+          "head": [
+            "Commando",
+            "Wat het doet"
+          ],
+          "rows": [
+            [
+              "`alembic init migrations`",
+              "Alembic in je project opzetten"
+            ],
+            [
+              "`alembic revision --autogenerate -m \"...\"`",
+              "een migration laten genereren uit het verschil tussen modellen en database"
+            ],
+            [
+              "`alembic upgrade head`",
+              "de database bijwerken tot de nieuwste versie"
+            ],
+            [
+              "`alembic downgrade -1`",
+              "één stap terug"
+            ],
+            [
+              "`alembic current` / `alembic history`",
+              "huidige versie / overzicht van alle versies"
+            ]
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Elke migration weet welke migration vóór hem kwam (`down_revision`). Zo vormen ze samen een keten, en `head` is simpelweg het nieuwste eind van die keten. `upgrade head` loopt de keten af vanaf de versie waarop de database nu staat; migrations die al zijn toegepast worden overgeslagen. Daardoor kun je hetzelfde commando veilig op je laptop, op de testserver en in productie draaien."
+        },
+        {
+          "type": "p",
+          "text": "Alembic houdt in de tabel `alembic_version` bij op welke versie je database staat: één rij met één string, de id van de laatst toegepaste migration."
+        },
+        {
+          "type": "code",
+          "lang": "sql",
+          "code": "SELECT version_num FROM alembic_version;"
+        },
+        {
+          "type": "h",
+          "text": "Autogenerate: handig, maar lees altijd mee"
+        },
+        {
+          "type": "p",
+          "text": "Autogenerate vergelijkt je modellen met de live database en schrijft de migration voor je. Lees het gegenereerde bestand altijd door voordat je het toepast. Autogenerate ziet een hernoemde kolom als drop plus add (en dan ben je je data kwijt), herkent niet alles, zoals `CHECK`-constraints, en weet niets van de data in je tabellen."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "from alembic import op\nimport sqlalchemy as sa\n\nrevision = \"b7e1c2d40a9f\"\ndown_revision = \"5a3f0e9c1b22\"\n\ndef upgrade() -> None:\n    op.add_column(\"parts\", sa.Column(\n        \"is_active\", sa.Boolean(), nullable=False, server_default=sa.text(\"true\")))\n\ndef downgrade() -> None:\n    op.drop_column(\"parts\", \"is_active\")",
+          "caption": "Een migration die een NOT NULL-kolom toevoegt aan een tabel met bestaande rijen"
+        },
+        {
+          "type": "note",
+          "tone": "warn",
+          "text": "Voeg je een `NOT NULL`-kolom toe aan een tabel die al rijen heeft, dan faalt de upgrade met een `NotNullViolation`, want de bestaande rijen hebben geen waarde. Je moet zelf beslissen wat ze krijgen, bijvoorbeeld met een `server_default`. Een hernoeming schrijf je met de hand als `op.alter_column(..., new_column_name=...)`."
+        },
+        {
+          "type": "h",
+          "text": "De vaste workflow"
+        },
+        {
+          "type": "list",
+          "ordered": true,
+          "items": [
+            "Pas het SQLAlchemy-model aan.",
+            "Genereer een migration met `alembic revision --autogenerate -m \"...\"`.",
+            "Lees en corrigeer het gegenereerde bestand.",
+            "Pas het toe met `alembic upgrade head` en test het, liefst tegen een database mét rijen.",
+            "Commit het model en het migrationbestand samen."
+          ]
+        },
+        {
+          "type": "note",
+          "tone": "tip",
+          "text": "Een migration die al gemerged is, pas je niet meer aan: anderen hebben hem misschien al gedraaid. Wil je iets veranderen, schrijf dan een nieuwe migration. En wijzig een productietabel nooit met de hand."
+        }
+      ],
+      "takeaways": [
+        "`create_all()` kan geen bestaande tabellen wijzigen; daarvoor gebruik je migrations.",
+        "Schemawijzigingen zijn code: met versie, gereviewd en reproduceerbaar.",
+        "Lees elke autogenerated migration; renames, constraints en bestaande data vragen handwerk.",
+        "Workflow: model aanpassen, revision genereren, nalezen, `alembic upgrade head`, alles committen."
+      ],
+      "links": [
+        {
+          "label": "Alembic — Tutorial",
+          "url": "https://alembic.sqlalchemy.org/en/latest/tutorial.html"
+        }
+      ],
+      "tags": [
+        "alembic",
+        "migration",
+        "autogenerate",
+        "upgrade",
+        "downgrade",
+        "schemawijziging"
+      ]
+    },
+    {
+      "id": "3.A",
+      "kind": "assessment",
+      "title": "Assessment week 3 — Voorraaddatabase voor een field-service-bedrijf",
+      "summary": "Je modelleert technici, klanten, werkorders en gebruikte onderdelen in Postgres, met SQLAlchemy, Alembic, een repository en tests.",
+      "simple": "Simpel gezegd: je bouwt het geheugen van een onderhoudsbedrijf. Wie is de klant, welke monteur gaat erheen, welke onderdelen gingen er mee en wat kostte dat? Alles moet kloppen, ook als er halverwege iets misgaat.",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Wat je bouwt"
+        },
+        {
+          "type": "p",
+          "text": "Een bedrijf met monteurs in het veld wil bijhouden welke klanten er zijn, welke technici er werken, welke werkorders er gepland of afgerond zijn en welke onderdelen per klus zijn gebruikt. Je bouwt dat in PostgreSQL in Docker, met SQLAlchemy-modellen, Alembic-migrations, een repository-laag en tests. Je werkt in `week3/inventory/` op de branch `feature/week3-inventory`."
+        },
+        {
+          "type": "table",
+          "head": [
+            "Tabel",
+            "Inhoud",
+            "Relatie"
+          ],
+          "rows": [
+            [
+              "`customers`",
+              "klantgegevens",
+              "één klant, veel werkorders"
+            ],
+            [
+              "`technicians`",
+              "monteurs",
+              "één monteur, veel werkorders (mag nog leeg zijn)"
+            ],
+            [
+              "`work_orders`",
+              "status (planned, in_progress, done), geplande tijd, notities",
+              "hoort bij een klant en eventueel een monteur"
+            ],
+            [
+              "`parts`",
+              "sku, naam, prijs in centen, voorraad",
+              "via de link table aan werkorders"
+            ],
+            [
+              "`work_order_parts`",
+              "welk onderdeel, hoeveel (`qty`)",
+              "link table tussen werkorders en onderdelen"
+            ]
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Stappenplan"
+        },
+        {
+          "type": "list",
+          "ordered": true,
+          "items": [
+            "Zet een `compose.yaml` op met Postgres 16 (named volume en healthcheck) en Adminer, en leg in de README uit hoe je het start. Maak in dezelfde Compose-opzet ook een aparte testdatabase.",
+            "Teken het ER-diagram met keys en cardinaliteiten op papier, en zet een foto ervan in `docs/`.",
+            "Schrijf de SQLAlchemy-modellen met relaties in beide richtingen, `created_at`/`updated_at` en configuratie via `.env`.",
+            "Maak de eerste Alembic-migration voor het hele schema, en een tweede die een prioriteitskolom en een index op de geplande tijd toevoegt.",
+            "Schrijf een seed-script dat een handvol klanten, technici, onderdelen en werkorders met onderdelen invoegt.",
+            "Bouw de repository: open orders per monteur, onderdelen onder een voorraadgrens, kosten van een order, omzet per klant met `GROUP BY`, en een methode die een order afrondt.",
+            "Schrijf vijf analytische query's in een `queries.sql`, met joins, `GROUP BY`/`HAVING`, een CTE, een subquery en een window function, elk met uitleg in commentaar.",
+            "Test de repository met pytest tegen de testdatabase, vooral het terugdraaien bij te weinig voorraad."
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Een order afronden in één transactie"
+        },
+        {
+          "type": "p",
+          "text": "Bij het afronden van een order zet je de status op done en verlaag je de voorraad van elk gebruikt onderdeel, allemaal in één transactie. Is er van één onderdeel te weinig, dan gooi je een eigen `InsufficientStock`-exceptie en mag er niets veranderd zijn. Een overzichtelijke aanpak is twee rondes: eerst alles controleren, pas daarna wijzigen. Een rollback zou je ook redden, maar zo geef je een duidelijke foutmelding voordat er iets is aangeraakt."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "class InsufficientStock(Exception):\n    pass\n\n# schets van de aanpak\n# ronde 1: voor elke regel controleren of stock >= qty, anders raise InsufficientStock\n# ronde 2: pas als alles klopt de voorraad verlagen en de status op done zetten"
+        },
+        {
+          "type": "h",
+          "text": "Testen tegen een database"
+        },
+        {
+          "type": "p",
+          "text": "Laat elke test in dezelfde schone wereld beginnen en niets achterlaten. Open een verbinding, start een buitenste transactie en koppel de session daaraan met savepoints. De code onder test mag dan gewoon committen; na de test draai je de buitenste transactie terug."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "import os\nimport pytest\nfrom sqlalchemy import create_engine\nfrom sqlalchemy.orm import Session\n\nengine = create_engine(os.environ[\"TEST_DATABASE_URL\"])\n\n@pytest.fixture\ndef session():\n    connection = engine.connect()\n    outer = connection.begin()\n    session = Session(bind=connection, join_transaction_mode=\"create_savepoint\")\n    yield session\n    session.close()\n    outer.rollback()\n    connection.close()"
+        },
+        {
+          "type": "h",
+          "text": "Valkuilen"
+        },
+        {
+          "type": "note",
+          "tone": "warn",
+          "text": "Een Python-`Enum` in SQLAlchemy wordt standaard opgeslagen met de naam van het lid (`PLANNED`), niet met de waarde (`planned`). Dan matchen je ruwe SQL-query's niet meer. Controleer in psql wat er echt in de kolom staat, en geef zo nodig `values_callable` mee aan `Enum`."
+        },
+        {
+          "type": "note",
+          "tone": "warn",
+          "text": "Wil je ook monteurs met nul open orders zien, gebruik dan een `LEFT JOIN` en zet de statusfilter in de `ON`-voorwaarde, niet in `WHERE`."
+        },
+        {
+          "type": "note",
+          "tone": "tip",
+          "text": "Stretch-ideeën: zoeken op onderdeelnaam met `ILIKE` en een pg_trgm-index, een `JSONB`-kolom met metadata op werkorders waarop je filtert, en soft delete voor klanten die je in alle repository-query's verbergt."
+        }
+      ],
+      "takeaways": [
+        "Ontwerp eerst op papier: tabellen, keys en cardinaliteiten.",
+        "Elke schemawijziging gaat via een Alembic-migration.",
+        "Wijzigingen die bij elkaar horen zitten in één transactie; bij een fout verandert er niets.",
+        "Tests draaien tegen een aparte testdatabase en laten niets achter."
+      ],
+      "checklist": [
+        "`compose.yaml` met Postgres 16, named volume, healthcheck, Adminer en een testdatabase",
+        "README legt uit hoe je de stack start",
+        "ER-diagram met keys en cardinaliteiten als afbeelding in `docs/`",
+        "Modellen met relaties in beide richtingen en `created_at`/`updated_at`",
+        "Configuratie via `.env`, geen wachtwoorden in de code",
+        "Twee Alembic-migrations: het startschema en prioriteit plus index",
+        "Seed-script vult de database met realistische voorbeelddata",
+        "Repository met de gevraagde methodes, inclusief order afronden in één transactie",
+        "`queries.sql` met vijf query's en uitleg in commentaar",
+        "pytest-suite tegen de testdatabase, inclusief de rollback bij te weinig voorraad",
+        "Vanaf een schone clone werken compose, `alembic upgrade head`, seed en `pytest -q` achter elkaar",
+        "Pull request met de uitvoer van `alembic history` en `pytest -q` in de beschrijving"
+      ],
+      "tags": [
+        "assessment",
+        "postgresql",
+        "sqlalchemy",
+        "alembic",
+        "repository",
+        "pytest",
+        "transactie"
+      ]
+    }
+  ]
+}

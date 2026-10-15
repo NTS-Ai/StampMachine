@@ -80,7 +80,8 @@
 .chip {
   font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
   padding: 3px 8px; border-radius: var(--r-xs);
-  background: color-mix(in srgb, var(--hue, var(--accent)) 9%, transparent); color: var(--hue, var(--accent));
+  /* Tekst iets richting de inktkleur gemengd: genoeg contrast op de getinte achtergrond, in licht én donker. */
+  background: color-mix(in srgb, var(--hue, var(--accent)) 9%, transparent); color: color-mix(in srgb, var(--hue, var(--accent)) 82%, var(--ink));
 }
 .chip.retry { --hue: var(--bad); }
 .hint { font-size: 13px; color: var(--muted); }

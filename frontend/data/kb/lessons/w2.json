@@ -1,0 +1,1242 @@
+{
+  "week": 2,
+  "title": "Echte programma's schrijven",
+  "sections": [
+    {
+      "id": "2.1",
+      "title": "Modules, packages, pip en virtual environments",
+      "summary": "Je verdeelt code over meerdere bestanden, gebruikt de standaardbibliotheek en geeft elk project een eigen virtual environment met pip en pyproject.toml.",
+      "minutes": 60,
+      "simple": "Simpel gezegd: een module is één receptkaart en een package is een receptenbak vol kaarten met een label erop. Met `import` pak je een kaart uit de bak. Een virtual environment is een eigen keukenkastje per project, zodat de ingrediënten van het ene project niet tussen die van het andere belanden.",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Modules: één bestand, herbruikbaar"
+        },
+        {
+          "type": "p",
+          "text": "Elk `.py`-bestand is een **module**. Zet je functies in een apart bestand, dan kan elk ander bestand ze ophalen met `import`. Zo blijven je bestanden klein en overzichtelijk, en hoef je nooit code te kopiëren. Je importeert op drie gangbare manieren: de hele module, één naam eruit, of een naam met een alias."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "# prijzen.py\ndef met_btw(bedrag: float, tarief: float = 0.21) -> float:\n    return round(bedrag * (1 + tarief), 2)\n\n# app.py\nimport prijzen                        # hele module\nfrom prijzen import met_btw           # één naam\nfrom prijzen import met_btw as bruto  # met alias\n\nprint(prijzen.met_btw(50), met_btw(50), bruto(50))",
+          "output": "60.5 60.5 60.5",
+          "caption": "Twee bestanden in dezelfde map: app.py gebruikt de functie uit prijzen.py."
+        },
+        {
+          "type": "table",
+          "head": [
+            "Importvorm",
+            "Gebruik",
+            "Wanneer"
+          ],
+          "rows": [
+            [
+              "`import math`",
+              "`math.sqrt(9)`",
+              "je ziet meteen waar een naam vandaan komt"
+            ],
+            [
+              "`from math import sqrt`",
+              "`sqrt(9)`",
+              "je gebruikt één naam vaak"
+            ],
+            [
+              "`from math import sqrt as wortel`",
+              "`wortel(9)`",
+              "een naam botst of is onhandig lang"
+            ],
+            [
+              "`from .models import Task`",
+              "`Task(...)`",
+              "relatieve import binnen je eigen package"
+            ]
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Eerst de standaardbibliotheek"
+        },
+        {
+          "type": "p",
+          "text": "Python komt met een grote standaardbibliotheek. Kijk daar altijd eerst voordat je iets met pip installeert. Modules als `os`, `sys`, `json`, `csv`, `math`, `random`, `datetime`, `pathlib`, `collections` en `itertools` gebruik je als developer bijna dagelijks, zonder iets te installeren."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "import collections\nimport math\nimport random\nfrom datetime import date\n\nprint(math.sqrt(81))\nprint(random.choice([\"kop\", \"munt\"]) in (\"kop\", \"munt\"))\nprint(collections.Counter(\"banaan\"))\nprint(date(2026, 9, 15).isoformat())",
+          "output": "9.0\nTrue\nCounter({'a': 3, 'n': 2, 'b': 1})\n2026-09-15",
+          "run": true
+        },
+        {
+          "type": "h",
+          "text": "Packages en de projectindeling"
+        },
+        {
+          "type": "p",
+          "text": "Een **package** is een map met modules plus een bestand `__init__.py`. Dat bestand maakt de map importeerbaar en kan namen doorgeven, zodat wie je package gebruikt niet hoeft te weten in welk bestand iets precies staat. In de rest van de training gebruik je steeds deze indeling:"
+        },
+        {
+          "type": "code",
+          "lang": "text",
+          "code": "taskman/               projectmap, hier staat de Git-repo\n├── taskman/           het package zelf (de naam waarmee je importeert)\n│   ├── __init__.py    maakt van de map een package\n│   ├── models.py\n│   ├── storage.py\n│   └── cli.py\n├── tests/\n│   └── test_models.py\n├── pyproject.toml     projectgegevens en dependencies\n└── README.md"
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "# taskman/__init__.py\nfrom .models import Task, Priority   # de punt betekent: uit dit package\n__all__ = [\"Task\", \"Priority\"]       # wat het package officieel aanbiedt\n\n# elders in je project\nfrom taskman import Task"
+        },
+        {
+          "type": "h",
+          "text": "Importeerbaar én uitvoerbaar met __name__"
+        },
+        {
+          "type": "p",
+          "text": "Python geeft elke module een variabele `__name__`. Start je een bestand direct, dan is die waarde `\"__main__\"`. Importeert een ander bestand het, dan bevat `__name__` de modulenaam. Met de check hieronder draait je startcode dus alleen als je het bestand zelf uitvoert, en niet als iemand het importeert om een functie te hergebruiken."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "def main() -> None:\n    print(\"Gestart als script\")\n\nif __name__ == \"__main__\":   # alleen waar bij direct uitvoeren\n    main()",
+          "output": "Gestart als script",
+          "run": true
+        },
+        {
+          "type": "h",
+          "text": "pip en virtual environments"
+        },
+        {
+          "type": "p",
+          "text": "`pip` installeert packages van PyPI (pypi.org). Installeer nooit in de Python van je systeem: elk project krijgt een eigen **virtual environment** (venv). Dat is een losse map met een eigen interpreter en eigen packages. Zo kan het ene project een oudere versie van een library gebruiken en het andere een nieuwere, zonder dat ze elkaar in de weg zitten."
+        },
+        {
+          "type": "code",
+          "lang": "bash",
+          "code": "python3 -m venv .venv              # eenmalig aanmaken\nsource .venv/bin/activate          # activeren; je prompt toont nu (.venv)\npython -m pip install --upgrade pip\npip install requests rich          # packages installeren\npip list                           # wat staat er in deze venv?\npip freeze > requirements.txt      # exacte versies vastleggen voor anderen\ndeactivate                         # venv weer uitzetten"
+        },
+        {
+          "type": "note",
+          "tone": "tip",
+          "text": "Kies in VS Code de interpreter uit `.venv` via Ctrl+Shift+P en dan Python: Select Interpreter. Op Windows in PowerShell activeer je de venv met `.venv\\Scripts\\Activate.ps1`. Zet `.venv/` in je `.gitignore`: een venv commit je nooit, iedereen maakt zijn eigen aan."
+        },
+        {
+          "type": "h",
+          "text": "Dependencies vastleggen in pyproject.toml"
+        },
+        {
+          "type": "p",
+          "text": "De moderne plek voor projectinformatie is `pyproject.toml`. Daarin staan de naam en versie van je project, de minimale Python-versie en de packages die het nodig heeft. Gereedschap dat je alleen tijdens het ontwikkelen gebruikt, zoals pytest en ruff, zet je in een aparte groep."
+        },
+        {
+          "type": "code",
+          "lang": "toml",
+          "code": "[project]\nname = \"taskman\"\nversion = \"0.1.0\"\nrequires-python = \">=3.12\"\ndependencies = [\"rich>=13\"]\n\n[project.optional-dependencies]\ndev = [\"pytest>=8\", \"ruff>=0.5\"]"
+        },
+        {
+          "type": "code",
+          "lang": "bash",
+          "code": "pip install -e \".[dev]\"   # je eigen package editable installeren, plus de dev-groep"
+        },
+        {
+          "type": "p",
+          "text": "Met `-e` (editable) verwijst de installatie naar je eigen bronmap. Pas je de code aan, dan werkt de nieuwe versie meteen, zonder opnieuw te installeren."
+        },
+        {
+          "type": "note",
+          "tone": "info",
+          "text": "De vuistregel: één project = één Git-repo = één venv = één `pyproject.toml`. Je eigen modules importeer je precies zoals de standaardbibliotheek."
+        }
+      ],
+      "takeaways": [
+        "Een module is één `.py`-bestand; een package is een map met modules en een `__init__.py`.",
+        "Kijk eerst in de standaardbibliotheek voordat je iets met pip installeert.",
+        "`if __name__ == \"__main__\":` maakt een bestand zowel importeerbaar als uitvoerbaar.",
+        "Elk project krijgt een eigen venv, en `.venv/` komt nooit in Git.",
+        "Dependencies leg je vast in `pyproject.toml`; `pip install -e \".[dev]\"` installeert je project plus de dev-tools."
+      ],
+      "links": [
+        {
+          "label": "W3Schools — Python Modules",
+          "url": "https://www.w3schools.com/python/python_modules.asp"
+        },
+        {
+          "label": "W3Schools — Python PIP",
+          "url": "https://www.w3schools.com/python/python_pip.asp"
+        },
+        {
+          "label": "Python docs — Modules",
+          "url": "https://docs.python.org/3/tutorial/modules.html"
+        },
+        {
+          "label": "Python docs — venv",
+          "url": "https://docs.python.org/3/library/venv.html"
+        }
+      ],
+      "tags": [
+        "modules",
+        "packages",
+        "import",
+        "__name__",
+        "pip",
+        "venv",
+        "pyproject.toml"
+      ]
+    },
+    {
+      "id": "2.2",
+      "title": "Bestanden, JSON, CSV en exception handling",
+      "summary": "Je leest en schrijft bestanden met pathlib en `with open`, zet data om naar JSON en CSV, en vangt fouten netjes op met try/except.",
+      "minutes": 60,
+      "simple": "Simpel gezegd: een bestand openen is als een la opentrekken, en `with` zorgt dat de la altijd weer dichtgaat, ook als je iets laat vallen. JSON is een standaard verzenddoos voor data die elk programma kan openen. Een exception is een alarmbel: jij bepaalt welke bellen je opvangt en wat je dan doet.",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Bestanden met pathlib"
+        },
+        {
+          "type": "p",
+          "text": "Met `pathlib.Path` behandel je paden als objecten. Je plakt stukken aan elkaar met `/`, en methodes als `write_text()` en `read_text()` openen en sluiten het bestand voor je. Geef altijd `encoding=\"utf-8\"` mee, dan gaan letters als é en ë op elk besturingssysteem goed. Een `Path` vertelt je ook van alles over het bestand: of het bestaat, de naam, de extensie en de grootte."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "import tempfile\nfrom pathlib import Path\n\nwith tempfile.TemporaryDirectory() as tmp:\n    werkmap = Path(tmp) / \"data\"\n    werkmap.mkdir(exist_ok=True)\n    notitie = werkmap / \"notities.txt\"\n    notitie.write_text(\"boodschappen\\nbellen\\n\", encoding=\"utf-8\")\n    print(notitie.read_text(encoding=\"utf-8\"), end=\"\")\n    print(notitie.exists(), notitie.name, notitie.stem, notitie.suffix)\n    print([p.name for p in werkmap.glob(\"*.txt\")])",
+          "output": "boodschappen\nbellen\nTrue notities.txt notities .txt\n['notities.txt']",
+          "run": true,
+          "caption": "Het voorbeeld werkt in een tijdelijke map, die na afloop vanzelf verdwijnt."
+        },
+        {
+          "type": "h",
+          "text": "with open: modes en regel voor regel lezen"
+        },
+        {
+          "type": "p",
+          "text": "De klassieke manier is `open()` binnen een `with`-blok. Het blok garandeert dat het bestand gesloten wordt, ook als er halverwege een fout optreedt. Loop je met `for` over het bestand-object, dan krijg je één regel per keer. Dat is zuinig met geheugen, ook bij heel grote bestanden."
+        },
+        {
+          "type": "table",
+          "head": [
+            "Mode",
+            "Betekenis",
+            "Let op"
+          ],
+          "rows": [
+            [
+              "`'r'`",
+              "lezen (de standaard)",
+              "fout als het bestand niet bestaat"
+            ],
+            [
+              "`'w'`",
+              "schrijven",
+              "overschrijft wat er al stond"
+            ],
+            [
+              "`'a'`",
+              "toevoegen (append)",
+              "schrijft achter de bestaande inhoud"
+            ]
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "import tempfile\nfrom pathlib import Path\n\npad = Path(tempfile.mkdtemp()) / \"log.txt\"\npad.write_text(\"start\\n\", encoding=\"utf-8\")\n\nwith open(pad, \"a\", encoding=\"utf-8\") as f:   # toevoegen\n    f.write(\"stap 1\\n\")\n    f.write(\"stap 2\\n\")\n\nwith open(pad, encoding=\"utf-8\") as f:        # lezen, regel voor regel\n    for regel in f:\n        print(regel.rstrip())",
+          "output": "start\nstap 1\nstap 2",
+          "run": true
+        },
+        {
+          "type": "h",
+          "text": "JSON: de taal van API's en config"
+        },
+        {
+          "type": "p",
+          "text": "API's en configuratiebestanden praten bijna altijd JSON. De module `json` vertaalt heen en weer. Onthoud het verschil: `dumps` en `loads` (met een s van string) werken met tekst, terwijl `dump` en `load` direct naar of van een bestand-object schrijven en lezen."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "import io\nimport json\n\ninstellingen = {\"model\": \"klein\", \"temperature\": 0.2, \"tools\": [\"zoeken\"], \"debug\": False, \"limiet\": None}\n\ntekst = json.dumps(instellingen)           # Python -> JSON-string\nprint(tekst)\nterug = json.loads(tekst)                  # JSON-string -> Python\nprint(terug[\"tools\"][0], type(terug))\n\nbuffer = io.StringIO()                     # gedraagt zich als een open bestand\njson.dump(instellingen, buffer, indent=2)  # naar een bestand-object\nbuffer.seek(0)\nprint(json.load(buffer) == instellingen)   # en weer terug",
+          "output": "{\"model\": \"klein\", \"temperature\": 0.2, \"tools\": [\"zoeken\"], \"debug\": false, \"limiet\": null}\nzoeken <class 'dict'>\nTrue",
+          "run": true
+        },
+        {
+          "type": "table",
+          "head": [
+            "JSON",
+            "Python"
+          ],
+          "rows": [
+            [
+              "object",
+              "`dict`"
+            ],
+            [
+              "array",
+              "`list`"
+            ],
+            [
+              "string",
+              "`str`"
+            ],
+            [
+              "number",
+              "`int` of `float`"
+            ],
+            [
+              "`true` / `false`",
+              "`True` / `False`"
+            ],
+            [
+              "`null`",
+              "`None`"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "tone": "warn",
+          "text": "JSON kent geen datums. Zit er een `date` of `datetime` in je data, dan geeft `json.dumps` een `TypeError`. Zet de datum zelf om naar een ISO-string met `.isoformat()` en maak er bij het inlezen weer een datum van met `fromisoformat()`."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "import json\nfrom datetime import date\n\ndeadline = date(2026, 9, 15)\ntry:\n    json.dumps({\"due\": deadline})\nexcept TypeError as exc:\n    print(\"Fout:\", exc)\n\ntekst = json.dumps({\"due\": deadline.isoformat()})\nprint(tekst)\nprint(date.fromisoformat(json.loads(tekst)[\"due\"]))",
+          "output": "Fout: Object of type date is not JSON serializable\n{\"due\": \"2026-09-15\"}\n2026-09-15",
+          "run": true
+        },
+        {
+          "type": "h",
+          "text": "CSV: tabellen als tekst"
+        },
+        {
+          "type": "p",
+          "text": "Voor exports en spreadsheets gebruik je de module `csv`. `DictWriter` schrijft dicts als rijen onder een kopregel, `DictReader` geeft elke rij terug als dict. Let op: alles wat je terugleest is een string, dus getallen zet je zelf om. Open CSV-bestanden met `newline=\"\"`, anders krijg je op Windows lege regels tussen je rijen."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "import csv\nimport io\n\nproducten = [\n    {\"sku\": \"K1\", \"naam\": \"Kabel\", \"prijs\": 4.5},\n    {\"sku\": \"L2\", \"naam\": \"Lamp\", \"prijs\": 12.0},\n]\nbuffer = io.StringIO(newline=\"\")           # in het echt: open(\"x.csv\", \"w\", newline=\"\")\nwriter = csv.DictWriter(buffer, fieldnames=[\"sku\", \"naam\", \"prijs\"])\nwriter.writeheader()\nwriter.writerows(producten)\n\nbuffer.seek(0)\nfor rij in csv.DictReader(buffer):\n    print(rij[\"naam\"], type(rij[\"prijs\"]).__name__, float(rij[\"prijs\"]) * 2)",
+          "output": "Kabel str 9.0\nLamp str 24.0",
+          "run": true
+        },
+        {
+          "type": "h",
+          "text": "Exceptions opvangen"
+        },
+        {
+          "type": "p",
+          "text": "Gaat er iets mis, bijvoorbeeld een ontbrekend bestand of tekst waar een getal hoorde, dan gooit Python een **exception**. Vangt niemand die op, dan stopt je programma met een traceback. Lees een traceback van onder naar boven: de onderste regel noemt de fout, de regels daarboven laten zien waar het gebeurde."
+        },
+        {
+          "type": "table",
+          "head": [
+            "Blok",
+            "Wanneer draait het"
+          ],
+          "rows": [
+            [
+              "`try`",
+              "de code die mis kan gaan"
+            ],
+            [
+              "`except SoortFout as exc`",
+              "alleen bij die fout; `exc` is het exception-object"
+            ],
+            [
+              "`else`",
+              "alleen als er geen exception was"
+            ],
+            [
+              "`finally`",
+              "altijd, met of zonder fout: de plek om op te ruimen"
+            ]
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "def lees_getal(tekst: str) -> float:\n    try:\n        waarde = float(tekst)\n    except ValueError as exc:\n        print(\"Geen getal:\", exc)\n        return 0.0\n    else:\n        print(\"Gelukt\")\n        return waarde\n    finally:\n        print(\"Klaar met\", repr(tekst))\n\nprint(lees_getal(\"3.5\"))\nprint(lees_getal(\"drie\"))",
+          "output": "Gelukt\nKlaar met '3.5'\n3.5\nGeen getal: could not convert string to float: 'drie'\nKlaar met 'drie'\n0.0",
+          "run": true
+        },
+        {
+          "type": "p",
+          "text": "Binnen een `except` kun je met een kale `raise` dezelfde exception opnieuw gooien. Dat doe je als je de fout wel wilt melden of loggen, maar hem op die plek niet kunt oplossen."
+        },
+        {
+          "type": "note",
+          "tone": "warn",
+          "text": "Vang altijd specifieke exceptions, nooit een kale `except:`. Die slikt ook fouten die je juist wilt zien, zoals een typfout in je eigen code. Vang een fout alleen waar je er iets zinnigs mee kunt doen en laat de rest doorlopen."
+        },
+        {
+          "type": "h",
+          "text": "Eigen exceptions"
+        },
+        {
+          "type": "p",
+          "text": "Voor fouten uit je eigen domein maak je een eigen klasse die erft van `Exception`. Met `raise` gooi je hem zodra er een ongeldige situatie ontstaat, en de aanroeper kan precies die fout opvangen."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "class OnvoldoendeVoorraad(Exception):\n    \"\"\"Er worden meer stuks gevraagd dan er op voorraad zijn.\"\"\"\n\ndef reserveer(voorraad: int, aantal: int) -> int:\n    if aantal <= 0:\n        raise ValueError(\"aantal moet positief zijn\")\n    if aantal > voorraad:\n        raise OnvoldoendeVoorraad(f\"gevraagd {aantal}, nog {voorraad} over\")\n    return voorraad - aantal\n\nprint(reserveer(10, 4))\ntry:\n    reserveer(2, 5)\nexcept OnvoldoendeVoorraad as e:\n    print(\"Lukt niet:\", e)",
+          "output": "6\nLukt niet: gevraagd 5, nog 2 over",
+          "run": true
+        },
+        {
+          "type": "table",
+          "head": [
+            "Exception",
+            "Typische oorzaak"
+          ],
+          "rows": [
+            [
+              "`ValueError`",
+              "goed type, foute waarde: `int(\"abc\")`"
+            ],
+            [
+              "`TypeError`",
+              "verkeerd type: `\"3\" + 4`"
+            ],
+            [
+              "`KeyError`",
+              "sleutel bestaat niet in een dict"
+            ],
+            [
+              "`IndexError`",
+              "index valt buiten de lijst"
+            ],
+            [
+              "`FileNotFoundError`",
+              "bestand bestaat niet"
+            ],
+            [
+              "`ZeroDivisionError`",
+              "delen door nul"
+            ],
+            [
+              "`AttributeError`",
+              "object heeft dat attribuut of die methode niet"
+            ],
+            [
+              "`ImportError`",
+              "module of naam kan niet worden geïmporteerd"
+            ]
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Al deze ingebouwde exceptions erven van `Exception`."
+        }
+      ],
+      "takeaways": [
+        "Gebruik `pathlib.Path` en `with open(...)`, altijd met `encoding=\"utf-8\"`.",
+        "`dumps`/`loads` werken met strings, `dump`/`load` met bestand-objecten; datums bewaar je als ISO-string.",
+        "`csv.DictReader` geeft rijen als dicts met strings; getallen zet je zelf om.",
+        "Lees een traceback van onder naar boven.",
+        "Vang specifieke exceptions waar je ze kunt afhandelen en maak eigen exceptions voor fouten in je domein."
+      ],
+      "exercise": "Laat het contactenboek van week 1 zijn contacten bij elke wijziging opslaan in `contacts.json` en bij het opstarten weer inladen. Ontbreekt het bestand of is het beschadigd, begin dan met een lege lijst en waarschuw de gebruiker.",
+      "links": [
+        {
+          "label": "W3Schools — Python File Handling",
+          "url": "https://www.w3schools.com/python/python_file_handling.asp"
+        },
+        {
+          "label": "W3Schools — Python JSON",
+          "url": "https://www.w3schools.com/python/python_json.asp"
+        },
+        {
+          "label": "W3Schools — Python Try Except",
+          "url": "https://www.w3schools.com/python/python_try_except.asp"
+        },
+        {
+          "label": "Python docs — Errors and Exceptions",
+          "url": "https://docs.python.org/3/tutorial/errors.html"
+        }
+      ],
+      "tags": [
+        "pathlib",
+        "bestanden",
+        "with",
+        "json",
+        "csv",
+        "exceptions",
+        "try/except",
+        "raise"
+      ]
+    },
+    {
+      "id": "2.3",
+      "title": "Object-oriented programming, dataclasses en type hints",
+      "summary": "Je modelleert dingen uit je domein met classes, gebruikt properties, classmethods en inheritance, en schrijft nette datamodellen met dataclasses en type hints.",
+      "minutes": 75,
+      "simple": "Simpel gezegd: een class is een bouwtekening en een object is een huis dat volgens die tekening is gebouwd. Met één tekening bouw je veel huizen, elk met een eigen adres en kleur. Een dataclass is een kant-en-klaar formulier: jij noemt de vakjes, Python regelt de rest.",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Classes en objecten"
+        },
+        {
+          "type": "p",
+          "text": "Een **class** is een blauwdruk; een **object** (ook wel instance) is een concreet exemplaar dat je ervan maakt. Een class bundelt data (attributes) en gedrag (methods). In backendcode gebruik je classes vooral om dingen uit je domein te modelleren, zoals een taak, een factuur of een gesprek, en om samenhangend gedrag te groeperen, zoals alles rond het versturen van e-mail."
+        },
+        {
+          "type": "p",
+          "text": "`__init__` vult een nieuw object met beginwaarden. `self` is het object waarop een methode wordt aangeroepen; Python geeft het automatisch mee. Een **class attribute** staat op de klasse zelf en wordt door alle objecten gedeeld, een **instance attribute** (via `self.`) hoort bij één object. Met `__repr__` bepaal je de tekst voor developers, met `__str__` wat `print` laat zien."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "class Lamp:\n    aantal = 0                           # class attribute: gedeeld\n\n    def __init__(self, kamer: str, watt: int = 8) -> None:\n        self.kamer = kamer               # instance attributes\n        self.watt = watt\n        self.aan = False\n        Lamp.aantal += 1\n\n    def schakel(self) -> None:           # instance method\n        self.aan = not self.aan\n\n    def __repr__(self) -> str:           # voor developers\n        return f\"Lamp({self.kamer!r}, watt={self.watt})\"\n\n    def __str__(self) -> str:            # voor gebruikers (print)\n        return f\"Lamp in {self.kamer}: {'aan' if self.aan else 'uit'}\"\n\nkeuken = Lamp(\"keuken\")\nkeuken.schakel()\nprint(keuken)\nprint(repr(keuken), Lamp.aantal)",
+          "output": "Lamp in keuken: aan\nLamp('keuken', watt=8) 1",
+          "run": true
+        },
+        {
+          "type": "h",
+          "text": "Property, classmethod en staticmethod"
+        },
+        {
+          "type": "p",
+          "text": "Attributen zijn in Python gewoon openbaar. Een underscore vooraan, zoals `self._netto`, is de afspraak voor: intern, niet van buitenaf aankomen. Met `@property` laat je een berekende waarde lezen alsof het een gewoon attribuut is, dus zonder haakjes."
+        },
+        {
+          "type": "table",
+          "head": [
+            "Decorator",
+            "Eerste parameter",
+            "Gebruik"
+          ],
+          "rows": [
+            [
+              "`@property`",
+              "`self`",
+              "berekende waarde opvragen als attribuut"
+            ],
+            [
+              "`@classmethod`",
+              "`cls` (de klasse)",
+              "alternatieve constructor, zoals `from_gross`"
+            ],
+            [
+              "`@staticmethod`",
+              "geen",
+              "hulpfunctie die logisch bij de klasse hoort"
+            ]
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "class Factuur:\n    BTW = 0.21\n\n    def __init__(self, netto: float) -> None:\n        self._netto = netto\n\n    @property\n    def bruto(self) -> float:\n        return round(self._netto * (1 + self.BTW), 2)\n\n    @classmethod\n    def uit_bruto(cls, bruto: float) -> \"Factuur\":   # alternatieve constructor\n        return cls(bruto / (1 + cls.BTW))\n\n    @staticmethod\n    def geldig(bedrag: float) -> bool:\n        return bedrag >= 0\n\nprint(Factuur(200).bruto, Factuur.uit_bruto(242).bruto, Factuur.geldig(-5))",
+          "output": "242.0 242.0 False",
+          "run": true
+        },
+        {
+          "type": "h",
+          "text": "Inheritance, polymorphism en composition"
+        },
+        {
+          "type": "p",
+          "text": "Een subclass erft alles van zijn basisklasse en kan gedrag overschrijven of uitbreiden. Met `super()` roep je de versie van de ouderklasse aan, bijvoorbeeld diens `__init__`. **Polymorphism** betekent: dezelfde aanroep geeft per klasse ander gedrag. De code die de objecten gebruikt, hoeft het verschil niet te kennen."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "class Melder:\n    def stuur(self, aan: str, tekst: str) -> None:\n        raise NotImplementedError\n\nclass MailMelder(Melder):\n    def stuur(self, aan: str, tekst: str) -> None:\n        print(f\"MAIL naar {aan}: {tekst}\")\n\nclass SmsMelder(Melder):\n    def __init__(self, afzender: str) -> None:\n        super().__init__()                # constructor van de ouder\n        self.afzender = afzender\n\n    def stuur(self, aan: str, tekst: str) -> None:\n        print(f\"SMS van {self.afzender} naar {aan}: {tekst[:160]}\")\n\nfor m in [MailMelder(), SmsMelder(\"Servicedesk\")]:   # zelfde aanroep, ander gedrag\n    m.stuur(\"Sam\", \"Monteur komt om 10:00\")\nprint(isinstance(SmsMelder(\"x\"), Melder))",
+          "output": "MAIL naar Sam: Monteur komt om 10:00\nSMS van Servicedesk naar Sam: Monteur komt om 10:00\nTrue",
+          "run": true
+        },
+        {
+          "type": "note",
+          "tone": "tip",
+          "text": "Gebruik inheritance alleen bij een echte is-een-relatie: een sms-melder is een melder. In andere gevallen kies je **composition**: een object heeft een ander object. Denk aan een service die een opslagobject meekrijgt in zijn constructor."
+        },
+        {
+          "type": "h",
+          "text": "Dataclasses: classes voor data"
+        },
+        {
+          "type": "p",
+          "text": "De meeste klassen die je schrijft bewaren vooral data. Met `@dataclass` noem je alleen de velden met hun type, en Python maakt `__init__`, `__repr__` en `__eq__` voor je. Twee objecten met dezelfde waarden zijn dan vanzelf gelijk. Voor een vaste set keuzes, zoals prioriteiten, gebruik je een `Enum`."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "from dataclasses import dataclass, field\nfrom enum import Enum\n\nclass Priority(Enum):\n    LOW = 1\n    MEDIUM = 2\n    HIGH = 3\n\n@dataclass\nclass Task:\n    title: str\n    priority: Priority = Priority.MEDIUM\n    done: bool = False\n    tags: list[str] = field(default_factory=list)   # elke Task een eigen lijst\n\na = Task(\"Uitrollen\", Priority.HIGH, tags=[\"ops\"])\nb = Task(\"Uitrollen\", Priority.HIGH, tags=[\"ops\"])\nprint(a == b)\nprint(a)",
+          "output": "True\nTask(title='Uitrollen', priority=<Priority.HIGH: 3>, done=False, tags=['ops'])",
+          "run": true
+        },
+        {
+          "type": "note",
+          "tone": "warn",
+          "text": "Geef een veld nooit een kale `[]` als default. Gebruik `field(default_factory=list)`, zodat elk object een eigen nieuwe lijst krijgt. Hetzelfde trucje gebruik je voor waarden die per object anders zijn, zoals een aanmaaktijd: `field(default_factory=datetime.now)`."
+        },
+        {
+          "type": "p",
+          "text": "Velden controleren doe je in `__post_init__`. Die methode draait direct nadat de gegenereerde `__init__` klaar is, dus een ongeldig object kan niet eens ontstaan."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "from dataclasses import dataclass\n\n@dataclass\nclass Task:\n    title: str\n    priority: int = 2\n\n    def __post_init__(self) -> None:\n        if not self.title.strip():\n            raise ValueError(\"title cannot be empty\")\n        if self.priority not in (1, 2, 3):\n            raise ValueError(\"priority must be 1, 2 or 3\")\n\ntry:\n    Task(\"Printer\", priority=7)\nexcept ValueError as e:\n    print(\"Ongeldig:\", e)",
+          "output": "Ongeldig: priority must be 1, 2 or 3",
+          "run": true
+        },
+        {
+          "type": "p",
+          "text": "Volgende week werk je met Pydantic-modellen voor FastAPI. Die lijken sterk op dataclasses, dus dit is precies de goede voorbereiding."
+        },
+        {
+          "type": "h",
+          "text": "Type hints en ruff"
+        },
+        {
+          "type": "p",
+          "text": "Type hints vertellen welke types een functie verwacht en teruggeeft. Python zelf controleert ze niet tijdens het draaien, maar je editor (Pylance in VS Code) wel. Zo zie je veel fouten al voordat je iets uitvoert."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "from typing import Callable, Iterable\n\ndef zoek(namen: list[str], doel: str) -> str | None:     # kan None teruggeven\n    for naam in namen:\n        if naam.lower() == doel.lower():\n            return naam\n    return None\n\ndef pas_toe(fn: Callable[[int], int], waarden: Iterable[int]) -> list[int]:\n    return [fn(w) for w in waarden]\n\nConfig = dict[str, str | int | bool]                       # type alias\ninstellingen: Config = {\"debug\": True, \"poort\": 8000}\n\nprint(zoek([\"Aisha\", \"Bram\"], \"bram\"), zoek([], \"x\"))\nprint(pas_toe(lambda n: n * 10, range(3)))",
+          "output": "Bram None\n[0, 10, 20]",
+          "run": true
+        },
+        {
+          "type": "table",
+          "head": [
+            "Hint",
+            "Betekenis"
+          ],
+          "rows": [
+            [
+              "`list[str]`",
+              "lijst met strings"
+            ],
+            [
+              "`dict[str, int]`",
+              "dict met string-keys en int-waarden"
+            ],
+            [
+              "`str | None`",
+              "een string of `None` (oudere schrijfwijze: `Optional[str]`)"
+            ],
+            [
+              "`int | float`",
+              "het een of het ander (ook: `Union[int, float]`)"
+            ],
+            [
+              "`Callable[[int], int]`",
+              "een functie die een int krijgt en een int teruggeeft"
+            ],
+            [
+              "`Iterable[int]`",
+              "alles waar je met `for` overheen kunt lopen"
+            ],
+            [
+              "`Any`",
+              "elk type; de controle staat uit"
+            ]
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Installeer daarnaast **ruff**, een snelle linter en formatter. `ruff check` zoekt problemen, `ruff format` zet je code netjes op volgens PEP 8."
+        },
+        {
+          "type": "code",
+          "lang": "bash",
+          "code": "pip install ruff\nruff check .     # problemen opsporen\nruff format .    # code automatisch opmaken"
+        },
+        {
+          "type": "note",
+          "tone": "info",
+          "text": "Vuistregel: `@dataclass` voor data, gewone classes voor gedrag, inheritance alleen bij een echte is-een-relatie, type hints overal en `ruff check .` voor elke commit."
+        }
+      ],
+      "takeaways": [
+        "Een class is een blauwdruk, een object een exemplaar; `self` is het object waarop je een methode aanroept.",
+        "`__repr__` is voor developers, `__str__` voor gebruikers.",
+        "`@property` toont een berekende waarde, `@classmethod` is een alternatieve constructor, `@staticmethod` een losse hulpfunctie.",
+        "Inheritance bij is-een, anders composition.",
+        "`@dataclass` schrijft `__init__`, `__repr__` en `__eq__`; valideer in `__post_init__` en gebruik `field(default_factory=list)` voor lijsten.",
+        "Type hints plus ruff vangen veel fouten voordat je code draait."
+      ],
+      "links": [
+        {
+          "label": "W3Schools — Python Classes/Objects",
+          "url": "https://www.w3schools.com/python/python_classes.asp"
+        },
+        {
+          "label": "W3Schools — Python Inheritance",
+          "url": "https://www.w3schools.com/python/python_inheritance.asp"
+        },
+        {
+          "label": "Python docs — dataclasses",
+          "url": "https://docs.python.org/3/library/dataclasses.html"
+        },
+        {
+          "label": "Python docs — typing",
+          "url": "https://docs.python.org/3/library/typing.html"
+        }
+      ],
+      "tags": [
+        "classes",
+        "objecten",
+        "self",
+        "property",
+        "inheritance",
+        "dataclass",
+        "enum",
+        "type hints",
+        "ruff"
+      ]
+    },
+    {
+      "id": "2.4",
+      "title": "Pythonic tools: comprehensions, generators, decorators en context managers",
+      "summary": "Je leert comprehensions, generators, lambda's, decorators en context managers lezen en schrijven: de bouwstenen waardoor Python-code echt als Python aanvoelt.",
+      "minutes": 45,
+      "simple": "Simpel gezegd: een comprehension is een hele lijst in één zin opschrijven. Een generator is een kraan: er komt pas water uit als je hem opendraait, in plaats van eerst een hele badkuip te vullen. Een decorator is cadeaupapier om een functie heen, en een context manager is een deur die altijd vanzelf achter je dichtvalt.",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Deze vier technieken kom je tegen in elke library die je gebruikt. Je moet ze dus vlot kunnen lezen; met wat oefening schrijf je ze vanzelf ook."
+        },
+        {
+          "type": "h",
+          "text": "Comprehensions"
+        },
+        {
+          "type": "p",
+          "text": "Een comprehension bouwt een nieuwe collectie in één regel. Je schrijft eerst wat er in de nieuwe collectie komt, daarna de `for`, en eventueel een `if` als filter. Er zijn varianten voor lists, dicts en sets, en je kunt meerdere `for`'s nesten."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "prijzen = [12.5, 80.0, 3.25, 60.0]\n\nbruto = [round(p * 1.21, 2) for p in prijzen]               # list\nduur = [p for p in prijzen if p > 50]                        # met filter\nper_code = {c: p for c, p in zip(\"ABCD\", prijzen)}           # dict\nletters = {n[0] for n in [\"Aisha\", \"Anna\", \"Bram\"]}          # set\nparen = [(x, y) for x in range(3) for y in range(3) if x < y]  # genest\n\nprint(bruto)\nprint(duur, per_code[\"C\"])\nprint(sorted(letters), paren)",
+          "output": "[15.12, 96.8, 3.93, 72.6]\n[80.0, 60.0] 3.25\n['A', 'B'] [(0, 1), (0, 2), (1, 2)]",
+          "run": true
+        },
+        {
+          "type": "table",
+          "head": [
+            "Soort",
+            "Syntax",
+            "Resultaat"
+          ],
+          "rows": [
+            [
+              "List",
+              "`[x * 2 for x in xs]`",
+              "`list`"
+            ],
+            [
+              "Met filter",
+              "`[x for x in xs if x > 0]`",
+              "`list`"
+            ],
+            [
+              "Dict",
+              "`{k: v for k, v in paren}`",
+              "`dict`"
+            ],
+            [
+              "Set",
+              "`{x % 3 for x in xs}`",
+              "`set`"
+            ],
+            [
+              "Generator expression",
+              "`(x * x for x in xs)`",
+              "generator (lazy)"
+            ]
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Generators: lazy reeksen"
+        },
+        {
+          "type": "p",
+          "text": "Een functie met `yield` is een **generator**. Hij levert waarden één voor één en pauzeert na elke `yield`, totdat iemand de volgende waarde vraagt met `next()` of een `for`-loop. Er wordt dus nooit een complete lijst in het geheugen gebouwd. Dat is ideaal voor grote bestanden, database-cursors en LLM-antwoorden die in stukjes binnenkomen. Je kunt generators aan elkaar koppelen tot een pijplijn: pas als de laatste stap om een waarde vraagt, gaat de eerste aan het werk."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "def regels(tekst: str):\n    for regel in tekst.splitlines():\n        yield regel.strip()\n\ndef genummerd(items):\n    for i, item in enumerate(items, 1):\n        yield f\"{i:>3}: {item}\"\n\ninvoer = \"melk\\n  brood\\neieren\"\nfor uit in genummerd(regels(invoer)):        # een pijplijn van generators\n    print(uit)\n\nkwadraten = (n * n for n in range(10**9))    # direct klaar, bijna geen geheugen\nprint(next(kwadraten), next(kwadraten), next(kwadraten))\nprint(sum(n for n in range(101)))",
+          "output": "  1: melk\n  2: brood\n  3: eieren\n0 1 4\n5050",
+          "run": true
+        },
+        {
+          "type": "note",
+          "tone": "tip",
+          "text": "Een groot bestand lees je op dezelfde manier: open het met `with`, loop over de regels en `yield` ze één voor één. Een regel wordt pas gelezen op het moment dat de loop erom vraagt."
+        },
+        {
+          "type": "h",
+          "text": "Functies als waarden en lambda"
+        },
+        {
+          "type": "p",
+          "text": "Functies zijn gewone waarden. Je kunt ze doorgeven aan andere functies, opslaan in een variabele of dict en later aanroepen. Een `lambda` is een kleine functie zonder naam die uit één expressie bestaat. Je ziet hem vaak als `key` bij sorteren."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "def nieuw(titel: str) -> str:\n    return f\"toegevoegd: {titel}\"\n\ndef wis(titel: str) -> str:\n    return f\"verwijderd: {titel}\"\n\nacties = {\"add\": nieuw, \"remove\": wis}        # functies in een dict\nprint(acties[\"add\"](\"Printer repareren\"))\n\ntaken = [(\"Mail\", 2), (\"Backup\", 1), (\"Audit\", 2)]\ntaken.sort(key=lambda t: (t[1], t[0]))        # eerst prioriteit, dan naam\nprint(taken)",
+          "output": "toegevoegd: Printer repareren\n[('Backup', 1), ('Audit', 2), ('Mail', 2)]",
+          "run": true
+        },
+        {
+          "type": "h",
+          "text": "Decorators: functies die functies inpakken"
+        },
+        {
+          "type": "p",
+          "text": "Een **decorator** is een functie die een andere functie inpakt en er gedrag aan toevoegt, zonder de functie zelf te veranderen. De regel `@timed` boven een `def` is een afkorting voor `functie = timed(functie)`. FastAPI-routes (`@app.get`), pytest-fixtures en caching werken allemaal met decorators."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "import functools\nimport time\n\ndef timed(fn):\n    @functools.wraps(fn)                   # behoud naam en docstring\n    def wrapper(*args, **kwargs):\n        start = time.perf_counter()\n        resultaat = fn(*args, **kwargs)\n        print(f\"{fn.__name__} duurde {time.perf_counter() - start:.4f}s\")\n        return resultaat\n    return wrapper\n\n@timed\ndef optellen(n: int) -> int:\n    \"\"\"Telt 0 tot en met n-1 op.\"\"\"\n    return sum(range(n))\n\nprint(optellen(1_000_000), optellen.__name__)",
+          "run": true,
+          "caption": "De gemeten tijd verschilt per computer; daarom staat hier geen vaste uitvoer."
+        },
+        {
+          "type": "p",
+          "text": "Zonder `@functools.wraps` zou de ingepakte functie voortaan `wrapper` heten en haar docstring kwijt zijn. Python heeft ook kant-en-klare decorators, zoals `@functools.lru_cache` voor memoisatie: de functie onthoudt resultaten, zodat dezelfde input maar één keer wordt uitgerekend."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "import functools\n\n@functools.lru_cache(maxsize=None)        # onthoud eerdere resultaten\ndef fib(n: int) -> int:\n    return n if n < 2 else fib(n - 1) + fib(n - 2)\n\nprint(fib(80))\nprint(fib.cache_info().hits > 0)",
+          "output": "23416728348467685\nTrue",
+          "run": true
+        },
+        {
+          "type": "h",
+          "text": "Context managers"
+        },
+        {
+          "type": "p",
+          "text": "Alles wat geopend en weer gesloten moet worden, of gestart en afgerond, regel je met `with`: bestanden, databasesessies, locks, HTTP-clients en tijdelijke mappen. Heeft iets een open/close of begin/commit, dan bestaat er vrijwel zeker een context manager voor. Zelf maak je er eenvoudig een met `@contextmanager` uit `contextlib`: de code vóór `yield` is de opbouw, op de plek van `yield` draait het `with`-blok, en in `finally` ruim je op, ook als het blok een fout gooit."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "from contextlib import contextmanager\n\n@contextmanager\ndef sectie(naam: str):\n    print(f\"[{naam}] start\")\n    try:\n        yield                              # hier draait het with-blok\n    finally:\n        print(f\"[{naam}] klaar\")\n\nwith sectie(\"import\"):\n    data = [n for n in range(5)]\n    print(\"bezig met\", len(data), \"items\")",
+          "output": "[import] start\nbezig met 5 items\n[import] klaar",
+          "run": true
+        },
+        {
+          "type": "note",
+          "tone": "info",
+          "text": "Lees deze vier technieken altijd vlot, maar schrijf ze alleen als je code er korter en duidelijker van wordt. Een comprehension met drie filters en twee loops is vaak beter leesbaar als gewone `for`-loop."
+        }
+      ],
+      "takeaways": [
+        "Comprehensions bouwen een list, dict of set in één regel, eventueel met een filter.",
+        "Generators (`yield`, of `( ... for ... )`) leveren waarden lazy, één voor één.",
+        "Functies zijn waarden; een `lambda` is een mini-functie, handig als sorteersleutel.",
+        "Decorators voegen gedrag toe; gebruik `@functools.wraps` in je wrapper.",
+        "Context managers met `with` garanderen opruimen; zelf maken kan met `@contextmanager`."
+      ],
+      "links": [
+        {
+          "label": "W3Schools — Python Lambda",
+          "url": "https://www.w3schools.com/python/python_lambda.asp"
+        },
+        {
+          "label": "W3Schools — Python Iterators",
+          "url": "https://www.w3schools.com/python/python_iterators.asp"
+        },
+        {
+          "label": "Python docs — Functional Programming HOWTO",
+          "url": "https://docs.python.org/3/howto/functional.html"
+        },
+        {
+          "label": "Real Python — Primer on Python Decorators",
+          "url": "https://realpython.com/primer-on-python-decorators/"
+        }
+      ],
+      "tags": [
+        "comprehensions",
+        "generators",
+        "yield",
+        "lambda",
+        "decorators",
+        "lru_cache",
+        "context managers",
+        "with"
+      ]
+    },
+    {
+      "id": "2.5",
+      "title": "Testen met pytest en de Git-workflow",
+      "summary": "Je schrijft automatische tests met pytest (assert, raises, parametrize, fixtures) en levert werk op via branches, pull requests en code review.",
+      "minutes": 60,
+      "simple": "Simpel gezegd: een test is een controlelijstje dat je code telkens zelf afvinkt. Breekt een wijziging iets, dan gaat er meteen een lampje branden. Een branch is een kladversie naast het echte document, en via een pull request leest een collega mee voordat je kladje in de echte versie komt.",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Waarom tests"
+        },
+        {
+          "type": "p",
+          "text": "Op echte projecten gaat er niets naar een klant zonder automatische tests. Een test is een kleine functie die je code aanroept en met `assert` controleert of het resultaat klopt. Tests vangen regressies (iets wat eerst werkte en nu stuk is), leggen vast hoe je code zich hoort te gedragen, en geven je de durf om code te herschrijven. **pytest** is daarvoor het standaardgereedschap."
+        },
+        {
+          "type": "p",
+          "text": "Typ je `pytest`, dan zoekt het zelf alle testbestanden en testfuncties op, voert ze uit en meldt per test of hij slaagt. Faalt een `assert`, dan laat pytest zien welke waarden er werden vergeleken, zodat je direct ziet wat er misging."
+        },
+        {
+          "type": "p",
+          "text": "Als voorbeeld test je de `Task`-dataclass met validatie in `__post_init__` uit les 2.3, opgeslagen als `taskman/models.py`. Testbestanden heten `test_*.py` en staan in `tests/`; elke testfunctie begint met `test_`. Met `pytest.raises` controleer je dat er netjes een exception wordt gegooid."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "# tests/test_models.py\nimport pytest\nfrom taskman.models import Task\n\ndef test_new_task_has_defaults():\n    t = Task(\"Docs schrijven\")\n    assert t.priority == 2\n    assert t.done is False\n\ndef test_blank_title_is_rejected():\n    with pytest.raises(ValueError):\n        Task(\"   \")"
+        },
+        {
+          "type": "h",
+          "text": "parametrize en fixtures"
+        },
+        {
+          "type": "p",
+          "text": "Met `@pytest.mark.parametrize` draai je één test met meerdere inputs; pytest maakt er losse testgevallen van. Een **fixture** (`@pytest.fixture`) zet testdata of hulpmiddelen klaar. Een test krijgt een fixture door de naam ervan als parameter op te nemen. pytest heeft ook ingebouwde fixtures, zoals `tmp_path`: een verse tijdelijke map voor tests die met bestanden werken."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "@pytest.mark.parametrize(\"priority\", [0, 4, -1])\ndef test_invalid_priority_is_rejected(priority):\n    with pytest.raises(ValueError):\n        Task(\"x\", priority=priority)\n\n@pytest.fixture\ndef tasks():\n    return [Task(\"a\", 1), Task(\"b\", 3), Task(\"c\", 2)]\n\ndef test_sort_by_priority(tasks):\n    titles = [t.title for t in sorted(tasks, key=lambda t: t.priority)]\n    assert titles == [\"a\", \"c\", \"b\"]\n\ndef test_file_roundtrip(tmp_path):\n    path = tmp_path / \"tasks.json\"\n    path.write_text(\"[]\", encoding=\"utf-8\")\n    assert path.read_text(encoding=\"utf-8\") == \"[]\""
+        },
+        {
+          "type": "table",
+          "head": [
+            "Onderdeel",
+            "Waarvoor"
+          ],
+          "rows": [
+            [
+              "`assert`",
+              "controleren of een resultaat klopt"
+            ],
+            [
+              "`pytest.raises(Fout)`",
+              "controleren dat een exception wordt gegooid"
+            ],
+            [
+              "`@pytest.mark.parametrize`",
+              "één test met meerdere inputs draaien"
+            ],
+            [
+              "`@pytest.fixture`",
+              "herbruikbare testdata of setup"
+            ],
+            [
+              "`tmp_path`",
+              "ingebouwde fixture met een tijdelijke map"
+            ]
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "bash",
+          "code": "pytest -q                  # alle tests draaien, kort verslag\npytest -q -k sort          # alleen tests waarvan de naam 'sort' bevat\npytest -q --cov=taskman    # met coverage (installeer eerst pytest-cov)"
+        },
+        {
+          "type": "h",
+          "text": "Goede tests"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**Snel**, zodat je ze na elke wijziging draait.",
+            "**Onafhankelijk**: geen gedeelde state tussen tests en geen echt netwerk.",
+            "**Benoemd naar gedrag**: `test_empty_title_rejected` zegt meer dan `test_1`."
+          ]
+        },
+        {
+          "type": "note",
+          "tone": "tip",
+          "text": "Bug gevonden? Schrijf eerst een test die de bug laat zien, en dus faalt. Repareer daarna de code tot de test slaagt. Zo kan dezelfde bug nooit meer ongemerkt terugkomen."
+        },
+        {
+          "type": "h",
+          "text": "Branches en pull requests"
+        },
+        {
+          "type": "p",
+          "text": "Op echte projecten commit niemand rechtstreeks op `main`. Je werkt op een **branch**, pusht die naar GitHub en opent een **pull request** (PR). Een collega doet code review, CI draait de tests, en pas daarna wordt de branch gemerged."
+        },
+        {
+          "type": "code",
+          "lang": "bash",
+          "code": "git switch -c feature/week2-taskman      # nieuwe branch maken en erheen gaan\ngit add -A\ngit commit -m \"Add Task model with validation\"\ngit push -u origin feature/week2-taskman\n# open nu op GitHub de pull request en vraag je mentor om een review\ngit switch main && git pull              # na de merge: lokale main bijwerken\ngit branch -d feature/week2-taskman      # branch opruimen"
+        },
+        {
+          "type": "table",
+          "head": [
+            "Commando",
+            "Wat het doet"
+          ],
+          "rows": [
+            [
+              "`git log --oneline --graph`",
+              "compacte geschiedenis, inclusief branches"
+            ],
+            [
+              "`git diff`",
+              "laat je nog niet gestagede wijzigingen zien"
+            ],
+            [
+              "`git stash`",
+              "wijzigingen tijdelijk parkeren"
+            ],
+            [
+              "`git restore <bestand>`",
+              "wijzigingen in een bestand weggooien"
+            ]
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Merge conflicts en .gitignore"
+        },
+        {
+          "type": "p",
+          "text": "Passen twee mensen dezelfde regels aan, dan ontstaat een **merge conflict**. Git zet dan beide versies in het bestand, tussen markeringen. Jij kiest de juiste inhoud, haalt de markeringen weg, en sluit af met `git add` en `git commit`."
+        },
+        {
+          "type": "code",
+          "lang": "text",
+          "code": "<<<<<<< HEAD\n    priority: int = 2\n=======\n    priority: int = 3\n>>>>>>> feature/andere-standaard",
+          "caption": "Boven `=======` staat jouw versie, eronder die van de andere branch."
+        },
+        {
+          "type": "p",
+          "text": "Elke repo krijgt een `.gitignore` voor bestanden die niet in Git thuishoren:"
+        },
+        {
+          "type": "code",
+          "lang": "text",
+          "code": ".venv/\n__pycache__/\n*.pyc\n.env\n.pytest_cache/"
+        },
+        {
+          "type": "note",
+          "tone": "info",
+          "text": "Elke feature = branch + tests + pull request. `pytest -q` moet groen zijn voordat je pusht. Een commit message zegt wat en waarom, in de gebiedende wijs: `Add JSON storage for tasks`."
+        }
+      ],
+      "takeaways": [
+        "Tests zijn kleine functies met `assert`; pytest vindt ze via de naam `test_...`.",
+        "`pytest.raises`, `parametrize`, fixtures en `tmp_path` dekken de meeste situaties.",
+        "Goede tests zijn snel, onafhankelijk en benoemd naar het gedrag dat ze controleren.",
+        "Bij een bug schrijf je eerst een falende test.",
+        "Werk op een branch, open een pull request en laat review en CI hun werk doen voordat je merget."
+      ],
+      "links": [
+        {
+          "label": "pytest — Get Started",
+          "url": "https://docs.pytest.org/en/stable/getting-started.html"
+        },
+        {
+          "label": "W3Schools — Git Tutorial",
+          "url": "https://www.w3schools.com/git/"
+        },
+        {
+          "label": "W3Schools — Git Branch",
+          "url": "https://www.w3schools.com/git/git_branch.asp"
+        },
+        {
+          "label": "W3Schools — Git Branch Merge",
+          "url": "https://www.w3schools.com/git/git_branch_merge.asp"
+        }
+      ],
+      "tags": [
+        "pytest",
+        "tests",
+        "fixtures",
+        "parametrize",
+        "git",
+        "branches",
+        "pull request",
+        "merge conflict"
+      ]
+    },
+    {
+      "id": "2.A",
+      "kind": "assessment",
+      "title": "Assessment week 2 — taskman: een getest en verpakt takenbeheer",
+      "summary": "Je bouwt taskman, een Python-package voor taken met JSON-opslag, foutafhandeling, dataclasses, een CLI en een testsuite, en levert het in via een pull request.",
+      "simple": "Simpel gezegd: je bouwt een digitale takenlijst zoals een echte developer dat doet. Niet alles in één bestand, maar netjes verdeeld over vakjes: één voor wat een taak is, één voor opslaan, één voor de regels en één voor de opdrachtregel. En met tests bewijs je dat alles werkt.",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Wat je bouwt"
+        },
+        {
+          "type": "p",
+          "text": "Je bouwt voort op je contactenboek uit week 1, maar nu als echt Python-package dat taken beheert. Taken blijven bewaard in een JSON-bestand, fouten worden netjes afgehandeld, het datamodel is een dataclass en een testsuite bewijst dat het werkt. Je werkt op een branch en levert in via een pull request op je eigen repository."
+        },
+        {
+          "type": "table",
+          "head": [
+            "Onderdeel",
+            "Bestand",
+            "Verantwoordelijkheid"
+          ],
+          "rows": [
+            [
+              "Model",
+              "`models.py`",
+              "`Priority`-enum en `Task`-dataclass (id, titel, prioriteit, klaar, tags, aanmaakmoment, optionele deadline) met validatie en `is_overdue(today)`"
+            ],
+            [
+              "Opslag",
+              "`storage.py`",
+              "`JsonStore` met `load()` en `save(tasks)`; datums als ISO-string"
+            ],
+            [
+              "Service",
+              "`service.py`",
+              "`TaskService`: toevoegen, afronden, verwijderen, sorteren, zoeken, verlopen taken"
+            ],
+            [
+              "CLI",
+              "`cli.py`",
+              "commando's via `argparse`, vriendelijke meldingen in plaats van tracebacks"
+            ],
+            [
+              "Tests",
+              "`tests/`",
+              "minstens 12 pytest-tests voor model, opslag en service"
+            ]
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Lagen en composition"
+        },
+        {
+          "type": "p",
+          "text": "De bedrijfsregels horen in de service, niet in de CLI. De CLI leest alleen argumenten en toont resultaten. `TaskService` krijgt een store mee in zijn constructor: dat is composition. Het voordeel: in tests geef je de service gewoon een andere store mee."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "class MemoryStore:\n    def __init__(self) -> None:\n        self._tasks: list[str] = []\n    def load(self) -> list[str]:\n        return list(self._tasks)\n    def save(self, tasks: list[str]) -> None:\n        self._tasks = list(tasks)\n\nclass TaskService:\n    def __init__(self, store) -> None:     # de service heeft een store\n        self.store = store\n    def add(self, title: str) -> None:\n        tasks = self.store.load()\n        tasks.append(title)\n        self.store.save(tasks)\n\nservice = TaskService(MemoryStore())\nservice.add(\"Printer repareren\")\nprint(service.store.load())",
+          "output": "['Printer repareren']",
+          "run": true,
+          "caption": "Schets met strings in plaats van Task-objecten: een opslag in het geheugen maakt de service testbaar zonder bestanden."
+        },
+        {
+          "type": "h",
+          "text": "Opslag: JSON, datums en een eigen fout"
+        },
+        {
+          "type": "p",
+          "text": "De store zet taken om naar JSON en terug. Datums bewaar je als ISO-string. Bestaat het bestand nog niet, dan geeft `load()` een lege lijst. Is het bestand beschadigd, dan gooi je je eigen `StorageError`, zodat de CLI een duidelijke melding kan tonen. Handig om te weten: de fout die `json.loads` bij kapotte JSON gooit, is een subklasse van `ValueError`."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "import json\nfrom datetime import date\n\nclass StorageError(Exception):\n    \"\"\"Het takenbestand kan niet worden gelezen.\"\"\"\n\ndef parse(text: str) -> list[dict]:\n    try:\n        rows = json.loads(text)\n    except ValueError:\n        raise StorageError(\"takenbestand is beschadigd\")\n    for row in rows:\n        row[\"due\"] = date.fromisoformat(row[\"due\"]) if row[\"due\"] else None\n    return rows\n\nprint(parse('[{\"title\": \"Printer\", \"due\": \"2026-09-15\"}]'))\ntry:\n    parse(\"{kapot\")\nexcept StorageError as e:\n    print(\"StorageError:\", e)",
+          "output": "[{'title': 'Printer', 'due': datetime.date(2026, 9, 15)}]\nStorageError: takenbestand is beschadigd",
+          "run": true
+        },
+        {
+          "type": "h",
+          "text": "Stappenplan"
+        },
+        {
+          "type": "list",
+          "ordered": true,
+          "items": [
+            "Maak de branch `feature/week2-taskman`, de mappenstructuur, een venv en `pyproject.toml`, en zet `.venv/` in `.gitignore`.",
+            "Schrijf `models.py` en meteen de tests erbij: standaardwaarden, validatie en `is_overdue`.",
+            "Bouw `JsonStore` en test hem met `tmp_path`: ontbrekend bestand, kapot bestand, opslaan en teruglezen.",
+            "Bouw `TaskService` bovenop een store en test de regels: sorteren, zoeken en verlopen taken.",
+            "Maak als laatste `cli.py` met `argparse`; vang je eigen fouten af en toon een korte melding.",
+            "Verwerk de Pythonic onderdelen: minstens één generator, comprehension, decorator en `with`-blok.",
+            "Draai `pytest -q` en `ruff check .`, schrijf de README en open de pull request."
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "bash",
+          "code": "python -m taskman add \"Printer repareren\" --priority high --tag kantoor --due 2026-09-15\npython -m taskman list\npython -m taskman complete 3\npython -m taskman search printer",
+          "caption": "Zo moet je CLI ongeveer werken."
+        },
+        {
+          "type": "note",
+          "tone": "tip",
+          "text": "Voor `python -m taskman` heeft je package een bestand `__main__.py` nodig dat de CLI start. Een generator past mooi bij het opsommen van verlopen taken, en een `@timed`-decorator rond het laden is een goede oefening."
+        },
+        {
+          "type": "h",
+          "text": "Extra uitdaging en inleveren"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "Toon de takenlijst als nette tabel met de library `rich`.",
+            "Voeg een exportcommando naar CSV toe.",
+            "Haal 90 procent of meer coverage met `pytest --cov`."
+          ]
+        },
+        {
+          "type": "note",
+          "tone": "info",
+          "text": "In de pull request beschrijf je wat je hebt gebouwd en hoe je het draait, en plak je de uitvoer van `pytest -q` en `ruff check .`. De README bevat de installatiestappen (venv aanmaken, `pip install -e \".[dev]\"`) en voorbeelden. Verwerk het reviewcommentaar en zorg dat de PR vóór week 3 gemerged is."
+        }
+      ],
+      "takeaways": [
+        "Verdeel je code in lagen: model, opslag, service en CLI.",
+        "Bedrijfsregels horen in de service; de CLI vertaalt alleen invoer en uitvoer.",
+        "Composition maakt je service testbaar met een andere store.",
+        "Eigen exceptions zoals `StorageError` geven de gebruiker een nette melding in plaats van een traceback.",
+        "Lever in als een echte developer: branch, groene tests, schone ruff-check en een pull request met review."
+      ],
+      "checklist": [
+        "Projectmap met `taskman/`, `tests/`, `pyproject.toml`, `README.md` en `.gitignore`",
+        "Werkende venv die niet in Git staat",
+        "`Priority`-enum en `Task`-dataclass met validatie in `__post_init__` en `is_overdue(today)`",
+        "`JsonStore` met `load()` en `save()`, datums opgeslagen als ISO-string",
+        "Ontbrekend bestand geeft een lege lijst, kapot bestand een eigen `StorageError`",
+        "`TaskService` met add, complete, remove, list, search en overdue",
+        "CLI met `argparse` en vriendelijke foutmeldingen",
+        "Minstens één generator, comprehension, decorator en `with`-blok",
+        "Minstens 12 tests; `pytest -q` is groen en `ruff check .` meldt niets",
+        "Pull request van `feature/week2-taskman` naar `main` met beschrijving en testuitvoer",
+        "Reviewcommentaar verwerkt en gemerged vóór week 3"
+      ],
+      "links": [
+        {
+          "label": "Python docs — argparse",
+          "url": "https://docs.python.org/3/library/argparse.html"
+        },
+        {
+          "label": "pytest — tmp_path",
+          "url": "https://docs.pytest.org/en/stable/how-to/tmp_path.html"
+        }
+      ],
+      "tags": [
+        "assessment",
+        "taskman",
+        "package",
+        "dataclass",
+        "json",
+        "argparse",
+        "pytest",
+        "pull request"
+      ]
+    }
+  ]
+}

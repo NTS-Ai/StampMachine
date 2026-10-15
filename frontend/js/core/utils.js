@@ -91,12 +91,15 @@ function editDistance(a, b) {
   return prev[b.length];
 }
 
-/** @typedef {'home' | 'play' | 'cards' | 'result' | 'search'} ScreenId */
+/** @typedef {'home' | 'play' | 'cards' | 'result' | 'search' | 'kb'} ScreenId */
 
 /** Toont één scherm en verbergt de rest. @param {ScreenId} id */
 function showScreen(id) {
-  for (const s of ['home', 'play', 'cards', 'result', 'search']) $('#' + s).hidden = s !== id;
+  for (const s of ['home', 'play', 'cards', 'result', 'search', 'kb']) $('#' + s).hidden = s !== id;
   document.body.dataset.screen = id;
+  // Verlaat je de kennisbank, dan wijst de URL weer naar de start; met 'terug' kom je terug in de les.
+  if (id !== 'kb' && location.hash.startsWith('#/kennis')) history.pushState(null, '', '#/');
+  if (typeof markTab === 'function') markTab(id);
   // Direct naar boven, ook al scrolt de pagina verder vloeiend.
   window.scrollTo({ top: 0, behavior: 'instant' });
 }

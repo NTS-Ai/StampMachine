@@ -28,6 +28,9 @@ jobs:
       - name: Controleer of content.js up-to-date is met content/
         run: python3 tools/build_content.py --check
 
+      - name: Unit tests (inhoud, logica en kennisbank)
+        run: node --test tests/*.test.mjs
+
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3

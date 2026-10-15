@@ -1,0 +1,1568 @@
+[
+  {
+    "term": "*args / **kwargs",
+    "short": "Vangen extra positionele argumenten op als tuple en extra keyword-argumenten als dict.",
+    "simple": "Twee extra zakken: een voor losse spullen en een voor spullen met een label.",
+    "section": "1.5"
+  },
+  {
+    "term": "12-factor app",
+    "short": "Een set principes voor services, waaronder: configuratie alleen via environment variables.",
+    "simple": "Hetzelfde apparaat met per land een andere stekker, in plaats van een ander apparaat.",
+    "section": "6.2"
+  },
+  {
+    "term": "401 vs 403",
+    "short": "401 betekent niet (geldig) ingelogd, 403 betekent ingelogd maar geen toegang.",
+    "simple": "401: je hebt geen pasje; 403: je pasje werkt niet voor deze deur.",
+    "section": "6.3"
+  },
+  {
+    "term": "agent",
+    "short": "Een LLM dat in een loop met tools en limieten werkt tot een doel bereikt is.",
+    "simple": "Een stagiair met een gereedschapskist die blijft werken tot de klus af is.",
+    "section": "6.1"
+  },
+  {
+    "term": "agent loop",
+    "short": "Een lus die het model aanroept, gevraagde tools uitvoert en doorgaat tot stop_reason niet meer tool_use is.",
+    "simple": "Heen en weer lopen tussen klant en keuken tot de klant zegt dat hij klaar is.",
+    "section": "5.2"
+  },
+  {
+    "term": "aggregate function",
+    "short": "Functie die veel rijen samenvat tot één waarde, zoals `COUNT`, `SUM` of `AVG`.",
+    "simple": "De kassabon onderaan: alle losse artikelen samengevat tot één totaal.",
+    "section": "3.2"
+  },
+  {
+    "term": "Alembic",
+    "short": "De migratietool van SQLAlchemy.",
+    "simple": "De aannemer die het verbouwingslogboek bijhoudt en de verbouwingen uitvoert.",
+    "section": "3.5"
+  },
+  {
+    "term": "allow-list",
+    "short": "Een vaste lijst van acties of tools die zonder extra bevestiging uitgevoerd mogen worden.",
+    "simple": "Een gastenlijst bij de deur: wie er niet op staat, komt er niet zomaar in.",
+    "section": "5.2"
+  },
+  {
+    "term": "anti-join",
+    "short": "Een `LEFT JOIN` met `WHERE rechts.id IS NULL` om rijen zonder match te vinden.",
+    "simple": "Op de presentielijst kijken wie er níet heeft getekend.",
+    "section": "3.2"
+  },
+  {
+    "term": "APIRouter",
+    "short": "Een groep endpoints van één resource, met een gedeeld prefix en tags, die je in de app opneemt.",
+    "simple": "Een afdeling in een winkel met een eigen bordje boven de ingang.",
+    "section": "4.3"
+  },
+  {
+    "term": "apt",
+    "short": "De pakketbeheerder van Ubuntu waarmee je software bijwerkt en installeert.",
+    "simple": "Een app-winkel voor de terminal.",
+    "section": "1.1"
+  },
+  {
+    "term": "async / await",
+    "short": "Python-syntax waarmee een proces andere taken afhandelt terwijl het op I/O wacht.",
+    "simple": "Een ober die tussen tafels heen en weer loopt in plaats van bij één tafel te wachten.",
+    "section": "4.3"
+  },
+  {
+    "term": "asyncio.gather",
+    "short": "Een functie die meerdere coroutines tegelijk laat lopen en wacht tot ze allemaal klaar zijn.",
+    "simple": "Vijf pizza's tegelijk in vijf ovens zetten.",
+    "section": "4.3"
+  },
+  {
+    "term": "asyncio.Semaphore",
+    "short": "Een teller die bepaalt hoeveel taken tegelijk een stuk async code mogen uitvoeren.",
+    "simple": "Een parkeergarage met een vast aantal plekken: is hij vol, dan wacht je.",
+    "section": "6.2"
+  },
+  {
+    "term": "asyncio.to_thread",
+    "short": "Voert een gewone, blokkerende functie uit in een aparte thread zodat de event loop vrij blijft.",
+    "simple": "Een zware klus uitbesteden aan een collega zodat jij de telefoon kunt blijven opnemen.",
+    "section": "6.2"
+  },
+  {
+    "term": "asyncio.wait_for",
+    "short": "Wacht op een coroutine met een maximale duur en geeft anders een TimeoutError.",
+    "simple": "Een bezorger maximaal een half uur geven voordat je iets anders regelt.",
+    "section": "6.2"
+  },
+  {
+    "term": "autogenerate",
+    "short": "Alembic-functie die modellen met de database vergelijkt en een migration voorstelt.",
+    "simple": "Een assistent die een concept schrijft dat jij altijd nog moet nalezen.",
+    "section": "3.5"
+  },
+  {
+    "term": "BackgroundTasks",
+    "short": "FastAPI-hulpmiddel om klein werk na de response in hetzelfde proces uit te voeren.",
+    "simple": "Een klusje dat de ober nog even zelf doet nadat hij het bord heeft gebracht.",
+    "section": "4.5"
+  },
+  {
+    "term": "banker's rounding",
+    "short": "De afrondregel van `round()`: precies .5 gaat naar het dichtstbijzijnde even getal.",
+    "simple": "Een scheidsrechter die bij gelijkspel altijd de even kant kiest.",
+    "section": "1.2"
+  },
+  {
+    "term": "BaseModel",
+    "short": "De basisklasse waarvan een Pydantic-model erft.",
+    "simple": "Het lege sjabloon waarop je je eigen formulier tekent.",
+    "section": "4.2"
+  },
+  {
+    "term": "bcrypt",
+    "short": "Een bewust traag hash-algoritme om wachtwoorden veilig op te slaan.",
+    "simple": "Een gehaktmolen: van gehakt maak je nooit meer de biefstuk terug.",
+    "section": "4.4"
+  },
+  {
+    "term": "Bearer token",
+    "short": "Een token dat de client meestuurt in de header `Authorization: Bearer <token>`.",
+    "simple": "Een toegangspasje dat je bij elke deur laat zien.",
+    "section": "4.4"
+  },
+  {
+    "term": "branch",
+    "short": "Een aparte ontwikkellijn in Git waarop je werkt zonder `main` te raken.",
+    "simple": "Een kladversie naast het echte document.",
+    "section": "2.5"
+  },
+  {
+    "term": "break",
+    "short": "Verlaat een loop onmiddellijk.",
+    "simple": "De nooduitgang: je loopt meteen naar buiten.",
+    "section": "1.3"
+  },
+  {
+    "term": "cache",
+    "short": "Een snelle opslag van eerder berekende resultaten, zodat je ze niet opnieuw hoeft uit te rekenen.",
+    "simple": "Een spiekbriefje met antwoorden die je al eens hebt opgezocht.",
+    "section": "4.5"
+  },
+  {
+    "term": "cache-invalidatie",
+    "short": "Het verwijderen van een gecachte waarde zodra de onderliggende data verandert.",
+    "simple": "Het briefje 'er is nog melk' weggooien als de melk op is.",
+    "section": "4.5"
+  },
+  {
+    "term": "capstone",
+    "short": "Het eindproject waarin je alles uit de cursus combineert in één deploybare service.",
+    "simple": "Een meesterproef: het werkstuk waarmee je laat zien wat je kunt.",
+    "section": "6.5"
+  },
+  {
+    "term": "casting",
+    "short": "Een waarde expliciet omzetten naar een ander type met `int()`, `float()` of `str()`.",
+    "simple": "Water in een ander vormpje gieten: de inhoud blijft, de vorm verandert.",
+    "section": "1.2"
+  },
+  {
+    "term": "CD (Continuous Deployment)",
+    "short": "Het image dat CI bouwde automatisch of met één stap uitrollen naar een omgeving.",
+    "simple": "De bezorger die het goedgekeurde pakket direct naar de klant brengt.",
+    "section": "6.4"
+  },
+  {
+    "term": "chunking",
+    "short": "Documenten opknippen in kleinere stukken die je los kunt embedden en ophalen.",
+    "simple": "Een dik boek in losse kaartjes knippen zodat je snel het juiste kaartje vindt.",
+    "section": "5.3"
+  },
+  {
+    "term": "CI (Continuous Integration)",
+    "short": "Automatisch lint, audit, migraties en tests draaien bij elke push en pull request.",
+    "simple": "Een kwaliteitscontroleur die elk product van de band test.",
+    "section": "6.4"
+  },
+  {
+    "term": "claim",
+    "short": "Een uitspraak in een JWT, zoals `sub` (wie) en `exp` (tot wanneer geldig).",
+    "simple": "Een regel op het toegangskaartje, zoals naam en vervaldatum.",
+    "section": "4.4"
+  },
+  {
+    "term": "class",
+    "short": "Een blauwdruk die data (attributes) en gedrag (methods) bundelt.",
+    "simple": "Een bouwtekening waarmee je veel huizen kunt bouwen.",
+    "section": "2.3"
+  },
+  {
+    "term": "classmethod",
+    "short": "Een methode die de klasse (`cls`) krijgt, vaak gebruikt als alternatieve constructor.",
+    "simple": "Een tweede ingang van hetzelfde gebouw.",
+    "section": "2.3"
+  },
+  {
+    "term": "commit",
+    "short": "Een vastgelegde momentopname van je project, met een bericht dat beschrijft wat er veranderde.",
+    "simple": "Een foto in het album met een bijschrift eronder.",
+    "section": "1.1"
+  },
+  {
+    "term": "composition",
+    "short": "Een object heeft een ander object en gebruikt dat, in plaats van ervan te erven.",
+    "simple": "Een auto heeft een motor; de auto is zelf geen motor.",
+    "section": "2.3"
+  },
+  {
+    "term": "comprehension",
+    "short": "Een korte schrijfwijze om een list, dict of set in één regel te bouwen, eventueel met filter.",
+    "simple": "Een boodschappenlijst in één zin: alle appels die rijp zijn.",
+    "section": "2.4"
+  },
+  {
+    "term": "conditional expression",
+    "short": "Een if/else in één expressie, zoals `x if voorwaarde else y` (ook wel ternary genoemd).",
+    "simple": "Een snelle keuze in één zin: paraplu als het regent, anders zonnebril.",
+    "section": "1.3"
+  },
+  {
+    "term": "constraint",
+    "short": "Een regel in de database die foute data weigert, zoals `NOT NULL`, `UNIQUE` of `CHECK`.",
+    "simple": "Een portier die iedereen zonder geldig kaartje tegenhoudt.",
+    "section": "3.2"
+  },
+  {
+    "term": "container",
+    "short": "Een draaiende, afgeschermde kopie van een image.",
+    "simple": "De taart uit de bakvorm: je kunt hem gebruiken en weggooien, de vorm blijft.",
+    "section": "3.1"
+  },
+  {
+    "term": "context manager",
+    "short": "Een object voor `with` dat opbouw en gegarandeerd opruimen regelt.",
+    "simple": "Een deur die altijd vanzelf achter je dichtvalt.",
+    "section": "2.4"
+  },
+  {
+    "term": "context window",
+    "short": "De maximale hoeveelheid tokens (prompt plus antwoord) die een model in één call kan verwerken.",
+    "simple": "Het bureaublad van het model: wat er niet op past, ziet het niet.",
+    "section": "5.1"
+  },
+  {
+    "term": "ContextVar",
+    "short": "Een variabele uit contextvars die per request of taak een eigen waarde heeft.",
+    "simple": "Een naamkaartje dat elke gast bij zich draagt, ook als iedereen door elkaar loopt.",
+    "section": "6.2"
+  },
+  {
+    "term": "continue",
+    "short": "Slaat de rest van de huidige ronde over en gaat door naar de volgende.",
+    "simple": "Een nummer in je afspeellijst overslaan.",
+    "section": "1.3"
+  },
+  {
+    "term": "CORS",
+    "short": "Browserregel die bepaalt welke websites je API mogen aanroepen; je beperkt hem met CORSMiddleware.",
+    "simple": "Een gastenlijst bij de deur: alleen bekende namen komen binnen.",
+    "section": "6.3"
+  },
+  {
+    "term": "cosine distance",
+    "short": "1 min de cosine similarity; in pgvector de operator <=>, waarbij kleiner dichterbij betekent.",
+    "simple": "De afstand tussen twee huizen op de betekenis-kaart: hoe kleiner, hoe meer buren.",
+    "section": "5.3"
+  },
+  {
+    "term": "cosine similarity",
+    "short": "Maat voor hoe sterk twee vectoren dezelfde kant op wijzen; hoger betekent meer gelijke betekenis.",
+    "simple": "Kijken of twee pijlen ongeveer dezelfde richting aanwijzen.",
+    "section": "5.3"
+  },
+  {
+    "term": "CSV",
+    "short": "Tekstbestand met een tabel: één rij per regel, waarden gescheiden door komma's.",
+    "simple": "Een spreadsheet die als gewone tekst is opgeschreven.",
+    "section": "2.2"
+  },
+  {
+    "term": "CTE",
+    "short": "Common Table Expression: met `WITH naam AS (...)` geef je een tussenstap van een query een naam.",
+    "simple": "Kladpapier met een kopje erboven, zodat je stap voor stap kunt rekenen.",
+    "section": "3.2"
+  },
+  {
+    "term": "current_user",
+    "short": "De dependency die de token uit de header leest, controleert en de bijbehorende gebruiker teruggeeft.",
+    "simple": "De portier die bij elke deur je bandje scant.",
+    "section": "4.4"
+  },
+  {
+    "term": "custom exception",
+    "short": "Een eigen exception-klasse die erft van `Exception`, voor fouten uit je eigen domein.",
+    "simple": "Een eigen alarmsignaal dat precies zegt wat er in jouw winkel mis is.",
+    "section": "2.2"
+  },
+  {
+    "term": "dataclass",
+    "short": "Een klasse met `@dataclass` waarvoor Python `__init__`, `__repr__` en `__eq__` schrijft.",
+    "simple": "Een kant-en-klaar formulier: jij noemt de vakjes, Python maakt de rest.",
+    "section": "2.3"
+  },
+  {
+    "term": "datatype",
+    "short": "De soort van een waarde, zoals `int`, `float`, `str`, `bool` of `NoneType`; opvragen doe je met `type()`.",
+    "simple": "Het soort spul in de doos: getallen, tekst of ja/nee.",
+    "section": "1.2"
+  },
+  {
+    "term": "decorator",
+    "short": "Een functie die een andere functie inpakt en er gedrag aan toevoegt.",
+    "simple": "Cadeaupapier om een cadeau: het cadeau blijft hetzelfde, maar er komt iets bij.",
+    "section": "2.4"
+  },
+  {
+    "term": "dependency injection",
+    "short": "Een route krijgt de dingen die hij nodig heeft aangereikt via `Depends()` in plaats van ze zelf te maken.",
+    "simple": "Een ober die je bord brengt, zodat je niet zelf naar de keuken hoeft.",
+    "section": "4.2"
+  },
+  {
+    "term": "dependency_overrides",
+    "short": "Een dict op de app waarmee je in tests een dependency, zoals `get_db`, vervangt door een testversie.",
+    "simple": "Een stuntman die tijdens de opnames de echte acteur vervangt.",
+    "section": "4.3"
+  },
+  {
+    "term": "dict",
+    "short": "Een verzameling key-waardeparen; de Python-vorm van een JSON-object.",
+    "simple": "Een telefoonboek: je zoekt op naam en vindt het nummer.",
+    "section": "1.4"
+  },
+  {
+    "term": "Docker",
+    "short": "Platform dat applicaties met al hun afhankelijkheden verpakt en geïsoleerd draait.",
+    "simple": "Een verhuisdoos waarin alles zit wat een programma nodig heeft, zodat het overal hetzelfde werkt.",
+    "section": "3.1"
+  },
+  {
+    "term": "Docker Compose",
+    "short": "Tool die met een `compose.yaml` meerdere containers als één stack beheert.",
+    "simple": "Een draaiboek waarmee je met één fluitsignaal het hele orkest laat beginnen.",
+    "section": "3.1"
+  },
+  {
+    "term": ".dockerignore",
+    "short": "Lijst met bestanden die niet in de Docker build-context komen, zoals .venv, .git en .env.",
+    "simple": "Een paklijst van wat je bewust thuislaat.",
+    "section": "6.4"
+  },
+  {
+    "term": "docstring",
+    "short": "Een string direct onder `def` die beschrijft wat de functie doet.",
+    "simple": "Het etiket op een potje dat zegt wat erin zit.",
+    "section": "1.5"
+  },
+  {
+    "term": "editable install",
+    "short": "Installatie met `pip install -e` die naar je eigen bronmap wijst, zodat wijzigingen meteen werken.",
+    "simple": "Een snelkoppeling in plaats van een kopie: pas je het origineel aan, dan zie je het meteen.",
+    "section": "2.1"
+  },
+  {
+    "term": "embedding",
+    "short": "Een lijst floats (bijvoorbeeld 1536) die de betekenis van een tekst voorstelt.",
+    "simple": "Een adres op een betekenis-kaart: teksten die op elkaar lijken wonen dicht bij elkaar.",
+    "section": "5.3"
+  },
+  {
+    "term": "endpoint",
+    "short": "Een combinatie van methode en pad waarop je API reageert, zoals `GET /notes`.",
+    "simple": "Een loketnummer met een eigen taak.",
+    "section": "4.2"
+  },
+  {
+    "term": "Enum",
+    "short": "Een vaste set benoemde waarden, zoals LOW, MEDIUM en HIGH.",
+    "simple": "Een keuzemenu met alleen de toegestane opties.",
+    "section": "2.3"
+  },
+  {
+    "term": "enumerate()",
+    "short": "Geeft bij elk element van een collectie ook een volgnummer.",
+    "simple": "Rugnummers uitdelen aan een rij hardlopers.",
+    "section": "1.3"
+  },
+  {
+    "term": ".env",
+    "short": "Bestand met configuratie en geheimen dat niet in git komt en met `python-dotenv` wordt geladen.",
+    "simple": "Een kluisje naast je bureau voor sleutels die niet in het gedeelde dossier horen.",
+    "section": "3.4"
+  },
+  {
+    "term": ".env.example",
+    "short": "Een bestand in Git met alle benodigde variabelen, maar alleen nepwaarden.",
+    "simple": "Een leeg invulformulier: je ziet welke velden er zijn, niet de antwoorden.",
+    "section": "6.2"
+  },
+  {
+    "term": "eval set",
+    "short": "Een vaste verzameling testvragen met verwachte inhoud en bron waarmee je een AI-functie meet.",
+    "simple": "Een vaste toets die je na elke oefenronde opnieuw maakt om je vooruitgang te zien.",
+    "section": "5.5"
+  },
+  {
+    "term": "eval suite",
+    "short": "Een set testcases die je tegen het echte model draait om de kwaliteit te meten.",
+    "simple": "Een proefexamen dat laat zien hoe goed je assistent scoort.",
+    "section": "6.5"
+  },
+  {
+    "term": "event loop",
+    "short": "Het mechanisme van asyncio dat coroutines om de beurt laat draaien terwijl ze op I/O wachten.",
+    "simple": "Een ober die tussen tafels heen en weer loopt in plaats van bij één tafel te blijven wachten.",
+    "section": "6.2"
+  },
+  {
+    "term": "exception",
+    "short": "Een signaal dat Python gooit als er iets misgaat; zonder opvangen stopt het programma.",
+    "simple": "Een alarmbel die afgaat als er iets mis is.",
+    "section": "2.2"
+  },
+  {
+    "term": "exclude_unset",
+    "short": "Optie van `model_dump()` die alleen de velden teruggeeft die echt zijn meegestuurd.",
+    "simple": "Een wijzigingsbriefje waarop alleen staat wat anders moet.",
+    "section": "4.3"
+  },
+  {
+    "term": "EXPLAIN ANALYZE",
+    "short": "Toont hoe Postgres een query uitvoert en of er een index gebruikt wordt.",
+    "simple": "Een routeplanner die laat zien welke weg de database echt heeft genomen.",
+    "section": "3.3"
+  },
+  {
+    "term": "f-string",
+    "short": "Een string met een `f` ervoor waarin je expressies tussen `{}` invult en opmaakt.",
+    "simple": "Een invulformulier: wat tussen `{}` staat, wordt ingevuld.",
+    "section": "1.2"
+  },
+  {
+    "term": "FastAPI",
+    "short": "Een Python-webframework dat met type hints input valideert, output serialiseert en automatisch docs maakt.",
+    "simple": "Een receptie die bezoekers controleert en zelf een plattegrond van het gebouw maakt.",
+    "section": "4.2"
+  },
+  {
+    "term": "few-shot prompting",
+    "short": "Twee of drie voorbeelden van input en gewenste output in de prompt zetten.",
+    "simple": "Voordoen in plaats van uitleggen, zoals bij het leren van een nieuw spelletje.",
+    "section": "5.1"
+  },
+  {
+    "term": "field_validator",
+    "short": "Een decorator voor een classmethod die één veld van een Pydantic-model extra controleert of opschoont.",
+    "simple": "Een controleur die bij één vakje kijkt of het netjes is ingevuld.",
+    "section": "4.2"
+  },
+  {
+    "term": "file mode",
+    "short": "De letter bij `open()` die bepaalt of je leest (`'r'`), overschrijft (`'w'`) of toevoegt (`'a'`).",
+    "simple": "Kiezen of je een schrift leest, uitgumt en opnieuw schrijft, of achteraan bijschrijft.",
+    "section": "2.2"
+  },
+  {
+    "term": "fixture",
+    "short": "Een functie met `@pytest.fixture` die testdata of setup klaarzet voor tests.",
+    "simple": "Een klaargezette werkbank zodat elke test meteen kan beginnen.",
+    "section": "2.5"
+  },
+  {
+    "term": "float",
+    "short": "Een kommagetal; binair opgeslagen, waardoor kleine afrondingsverschillen ontstaan.",
+    "simple": "Een liniaal met heel fijne streepjes die net niet overal precies uitkomt.",
+    "section": "1.2"
+  },
+  {
+    "term": "floor division",
+    "short": "Delen met `//`, waarbij het resultaat naar beneden wordt afgerond op een heel getal.",
+    "simple": "Tellen hoeveel hele koekjes iedereen krijgt, zonder te breken.",
+    "section": "1.2"
+  },
+  {
+    "term": "flush",
+    "short": "Stuurt openstaande wijzigingen als SQL naar de database zonder ze definitief te maken.",
+    "simple": "Je boodschappen op de band leggen: de kassa ziet ze, maar je hebt nog niet betaald.",
+    "section": "3.4"
+  },
+  {
+    "term": "for-loop",
+    "short": "Loopt één voor één langs alle elementen van iets dat iterable is.",
+    "simple": "Elke kaart in een stapel één voor één omdraaien.",
+    "section": "1.3"
+  },
+  {
+    "term": "foreign key",
+    "short": "Kolom die verwijst naar de primary key van een andere tabel, met `REFERENCES`.",
+    "simple": "Een verwijzing in een boek: 'zie hoofdstuk 4', en dat hoofdstuk moet wel bestaan.",
+    "section": "3.3"
+  },
+  {
+    "term": "from_attributes",
+    "short": "Pydantic-instelling waarmee een model waarden leest uit attributen van een object, zoals een SQLAlchemy-rij.",
+    "simple": "Leren lezen uit de vakjes van een doos in plaats van alleen van een lijstje.",
+    "section": "4.3"
+  },
+  {
+    "term": "functie",
+    "short": "Een herbruikbaar blok code met een naam, parameters en meestal een returnwaarde.",
+    "simple": "Een recept: ingrediënten erin, gerecht eruit.",
+    "section": "1.5"
+  },
+  {
+    "term": "generator",
+    "short": "Een functie met `yield` die waarden één voor één en pas op verzoek levert.",
+    "simple": "Een kraan: er komt pas water als je hem opendraait.",
+    "section": "2.4"
+  },
+  {
+    "term": "GHCR",
+    "short": "GitHub Container Registry: de plek waar CI je Docker-images opslaat.",
+    "simple": "Een magazijn waar elke gebouwde versie met een label op de plank staat.",
+    "section": "6.4"
+  },
+  {
+    "term": "Git",
+    "short": "Een versiebeheersysteem dat momentopnames (commits) van je project vastlegt.",
+    "simple": "Een fotoalbum van je project: je kunt altijd terugbladeren naar een eerdere foto.",
+    "section": "1.1"
+  },
+  {
+    "term": "git push",
+    "short": "Stuurt je lokale commits naar de repository op GitHub.",
+    "simple": "Je pakketje naar het postkantoor brengen.",
+    "section": "1.1"
+  },
+  {
+    "term": "GitHub",
+    "short": "Een website die Git-repositories online bewaart, zodat je kunt delen en samenwerken.",
+    "simple": "Een kluis in de cloud voor je fotoalbums.",
+    "section": "1.1"
+  },
+  {
+    "term": "GitHub Actions workflow",
+    "short": "Een YAML-bestand in .github/workflows/ dat beschrijft welke jobs GitHub automatisch draait.",
+    "simple": "Een draaiboek dat een robot bij elke wijziging afwerkt.",
+    "section": "6.4"
+  },
+  {
+    "term": "`.gitignore`",
+    "short": "Bestand met patronen voor bestanden die Git moet negeren, zoals `.venv/` en `__pycache__/`.",
+    "simple": "Een bordje 'niet inpakken' op spullen die niet mee in de verhuisdoos horen.",
+    "section": "2.5"
+  },
+  {
+    "term": "global",
+    "short": "Keyword om binnen een functie een globale variabele opnieuw toe te wijzen; liever vermijden.",
+    "simple": "Op het grote whiteboard in de gang schrijven in plaats van op je eigen kladblok.",
+    "section": "1.5"
+  },
+  {
+    "term": "groundedness",
+    "short": "De mate waarin een antwoord echt gebaseerd is op de meegegeven bronnen in plaats van verzonnen.",
+    "simple": "Of een werkstuk echt uit de opgegeven bronnen komt of uit iemands duim.",
+    "section": "5.5"
+  },
+  {
+    "term": "GROUP BY",
+    "short": "Voegt rijen met dezelfde waarde samen zodat aggregates per groep worden berekend.",
+    "simple": "Wasgoed sorteren op kleur en daarna per stapel tellen.",
+    "section": "3.2"
+  },
+  {
+    "term": "guard-rails",
+    "short": "Beschermende maatregelen rond een LLM: invoer begrenzen, opgehaalde tekst wantrouwen, gevaarlijke tools achter bevestiging.",
+    "simple": "De vangrails langs een snelweg die voorkomen dat een fout uit de bocht vliegt.",
+    "section": "5.4"
+  },
+  {
+    "term": "hallucinatie",
+    "short": "Vloeiende, zelfverzekerde tekst van een model die inhoudelijk niet klopt.",
+    "simple": "Een leerling die liever iets verzint dan 'weet ik niet' zegt.",
+    "section": "5.1"
+  },
+  {
+    "term": "HAVING",
+    "short": "Filtert groepen na `GROUP BY`, terwijl `WHERE` losse rijen ervoor filtert.",
+    "simple": "Na het sorteren alleen de stapels houden die groter zijn dan vijf stuks.",
+    "section": "3.2"
+  },
+  {
+    "term": "healthcheck",
+    "short": "Een periodieke controle in Compose of een service echt klaar is, zoals `pg_isready`.",
+    "simple": "Even aankloppen om te vragen of iemand al klaar is voordat je binnenloopt.",
+    "section": "3.1"
+  },
+  {
+    "term": "HNSW-index",
+    "short": "Een index voor snel, benaderend zoeken naar de dichtstbijzijnde vectoren (approximate nearest neighbour).",
+    "simple": "Een netwerk van wegwijzers waarmee je snel naar de goede buurt springt in plaats van elk huis te bezoeken.",
+    "section": "5.3"
+  },
+  {
+    "term": "HTTP",
+    "short": "Het protocol waarmee een client een request naar een server stuurt en een response terugkrijgt.",
+    "simple": "Een loket: jij schuift een briefje naar binnen en krijgt een antwoord terug.",
+    "section": "4.1"
+  },
+  {
+    "term": "HTTP-methode",
+    "short": "Het werkwoord van een request, zoals GET, POST, PUT, PATCH of DELETE.",
+    "simple": "Zoals kijken, toevoegen, vervangen of weggooien bij een kast.",
+    "section": "4.1"
+  },
+  {
+    "term": "HTTPException",
+    "short": "Een exception in FastAPI waarmee je een route stopt en een foutcode met bericht terugstuurt.",
+    "simple": "De noodrem: de rit stopt en de reiziger hoort waarom.",
+    "section": "4.2"
+  },
+  {
+    "term": "httpx",
+    "short": "Een Python-library om HTTP-requests te sturen, synchroon of async.",
+    "simple": "Een postbode die je vanuit Python brieven laat versturen.",
+    "section": "4.1"
+  },
+  {
+    "term": "human in the loop",
+    "short": "Een tool met side effects geeft eerst een voorstel dat een mens moet bevestigen.",
+    "simple": "Een bankoverschrijving die pas doorgaat nadat je hem zelf hebt goedgekeurd.",
+    "section": "6.1"
+  },
+  {
+    "term": "hybrid search",
+    "short": "Vector search combineren met Postgres full-text search (tsvector) en de resultaten samenvoegen.",
+    "simple": "Zoeken met twee zoekers tegelijk: één op betekenis en één op precieze woorden.",
+    "section": "5.3"
+  },
+  {
+    "term": "`if __name__ == \"__main__\"`",
+    "short": "Check die alleen waar is als je het bestand direct uitvoert, niet als je het importeert.",
+    "simple": "Een lamp die alleen aangaat als jij zelf de kamer binnenloopt, niet als je er alleen langs loopt.",
+    "section": "2.1"
+  },
+  {
+    "term": "image",
+    "short": "Een read-only sjabloon waaruit Docker containers start, zoals `postgres:16`.",
+    "simple": "Een bakvorm: je kunt er zoveel taarten mee maken als je wilt.",
+    "section": "3.1"
+  },
+  {
+    "term": "immutable",
+    "short": "Niet ter plekke aan te passen; elke wijziging levert een nieuw object op.",
+    "simple": "Een gedrukt boek: wil je iets anders, dan druk je een nieuw exemplaar.",
+    "section": "1.2"
+  },
+  {
+    "term": "indentation",
+    "short": "Inspringing van vier spaties die in Python aangeeft welke regels bij een blok horen.",
+    "simple": "Inspringen in een boodschappenlijstje om te laten zien wat onder welk kopje valt.",
+    "section": "1.3"
+  },
+  {
+    "term": "index",
+    "short": "Hulpstructuur waarmee de database snel rijen vindt zonder de hele tabel door te lopen.",
+    "simple": "Het register achterin een boek: je slaat direct de juiste pagina open.",
+    "section": "3.3"
+  },
+  {
+    "term": "inheritance",
+    "short": "Een subclass erft alles van een basisklasse en kan gedrag overschrijven of uitbreiden.",
+    "simple": "Een kind dat de gewoonten van zijn ouders overneemt maar sommige op zijn eigen manier doet.",
+    "section": "2.3"
+  },
+  {
+    "term": "`__init__.py`",
+    "short": "Bestand dat van een map een package maakt en namen kan doorgeven aan gebruikers.",
+    "simple": "Het bordje op de kast dat zegt: dit hoort bij elkaar.",
+    "section": "2.1"
+  },
+  {
+    "term": "input()",
+    "short": "Toont een vraag en geeft wat de gebruiker typt terug, altijd als string.",
+    "simple": "Een briefje dat iemand je toestopt: er staat altijd tekst op.",
+    "section": "1.2"
+  },
+  {
+    "term": "JOIN",
+    "short": "Combineert rijen uit twee tabellen via een key; `INNER` alleen bij een match, `LEFT` houdt alle linkerrijen.",
+    "simple": "Twee lijsten naast elkaar leggen en de regels met hetzelfde klantnummer aan elkaar nieten.",
+    "section": "3.2"
+  },
+  {
+    "term": "JSON",
+    "short": "Tekstformaat voor data dat API's en configbestanden gebruiken en dat Python omzet naar dicts en lists.",
+    "simple": "Een standaard verzenddoos die elk programma kan openen.",
+    "section": "2.2"
+  },
+  {
+    "term": "JSONB",
+    "short": "Postgres-type dat JSON binair opslaat en doorzoekbaar en indexeerbaar maakt.",
+    "simple": "Een la voor losse spullen die toch netjes gelabeld is, zodat je ze terugvindt.",
+    "section": "3.3"
+  },
+  {
+    "term": "JWT",
+    "short": "Een JSON Web Token: een ondertekende, voor iedereen leesbare set claims, zoals een user-id en een vervaltijd.",
+    "simple": "Een polsbandje met een stempel dat bewijst dat je binnen mag.",
+    "section": "4.4"
+  },
+  {
+    "term": "key rotation",
+    "short": "Een gelekte of verdachte key vervangen door een nieuwe en de oude intrekken.",
+    "simple": "De sloten vervangen nadat je je sleutelbos bent verloren.",
+    "section": "6.3"
+  },
+  {
+    "term": "KeyError",
+    "short": "De fout die je krijgt als je met `d[key]` een key opvraagt die niet bestaat.",
+    "simple": "Aanbellen bij een huisnummer dat niet bestaat.",
+    "section": "1.4"
+  },
+  {
+    "term": "keyword-argument",
+    "short": "Een argument dat je bij naam meegeeft, zoals `tarief=0.09`; de volgorde maakt dan niet uit.",
+    "simple": "Een pakket met naamlabel: het komt altijd op de juiste plek terecht.",
+    "section": "1.5"
+  },
+  {
+    "term": "lambda",
+    "short": "Een kleine naamloze functie van één expressie, vaak als `key` bij sorteren.",
+    "simple": "Een geeltje met een snelle instructie in plaats van een hele handleiding.",
+    "section": "2.4"
+  },
+  {
+    "term": "latency p50/p95",
+    "short": "De mediaan en het 95e percentiel van de responstijd: de normale en de bijna-slechtste ervaring.",
+    "simple": "Hoe lang je meestal in de rij staat, en hoe lang op een drukke dag.",
+    "section": "5.5"
+  },
+  {
+    "term": "link table",
+    "short": "Tabel die een many-to-many-relatie vastlegt met een samengestelde primary key, soms met extra velden zoals `qty`.",
+    "simple": "Een gastenlijst die bijhoudt welke gast op welk feest was, en met hoeveel personen.",
+    "section": "3.3"
+  },
+  {
+    "term": "list",
+    "short": "Een geordende, aanpasbare reeks waarden tussen `[]`.",
+    "simple": "Een boodschappenlijst die je kunt aanvullen en doorstrepen.",
+    "section": "1.4"
+  },
+  {
+    "term": "LLM",
+    "short": "Een large language model: een neuraal netwerk dat steeds het volgende token voorspelt op basis van de tekst ervoor.",
+    "simple": "Een supersnelle woordvoorspeller, zoals die op je telefoon, maar dan veel slimmer.",
+    "section": "5.1"
+  },
+  {
+    "term": "LLM-as-judge",
+    "short": "Een tweede LLM-call die antwoorden beoordeelt aan de hand van een rubric.",
+    "simple": "Een tweede corrector die het nakijkwerk van de eerste controleert.",
+    "section": "5.5"
+  },
+  {
+    "term": "log level",
+    "short": "De ernst van een logregel: DEBUG, INFO, WARNING, ERROR of CRITICAL.",
+    "simple": "De lampjes op een dashboard: van informatief tot alarm.",
+    "section": "6.2"
+  },
+  {
+    "term": "MAX_STEPS",
+    "short": "Een harde limiet op het aantal rondes dat een agent-loop mag maken.",
+    "simple": "Een kookwekker die afgaat, wat er ook in de pan gebeurt.",
+    "section": "6.1"
+  },
+  {
+    "term": "max_tokens",
+    "short": "Bovengrens voor het aantal tokens dat het model in één antwoord mag genereren.",
+    "simple": "Een rem die voorkomt dat het model eindeloos doorpraat op jouw kosten.",
+    "section": "5.1"
+  },
+  {
+    "term": "memoisatie (`lru_cache`)",
+    "short": "Resultaten van een functie onthouden zodat dezelfde input niet opnieuw wordt berekend.",
+    "simple": "Een spiekbriefje met antwoorden die je al eens hebt uitgerekend.",
+    "section": "2.4"
+  },
+  {
+    "term": "merge conflict",
+    "short": "Situatie waarin twee branches dezelfde regels veranderden en jij moet kiezen wat blijft.",
+    "simple": "Twee mensen die tegelijk dezelfde zin in een document hebben herschreven.",
+    "section": "2.5"
+  },
+  {
+    "term": "metrics",
+    "short": "Cijfers over je service, zoals aantal requests en latency, vaak via /metrics voor Prometheus.",
+    "simple": "Het dashboard van een auto met snelheid en toerental.",
+    "section": "6.2"
+  },
+  {
+    "term": "migration",
+    "short": "Versiebeheerd script dat het databaseschema één stap vooruit (`upgrade`) of terug (`downgrade`) zet.",
+    "simple": "Een genummerde stap in een verbouwingslogboek die iedereen in dezelfde volgorde uitvoert.",
+    "section": "3.5"
+  },
+  {
+    "term": "module",
+    "short": "Eén `.py`-bestand met code die je in andere bestanden kunt importeren.",
+    "simple": "Een losse receptkaart die je uit de bak pakt wanneer je hem nodig hebt.",
+    "section": "2.1"
+  },
+  {
+    "term": "modulo",
+    "short": "De operator `%`, die de rest van een deling geeft.",
+    "simple": "De koekjes die overblijven nadat je eerlijk hebt verdeeld.",
+    "section": "1.2"
+  },
+  {
+    "term": "monkeypatch",
+    "short": "Pytest-fixture om in een test tijdelijk een functie of attribuut te vervangen, bijvoorbeeld de LLM-call.",
+    "simple": "Een stuntman die voor de acteur invalt tijdens een gevaarlijke scène.",
+    "section": "6.4"
+  },
+  {
+    "term": "multi-stage build",
+    "short": "Een Dockerfile met een build-stage en een kleine runtime-stage die alleen het resultaat overneemt.",
+    "simple": "Koken in een rommelige keuken en alleen het nette bord naar de tafel brengen.",
+    "section": "6.4"
+  },
+  {
+    "term": "mutable",
+    "short": "Ter plekke aan te passen, zoals een list, dict of set.",
+    "simple": "Een whiteboard: je veegt uit en schrijft er iets nieuws op.",
+    "section": "1.4"
+  },
+  {
+    "term": "mutable default",
+    "short": "Een list of dict als default-waarde, die door alle aanroepen gedeeld wordt; gebruik `None`.",
+    "simple": "Een gedeelde mand bij de ingang waarin iedereen zijn spullen laat liggen.",
+    "section": "1.5"
+  },
+  {
+    "term": "N+1-probleem",
+    "short": "Eén query voor een lijst plus één extra query per object; op te lossen met `selectinload` of `joinedload`.",
+    "simple": "Voor elk boodschappenitem apart naar de winkel lopen in plaats van één keer met een lijstje.",
+    "section": "3.4"
+  },
+  {
+    "term": "non-root user",
+    "short": "Een gewone gebruiker in de container, zodat een indringer niet meteen alle rechten heeft.",
+    "simple": "Een gast krijgt een kamersleutel, niet de loper van het hele hotel.",
+    "section": "6.4"
+  },
+  {
+    "term": "None",
+    "short": "De waarde voor 'niets'; een functie zonder `return` geeft `None` terug.",
+    "simple": "Een lege envelop: er is wel een envelop, maar er zit niets in.",
+    "section": "1.2"
+  },
+  {
+    "term": "normalisatie",
+    "short": "Je schema zo inrichten dat elk feit maar op één plek staat.",
+    "simple": "Eén adresboek in plaats van hetzelfde adres op twintig briefjes, die je allemaal moet bijwerken.",
+    "section": "3.3"
+  },
+  {
+    "term": "NULL",
+    "short": "Speciale waarde voor 'onbekend'; vergelijk je met `IS NULL`, niet met `=`.",
+    "simple": "Een leeg vakje op een formulier: je weet niet wat er had moeten staan.",
+    "section": "3.2"
+  },
+  {
+    "term": "object (instance)",
+    "short": "Een concreet exemplaar dat je van een class maakt.",
+    "simple": "Eén huis dat volgens de bouwtekening is gebouwd.",
+    "section": "2.3"
+  },
+  {
+    "term": "observability",
+    "short": "Je systeem zo loggen en meten dat je achteraf kunt zien en naspelen wat er gebeurde.",
+    "simple": "De zwarte doos van een vliegtuig: na afloop kun je alles terugkijken.",
+    "section": "5.5"
+  },
+  {
+    "term": "orchestrator + workers",
+    "short": "Een agent die een plan maakt en deeltaken verdeelt over andere agents.",
+    "simple": "Een projectleider die taken uitdeelt aan specialisten.",
+    "section": "6.1"
+  },
+  {
+    "term": "ORM",
+    "short": "Object-relational mapper: koppelt tabellen aan klassen en rijen aan objecten.",
+    "simple": "Een tolk die jouw Python-zinnen vertaalt naar SQL en het antwoord terugvertaalt.",
+    "section": "3.4"
+  },
+  {
+    "term": "overlap",
+    "short": "Het deel tekst dat twee opeenvolgende chunks gemeen hebben, zodat zinnen op de grens niet verloren gaan.",
+    "simple": "Dakpannen die een stukje over elkaar liggen, zodat er geen gat valt.",
+    "section": "5.3"
+  },
+  {
+    "term": "package",
+    "short": "Een map met modules en een `__init__.py`, die je als geheel kunt importeren.",
+    "simple": "Een receptenbak met een label erop, vol losse kaarten.",
+    "section": "2.1"
+  },
+  {
+    "term": "parameter",
+    "short": "Een naam in de functiedefinitie die bij de aanroep een waarde (het argument) krijgt.",
+    "simple": "Een leeg vakje op een formulier dat bij elke aanroep wordt ingevuld.",
+    "section": "1.5"
+  },
+  {
+    "term": "parametrize",
+    "short": "`@pytest.mark.parametrize` draait één test met meerdere inputs.",
+    "simple": "Hetzelfde recept proeven met verschillende ingrediënten.",
+    "section": "2.5"
+  },
+  {
+    "term": "pathlib",
+    "short": "Module waarmee je paden als `Path`-objecten behandelt en aan elkaar plakt met `/`.",
+    "simple": "Een routeplanner die adressen netjes voor je samenstelt.",
+    "section": "2.2"
+  },
+  {
+    "term": "PEP 8",
+    "short": "De officiële stijlgids voor Python-code, onder meer voor naamgeving.",
+    "simple": "De verkeersregels voor Python-code: iedereen rijdt aan dezelfde kant.",
+    "section": "1.2"
+  },
+  {
+    "term": "pg_dump",
+    "short": "PostgreSQL-tool die een backup van een database maakt.",
+    "simple": "Een complete kopie van je archiefkast die je elke dag in een kluis legt.",
+    "section": "6.4"
+  },
+  {
+    "term": "pgvector",
+    "short": "PostgreSQL-extensie die een vector-kolomtype, afstandsoperators en vectorindexen toevoegt.",
+    "simple": "Een uitbreidingsset die je bestaande database leert zoeken op betekenis.",
+    "section": "5.3"
+  },
+  {
+    "term": "pip",
+    "short": "Het programma dat packages van PyPI installeert.",
+    "simple": "Een bezorgdienst die onderdelen uit een grote online winkel bij je afgeeft.",
+    "section": "2.1"
+  },
+  {
+    "term": "pip-audit",
+    "short": "Tool die je geïnstalleerde packages controleert op bekende kwetsbaarheden.",
+    "simple": "Een terugroepactie-check voor alle onderdelen van je auto.",
+    "section": "6.3"
+  },
+  {
+    "term": "polymorphism",
+    "short": "Dezelfde aanroep geeft per klasse ander gedrag.",
+    "simple": "Op de knop 'bericht sturen' drukken: de ene app mailt, de andere sms't.",
+    "section": "2.3"
+  },
+  {
+    "term": "port mapping",
+    "short": "Koppeling van een poort op je machine aan een poort in de container, bijv. `-p 5432:5432`.",
+    "simple": "Een doorverbinding bij een receptie: wie op toestel 5432 belt, komt bij de container uit.",
+    "section": "3.1"
+  },
+  {
+    "term": "`__post_init__`",
+    "short": "Methode van een dataclass die direct na `__init__` draait, ideaal voor validatie.",
+    "simple": "De controleur die na de bouw nog even checkt of alles klopt.",
+    "section": "2.3"
+  },
+  {
+    "term": "primary key",
+    "short": "Kolom die elke rij uniek identificeert; uniek en nooit NULL.",
+    "simple": "Het lidnummer op een bibliotheekpas: elk nummer hoort bij precies één persoon.",
+    "section": "3.3"
+  },
+  {
+    "term": "prompt caching",
+    "short": "Een provider-functie die herhaalde delen van een prompt goedkoper maakt bij volgende calls.",
+    "simple": "Een stempelkaart: wat je al eens besteld hebt, krijg je de volgende keer met korting.",
+    "section": "5.4"
+  },
+  {
+    "term": "prompt injection",
+    "short": "Een aanval waarbij tekst in invoer of documenten het model nieuwe instructies probeert te geven.",
+    "simple": "Een briefje in een geleend boek met 'negeer wat je leraar zegt'.",
+    "section": "5.4"
+  },
+  {
+    "term": "prompt versioning",
+    "short": "Prompts als code in Git bijhouden en de versie bij elke call loggen.",
+    "simple": "Een recept met versienummers, zodat je weet welk recept welke taart opleverde.",
+    "section": "5.5"
+  },
+  {
+    "term": "property",
+    "short": "Een methode met `@property` die je opvraagt alsof het een gewoon attribuut is.",
+    "simple": "Een display dat de actuele stand toont: jij kijkt alleen, het rekenwerk gebeurt achter de schermen.",
+    "section": "2.3"
+  },
+  {
+    "term": "psql",
+    "short": "De command-line client van PostgreSQL, met meta-commando's zoals `\\dt`.",
+    "simple": "Een directe telefoonlijn met de database waarover je SQL intypt.",
+    "section": "3.2"
+  },
+  {
+    "term": "psycopg",
+    "short": "De PostgreSQL-driver voor Python waarmee je verbinding maakt en SQL uitvoert.",
+    "simple": "De telefoonkabel tussen je Python-programma en de database.",
+    "section": "3.4"
+  },
+  {
+    "term": "pull request",
+    "short": "Een verzoek op GitHub om je branch te mergen, met review en CI-checks.",
+    "simple": "Je kladje laten nalezen door een collega voordat het in het echte document komt.",
+    "section": "2.5"
+  },
+  {
+    "term": "Pydantic",
+    "short": "Een library voor datamodellen die op basis van type hints waarden controleert en omzet.",
+    "simple": "Een formulier met vakjes dat foute invulling meteen weigert.",
+    "section": "4.2"
+  },
+  {
+    "term": "pydantic-settings",
+    "short": "Een library waarmee een `BaseSettings`-klasse instellingen uit omgevingsvariabelen en `.env` leest en controleert.",
+    "simple": "Een paklijst die bij vertrek meteen laat zien wat je vergeten bent.",
+    "section": "4.3"
+  },
+  {
+    "term": "`pyproject.toml`",
+    "short": "Het bestand met de naam, versie en dependencies van je project.",
+    "simple": "Het etiket en de ingrediëntenlijst op de verpakking van je project.",
+    "section": "2.1"
+  },
+  {
+    "term": "pytest",
+    "short": "Het standaard testframework voor Python dat testfuncties vindt en uitvoert.",
+    "simple": "Een keurmeester die al je controlelijstjes in één keer afloopt.",
+    "section": "2.5"
+  },
+  {
+    "term": "query parameter",
+    "short": "Een `%s`-plek in de SQL waarvan de waarde los van de query-tekst naar de database gaat.",
+    "simple": "Een invulvak op een formulier: wat je erin schrijft, kan het formulier zelf niet veranderen.",
+    "section": "3.4"
+  },
+  {
+    "term": "query-parameter",
+    "short": "Een waarde achter het vraagteken in een URL, gebruikt om te filteren of te pagineren.",
+    "simple": "Extra wensen op je bestelling, zoals 'alleen de open orders, twintig per keer'.",
+    "section": "4.1"
+  },
+  {
+    "term": "queue",
+    "short": "Een wachtrij van jobs, in Redis meestal een list met `LPUSH` en `BRPOP`.",
+    "simple": "Een bestellijst aan de muur waar de koks één voor één mee werken.",
+    "section": "4.5"
+  },
+  {
+    "term": "RAG",
+    "short": "Retrieval-Augmented Generation: relevante stukken uit je eigen documenten ophalen en het model alleen daaruit laten antwoorden.",
+    "simple": "Een open-boek-toets: eerst de juiste bladzijden opzoeken, dan antwoorden.",
+    "section": "5.3"
+  },
+  {
+    "term": "raise_for_status()",
+    "short": "Een httpx-methode die een exception gooit als de response een 4xx- of 5xx-code heeft.",
+    "simple": "Een rookmelder die alleen afgaat als er iets mis is.",
+    "section": "4.1"
+  },
+  {
+    "term": "range()",
+    "short": "Maakt een reeks hele getallen van start tot (niet tot en met) stop, met een optionele stap.",
+    "simple": "Traplopen: begin op een tree, neem vaste stappen en stop vóór de bovenste.",
+    "section": "1.3"
+  },
+  {
+    "term": "rate limiting",
+    "short": "Het begrenzen van het aantal requests per client in een tijdvak, met 429 als antwoord boven de limiet.",
+    "simple": "Een stempelkaart: vol is vol, kom over een minuut terug.",
+    "section": "4.5"
+  },
+  {
+    "term": "re-ranking",
+    "short": "De beste kandidaten uit de eerste zoekronde opnieuw sorteren met een preciezer model.",
+    "simple": "Een voorselectie van sollicitanten die daarna nog eens grondig bekeken wordt.",
+    "section": "5.3"
+  },
+  {
+    "term": "recall@k",
+    "short": "Het aandeel vragen waarbij de juiste chunk in de top k zoekresultaten zit.",
+    "simple": "Checken of het juiste boek op de stapel van de bibliothecaris ligt.",
+    "section": "5.5"
+  },
+  {
+    "term": "Redis",
+    "short": "Een in-memory server voor datastructuren die heel snel antwoordt en keys kan laten verlopen.",
+    "simple": "Een whiteboard naast de kassa waarop iedereen snel iets kan zetten en lezen.",
+    "section": "4.5"
+  },
+  {
+    "term": "regressie",
+    "short": "Iets wat eerst werkte maar door een wijziging weer stuk is gegaan.",
+    "simple": "Een gerepareerde lekkage die na een verbouwing opnieuw begint te druppelen.",
+    "section": "2.5"
+  },
+  {
+    "term": "REPL",
+    "short": "De interactieve Python-prompt (`>>>`) waar je code typt en meteen het resultaat ziet.",
+    "simple": "Een rekenmachine die Python verstaat.",
+    "section": "1.2"
+  },
+  {
+    "term": "repository",
+    "short": "Een projectmap waarvan Git de volledige geschiedenis bijhoudt, lokaal of online op GitHub.",
+    "simple": "Een archiefkast waarin elke versie van je project bewaard blijft.",
+    "section": "1.1"
+  },
+  {
+    "term": "repository pattern",
+    "short": "Ontwerppatroon dat alle databasecode voor een soort object in één klasse bundelt.",
+    "simple": "Eén loket voor alles over onderdelen, zodat niemand zelf in het archief hoeft te zoeken.",
+    "section": "3.4"
+  },
+  {
+    "term": "`__repr__` / `__str__`",
+    "short": "Methodes die de tekstweergave van een object bepalen: repr voor developers, str voor gebruikers.",
+    "simple": "Het technische typeplaatje op een apparaat versus het vriendelijke naamlabel.",
+    "section": "2.3"
+  },
+  {
+    "term": "request",
+    "short": "Wat de client stuurt: een methode, een pad, headers en eventueel een body.",
+    "simple": "Een bestelbon met wat je wilt, waarvoor en wat extra informatie.",
+    "section": "4.1"
+  },
+  {
+    "term": "request id",
+    "short": "Een unieke id per request die in elke logregel en in de X-Request-ID header terugkomt.",
+    "simple": "Een bonnummer waarmee je een bestelling door de hele keuken kunt volgen.",
+    "section": "6.2"
+  },
+  {
+    "term": "resource",
+    "short": "Een ding dat je API beheert, aangeduid met een zelfstandig naamwoord in het pad, zoals `/notes/42`.",
+    "simple": "Een vak in een archiefkast met een duidelijk etiket.",
+    "section": "4.1"
+  },
+  {
+    "term": "response",
+    "short": "Wat de server terugstuurt: een statuscode, headers en meestal een JSON-body.",
+    "simple": "Het antwoordbriefje van het loket, met bovenaan of het gelukt is.",
+    "section": "4.1"
+  },
+  {
+    "term": "response_model",
+    "short": "Het model dat bepaalt welke velden een FastAPI-route in de response zet.",
+    "simple": "Een uitgaande-postfilter: alleen wat op de lijst staat, mag het gebouw uit.",
+    "section": "4.2"
+  },
+  {
+    "term": "REST",
+    "short": "Een afspraak om een API op te bouwen uit resources die je met HTTP-methodes bewerkt, met JSON en zinvolle statuscodes.",
+    "simple": "Adressen voor dingen, en de methode zegt wat je op dat adres doet.",
+    "section": "4.1"
+  },
+  {
+    "term": "reverse proxy",
+    "short": "Een server zoals Caddy die verkeer ontvangt, HTTPS afhandelt en doorstuurt naar je app.",
+    "simple": "Een receptie die bezoekers ontvangt en naar de juiste kamer brengt.",
+    "section": "6.4"
+  },
+  {
+    "term": "rollback",
+    "short": "Terug naar een vorige werkende versie door de vorige image-tag te draaien.",
+    "simple": "De ongedaan-maken-knop voor een uitrol.",
+    "section": "6.4"
+  },
+  {
+    "term": "router",
+    "short": "Een goedkoop model dat bepaalt welke gespecialiseerde prompt of agent een verzoek afhandelt.",
+    "simple": "De receptionist die je doorverbindt met de juiste afdeling.",
+    "section": "6.1"
+  },
+  {
+    "term": "ruff",
+    "short": "Snelle linter en formatter die problemen opspoort en code opmaakt volgens PEP 8.",
+    "simple": "Een spellingscontrole plus automatische opmaak voor je code.",
+    "section": "2.3"
+  },
+  {
+    "term": "scope",
+    "short": "Het deel van de code waarin een naam zichtbaar is; lokale variabelen verdwijnen na de functie.",
+    "simple": "Een kladblok dat alleen in één kamer ligt.",
+    "section": "1.5"
+  },
+  {
+    "term": "secret",
+    "short": "Gevoelige waarde zoals een API-key, wachtwoord of JWT-secret die nooit in code of Git mag staan.",
+    "simple": "De sleutel van je huis: die leg je niet onder de mat.",
+    "section": "6.3"
+  },
+  {
+    "term": "`self`",
+    "short": "Het object waarop een methode wordt aangeroepen; Python geeft het automatisch mee.",
+    "simple": "Het woord 'ik' in een zin: het verwijst naar wie er spreekt.",
+    "section": "2.3"
+  },
+  {
+    "term": "Server-Sent Events (SSE)",
+    "short": "Een formaat waarin de server frames als 'data: ...' gevolgd door een lege regel naar de browser stuurt.",
+    "simple": "Een telexmachine die regel voor regel binnenkomende berichten afdrukt.",
+    "section": "5.4"
+  },
+  {
+    "term": "servicenaam",
+    "short": "De naam van een service in `compose.yaml`, die binnen het Compose-netwerk ook de hostnaam is.",
+    "simple": "Het huisnummer van een buur in dezelfde straat.",
+    "section": "4.5"
+  },
+  {
+    "term": "session",
+    "short": "De unit of work van SQLAlchemy: verzamelt wijzigingen en schrijft ze bij `commit()` in één transactie weg.",
+    "simple": "Een winkelmandje: je verzamelt alles en rekent in één keer af.",
+    "section": "3.4"
+  },
+  {
+    "term": "set",
+    "short": "Een ongeordende verzameling unieke waarden met zeer snelle membership-tests.",
+    "simple": "Een stickeralbum waarin elke sticker maar één keer past.",
+    "section": "1.4"
+  },
+  {
+    "term": "shell",
+    "short": "Het programma in de terminal dat je commando's leest en uitvoert, zoals bash in Ubuntu.",
+    "simple": "Een tolk aan het loket: jij typt een opdracht en de shell laat de computer die uitvoeren.",
+    "section": "1.1"
+  },
+  {
+    "term": "side effect",
+    "short": "Een handeling van een tool die iets verandert in de buitenwereld, zoals versturen, boeken of verwijderen.",
+    "simple": "Het verschil tussen een recept lezen en daadwerkelijk de oven aanzetten.",
+    "section": "6.1"
+  },
+  {
+    "term": "slicing",
+    "short": "Een stuk uit een string of list halen met `[start:stop:stap]`; de stop telt niet mee.",
+    "simple": "Plakjes van een worst snijden, tot net vóór het merkje.",
+    "section": "1.2"
+  },
+  {
+    "term": "snake_case",
+    "short": "Naamstijl met kleine letters en underscores, voor variabelen en functies.",
+    "simple": "Woorden aan elkaar geregen met lage streepjes, als een slang over de grond.",
+    "section": "1.2"
+  },
+  {
+    "term": "soft delete",
+    "short": "Een rij als verwijderd markeren met `deleted_at` in plaats van hem echt te wissen.",
+    "simple": "Een bestand in de prullenbak zetten in plaats van de prullenbak meteen te legen.",
+    "section": "3.3"
+  },
+  {
+    "term": "SQL",
+    "short": "Declaratieve taal om data in een relationele database te definiëren, op te vragen en te wijzigen.",
+    "simple": "Een bestelformulier: je schrijft op wat je wilt, de keuken bepaalt hoe het gemaakt wordt.",
+    "section": "3.2"
+  },
+  {
+    "term": "SQL injection",
+    "short": "Aanval waarbij invoer als SQL wordt uitgevoerd doordat je queries met stringopmaak bouwt.",
+    "simple": "Iemand die op een bestelbriefje 'en geef ook de kassa mee' bijschrijft, en de kok die het uitvoert.",
+    "section": "3.4"
+  },
+  {
+    "term": "SQLAlchemy",
+    "short": "De standaard Python-ORM en SQL-toolkit, versie 2.x met `Mapped` en `select()`.",
+    "simple": "Een gereedschapskist waarmee je databasetabellen als gewone Python-klassen gebruikt.",
+    "section": "3.4"
+  },
+  {
+    "term": "SSE (Server-Sent Events)",
+    "short": "Een manier om een antwoord stukje bij beetje van server naar client te streamen.",
+    "simple": "Een ondertitelaar die de tekst live laat verschijnen in plaats van achteraf.",
+    "section": "6.5"
+  },
+  {
+    "term": "SSH key",
+    "short": "Een sleutelpaar waarmee je je bij GitHub identificeert; het publieke deel zet je op GitHub.",
+    "simple": "Een sleutel en een slot: het slot hangt bij GitHub, de sleutel houd jij.",
+    "section": "1.1"
+  },
+  {
+    "term": "standaardbibliotheek",
+    "short": "De modules die met Python meekomen, zoals `json`, `csv`, `pathlib` en `datetime`.",
+    "simple": "Het gereedschap dat al in de gereedschapskist zat toen je hem kocht.",
+    "section": "2.1"
+  },
+  {
+    "term": "stateless API",
+    "short": "Een API die niets onthoudt tussen calls; je stuurt bij elke call de hele gespreksgeschiedenis mee.",
+    "simple": "Iemand zonder geheugen die je bij elke brief het hele verhaal opnieuw moet vertellen.",
+    "section": "5.2"
+  },
+  {
+    "term": "statuscode",
+    "short": "Een getal van drie cijfers in de response dat zegt of het request gelukt is en zo niet, bij wie de fout ligt.",
+    "simple": "Een stoplicht: groen (2xx) is gelukt, oranje (4xx) is jouw fout, rood (5xx) is de fout van de server.",
+    "section": "4.1"
+  },
+  {
+    "term": "streaming",
+    "short": "Het antwoord stukje voor stukje doorsturen terwijl het model nog genereert.",
+    "simple": "Een kraan die meteen druppelt in plaats van een emmer die je pas krijgt als hij vol is.",
+    "section": "5.4"
+  },
+  {
+    "term": "StreamingResponse",
+    "short": "FastAPI-response die de stukjes uit een generator direct naar de client stuurt.",
+    "simple": "Een lopende band die elk product meteen doorschuift zodra het klaar is.",
+    "section": "5.4"
+  },
+  {
+    "term": "string",
+    "short": "Een stuk tekst (`str`) tussen aanhalingstekens.",
+    "simple": "Een kralenketting van letters.",
+    "section": "1.2"
+  },
+  {
+    "term": "structured logging",
+    "short": "Logregels als JSON met vaste velden, zodat je erop kunt zoeken en filteren.",
+    "simple": "Een ingevuld formulier in plaats van een handgeschreven briefje.",
+    "section": "6.2"
+  },
+  {
+    "term": "structured output",
+    "short": "Het model laten antwoorden met JSON volgens een schema, dat je daarna valideert.",
+    "simple": "Een ingevuld formulier terugvragen in plaats van een vrije brief.",
+    "section": "5.2"
+  },
+  {
+    "term": "subquery",
+    "short": "Een query binnen een andere query, bijvoorbeeld om met een gemiddelde te vergelijken.",
+    "simple": "Een vraag die je eerst moet beantwoorden voordat je de hoofdvraag kunt stellen.",
+    "section": "3.2"
+  },
+  {
+    "term": "sudo",
+    "short": "Voert één commando uit met beheerdersrechten en vraagt daarvoor je wachtwoord.",
+    "simple": "De sleutel van de beheerder lenen voor één klus.",
+    "section": "1.1"
+  },
+  {
+    "term": "Swagger UI",
+    "short": "De interactieve documentatie op `/docs` die FastAPI uit je code genereert volgens de OpenAPI-standaard.",
+    "simple": "Een menukaart die zichzelf schrijft uit wat de keuken kan maken.",
+    "section": "4.2"
+  },
+  {
+    "term": "system prompt",
+    "short": "Instructies met rol, doel en spelregels die voor het hele gesprek gelden.",
+    "simple": "De werkinstructie die een nieuwe medewerker op dag één krijgt.",
+    "section": "5.1"
+  },
+  {
+    "term": "temperature",
+    "short": "Parameter die bepaalt hoe willekeurig het model kiest; 0 voor extractie en classificatie, hoger voor creatief werk.",
+    "simple": "Een durf-knop: laag kiest steeds het voor de hand liggende woord, hoog durft te variëren.",
+    "section": "5.1"
+  },
+  {
+    "term": "tenant id",
+    "short": "Kenmerk dat aangeeft bij welke klant data hoort; je filtert erop met een WHERE in de retrieval-query.",
+    "simple": "Het nummer op je kluisje: alleen jouw sleutel past.",
+    "section": "5.3"
+  },
+  {
+    "term": "tenant isolation",
+    "short": "Zorgen dat data van verschillende klanten strikt gescheiden blijft, bijvoorbeeld met een filter in de query.",
+    "simple": "Aparte kluisjes per klant in plaats van één grote doos.",
+    "section": "6.3"
+  },
+  {
+    "term": "TestClient",
+    "short": "Een FastAPI-hulpmiddel om requests naar je app te sturen in tests, zonder echte server.",
+    "simple": "Een proefdiner in het restaurant voordat de gasten komen.",
+    "section": "4.3"
+  },
+  {
+    "term": "tiktoken",
+    "short": "Python-library van OpenAI om tekst in tokens om te zetten en zo vooraf het aantal tokens te schatten.",
+    "simple": "Een weegschaal waarmee je je pakket weegt voordat je de verzendkosten betaalt.",
+    "section": "5.1"
+  },
+  {
+    "term": "TIMESTAMPTZ",
+    "short": "Postgres-type voor een tijdstip mét tijdzone.",
+    "simple": "Een tijdstip met de plaatsnaam erbij, zodat iedereen weet welk moment bedoeld is.",
+    "section": "3.2"
+  },
+  {
+    "term": "`tmp_path`",
+    "short": "Ingebouwde pytest-fixture die een verse tijdelijke map geeft voor bestandstests.",
+    "simple": "Een kladblok dat na de toets wordt weggegooid.",
+    "section": "2.5"
+  },
+  {
+    "term": "token",
+    "short": "Een woordstukje waarin een model tekst opknipt; gemiddeld ongeveer driekwart woord, en de eenheid waarin je betaalt.",
+    "simple": "Een puzzelstukje van een woord: korte woorden zijn één stukje, lange woorden meerdere.",
+    "section": "5.1"
+  },
+  {
+    "term": "tokenbudget",
+    "short": "Een maximum aan tokens dat een agent of gebruiker mag verbruiken.",
+    "simple": "Een prepaid beltegoed: op is op.",
+    "section": "6.1"
+  },
+  {
+    "term": "tool calling",
+    "short": "Het model vraagt jouw code om een beschreven functie met bepaalde argumenten uit te voeren; jij voert uit en stuurt het resultaat terug.",
+    "simple": "Een bestelbriefje: het model schrijft wat het wil, de keuken (jouw code) maakt het klaar.",
+    "section": "5.2"
+  },
+  {
+    "term": "tool_result",
+    "short": "Contentblok waarmee jouw code de uitkomst van een tool terugstuurt, gekoppeld via tool_use_id.",
+    "simple": "Het bord dat terugkomt met hetzelfde bonnummer als de bestelling.",
+    "section": "5.2"
+  },
+  {
+    "term": "tool_use",
+    "short": "Contentblok waarin het model aangeeft welke tool het wil aanroepen, met id, naam en argumenten.",
+    "simple": "Het bestelbriefje zelf, met een bonnummer erop.",
+    "section": "5.2"
+  },
+  {
+    "term": "trace",
+    "short": "Het volledige verslag van een request: elk bericht en elke tool-call, onder een request id.",
+    "simple": "Een vluchtrecorder die alles van een vlucht vastlegt.",
+    "section": "6.1"
+  },
+  {
+    "term": "traceback",
+    "short": "Het foutverslag dat Python toont; de onderste regel noemt de fout, daarboven staat waar het gebeurde.",
+    "simple": "Een spoor van voetstappen terug naar de plek van het ongeluk.",
+    "section": "2.2"
+  },
+  {
+    "term": "transaction",
+    "short": "Een groep SQL-stappen tussen `BEGIN` en `COMMIT` die samen slagen of samen mislukken.",
+    "simple": "Een overboeking: het geld gaat er pas af als het ook aan de andere kant bijgeschreven is.",
+    "section": "3.2"
+  },
+  {
+    "term": "truthy en falsy",
+    "short": "Of een waarde in een `if` als waar of onwaar telt; `0`, lege waarden en `None` zijn falsy.",
+    "simple": "Python kijkt of de doos leeg is, niet wat erin zit.",
+    "section": "1.3"
+  },
+  {
+    "term": "try/except/else/finally",
+    "short": "Blokken om fouten op te vangen: except bij een fout, else zonder fout, finally altijd.",
+    "simple": "Een plan A, een noodplan, een beloning als alles goed ging en altijd opruimen na afloop.",
+    "section": "2.2"
+  },
+  {
+    "term": "TTL",
+    "short": "Time to live: hoe lang een key in Redis bestaat voordat hij automatisch verdwijnt.",
+    "simple": "Een briefje dat na een minuut vanzelf weer van het bord gaat.",
+    "section": "4.5"
+  },
+  {
+    "term": "tuple",
+    "short": "Een geordende, onveranderlijke reeks tussen `()`, voor vaste records.",
+    "simple": "Een adres op een envelop: vast en niet te wijzigen.",
+    "section": "1.4"
+  },
+  {
+    "term": "type hint",
+    "short": "Een aanduiding als `x: int` of `-> bool` die zegt welke types een functie verwacht en teruggeeft.",
+    "simple": "Een bordje 'alleen glas' op een container: het helpt, maar niemand houdt je tegen.",
+    "section": "1.5"
+  },
+  {
+    "term": "unpacking",
+    "short": "De waarden van een tuple of list in één keer aan meerdere variabelen toekennen.",
+    "simple": "Een tas uitpakken en alles meteen op de juiste plek leggen.",
+    "section": "1.4"
+  },
+  {
+    "term": "ValidationError",
+    "short": "De fout die Pydantic geeft als data niet aan het model voldoet; in een retry stuur je hem terug naar het LLM.",
+    "simple": "Het rode streepje van de juf bij een fout ingevuld vakje.",
+    "section": "5.2"
+  },
+  {
+    "term": "variabele",
+    "short": "Een naam die naar een waarde wijst en ontstaat zodra je er met `=` iets aan toekent.",
+    "simple": "Een etiket op een doos, zodat je de inhoud terugvindt.",
+    "section": "1.2"
+  },
+  {
+    "term": "virtual environment (venv)",
+    "short": "Een losse map met een eigen Python-interpreter en eigen packages per project.",
+    "simple": "Een eigen keukenkastje per project, zodat ingrediënten niet door elkaar raken.",
+    "section": "2.1"
+  },
+  {
+    "term": "volume",
+    "short": "Opslag van Docker die blijft bestaan als een container wordt verwijderd.",
+    "simple": "Een externe harde schijf: je kunt de computer vervangen, je bestanden blijven.",
+    "section": "3.1"
+  },
+  {
+    "term": "while-loop",
+    "short": "Herhaalt een blok zolang een voorwaarde waar is.",
+    "simple": "Blijven roeren zolang de soep nog niet kookt.",
+    "section": "1.3"
+  },
+  {
+    "term": "window function",
+    "short": "Functie met `OVER (...)` die over meerdere rijen rekent maar elke rij behoudt, zoals `RANK()`.",
+    "simple": "Een klassenlijst waarop iedere leerling zijn eigen naam houdt, maar wel zijn plaats in de ranglijst erbij krijgt.",
+    "section": "3.2"
+  },
+  {
+    "term": "worker",
+    "short": "Een apart proces dat jobs uit een queue haalt en verwerkt, los van de API.",
+    "simple": "Een kok in de achterkeuken die bestellingen afwerkt terwijl de ober al verder gaat.",
+    "section": "4.5"
+  },
+  {
+    "term": "workflow (pipeline)",
+    "short": "Een reeks vaste stappen waarbij alleen sommige stappen een LLM gebruiken.",
+    "simple": "Een lopende band: elk station doet altijd dezelfde handeling in dezelfde volgorde.",
+    "section": "6.1"
+  },
+  {
+    "term": "WSL2",
+    "short": "Windows Subsystem for Linux: een echte Linux (zoals Ubuntu) die binnen Windows draait.",
+    "simple": "Een Linux-kamer in je Windows-huis: je loopt er zo naar binnen zonder te verhuizen.",
+    "section": "1.1"
+  },
+  {
+    "term": "`yield`",
+    "short": "Geeft een waarde terug en pauzeert de functie tot de volgende waarde wordt gevraagd.",
+    "simple": "Een bladwijzer: je stopt even en gaat later verder waar je was.",
+    "section": "2.4"
+  }
+]

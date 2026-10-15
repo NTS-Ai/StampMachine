@@ -17,9 +17,12 @@ let F = null;
 /** Minimale veegafstand in pixels om een kaart te beoordelen. */
 const SWIPE_MIN = 80;
 
-/** @param {number} week */
-function startCards(week) {
-  const deck = week ? weekOf(week).flashcards : ALLF;
+/**
+ * @param {number} week  0 = alle weken
+ * @param {Flashcard[]} [list]  Eigen stapel, bijvoorbeeld de kaarten van één les.
+ */
+function startCards(week, list) {
+  const deck = list || (week ? weekOf(week).flashcards : ALLF);
   const unknown = deck.filter(c => !S.fc[c.id]);
   const known = deck.filter(c => S.fc[c.id]);
   F = { week, list: shuffle(unknown).concat(shuffle(known)), total: deck.length, done: 0, rated: 0, flipped: false };

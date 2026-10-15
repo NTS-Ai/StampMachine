@@ -1,0 +1,5455 @@
+{
+  "groups": [
+    {
+      "id": "python",
+      "title": "Python",
+      "tables": [
+        {
+          "id": "builtins",
+          "title": "Ingebouwde functies",
+          "intro": "De functies die je zonder import overal in Python kunt gebruiken.",
+          "section": "1.2",
+          "head": [
+            "Functie",
+            "Wat het doet",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`print(*waarden)`",
+              "Schrijft waarden naar het scherm, gescheiden door een spatie.",
+              "`print('a', 1)` geeft `a 1`"
+            ],
+            [
+              "`input(prompt)`",
+              "Vraagt de gebruiker om tekst; geeft altijd een `str` terug.",
+              "`naam = input('Naam? ')`"
+            ],
+            [
+              "`len(x)`",
+              "Aantal tekens of elementen.",
+              "`len('hallo')` geeft `5`"
+            ],
+            [
+              "`type(x)`",
+              "Laat het type van een waarde zien.",
+              "`type(3.0)` geeft `<class 'float'>`"
+            ],
+            [
+              "`int(x)` / `float(x)` / `str(x)`",
+              "Zet een waarde om naar een ander type (casting).",
+              "`int('42') + 1` geeft `43`"
+            ],
+            [
+              "`bool(x)`",
+              "Truthiness: lege of nul-waarden worden `False`.",
+              "`bool([])` geeft `False`"
+            ],
+            [
+              "`round(x, n)`",
+              "Rondt af; bij precies .5 naar het even getal.",
+              "`round(2.5)` geeft `2`"
+            ],
+            [
+              "`range(start, stop, step)`",
+              "Reeks gehele getallen; `stop` doet niet mee.",
+              "`list(range(2, 9, 3))` geeft `[2, 5, 8]`"
+            ],
+            [
+              "`enumerate(it, start=0)`",
+              "Levert paren (index, waarde) in een loop.",
+              "`for i, x in enumerate(items, 1):`"
+            ],
+            [
+              "`zip(a, b)`",
+              "Koppelt elementen van meerdere reeksen paarsgewijs.",
+              "`dict(zip(['a', 'b'], [1, 2]))`"
+            ],
+            [
+              "`sorted(it, key=, reverse=)`",
+              "Geeft een nieuwe, gesorteerde list terug.",
+              "`sorted([3, 1, 2], reverse=True)` geeft `[3, 2, 1]`"
+            ],
+            [
+              "`sum()` / `min()` / `max()`",
+              "Totaal, kleinste en grootste waarde.",
+              "`max([4, 9, 2])` geeft `9`"
+            ],
+            [
+              "`isinstance(obj, cls)`",
+              "Controleert of een object van een klasse (of subklasse) is.",
+              "`isinstance(5, int)` geeft `True`"
+            ],
+            [
+              "`repr(x)`",
+              "Ontwikkelaarsweergave van een waarde, strings met quotes.",
+              "`repr('hi')` geeft `\"'hi'\"`"
+            ],
+            [
+              "`next(gen)`",
+              "Haalt de volgende waarde uit een generator of iterator.",
+              "`next(iter([7, 8]))` geeft `7`"
+            ],
+            [
+              "`open(pad, modus)`",
+              "Opent een bestand; gebruik het met `with`.",
+              "`with open('a.txt') as f:`"
+            ]
+          ]
+        },
+        {
+          "id": "operators",
+          "title": "Operatoren",
+          "intro": "Rekenen, vergelijken en logica in één overzicht.",
+          "section": "1.2",
+          "head": [
+            "Operator",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`+  -  *`",
+              "Optellen, aftrekken, vermenigvuldigen.",
+              "`7 * 2` geeft `14`"
+            ],
+            [
+              "`/`",
+              "Delen; de uitkomst is altijd een `float`.",
+              "`7 / 2` geeft `3.5`"
+            ],
+            [
+              "`//`",
+              "Gehele deling (naar beneden afgerond).",
+              "`7 // 2` geeft `3`"
+            ],
+            [
+              "`%`",
+              "Rest na deling (modulo).",
+              "`7 % 2` geeft `1`"
+            ],
+            [
+              "`**`",
+              "Machtsverheffen.",
+              "`2 ** 5` geeft `32`"
+            ],
+            [
+              "`==  !=`",
+              "Gelijk aan, niet gelijk aan.",
+              "`5 != 3` geeft `True`"
+            ],
+            [
+              "`<  <=  >  >=`",
+              "Groter/kleiner dan; je mag ze ketenen.",
+              "`9 <= uur < 17`"
+            ],
+            [
+              "`and  or  not`",
+              "Logisch combineren of omkeren.",
+              "`True and not False` geeft `True`"
+            ],
+            [
+              "`in`  /  `not in`",
+              "Lidmaatschap in string, list, dict of set.",
+              "`'AI' in 'Fayora AI'` geeft `True`"
+            ],
+            [
+              "`is`  /  `is not`",
+              "Is het exact hetzelfde object? Gebruik dit voor `None`.",
+              "`if x is None:`"
+            ],
+            [
+              "`+=  -=  *=`",
+              "Verkorte toewijzing.",
+              "`teller += 1`"
+            ],
+            [
+              "`a if cond else b`",
+              "Conditionele expressie (ternary).",
+              "`'open' if uur < 17 else 'dicht'`"
+            ]
+          ]
+        },
+        {
+          "id": "str-methods",
+          "title": "String-methodes en slicing",
+          "intro": "Veelgebruikte bewerkingen op tekst; elke methode geeft een nieuwe string terug.",
+          "section": "1.2",
+          "head": [
+            "Methode",
+            "Wat het doet",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`s.strip()`",
+              "Haalt witruimte weg aan begin en eind.",
+              "`' hi '.strip()` geeft `'hi'`"
+            ],
+            [
+              "`s.rstrip(tekens)`",
+              "Haalt alleen rechts tekens weg (standaard witruimte).",
+              "`'regel\\n'.rstrip()` geeft `'regel'`"
+            ],
+            [
+              "`s.lower()` / `s.upper()`",
+              "Alles klein of alles hoofdletters.",
+              "`'Api'.upper()` geeft `'API'`"
+            ],
+            [
+              "`s.split(sep)`",
+              "Knipt op een scheidingsteken; zonder argument op witruimte.",
+              "`'a,b'.split(',')` geeft `['a', 'b']`"
+            ],
+            [
+              "`sep.join(lijst)`",
+              "Plakt strings aan elkaar met `sep` ertussen.",
+              "`'-'.join(['a', 'b'])` geeft `'a-b'`"
+            ],
+            [
+              "`s.replace(oud, nieuw)`",
+              "Vervangt elk voorkomen van een stukje tekst.",
+              "`'v1'.replace('1', '2')` geeft `'v2'`"
+            ],
+            [
+              "`s.startswith(x)` / `s.endswith(x)`",
+              "Begint of eindigt de tekst met `x`?",
+              "`'main.py'.endswith('.py')` geeft `True`"
+            ],
+            [
+              "`s.removeprefix(x)`",
+              "Haalt een vast begin weg als het er staat.",
+              "`'json{}'.removeprefix('json')` geeft `'{}'`"
+            ],
+            [
+              "`x in s`",
+              "Komt het stukje tekst voor?",
+              "`'AI' in 'Fayora AI'` geeft `True`"
+            ],
+            [
+              "`s[i]`",
+              "Eén teken; telt vanaf 0, negatief telt van achteren.",
+              "`'Python'[-1]` geeft `'n'`"
+            ],
+            [
+              "`s[start:stop]`",
+              "Stuk tekst; `stop` doet niet mee.",
+              "`'Python'[0:3]` geeft `'Pyt'`"
+            ],
+            [
+              "`s[::-1]`",
+              "Draait de string om.",
+              "`'abc'[::-1]` geeft `'cba'`"
+            ],
+            [
+              "`len(s)`",
+              "Aantal tekens, spaties tellen mee.",
+              "`len(' a ')` geeft `3`"
+            ]
+          ]
+        },
+        {
+          "id": "fstring",
+          "title": "f-string-opmaak",
+          "intro": "Wat je na de dubbele punt in `{waarde:spec}` kunt zetten.",
+          "section": "1.2",
+          "head": [
+            "Spec",
+            "Effect",
+            "Voorbeeld",
+            "Uitvoer"
+          ],
+          "rows": [
+            [
+              "`{x}`",
+              "Waarde invullen.",
+              "`f'Hoi {naam}'`",
+              "`Hoi Aisha`"
+            ],
+            [
+              "`{x:.2f}`",
+              "Vast aantal decimalen.",
+              "`f'{3.14159:.2f}'`",
+              "`3.14`"
+            ],
+            [
+              "`{x:,.2f}`",
+              "Duizendtalscheiding plus decimalen.",
+              "`f'{1234.5:,.2f}'`",
+              "`1,234.50`"
+            ],
+            [
+              "`{x:<10}`",
+              "Links uitlijnen in 10 posities.",
+              "`f'{\"ab\":<5}|'`",
+              "`ab   |`"
+            ],
+            [
+              "`{x:>5}`",
+              "Rechts uitlijnen in 5 posities.",
+              "`f'{\"ab\":>5}|'`",
+              "`   ab|`"
+            ],
+            [
+              "`{x:^6}`",
+              "Centreren in 6 posities.",
+              "`f'[{\"ab\":^6}]'`",
+              "`[  ab  ]`"
+            ],
+            [
+              "`{x:4d}`",
+              "Geheel getal, minstens 4 breed.",
+              "`f'{42:4d}'`",
+              "`  42`"
+            ],
+            [
+              "`{x:.1%}`",
+              "Als percentage (vermenigvuldigt met 100).",
+              "`f'{0.256:.1%}'`",
+              "`25.6%`"
+            ],
+            [
+              "`{x!r}`",
+              "Gebruikt `repr()` in plaats van `str()`.",
+              "`f'{\"hi\"!r}'`",
+              "`'hi'`"
+            ],
+            [
+              "`{expr}`",
+              "Elke expressie mag tussen de accolades.",
+              "`f'{2 * 21}'`",
+              "`42`"
+            ]
+          ]
+        },
+        {
+          "id": "list-methods",
+          "title": "List-methodes",
+          "intro": "Een list is geordend en aanpasbaar; deze methodes wijzigen of doorzoeken hem.",
+          "section": "1.4",
+          "head": [
+            "Methode",
+            "Wat het doet",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`l.append(x)`",
+              "Voegt één element achteraan toe.",
+              "`[1, 2]` wordt `[1, 2, 3]` na `append(3)`"
+            ],
+            [
+              "`l.insert(i, x)`",
+              "Voegt in op positie `i`.",
+              "`l.insert(0, 'eerst')`"
+            ],
+            [
+              "`l.extend(andere)`",
+              "Voegt alle elementen van een andere reeks toe.",
+              "`a = [1]; a.extend([2, 3])` maakt `a` gelijk aan `[1, 2, 3]`"
+            ],
+            [
+              "`l.remove(x)`",
+              "Verwijdert de eerste `x`; `ValueError` als die er niet is.",
+              "`l.remove('fix bug')`"
+            ],
+            [
+              "`l.pop(i=-1)`",
+              "Verwijdert en geeft het element terug (standaard het laatste).",
+              "`[1, 2, 3].pop()` geeft `3`"
+            ],
+            [
+              "`l.sort(key=, reverse=)`",
+              "Sorteert in place, geeft `None` terug.",
+              "`nums.sort(reverse=True)`"
+            ],
+            [
+              "`sorted(l)`",
+              "Nieuwe gesorteerde list; origineel blijft gelijk.",
+              "`sorted([3, 1])` geeft `[1, 3]`"
+            ],
+            [
+              "`l.index(x)`",
+              "Positie van de eerste `x`.",
+              "`[5, 9].index(9)` geeft `1`"
+            ],
+            [
+              "`l.count(x)`",
+              "Hoe vaak `x` voorkomt.",
+              "`[1, 1, 2].count(1)` geeft `2`"
+            ],
+            [
+              "`l.copy()`",
+              "Ondiepe kopie; ook `list(l)` of `l[:]`.",
+              "`b = a.copy()`"
+            ],
+            [
+              "`l[i] = x`",
+              "Vervangt het element op positie `i`.",
+              "`taken[1] = 'review'`"
+            ],
+            [
+              "`l[a:b]`",
+              "Slice, net als bij strings.",
+              "`[0, 1, 2, 3][1:3]` geeft `[1, 2]`"
+            ],
+            [
+              "`b = a`",
+              "Geen kopie: beide namen wijzen naar dezelfde list.",
+              "`b.append(4)` verandert ook `a`"
+            ]
+          ]
+        },
+        {
+          "id": "dict-methods",
+          "title": "Dict-methodes",
+          "intro": "Een dict koppelt unieke keys aan waarden, net als een JSON-object.",
+          "section": "1.4",
+          "head": [
+            "Bewerking",
+            "Wat het doet",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`d[key]`",
+              "Waarde opvragen; `KeyError` als de key ontbreekt.",
+              "`klant['naam']`"
+            ],
+            [
+              "`d.get(key, default)`",
+              "Veilig opvragen met terugvalwaarde.",
+              "`d.get('tel', 'onbekend')`"
+            ],
+            [
+              "`d[key] = waarde`",
+              "Toevoegen of overschrijven.",
+              "`d['tel'] = '+31 6 ...'`"
+            ],
+            [
+              "`del d[key]`",
+              "Key verwijderen.",
+              "`del d['actief']`"
+            ],
+            [
+              "`d.pop(key, default)`",
+              "Verwijdert en geeft de waarde terug; geen fout met default.",
+              "`d.pop(99, None)` geeft `None`"
+            ],
+            [
+              "`key in d`",
+              "Bestaat deze key?",
+              "`'email' in klant`"
+            ],
+            [
+              "`d.keys()` / `d.values()`",
+              "Alle keys of alle waarden.",
+              "`list(d.keys())`"
+            ],
+            [
+              "`d.items()`",
+              "Paren (key, waarde) om over te lussen.",
+              "`for k, v in d.items():`"
+            ],
+            [
+              "`d.update(andere)`",
+              "Neemt alle paren van een andere dict over.",
+              "`d.update({'a': 1})`"
+            ],
+            [
+              "`len(d)`",
+              "Aantal key-waardeparen.",
+              "`len({'a': 1})` geeft `1`"
+            ],
+            [
+              "Tel-patroon",
+              "Telt hoe vaak iets voorkomt.",
+              "`c[w] = c.get(w, 0) + 1`"
+            ],
+            [
+              "Geneste dict",
+              "Dicts en lists in elkaar: de vorm van JSON.",
+              "`order['lines'][0]['qty']`"
+            ]
+          ]
+        },
+        {
+          "id": "set-ops",
+          "title": "Set-bewerkingen",
+          "intro": "Een set bevat elk element hooguit één keer en zoekt razendsnel.",
+          "section": "1.4",
+          "head": [
+            "Bewerking",
+            "Wat het doet",
+            "Voorbeeld",
+            "Uitkomst"
+          ],
+          "rows": [
+            [
+              "`{a, b}` / `set(lijst)`",
+              "Maakt een set; dubbele waarden verdwijnen.",
+              "`set([3, 1, 3])`",
+              "`{1, 3}`"
+            ],
+            [
+              "`s.add(x)`",
+              "Voegt één element toe.",
+              "`tags.add('redis')`",
+              "set met `'redis'` erbij"
+            ],
+            [
+              "`s.remove(x)` / `s.discard(x)`",
+              "Verwijdert; `discard` geeft geen fout als `x` ontbreekt.",
+              "`tags.discard('oud')`",
+              "geen fout"
+            ],
+            [
+              "`x in s`",
+              "Lidmaatschapstest, veel sneller dan bij een list.",
+              "`'api' in tags`",
+              "`True`"
+            ],
+            [
+              "`a & b`",
+              "Doorsnede: in beide.",
+              "`{1, 2, 3} & {2, 3, 4}`",
+              "`{2, 3}`"
+            ],
+            [
+              "`a | b`",
+              "Vereniging: in minstens één.",
+              "`{1, 2} | {2, 3}`",
+              "`{1, 2, 3}`"
+            ],
+            [
+              "`a - b`",
+              "Verschil: in `a` maar niet in `b`.",
+              "`{1, 2, 3} - {2}`",
+              "`{1, 3}`"
+            ],
+            [
+              "`a ^ b`",
+              "Symmetrisch verschil: in precies één van beide.",
+              "`{1, 2} ^ {2, 3}`",
+              "`{1, 3}`"
+            ],
+            [
+              "`len(s)`",
+              "Aantal unieke elementen.",
+              "`len({'a', 'a', 'b'})`",
+              "`2`"
+            ]
+          ]
+        },
+        {
+          "id": "collections",
+          "title": "Welke collectie kies je?",
+          "intro": "De vier ingebouwde collecties naast elkaar.",
+          "section": "1.4",
+          "head": [
+            "Type",
+            "Geordend / aanpasbaar",
+            "Dubbelen",
+            "Typisch gebruik"
+          ],
+          "rows": [
+            [
+              "`list` `[1, 2]`",
+              "ja / ja",
+              "toegestaan",
+              "Een reeks die groeit of verandert."
+            ],
+            [
+              "`tuple` `(1, 2)`",
+              "ja / nee",
+              "toegestaan",
+              "Vaste records, meerdere returnwaarden, dict-keys."
+            ],
+            [
+              "`dict` `{'k': v}`",
+              "ja (invoegvolgorde) / ja",
+              "keys uniek",
+              "Opzoeken op key: JSON, config, records."
+            ],
+            [
+              "`set` `{1, 2}`",
+              "nee / ja",
+              "nee",
+              "Unieke waarden, snelle `in`-test, verzamelingsleer."
+            ],
+            [
+              "`str` `'abc'`",
+              "ja / nee",
+              "toegestaan",
+              "Tekst; methodes geven altijd een nieuwe string."
+            ]
+          ]
+        },
+        {
+          "id": "files",
+          "title": "Bestandsmodi, `with` en pathlib",
+          "intro": "Bestanden openen, lezen en schrijven met `open()` en `pathlib.Path`.",
+          "section": "2.2",
+          "head": [
+            "Onderdeel",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`'r'`",
+              "Lezen (standaard); fout als het bestand niet bestaat.",
+              "`open(p, 'r', encoding='utf-8')`"
+            ],
+            [
+              "`'w'`",
+              "Schrijven; maakt aan of overschrijft volledig.",
+              "`open(p, 'w', encoding='utf-8')`"
+            ],
+            [
+              "`'a'`",
+              "Toevoegen aan het eind.",
+              "`open(p, 'a', encoding='utf-8')`"
+            ],
+            [
+              "`with ... as f:`",
+              "Sluit het bestand altijd, ook bij een fout.",
+              "`with open(p) as f: data = f.read()`"
+            ],
+            [
+              "`for regel in f:`",
+              "Leest regel voor regel, zuinig met geheugen.",
+              "`print(regel.rstrip())`"
+            ],
+            [
+              "`encoding='utf-8'`",
+              "Leg de tekencodering expliciet vast.",
+              "`p.read_text(encoding='utf-8')`"
+            ],
+            [
+              "`newline=''`",
+              "Nodig bij het `csv`-module, voorkomt lege regels.",
+              "`open('a.csv', 'w', newline='')`"
+            ],
+            [
+              "`Path('map') / 'a.txt'`",
+              "Paden samenvoegen met `/`.",
+              "`notes = data_dir / 'notes.txt'`"
+            ],
+            [
+              "`p.read_text()` / `p.write_text(s)`",
+              "Heel bestand lezen of schrijven in één regel.",
+              "`p.write_text('hoi\\n')`"
+            ],
+            [
+              "`p.exists()`",
+              "Bestaat het pad?",
+              "`Path('x.json').exists()`"
+            ],
+            [
+              "`p.suffix` / `p.stem`",
+              "Extensie en naam zonder extensie.",
+              "`'.txt'` en `'notes'`"
+            ],
+            [
+              "`p.mkdir(exist_ok=True)`",
+              "Map maken, geen fout als hij al bestaat.",
+              "`Path('data').mkdir(exist_ok=True)`"
+            ],
+            [
+              "`p.glob('*.txt')`",
+              "Alle paden die op een patroon passen.",
+              "`for f in d.glob('*.txt'):`"
+            ]
+          ]
+        },
+        {
+          "id": "json-csv",
+          "title": "JSON en CSV",
+          "intro": "Data omzetten tussen Python-objecten en tekstformaten.",
+          "section": "2.2",
+          "head": [
+            "Functie",
+            "Richting",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`json.dumps(obj, indent=2)`",
+              "Python naar JSON-string.",
+              "`json.dumps({'a': 1})` geeft `'{\"a\": 1}'`"
+            ],
+            [
+              "`json.loads(tekst)`",
+              "JSON-string naar Python.",
+              "`json.loads('[1, 2]')` geeft `[1, 2]`"
+            ],
+            [
+              "`json.dump(obj, f)`",
+              "Python rechtstreeks naar een bestand.",
+              "`json.dump(cfg, f, indent=2)`"
+            ],
+            [
+              "`json.load(f)`",
+              "Bestand rechtstreeks naar Python.",
+              "`cfg = json.load(f)`"
+            ],
+            [
+              "object / array",
+              "Wordt `dict` / `list`.",
+              "`{}` en `[]`"
+            ],
+            [
+              "`true` / `false` / `null`",
+              "Wordt `True` / `False` / `None`.",
+              "`json.loads('null')` geeft `None`"
+            ],
+            [
+              "datum",
+              "Bestaat niet in JSON: sla op als ISO-string.",
+              "`d.isoformat()` geeft `'2026-09-15'`"
+            ],
+            [
+              "`csv.DictWriter(f, fieldnames=)`",
+              "Schrijft dicts als rijen; eerst `writeheader()`.",
+              "`w.writerows(rijen)`"
+            ],
+            [
+              "`csv.DictReader(f)`",
+              "Leest elke rij als dict met string-waarden.",
+              "`float(rij['price'])`"
+            ]
+          ]
+        },
+        {
+          "id": "exceptions",
+          "title": "Veelvoorkomende exceptions",
+          "intro": "Fouten die je vaak tegenkomt, wanneer ze optreden en hoe je ze voorkomt.",
+          "section": "2.2",
+          "head": [
+            "Exception",
+            "Wanneer",
+            "Voorbeeld dat hem veroorzaakt"
+          ],
+          "rows": [
+            [
+              "`ValueError`",
+              "Juist type, maar ongeldige waarde.",
+              "`int('abc')`"
+            ],
+            [
+              "`TypeError`",
+              "Bewerking op het verkeerde type.",
+              "`'1' + 1`"
+            ],
+            [
+              "`KeyError`",
+              "Key bestaat niet in een dict.",
+              "`{}['x']`"
+            ],
+            [
+              "`IndexError`",
+              "Positie buiten de reeks.",
+              "`[1, 2][5]`"
+            ],
+            [
+              "`FileNotFoundError`",
+              "Bestand of map bestaat niet.",
+              "`open('weg.txt')`"
+            ],
+            [
+              "`ZeroDivisionError`",
+              "Delen door nul.",
+              "`1 / 0`"
+            ],
+            [
+              "`AttributeError`",
+              "Object heeft dat attribuut of die methode niet.",
+              "`None.strip()`"
+            ],
+            [
+              "`ImportError`",
+              "Module of naam kan niet geïmporteerd worden.",
+              "`from math import bestaatniet`"
+            ],
+            [
+              "`NotImplementedError`",
+              "Basisklasse-methode die een subklasse moet invullen.",
+              "`raise NotImplementedError`"
+            ],
+            [
+              "`TimeoutError`",
+              "Een bewerking duurde te lang.",
+              "`asyncio.wait_for(..., timeout=30)`"
+            ],
+            [
+              "`json.JSONDecodeError`",
+              "Ongeldige JSON; subklasse van `ValueError`.",
+              "`json.loads('{kapot')`"
+            ],
+            [
+              "Eigen exception",
+              "Domeinfout die je zelf definieert.",
+              "`class InsufficientStock(Exception): ...`"
+            ]
+          ]
+        },
+        {
+          "id": "try",
+          "title": "try / except / else / finally",
+          "intro": "De onderdelen van foutafhandeling en wanneer ze draaien.",
+          "section": "2.2",
+          "head": [
+            "Onderdeel",
+            "Draait wanneer",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`try:`",
+              "Altijd: de code die mis kan gaan.",
+              "`try: prijs = float(tekst)`"
+            ],
+            [
+              "`except X:`",
+              "Alleen als precies die fout optreedt.",
+              "`except FileNotFoundError:`"
+            ],
+            [
+              "`except X as e:`",
+              "Idem, en je krijgt het foutobject.",
+              "`print(f'Fout: {e}')`"
+            ],
+            [
+              "`else:`",
+              "Alleen als er géén exception was.",
+              "`else: print('gelukt')`"
+            ],
+            [
+              "`finally:`",
+              "Altijd, voor opruimwerk.",
+              "`finally: conn.close()`"
+            ],
+            [
+              "`raise X('tekst')`",
+              "Gooit zelf een fout.",
+              "`raise ValueError('aantal moet positief zijn')`"
+            ],
+            [
+              "`raise`",
+              "Gooit de opgevangen fout opnieuw.",
+              "`except ValueError: log(...); raise`"
+            ],
+            [
+              "kale `except:`",
+              "Vangt alles, ook bugs: niet doen.",
+              "Vang specifieke exceptions."
+            ]
+          ]
+        },
+        {
+          "id": "oop",
+          "title": "Klassen: speciale methodes en decorators",
+          "intro": "Bouwstenen van een klasse en wat ze betekenen.",
+          "section": "2.3",
+          "head": [
+            "Onderdeel",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`class Naam:`",
+              "Definieert een klasse (blauwdruk), PascalCase.",
+              "`class Task:`"
+            ],
+            [
+              "`__init__(self, ...)`",
+              "Constructor: zet de beginwaarden.",
+              "`self.title = title`"
+            ],
+            [
+              "`self`",
+              "Het object waarop de methode draait; Python geeft het automatisch mee.",
+              "`def complete(self):`"
+            ],
+            [
+              "Klasse-attribuut",
+              "Gedeeld door alle instanties.",
+              "`Task.open_count += 1`"
+            ],
+            [
+              "`__repr__`",
+              "Tekst voor ontwikkelaars (debuggen).",
+              "`Task('Docs', done=False)`"
+            ],
+            [
+              "`__str__`",
+              "Tekst voor gebruikers, gebruikt door `print()`.",
+              "`[x] Docs (P1)`"
+            ],
+            [
+              "`_naam`",
+              "Conventie: intern, niet van buitenaf gebruiken.",
+              "`self._net = net`"
+            ],
+            [
+              "`@property`",
+              "Berekende waarde die je leest als attribuut.",
+              "`invoice.gross`"
+            ],
+            [
+              "`@classmethod`",
+              "Krijgt `cls`; handig als alternatieve constructor.",
+              "`Invoice.from_gross(121)`"
+            ],
+            [
+              "`@staticmethod`",
+              "Hulpfunctie in de klasse zonder `self` of `cls`.",
+              "`Invoice.is_valid_amount(5)`"
+            ],
+            [
+              "`class B(A):`",
+              "Overerving: B is een A.",
+              "`class EmailNotifier(Notifier):`"
+            ],
+            [
+              "`super().__init__()`",
+              "Roept de constructor van de ouderklasse aan.",
+              "`super().__init__()`"
+            ]
+          ]
+        },
+        {
+          "id": "dataclass",
+          "title": "Dataclass-opties",
+          "intro": "Wat `@dataclass` en `field()` voor je doen bij klassen die vooral data bevatten.",
+          "section": "2.3",
+          "head": [
+            "Onderdeel",
+            "Wat het doet",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`@dataclass`",
+              "Genereert `__init__`, `__repr__` en `__eq__` op basis van de velden.",
+              "`@dataclass` boven `class Task:`"
+            ],
+            [
+              "`naam: type`",
+              "Verplicht veld (komt in de constructor).",
+              "`title: str`"
+            ],
+            [
+              "`naam: type = waarde`",
+              "Veld met standaardwaarde; moet na de verplichte velden.",
+              "`done: bool = False`"
+            ],
+            [
+              "`field(default_factory=list)`",
+              "Nieuwe lege list per object; nooit `= []`.",
+              "`tags: list[str] = field(default_factory=list)`"
+            ],
+            [
+              "`field(default_factory=datetime.now)`",
+              "Roept de functie aan bij elk nieuw object.",
+              "`created_at: datetime = field(default_factory=datetime.now)`"
+            ],
+            [
+              "`__post_init__`",
+              "Draait direct na `__init__`; ideaal voor validatie.",
+              "`if not self.title.strip(): raise ValueError(...)`"
+            ],
+            [
+              "`==` gratis",
+              "Vergelijkt alle velden op waarde.",
+              "`Task('a') == Task('a')` (zelfde velden)"
+            ],
+            [
+              "Methodes",
+              "Een dataclass mag gewoon methodes hebben.",
+              "`def complete(self): self.done = True`"
+            ],
+            [
+              "`Enum` als veldtype",
+              "Vaste keuzelijst als waarde.",
+              "`priority: Priority = Priority.MEDIUM`"
+            ],
+            [
+              "`asdict(obj)`",
+              "Zet een dataclass om naar een dict, bijvoorbeeld voor JSON.",
+              "`json.dumps(asdict(task), default=str)`"
+            ]
+          ]
+        },
+        {
+          "id": "type-hints",
+          "title": "Type hints",
+          "intro": "Annotaties die niets veranderen aan het uitvoeren, maar editor en linter helpen.",
+          "section": "2.3",
+          "head": [
+            "Hint",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`x: int`",
+              "Variabele of parameter van type `int`.",
+              "`def vat(amount: float) -> float:`"
+            ],
+            [
+              "`-> type`",
+              "Returntype van een functie.",
+              "`def main() -> None:`"
+            ],
+            [
+              "`list[float]`",
+              "List met floats.",
+              "`def average(values: list[float]) -> float:`"
+            ],
+            [
+              "`dict[str, int]`",
+              "Dict met string-keys en int-waarden.",
+              "`counts: dict[str, int] = {}`"
+            ],
+            [
+              "`tuple[int, int]`",
+              "Tuple met precies twee ints.",
+              "`def min_max(v) -> tuple[int, int]:`"
+            ],
+            [
+              "`X | None`",
+              "Mag ook `None` zijn.",
+              "`def find(...) -> Task | None:`"
+            ],
+            [
+              "`Optional[X]`",
+              "Oudere schrijfwijze van `X | None`.",
+              "`from typing import Optional`"
+            ],
+            [
+              "`int | str`",
+              "Een van meerdere types (`Union`).",
+              "`waarde: int | str`"
+            ],
+            [
+              "`Any`",
+              "Elk type; zet de controle uit.",
+              "`payload: Any`"
+            ],
+            [
+              "`Callable[[int], int]`",
+              "Functie die een int krijgt en een int teruggeeft.",
+              "`def apply(fn: Callable[[int], int], ...)`"
+            ],
+            [
+              "`Iterable[int]`",
+              "Alles waar je met `for` overheen kunt lopen.",
+              "`values: Iterable[int]`"
+            ],
+            [
+              "Type alias",
+              "Korte naam voor een lang type.",
+              "`Config = dict[str, str | int | bool]`"
+            ],
+            [
+              "`Mapped[int]`",
+              "SQLAlchemy-kolomtype via een hint.",
+              "`id: Mapped[int] = mapped_column(primary_key=True)`"
+            ]
+          ]
+        },
+        {
+          "id": "comprehensions",
+          "title": "Comprehensions en generators",
+          "intro": "Korte syntax om collecties te bouwen of waarden lui te produceren.",
+          "section": "2.4",
+          "head": [
+            "Vorm",
+            "Syntax",
+            "Voorbeeld",
+            "Resultaat"
+          ],
+          "rows": [
+            [
+              "List comprehension",
+              "`[expr for x in it]`",
+              "`[n * 2 for n in range(3)]`",
+              "`[0, 2, 4]`"
+            ],
+            [
+              "Met filter",
+              "`[expr for x in it if cond]`",
+              "`[n for n in range(6) if n % 2]`",
+              "`[1, 3, 5]`"
+            ],
+            [
+              "Dict comprehension",
+              "`{k: v for ...}`",
+              "`{w: len(w) for w in ['ab', 'c']}`",
+              "`{'ab': 2, 'c': 1}`"
+            ],
+            [
+              "Set comprehension",
+              "`{expr for ...}`",
+              "`{n[0] for n in ['Aa', 'Ab', 'B']}`",
+              "`{'A', 'B'}`"
+            ],
+            [
+              "Genest",
+              "`[.. for x in a for y in b]`",
+              "`[(x, y) for x in 'ab' for y in '12']`",
+              "4 paren"
+            ],
+            [
+              "Generator expression",
+              "`(expr for x in it)`",
+              "`sum(n for n in range(5))`",
+              "`10`"
+            ],
+            [
+              "Generator-functie",
+              "`yield` in een functie",
+              "`def tel(): yield 1; yield 2`",
+              "levert 1, daarna 2"
+            ],
+            [
+              "`next(gen)`",
+              "Volgende waarde ophalen",
+              "`g = tel(); next(g)`",
+              "`1`"
+            ],
+            [
+              "Pijplijn",
+              "Generators aan elkaar koppelen",
+              "`numbered(read_lines(p))`",
+              "niets geladen tot je itereert"
+            ],
+            [
+              "`lambda`",
+              "Kleine anonieme functie",
+              "`sorted(ts, key=lambda t: t.priority)`",
+              "gesorteerd op prioriteit"
+            ]
+          ]
+        },
+        {
+          "id": "decorators",
+          "title": "Decorators en context managers",
+          "intro": "Veelgebruikte decorators en `with`-hulpmiddelen uit de training.",
+          "section": "2.4",
+          "head": [
+            "Naam",
+            "Doel",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "Eigen decorator",
+              "Functie die een functie inpakt en teruggeeft.",
+              "`def timed(fn): ... return wrapper`"
+            ],
+            [
+              "`@functools.wraps(fn)`",
+              "Behoudt naam en docstring van de ingepakte functie.",
+              "boven `def wrapper(*args, **kwargs):`"
+            ],
+            [
+              "`@functools.lru_cache`",
+              "Onthoudt eerdere uitkomsten (memoisation).",
+              "`@lru_cache(maxsize=None)`"
+            ],
+            [
+              "`@contextmanager`",
+              "Maakt van een generator een context manager.",
+              "`with timer('load'):`"
+            ],
+            [
+              "`yield` in context manager",
+              "Hier draait het `with`-blok; code erna is opruimwerk.",
+              "`try: yield` / `finally: ...`"
+            ],
+            [
+              "`@app.get('/pad')`",
+              "FastAPI-route registreren.",
+              "`@app.get('/health')`"
+            ],
+            [
+              "`@pytest.fixture`",
+              "Herbruikbare testdata of -opzet.",
+              "`def sample_tasks(): ...`"
+            ],
+            [
+              "`with` (algemeen)",
+              "Garandeert sluiten of opruimen: bestanden, sessies, clients.",
+              "`with SessionLocal() as session:`"
+            ],
+            [
+              "`async with`",
+              "Async variant voor bijvoorbeeld HTTP-clients.",
+              "`async with httpx.AsyncClient() as c:`"
+            ]
+          ]
+        },
+        {
+          "id": "functions",
+          "title": "Functies: parameters en scope",
+          "intro": "Hoe je parameters definieert en meegeeft.",
+          "section": "1.5",
+          "head": [
+            "Vorm",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`def f(a):`",
+              "Verplichte parameter.",
+              "`def greet(name):`"
+            ],
+            [
+              "`def f(a, b=0.21):`",
+              "Parameter met standaardwaarde.",
+              "`vat(100)` gebruikt `b=0.21`"
+            ],
+            [
+              "Positioneel",
+              "Argumenten op volgorde.",
+              "`vat(100, 0.09)`"
+            ],
+            [
+              "Keyword",
+              "Argumenten op naam, volgorde vrij.",
+              "`vat(rate=0.09, amount=50)`"
+            ],
+            [
+              "`*args`",
+              "Vangt extra positionele argumenten als tuple.",
+              "`def f(*hobbies):`"
+            ],
+            [
+              "`**kwargs`",
+              "Vangt extra keyword-argumenten als dict.",
+              "`def f(**details):`"
+            ],
+            [
+              "`*` in de parameters",
+              "Alles erna moet als keyword meegegeven worden.",
+              "`def run(goal, *, user_id):`"
+            ],
+            [
+              "`return`",
+              "Geeft een waarde terug; zonder `return` is het `None`.",
+              "`return min(v), max(v)`"
+            ],
+            [
+              "Mutable default",
+              "`def f(x=[])` deelt één list over alle aanroepen.",
+              "Gebruik `x=None` en maak binnenin `[]`."
+            ],
+            [
+              "Lokale scope",
+              "Variabelen in een functie bestaan alleen daar.",
+              "weg na `return`"
+            ],
+            [
+              "`global`",
+              "Herbinden van een globale variabele; vermijden.",
+              "Geef waarden mee en terug."
+            ],
+            [
+              "Docstring",
+              "Eerste string in de functie: wat ze doet.",
+              "`\"\"\"Return the mean.\"\"\"`"
+            ]
+          ]
+        },
+        {
+          "id": "imports",
+          "title": "Modules en imports",
+          "intro": "Code uit andere bestanden en de standaardbibliotheek gebruiken.",
+          "section": "2.1",
+          "head": [
+            "Vorm",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`import mod`",
+              "Hele module; gebruik met `mod.naam`.",
+              "`import math; math.sqrt(16)`"
+            ],
+            [
+              "`from mod import naam`",
+              "Eén naam direct beschikbaar.",
+              "`from pathlib import Path`"
+            ],
+            [
+              "`import mod as alias`",
+              "Module onder een kortere naam.",
+              "`import numpy as np`"
+            ],
+            [
+              "`from mod import x as y`",
+              "Naam onder een andere naam.",
+              "`from math_utils import vat as btw`"
+            ],
+            [
+              "`from .models import Task`",
+              "Relatieve import binnen een package.",
+              "in `taskman/__init__.py`"
+            ],
+            [
+              "`__init__.py`",
+              "Maakt van een map een package.",
+              "`taskman/__init__.py`"
+            ],
+            [
+              "`__all__`",
+              "Welke namen een package naar buiten toont.",
+              "`__all__ = ['Task']`"
+            ],
+            [
+              "`if __name__ == '__main__':`",
+              "Alleen uitvoeren als het bestand direct gestart wordt.",
+              "`main()` daarbinnen"
+            ],
+            [
+              "`python -m pakket`",
+              "Start een package of module als programma.",
+              "`python -m taskman list`"
+            ],
+            [
+              "Standaardbibliotheek",
+              "Eerst hier kijken voor je iets installeert.",
+              "`os`, `sys`, `json`, `csv`, `datetime`, `pathlib`"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tools",
+      "title": "Shell, Git & venv",
+      "tables": [
+        {
+          "id": "shell",
+          "title": "Shell-commando's",
+          "intro": "De basiscommando's voor de Ubuntu-terminal (WSL2).",
+          "section": "1.1",
+          "head": [
+            "Commando",
+            "Wat het doet",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`pwd`",
+              "Toont de huidige map.",
+              "`pwd`"
+            ],
+            [
+              "`ls -la`",
+              "Lijst van bestanden, ook verborgen.",
+              "`ls -la ~/projects`"
+            ],
+            [
+              "`cd <map>`",
+              "Wissel van map; `..` is omhoog, `~` is home.",
+              "`cd ~/projects/week1`"
+            ],
+            [
+              "`mkdir -p a/b`",
+              "Maakt mappen, inclusief tussenliggende.",
+              "`mkdir -p src/tests`"
+            ],
+            [
+              "`touch f.py`",
+              "Maakt een leeg bestand.",
+              "`touch main.py`"
+            ],
+            [
+              "`cat f`",
+              "Toont de inhoud van een bestand.",
+              "`cat main.py`"
+            ],
+            [
+              "`rm -r map`",
+              "Verwijdert definitief, zonder prullenbak.",
+              "`rm -r build`"
+            ],
+            [
+              "`echo tekst > f`",
+              "Schrijft tekst naar een bestand (overschrijft).",
+              "`echo '# Titel' > README.md`"
+            ],
+            [
+              "`python3 f.py`",
+              "Voert een Python-script uit.",
+              "`python3 contacts.py`"
+            ],
+            [
+              "`python3 -c '...'`",
+              "Voert één regel Python uit.",
+              "`python3 -c \"print('hi')\"`"
+            ],
+            [
+              "`code .`",
+              "Opent de huidige map in VS Code.",
+              "`code .`"
+            ],
+            [
+              "`sudo apt update && sudo apt install -y pkg`",
+              "Pakketlijst bijwerken en software installeren.",
+              "`sudo apt install -y git`"
+            ],
+            [
+              "`curl -i url`",
+              "HTTP-verzoek doen en headers tonen.",
+              "`curl -i https://api.github.com/zen`"
+            ],
+            [
+              "`Ctrl + C`",
+              "Stopt het lopende programma.",
+              "--"
+            ],
+            [
+              "`Tab`",
+              "Vult bestands- of commandonamen aan.",
+              "--"
+            ]
+          ]
+        },
+        {
+          "id": "git",
+          "title": "Git-commando's",
+          "intro": "De commando's voor versiebeheer die je dagelijks gebruikt.",
+          "section": "1.1",
+          "head": [
+            "Commando",
+            "Wat het doet",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`git config --global`",
+              "Eenmalig je naam, e-mail en standaardbranch instellen.",
+              "`git config --global init.defaultBranch main`"
+            ],
+            [
+              "`git init`",
+              "Maakt van de huidige map een repository.",
+              "`git init`"
+            ],
+            [
+              "`git status`",
+              "Wat is er gewijzigd en wat staat klaar?",
+              "`git status`"
+            ],
+            [
+              "`git add`",
+              "Wijzigingen klaarzetten (stagen).",
+              "`git add -A`"
+            ],
+            [
+              "`git commit -m`",
+              "Snapshot opslaan met een boodschap.",
+              "`git commit -m \"Add JSON storage\"`"
+            ],
+            [
+              "`git remote add origin`",
+              "Koppelt de repo aan GitHub.",
+              "`git remote add origin git@github.com:jij/repo.git`"
+            ],
+            [
+              "`git push -u origin <branch>`",
+              "Eerste push van een branch; daarna volstaat `git push`.",
+              "`git push -u origin main`"
+            ],
+            [
+              "`git pull`",
+              "Haalt nieuwe commits op en voegt ze samen.",
+              "`git switch main && git pull`"
+            ],
+            [
+              "`git switch -c <naam>`",
+              "Nieuwe branch maken en erheen gaan.",
+              "`git switch -c feature/taskman`"
+            ],
+            [
+              "`git branch -d <naam>`",
+              "Lokale branch verwijderen na de merge.",
+              "`git branch -d feature/taskman`"
+            ],
+            [
+              "`git log --oneline --graph`",
+              "Compacte geschiedenis met branches.",
+              "`git log --oneline --graph`"
+            ],
+            [
+              "`git diff`",
+              "Laat regel voor regel zien wat er veranderd is.",
+              "`git diff`"
+            ],
+            [
+              "`git stash`",
+              "Zet wijzigingen tijdelijk opzij.",
+              "`git stash` en later `git stash pop`"
+            ],
+            [
+              "`git restore <file>`",
+              "Gooit niet-gecommitte wijzigingen in een bestand weg.",
+              "`git restore main.py`"
+            ],
+            [
+              "`ssh-keygen -t ed25519`",
+              "Maakt een SSH-sleutel om naar GitHub te pushen.",
+              "publieke sleutel in GitHub-instellingen"
+            ]
+          ]
+        },
+        {
+          "id": "git-flow",
+          "title": "De branch-workflow",
+          "intro": "Van idee tot gemergde pull request, stap voor stap.",
+          "section": "2.5",
+          "head": [
+            "Stap",
+            "Actie",
+            "Commando of plek"
+          ],
+          "rows": [
+            [
+              "1",
+              "Maak een feature-branch vanaf een actuele `main`.",
+              "`git switch -c feature/week2-taskman`"
+            ],
+            [
+              "2",
+              "Schrijf code en tests; draai de tests lokaal.",
+              "`pytest -q`"
+            ],
+            [
+              "3",
+              "Commit in kleine stappen, gebiedende wijs.",
+              "`git commit -m \"Add Task model\"`"
+            ],
+            [
+              "4",
+              "Push de branch naar GitHub.",
+              "`git push -u origin feature/week2-taskman`"
+            ],
+            [
+              "5",
+              "Open een pull request en vraag een review.",
+              "GitHub, tabblad Pull requests"
+            ],
+            [
+              "6",
+              "CI draait de checks; verwerk reviewcommentaar.",
+              "GitHub Actions"
+            ],
+            [
+              "7",
+              "Merge de PR naar `main`.",
+              "knop Merge op GitHub"
+            ],
+            [
+              "8",
+              "Werk je lokale `main` bij.",
+              "`git switch main && git pull`"
+            ],
+            [
+              "9",
+              "Ruim de branch op.",
+              "`git branch -d feature/week2-taskman`"
+            ],
+            [
+              "Conflict",
+              "Git zet `<<<<<<<`, `=======`, `>>>>>>>` in het bestand; kies de juiste versie.",
+              "daarna `git add` en `git commit`"
+            ]
+          ]
+        },
+        {
+          "id": "gitignore",
+          "title": ".gitignore-regels",
+          "intro": "Wat nooit in een repository thuishoort.",
+          "section": "2.5",
+          "head": [
+            "Regel",
+            "Wat het uitsluit",
+            "Waarom"
+          ],
+          "rows": [
+            [
+              "`.venv/`",
+              "De virtuele omgeving.",
+              "Groot en per machine opnieuw te maken."
+            ],
+            [
+              "`__pycache__/`",
+              "Gecompileerde bytecode-mappen.",
+              "Wordt automatisch gegenereerd."
+            ],
+            [
+              "`*.pyc`",
+              "Losse bytecode-bestanden.",
+              "Gegenereerd, geen broncode."
+            ],
+            [
+              "`.env`",
+              "Lokale configuratie met geheimen.",
+              "Wachtwoorden en API-keys horen niet in Git."
+            ],
+            [
+              "`.pytest_cache/`",
+              "Cache van pytest.",
+              "Lokaal hulpbestand."
+            ],
+            [
+              "`.env.example`",
+              "Niet uitsluiten: dit bestand commit je wel.",
+              "Laat zien welke variabelen nodig zijn."
+            ]
+          ]
+        },
+        {
+          "id": "venv-pip",
+          "title": "venv- en pip-commando's",
+          "intro": "Een eigen, geïsoleerde omgeving per project en pakketten installeren.",
+          "section": "2.1",
+          "head": [
+            "Commando",
+            "Wat het doet",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`python3 -m venv .venv`",
+              "Maakt eenmalig een virtuele omgeving.",
+              "`python3 -m venv .venv`"
+            ],
+            [
+              "`source .venv/bin/activate`",
+              "Activeert de venv; de prompt toont `(.venv)`.",
+              "`source .venv/bin/activate`"
+            ],
+            [
+              "`deactivate`",
+              "Verlaat de venv.",
+              "`deactivate`"
+            ],
+            [
+              "`python -m pip install --upgrade pip`",
+              "Werkt pip zelf bij.",
+              "`python -m pip install --upgrade pip`"
+            ],
+            [
+              "`pip install <pkg>`",
+              "Installeert pakketten uit PyPI.",
+              "`pip install httpx`"
+            ],
+            [
+              "`pip install \"pkg[extra]\"`",
+              "Installeert met optionele extra's.",
+              "`pip install \"fastapi[standard]\"`"
+            ],
+            [
+              "`pip list`",
+              "Toont geïnstalleerde pakketten.",
+              "`pip list`"
+            ],
+            [
+              "`pip freeze > requirements.txt`",
+              "Legt exacte versies vast.",
+              "`pip freeze > requirements.txt`"
+            ],
+            [
+              "`pip install -r requirements.txt`",
+              "Installeert alles uit dat bestand.",
+              "`pip install -r requirements.txt`"
+            ],
+            [
+              "`pip install -e \".[dev]\"`",
+              "Eigen project bewerkbaar installeren, plus dev-tools.",
+              "`pip install -e \".[dev]\"`"
+            ],
+            [
+              "`pip-audit`",
+              "Zoekt bekende kwetsbaarheden in je dependencies.",
+              "`pip-audit`"
+            ]
+          ]
+        },
+        {
+          "id": "pyproject",
+          "title": "pyproject.toml-sleutels",
+          "intro": "De velden waarmee je je project en zijn dependencies beschrijft.",
+          "section": "2.1",
+          "head": [
+            "Sleutel",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`[project]`",
+              "Sectie met de projectgegevens.",
+              "`[project]`"
+            ],
+            [
+              "`name`",
+              "Naam van het pakket.",
+              "`name = \"taskman\"`"
+            ],
+            [
+              "`version`",
+              "Versienummer.",
+              "`version = \"0.1.0\"`"
+            ],
+            [
+              "`requires-python`",
+              "Minimale Python-versie.",
+              "`requires-python = \">=3.12\"`"
+            ],
+            [
+              "`dependencies`",
+              "Pakketten die altijd nodig zijn.",
+              "`dependencies = [\"rich>=13\"]`"
+            ],
+            [
+              "`[project.optional-dependencies]`",
+              "Groepen extra pakketten, zoals voor ontwikkelen.",
+              "`dev = [\"pytest>=8\", \"ruff>=0.5\"]`"
+            ]
+          ]
+        },
+        {
+          "id": "pytest-cmd",
+          "title": "pytest-commando's en -opties",
+          "intro": "Tests draaien en selecteren vanaf de commandline.",
+          "section": "2.5",
+          "head": [
+            "Commando",
+            "Wat het doet",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`pytest`",
+              "Zoekt en draait alle `test_*.py`-bestanden.",
+              "`pytest`"
+            ],
+            [
+              "`-q`",
+              "Beknopte uitvoer.",
+              "`pytest -q`"
+            ],
+            [
+              "`-v`",
+              "Toont elke test met naam en resultaat.",
+              "`pytest -v`"
+            ],
+            [
+              "`-k <woord>`",
+              "Alleen tests waarvan de naam erop past.",
+              "`pytest -q -k sorting`"
+            ],
+            [
+              "`-x`",
+              "Stopt bij de eerste mislukte test.",
+              "`pytest -x`"
+            ],
+            [
+              "`-m <mark>`",
+              "Alleen tests met een bepaalde markering.",
+              "`pytest -q evals -m slow`"
+            ],
+            [
+              "`<pad>`",
+              "Alleen een bepaalde map of bestand.",
+              "`pytest tests/test_models.py`"
+            ],
+            [
+              "`--cov=<pkg>`",
+              "Meet code coverage (vereist `pytest-cov`).",
+              "`pytest --cov=taskman`"
+            ],
+            [
+              "`--cov-report=term-missing`",
+              "Toont welke regels niet getest zijn.",
+              "`pytest --cov=app --cov-report=term-missing`"
+            ]
+          ]
+        },
+        {
+          "id": "pytest-features",
+          "title": "pytest-bouwstenen",
+          "intro": "De onderdelen waarmee je tests schrijft.",
+          "section": "2.5",
+          "head": [
+            "Onderdeel",
+            "Doel",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`assert`",
+              "Controleert een uitkomst; faalt als het `False` is.",
+              "`assert t.priority == 2`"
+            ],
+            [
+              "`pytest.raises(X)`",
+              "Test dat er een bepaalde fout optreedt.",
+              "`with pytest.raises(ValueError): Task(' ')`"
+            ],
+            [
+              "`@pytest.mark.parametrize`",
+              "Zelfde test met meerdere invoerwaarden.",
+              "`@pytest.mark.parametrize('p', [0, 4])`"
+            ],
+            [
+              "`@pytest.fixture`",
+              "Levert testdata of opzet aan een test via de parameternaam.",
+              "`def test_x(sample_tasks):`"
+            ],
+            [
+              "`yield` in fixture",
+              "Code na `yield` ruimt op na de test.",
+              "`create_all()` / `yield` / `drop_all()`"
+            ],
+            [
+              "`autouse=True`",
+              "Fixture draait automatisch bij elke test.",
+              "`@pytest.fixture(autouse=True)`"
+            ],
+            [
+              "`tmp_path`",
+              "Ingebouwde fixture: een tijdelijke map.",
+              "`def test_save(tmp_path):`"
+            ],
+            [
+              "`monkeypatch`",
+              "Vervangt tijdelijk een functie of variabele, bijvoorbeeld de LLM-call.",
+              "`monkeypatch.setattr(mod, 'ask', fake)`"
+            ],
+            [
+              "`conftest.py`",
+              "Fixtures die alle tests in de map kunnen gebruiken.",
+              "`tests/conftest.py`"
+            ],
+            [
+              "`@pytest.mark.slow`",
+              "Eigen markering om trage tests apart te draaien.",
+              "`pytest -m slow`"
+            ]
+          ]
+        },
+        {
+          "id": "ruff",
+          "title": "Kwaliteitstools",
+          "intro": "Linten en formatteren met ruff.",
+          "section": "2.3",
+          "head": [
+            "Commando",
+            "Wat het doet",
+            "Wanneer"
+          ],
+          "rows": [
+            [
+              "`pip install ruff`",
+              "Installeert linter en formatter in één.",
+              "Eenmalig per venv."
+            ],
+            [
+              "`ruff check .`",
+              "Zoekt fouten en stijlproblemen.",
+              "Voor elke commit."
+            ],
+            [
+              "`ruff check . --fix`",
+              "Lost automatisch op wat veilig kan.",
+              "Na `ruff check`."
+            ],
+            [
+              "`ruff format .`",
+              "Formatteert alle code volgens PEP 8.",
+              "Voor elke commit."
+            ],
+            [
+              "`ruff format --check .`",
+              "Controleert alleen, wijzigt niets.",
+              "In CI."
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "docker",
+      "title": "Docker & Compose",
+      "tables": [
+        {
+          "id": "docker-terms",
+          "title": "Docker-begrippen",
+          "intro": "De woorden die je bij Docker steeds tegenkomt.",
+          "section": "3.1",
+          "head": [
+            "Begrip",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "Image",
+              "Alleen-lezen sjabloon met app en alles wat die nodig heeft.",
+              "`postgres:16`"
+            ],
+            [
+              "Container",
+              "Een draaiend exemplaar van een image.",
+              "`docker run postgres:16`"
+            ],
+            [
+              "Volume",
+              "Opslag die blijft bestaan als de container weg is.",
+              "`pgdata:/var/lib/postgresql/data`"
+            ],
+            [
+              "Port mapping",
+              "Maakt een containerpoort bereikbaar op je machine.",
+              "`-p 5432:5432` (host:container)"
+            ],
+            [
+              "Dockerfile",
+              "Recept om je eigen image te bouwen.",
+              "`FROM python:3.12-slim`"
+            ],
+            [
+              "Docker Compose",
+              "Meerdere containers als één stack uit één bestand.",
+              "`compose.yaml`"
+            ],
+            [
+              "Registry",
+              "Opslagplaats voor images.",
+              "Docker Hub, `ghcr.io`"
+            ],
+            [
+              "Tag",
+              "Versielabel van een image.",
+              "`redis:7-alpine`, `:latest`"
+            ],
+            [
+              "Layer",
+              "Elke instructie in een Dockerfile is een laag die gecachet wordt.",
+              "dependencies vóór de broncode kopiëren"
+            ]
+          ]
+        },
+        {
+          "id": "docker-cmd",
+          "title": "Docker-commando's",
+          "intro": "Losse containers en images beheren.",
+          "section": "3.1",
+          "head": [
+            "Commando",
+            "Wat het doet",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`docker --version`",
+              "Controleert de installatie.",
+              "`docker --version`"
+            ],
+            [
+              "`docker run`",
+              "Start een container uit een image.",
+              "`docker run hello-world`"
+            ],
+            [
+              "`docker pull`",
+              "Downloadt een image.",
+              "`docker pull postgres:16`"
+            ],
+            [
+              "`docker build -t naam .`",
+              "Bouwt een image uit de Dockerfile in deze map.",
+              "`docker build -t notes-api .`"
+            ],
+            [
+              "`docker ps`",
+              "Draaiende containers.",
+              "`docker ps`"
+            ],
+            [
+              "`docker ps -a`",
+              "Ook gestopte containers.",
+              "`docker ps -a`"
+            ],
+            [
+              "`docker logs -f`",
+              "Logs bekijken en blijven volgen.",
+              "`docker logs -f pg`"
+            ],
+            [
+              "`docker exec -it`",
+              "Commando uitvoeren in een draaiende container.",
+              "`docker exec -it pg psql -U postgres`"
+            ],
+            [
+              "`docker stop` / `docker start`",
+              "Container stoppen of herstarten.",
+              "`docker stop pg`"
+            ],
+            [
+              "`docker rm -f`",
+              "Container verwijderen; volume blijft bestaan.",
+              "`docker rm -f pg`"
+            ],
+            [
+              "`docker images`",
+              "Lokale images en hun grootte.",
+              "`docker images`"
+            ],
+            [
+              "`docker volume ls`",
+              "Lijst van volumes.",
+              "`docker volume ls`"
+            ],
+            [
+              "`docker system prune`",
+              "Ruimt ongebruikte containers, netwerken en images op.",
+              "`docker system prune`"
+            ]
+          ]
+        },
+        {
+          "id": "docker-run",
+          "title": "`docker run`-opties",
+          "intro": "De vlaggen die je het vaakst aan `docker run` meegeeft.",
+          "section": "3.1",
+          "head": [
+            "Optie",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`-d`",
+              "Op de achtergrond draaien (detached).",
+              "`docker run -d redis:7-alpine`"
+            ],
+            [
+              "`--name`",
+              "Eigen naam voor de container.",
+              "`--name pg`"
+            ],
+            [
+              "`-e KEY=waarde`",
+              "Omgevingsvariabele meegeven.",
+              "`-e POSTGRES_PASSWORD=secret`"
+            ],
+            [
+              "`-p host:container`",
+              "Poort doorzetten naar je machine.",
+              "`-p 5432:5432`"
+            ],
+            [
+              "`-v volume:pad`",
+              "Volume koppelen aan een pad in de container.",
+              "`-v pgdata:/var/lib/postgresql/data`"
+            ],
+            [
+              "`-it`",
+              "Interactief met terminal (ook bij `exec`).",
+              "`docker exec -it pg bash`"
+            ],
+            [
+              "`--rm`",
+              "Container automatisch verwijderen na afloop.",
+              "`docker run --rm hello-world`"
+            ]
+          ]
+        },
+        {
+          "id": "compose-cmd",
+          "title": "Compose-commando's",
+          "intro": "De hele stack starten, bekijken en stoppen.",
+          "section": "3.1",
+          "head": [
+            "Commando",
+            "Wat het doet",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`docker compose up -d`",
+              "Start alle services op de achtergrond.",
+              "`docker compose up -d`"
+            ],
+            [
+              "`docker compose up -d <service>`",
+              "Start alleen één service (en wat die nodig heeft).",
+              "`docker compose up -d redis`"
+            ],
+            [
+              "`docker compose up --build -d`",
+              "Bouwt eigen images opnieuw en start.",
+              "`docker compose up --build -d`"
+            ],
+            [
+              "`docker compose ps`",
+              "Status van de services.",
+              "`docker compose ps`"
+            ],
+            [
+              "`docker compose logs -f <service>`",
+              "Logs van een service volgen.",
+              "`docker compose logs -f api`"
+            ],
+            [
+              "`docker compose exec <service> cmd`",
+              "Commando in een draaiende service.",
+              "`docker compose exec db psql -U app -d inventory`"
+            ],
+            [
+              "`docker compose down`",
+              "Stopt en verwijdert containers; volumes blijven.",
+              "`docker compose down`"
+            ],
+            [
+              "`docker compose down -v`",
+              "Idem, en verwijdert ook de volumes (data weg).",
+              "`docker compose down -v`"
+            ],
+            [
+              "`docker compose pull`",
+              "Haalt nieuwere images op.",
+              "`docker compose pull`"
+            ],
+            [
+              "`-f bestand`",
+              "Ander Compose-bestand gebruiken.",
+              "`docker compose -f compose.prod.yaml up -d`"
+            ]
+          ]
+        },
+        {
+          "id": "compose-keys",
+          "title": "compose.yaml-sleutels",
+          "intro": "De velden waarmee je services beschrijft.",
+          "section": "3.1",
+          "head": [
+            "Sleutel",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`services:`",
+              "Lijst van containers in de stack.",
+              "`services:` met `db:`, `api:`"
+            ],
+            [
+              "`image:`",
+              "Welk image de service gebruikt.",
+              "`image: postgres:16`"
+            ],
+            [
+              "`build:`",
+              "Bouw een image uit een Dockerfile.",
+              "`build: .`"
+            ],
+            [
+              "`ports:`",
+              "Poorten doorzetten, host:container.",
+              "`ports: [\"8000:8000\"]`"
+            ],
+            [
+              "`environment:`",
+              "Omgevingsvariabelen voor de container.",
+              "`POSTGRES_DB: inventory`"
+            ],
+            [
+              "`env_file:`",
+              "Variabelen uit een bestand laden.",
+              "`env_file: .env`"
+            ],
+            [
+              "`volumes:` (service)",
+              "Volume of map koppelen.",
+              "`- pgdata:/var/lib/postgresql/data`"
+            ],
+            [
+              "`volumes:` (bovenaan)",
+              "Named volumes declareren.",
+              "`volumes:` met `pgdata:`"
+            ],
+            [
+              "`depends_on:`",
+              "Startvolgorde tussen services.",
+              "`depends_on: [redis, db]`"
+            ],
+            [
+              "`condition: service_healthy`",
+              "Wacht tot de healthcheck slaagt.",
+              "`db: { condition: service_healthy }`"
+            ],
+            [
+              "`healthcheck:`",
+              "Commando dat controleert of de service gezond is.",
+              "`test: [\"CMD-SHELL\", \"pg_isready -U app\"]`"
+            ],
+            [
+              "`command:`",
+              "Vervangt het standaard startcommando.",
+              "`command: python -m app.worker`"
+            ],
+            [
+              "`restart:`",
+              "Herstartbeleid.",
+              "`restart: unless-stopped`"
+            ],
+            [
+              "Servicenaam als host",
+              "Binnen het Compose-netwerk bereik je een service op zijn naam.",
+              "`postgresql://app:secret@db:5432/notes`"
+            ]
+          ]
+        },
+        {
+          "id": "dockerfile",
+          "title": "Dockerfile-instructies",
+          "intro": "De instructies waarmee je een eigen image bouwt.",
+          "section": "4.5",
+          "head": [
+            "Instructie",
+            "Wat het doet",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`FROM`",
+              "Basisimage waarop je bouwt.",
+              "`FROM python:3.12-slim`"
+            ],
+            [
+              "`FROM ... AS naam`",
+              "Benoemde stage voor een multi-stage build.",
+              "`FROM python:3.12-slim AS builder`"
+            ],
+            [
+              "`WORKDIR`",
+              "Werkmap in de container.",
+              "`WORKDIR /code`"
+            ],
+            [
+              "`COPY`",
+              "Bestanden van je machine naar het image.",
+              "`COPY app ./app`"
+            ],
+            [
+              "`COPY --from=stage`",
+              "Kopieert uit een eerdere stage.",
+              "`COPY --from=builder /venv /venv`"
+            ],
+            [
+              "`COPY --chown=`",
+              "Kopieert en zet meteen de eigenaar.",
+              "`COPY --chown=appuser:appuser app ./app`"
+            ],
+            [
+              "`RUN`",
+              "Voert een commando uit tijdens het bouwen.",
+              "`RUN pip install --no-cache-dir .`"
+            ],
+            [
+              "`ENV`",
+              "Zet omgevingsvariabelen.",
+              "`ENV PYTHONUNBUFFERED=1`"
+            ],
+            [
+              "`EXPOSE`",
+              "Documenteert op welke poort de app luistert.",
+              "`EXPOSE 8000`"
+            ],
+            [
+              "`USER`",
+              "Draai verder als deze gebruiker (niet root).",
+              "`USER appuser`"
+            ],
+            [
+              "`HEALTHCHECK`",
+              "Laat Docker periodiek de gezondheid controleren.",
+              "`HEALTHCHECK --interval=30s CMD ...`"
+            ],
+            [
+              "`CMD`",
+              "Standaardcommando bij het starten.",
+              "`CMD [\"fastapi\", \"run\", \"app/main.py\"]`"
+            ],
+            [
+              "`.dockerignore`",
+              "Bestanden die niet in de build-context mogen.",
+              "`.venv`, `.git`, `.env`, `tests`"
+            ]
+          ]
+        },
+        {
+          "id": "dockerfile-tips",
+          "title": "Dockerfile-vuistregels",
+          "intro": "Waarom een productie-image er zo uitziet.",
+          "section": "6.4",
+          "head": [
+            "Regel",
+            "Waarom",
+            "Hoe"
+          ],
+          "rows": [
+            [
+              "Slim basisimage",
+              "Kleiner en minder aanvalsoppervlak.",
+              "`python:3.12-slim`"
+            ],
+            [
+              "Dependencies eerst",
+              "Die laag wordt gecachet; rebuilds gaan snel.",
+              "`COPY pyproject.toml` vóór `COPY app`"
+            ],
+            [
+              "Multi-stage",
+              "Build-gereedschap komt niet in het eindimage.",
+              "venv bouwen in `builder`, daarna kopiëren"
+            ],
+            [
+              "Niet als root",
+              "Beperkt de schade bij een inbraak.",
+              "`useradd` plus `USER appuser`"
+            ],
+            [
+              "Geen geheimen in het image",
+              "Images worden gedeeld; geheimen lekken mee.",
+              "Configuratie via omgevingsvariabelen"
+            ],
+            [
+              "`--no-cache-dir`",
+              "pip-cache maakt het image onnodig groot.",
+              "`pip install --no-cache-dir .`"
+            ],
+            [
+              "Grootte controleren",
+              "Een slanke FastAPI-image is enkele honderden MB.",
+              "`docker images`"
+            ],
+            [
+              "Scannen",
+              "Vindt bekende kwetsbaarheden in het image.",
+              "`docker scout` of `trivy`"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sql",
+      "title": "SQL & PostgreSQL",
+      "tables": [
+        {
+          "id": "sql-statements",
+          "title": "SQL-statements",
+          "intro": "De hoofdcommando's om tabellen en data te beheren.",
+          "section": "3.2",
+          "head": [
+            "Statement",
+            "Wat het doet",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`CREATE TABLE`",
+              "Maakt een tabel met kolommen en constraints.",
+              "`CREATE TABLE tags (id SERIAL PRIMARY KEY, name TEXT);`"
+            ],
+            [
+              "`INSERT INTO ... VALUES`",
+              "Voegt rijen toe.",
+              "`INSERT INTO tags (name) VALUES ('ops');`"
+            ],
+            [
+              "`... RETURNING id`",
+              "Geeft gegenereerde waarden direct terug.",
+              "`INSERT ... RETURNING id;`"
+            ],
+            [
+              "`SELECT`",
+              "Vraagt data op.",
+              "`SELECT name FROM products;`"
+            ],
+            [
+              "`UPDATE ... SET ... WHERE`",
+              "Wijzigt rijen; altijd met `WHERE`.",
+              "`UPDATE products SET stock = stock - 1 WHERE id = 3;`"
+            ],
+            [
+              "`DELETE FROM ... WHERE`",
+              "Verwijdert rijen; altijd met `WHERE`.",
+              "`DELETE FROM products WHERE stock = 0;`"
+            ],
+            [
+              "`BEGIN` / `COMMIT`",
+              "Transactie: alles slaagt samen of niets.",
+              "`BEGIN; ... COMMIT;`"
+            ],
+            [
+              "`ROLLBACK`",
+              "Draait de lopende transactie terug.",
+              "`ROLLBACK;`"
+            ],
+            [
+              "`ALTER TABLE`",
+              "Wijzigt een bestaande tabel (meestal via een migratie).",
+              "`ALTER TABLE work_orders ADD COLUMN priority INT;`"
+            ],
+            [
+              "`DROP TABLE`",
+              "Verwijdert een tabel met alle data.",
+              "`DROP TABLE IF EXISTS tmp;`"
+            ],
+            [
+              "`CREATE INDEX`",
+              "Versnelt zoeken en joinen op een kolom.",
+              "`CREATE INDEX ON orders (product_id);`"
+            ],
+            [
+              "`CREATE EXTENSION`",
+              "Zet een PostgreSQL-uitbreiding aan.",
+              "`CREATE EXTENSION IF NOT EXISTS vector;`"
+            ],
+            [
+              "`EXPLAIN ANALYZE`",
+              "Toont hoe Postgres de query uitvoert en of een index gebruikt wordt.",
+              "`EXPLAIN ANALYZE SELECT ...;`"
+            ]
+          ]
+        },
+        {
+          "id": "select-clauses",
+          "title": "SELECT-clausules en filters",
+          "intro": "Onderdelen waarmee je precies de rijen en kolommen kiest die je wilt.",
+          "section": "3.2",
+          "head": [
+            "Clausule",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`*`",
+              "Alle kolommen.",
+              "`SELECT * FROM products;`"
+            ],
+            [
+              "`AS`",
+              "Alias voor een kolom of tabel.",
+              "`price_cents / 100.0 AS price_eur`"
+            ],
+            [
+              "`WHERE`",
+              "Filtert rijen.",
+              "`WHERE stock = 0`"
+            ],
+            [
+              "`AND` / `OR` / `NOT`",
+              "Voorwaarden combineren.",
+              "`WHERE stock > 0 AND price_cents < 5000`"
+            ],
+            [
+              "`BETWEEN a AND b`",
+              "Binnen een bereik, grenzen inbegrepen.",
+              "`price_cents BETWEEN 1000 AND 5000`"
+            ],
+            [
+              "`IN (...)`",
+              "Gelijk aan een van de waarden.",
+              "`category_id IN (1, 3)`"
+            ],
+            [
+              "`LIKE` / `ILIKE`",
+              "Patroon zoeken; `%` is willekeurige tekst. `ILIKE` negeert hoofdletters.",
+              "`name ILIKE '%sensor%'`"
+            ],
+            [
+              "`IS NULL`",
+              "Heeft geen waarde.",
+              "`WHERE category_id IS NULL`"
+            ],
+            [
+              "`DISTINCT`",
+              "Alleen unieke waarden.",
+              "`SELECT DISTINCT category_id FROM products;`"
+            ],
+            [
+              "`ORDER BY ... DESC`",
+              "Sorteren, `DESC` is aflopend.",
+              "`ORDER BY price_cents DESC`"
+            ],
+            [
+              "`LIMIT` / `OFFSET`",
+              "Aantal rijen en hoeveel overslaan (paging).",
+              "`LIMIT 20 OFFSET 40`"
+            ],
+            [
+              "`now() - INTERVAL`",
+              "Rekenen met tijd.",
+              "`created_at > now() - INTERVAL '7 days'`"
+            ],
+            [
+              "`::type`",
+              "Cast naar een ander type (PostgreSQL).",
+              "`AVG(price_cents)::INTEGER`"
+            ]
+          ]
+        },
+        {
+          "id": "sql-order",
+          "title": "Uitvoervolgorde van een query",
+          "intro": "Je schrijft SELECT eerst, maar de database verwerkt de clausules in deze volgorde.",
+          "section": "3.2",
+          "head": [
+            "Stap",
+            "Clausule",
+            "Wat er gebeurt"
+          ],
+          "rows": [
+            [
+              "1",
+              "`FROM` / `JOIN`",
+              "Tabellen ophalen en koppelen."
+            ],
+            [
+              "2",
+              "`WHERE`",
+              "Losse rijen filteren, vóór het groeperen."
+            ],
+            [
+              "3",
+              "`GROUP BY`",
+              "Rijen samenvoegen tot groepen."
+            ],
+            [
+              "4",
+              "`HAVING`",
+              "Groepen filteren, na het aggregeren."
+            ],
+            [
+              "5",
+              "`SELECT`",
+              "Kolommen en berekeningen kiezen; aliassen ontstaan hier. Window functions worden hier berekend."
+            ],
+            [
+              "6",
+              "`DISTINCT`",
+              "Dubbele resultaatrijen weghalen."
+            ],
+            [
+              "7",
+              "`ORDER BY`",
+              "Sorteren; hier mag je de alias uit `SELECT` gebruiken."
+            ],
+            [
+              "8",
+              "`LIMIT` / `OFFSET`",
+              "Alleen een deel van de rijen teruggeven."
+            ]
+          ]
+        },
+        {
+          "id": "joins",
+          "title": "JOIN-soorten",
+          "intro": "Hoe je rijen uit twee tabellen via een key combineert.",
+          "section": "3.2",
+          "head": [
+            "JOIN",
+            "Geeft terug",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`INNER JOIN`",
+              "Alleen rijen met een match in beide tabellen.",
+              "`FROM products p JOIN categories c ON c.id = p.category_id`"
+            ],
+            [
+              "`LEFT JOIN`",
+              "Alle rijen links, plus matches; anders `NULL`.",
+              "`FROM categories c LEFT JOIN products p ON ...`"
+            ],
+            [
+              "`RIGHT JOIN`",
+              "Spiegelbeeld van `LEFT JOIN`.",
+              "Meestal herschreven als `LEFT JOIN`."
+            ],
+            [
+              "`FULL OUTER JOIN`",
+              "Alles van beide kanten, gekoppeld waar mogelijk.",
+              "`FROM a FULL OUTER JOIN b ON ...`"
+            ],
+            [
+              "`LEFT JOIN ... WHERE x.id IS NULL`",
+              "Rijen zonder match (anti-join).",
+              "categorieën zonder producten"
+            ],
+            [
+              "`ON`",
+              "De koppelvoorwaarde, meestal foreign key = primary key.",
+              "`ON p.category_id = c.id`"
+            ],
+            [
+              "Alias",
+              "Korte tabelnaam in joins.",
+              "`products p`, `categories c`"
+            ]
+          ]
+        },
+        {
+          "id": "aggregates",
+          "title": "Aggregaties, GROUP BY en HAVING",
+          "intro": "Rijen samenvatten tot getallen per groep.",
+          "section": "3.2",
+          "head": [
+            "Onderdeel",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`COUNT(*)`",
+              "Aantal rijen.",
+              "`SELECT COUNT(*) FROM products;`"
+            ],
+            [
+              "`COUNT(kolom)`",
+              "Aantal rijen waar de kolom niet `NULL` is.",
+              "`COUNT(p.id)` na een `LEFT JOIN`"
+            ],
+            [
+              "`SUM(x)`",
+              "Totaal.",
+              "`SUM(stock)`"
+            ],
+            [
+              "`AVG(x)`",
+              "Gemiddelde.",
+              "`AVG(price_cents)`"
+            ],
+            [
+              "`MIN(x)` / `MAX(x)`",
+              "Kleinste en grootste waarde.",
+              "`MAX(price_cents)`"
+            ],
+            [
+              "`GROUP BY`",
+              "Eén resultaatrij per groep.",
+              "`GROUP BY c.name`"
+            ],
+            [
+              "`HAVING`",
+              "Filter op groepen, na het aggregeren.",
+              "`HAVING COUNT(p.id) > 0`"
+            ],
+            [
+              "`WHERE` vs `HAVING`",
+              "`WHERE` filtert rijen ervoor, `HAVING` groepen erna.",
+              "`WHERE stock > 0 ... HAVING SUM(stock) > 10`"
+            ],
+            [
+              "Regel",
+              "Elke kolom in `SELECT` is geaggregeerd of staat in `GROUP BY`.",
+              "`SELECT c.name, COUNT(*) ... GROUP BY c.name`"
+            ]
+          ]
+        },
+        {
+          "id": "constraints",
+          "title": "Constraints",
+          "intro": "Regels waarmee de database foute data weigert.",
+          "section": "3.2",
+          "head": [
+            "Constraint",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`PRIMARY KEY`",
+              "Unieke, verplichte identificatie van elke rij.",
+              "`id SERIAL PRIMARY KEY`"
+            ],
+            [
+              "Samengestelde PK",
+              "Primary key over meerdere kolommen, typisch in een koppeltabel.",
+              "`PRIMARY KEY (product_id, tag_id)`"
+            ],
+            [
+              "`NOT NULL`",
+              "Waarde is verplicht.",
+              "`name TEXT NOT NULL`"
+            ],
+            [
+              "`UNIQUE`",
+              "Geen dubbele waarden in deze kolom.",
+              "`sku VARCHAR(20) UNIQUE`"
+            ],
+            [
+              "`CHECK (...)`",
+              "Eigen voorwaarde.",
+              "`CHECK (price_cents >= 0)`"
+            ],
+            [
+              "`DEFAULT`",
+              "Standaardwaarde als je niets opgeeft.",
+              "`stock INTEGER DEFAULT 0`"
+            ],
+            [
+              "`REFERENCES`",
+              "Foreign key naar een andere tabel.",
+              "`category_id INTEGER REFERENCES categories(id)`"
+            ],
+            [
+              "`ON DELETE CASCADE`",
+              "Verwijder kindrijen mee met de ouder.",
+              "`REFERENCES documents(id) ON DELETE CASCADE`"
+            ]
+          ]
+        },
+        {
+          "id": "datatypes",
+          "title": "PostgreSQL-datatypes",
+          "intro": "Kies het type bewust: het bepaalt wat de kolom mag bevatten.",
+          "section": "3.2",
+          "head": [
+            "Type",
+            "Gebruik",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`INTEGER` / `BIGINT`",
+              "Gehele getallen; bedragen in centen.",
+              "`price_cents INTEGER`"
+            ],
+            [
+              "`SERIAL` / `BIGSERIAL`",
+              "Automatisch oplopend id.",
+              "`id SERIAL PRIMARY KEY`"
+            ],
+            [
+              "`NUMERIC(10,2)`",
+              "Exacte decimalen, geschikt voor geld.",
+              "`amount NUMERIC(10,2)`"
+            ],
+            [
+              "`TEXT`",
+              "Tekst zonder lengtegrens.",
+              "`name TEXT`"
+            ],
+            [
+              "`VARCHAR(n)`",
+              "Tekst met maximale lengte.",
+              "`sku VARCHAR(20)`"
+            ],
+            [
+              "`BOOLEAN`",
+              "Waar of niet waar (geen `'Y'`/`'N'`).",
+              "`active BOOLEAN DEFAULT true`"
+            ],
+            [
+              "`DATE`",
+              "Een dag zonder tijd.",
+              "`due DATE`"
+            ],
+            [
+              "`TIMESTAMPTZ`",
+              "Moment in de tijd met tijdzone.",
+              "`created_at TIMESTAMPTZ DEFAULT now()`"
+            ],
+            [
+              "`JSONB`",
+              "Flexibele JSON-data, doorzoekbaar.",
+              "`metadata JSONB`"
+            ],
+            [
+              "`UUID`",
+              "Wereldwijd unieke id.",
+              "`id UUID PRIMARY KEY`"
+            ],
+            [
+              "`vector(n)`",
+              "Embedding met n getallen (pgvector).",
+              "`embedding vector(1536)`"
+            ]
+          ]
+        },
+        {
+          "id": "null",
+          "title": "NULL-regels",
+          "intro": "`NULL` betekent onbekend of ontbrekend, en gedraagt zich anders dan je verwacht.",
+          "section": "3.2",
+          "head": [
+            "Situatie",
+            "Uitkomst",
+            "Doe het zo"
+          ],
+          "rows": [
+            [
+              "`x = NULL`",
+              "Nooit waar: vergelijken met `NULL` geeft onbekend.",
+              "`x IS NULL`"
+            ],
+            [
+              "`x <> NULL`",
+              "Ook nooit waar.",
+              "`x IS NOT NULL`"
+            ],
+            [
+              "`NULL + 1`",
+              "Rekenen met `NULL` geeft `NULL`.",
+              "`COALESCE(x, 0) + 1`"
+            ],
+            [
+              "`COUNT(*)` vs `COUNT(kolom)`",
+              "`COUNT(*)` telt alle rijen, `COUNT(kolom)` slaat `NULL` over.",
+              "Tel na een `LEFT JOIN` op de kolom rechts."
+            ],
+            [
+              "`SUM` / `AVG` / `MIN` / `MAX`",
+              "Negeren `NULL`; zonder rijen geven ze `NULL`.",
+              "`COALESCE(SUM(x), 0)`"
+            ],
+            [
+              "`LEFT JOIN` zonder match",
+              "Kolommen van rechts worden `NULL`.",
+              "`WHERE p.id IS NULL` voor rijen zonder match"
+            ],
+            [
+              "`NOT NULL`-constraint",
+              "Weigert lege waarden bij invoer.",
+              "`name TEXT NOT NULL`"
+            ],
+            [
+              "In Python",
+              "`NULL` komt binnen als `None`.",
+              "`if row.category is None:`"
+            ]
+          ]
+        },
+        {
+          "id": "psql",
+          "title": "psql-meta-commando's",
+          "intro": "Commando's met een backslash die je in de `psql`-prompt gebruikt (geen SQL, geen puntkomma nodig).",
+          "section": "3.2",
+          "head": [
+            "Commando",
+            "Wat het doet",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`psql -U gebruiker -d db`",
+              "Verbinden vanaf de shell of in een container.",
+              "`docker compose exec db psql -U app -d inventory`"
+            ],
+            [
+              "`\\l`",
+              "Lijst van databases.",
+              "`\\l`"
+            ],
+            [
+              "`\\c db`",
+              "Wissel naar een andere database.",
+              "`\\c inventory_test`"
+            ],
+            [
+              "`\\dt`",
+              "Tabellen in de huidige database.",
+              "`\\dt`"
+            ],
+            [
+              "`\\d tabel`",
+              "Kolommen, types, indexen en keys van een tabel.",
+              "`\\d products`"
+            ],
+            [
+              "`\\di`",
+              "Lijst van indexen.",
+              "`\\di`"
+            ],
+            [
+              "`\\dx`",
+              "Geïnstalleerde extensies, zoals `vector`.",
+              "`\\dx`"
+            ],
+            [
+              "`\\x`",
+              "Uitgebreide weergave aan/uit (rij onder elkaar).",
+              "`\\x`"
+            ],
+            [
+              "`\\i bestand.sql`",
+              "Voert een SQL-bestand uit.",
+              "`\\i queries.sql`"
+            ],
+            [
+              "`\\?`",
+              "Hulp bij alle meta-commando's.",
+              "`\\?`"
+            ],
+            [
+              "`\\q`",
+              "Verlaat psql.",
+              "`\\q`"
+            ]
+          ]
+        },
+        {
+          "id": "cte-window",
+          "title": "Subqueries, CTE's en window functions",
+          "intro": "Meerstaps-queries leesbaar maken en rangordes berekenen.",
+          "section": "3.2",
+          "head": [
+            "Techniek",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "Subquery",
+              "Query binnen een query, bijvoorbeeld als vergelijkingswaarde.",
+              "`WHERE price_cents > (SELECT AVG(price_cents) FROM products)`"
+            ],
+            [
+              "`WITH naam AS (...)`",
+              "CTE: benoemde tussenstap die je daarna als tabel gebruikt.",
+              "`WITH totals AS (SELECT ...) SELECT * FROM totals`"
+            ],
+            [
+              "Meerdere CTE's",
+              "Komma-gescheiden na één `WITH`.",
+              "`WITH a AS (...), b AS (...) SELECT ...`"
+            ],
+            [
+              "`OVER (...)`",
+              "Maakt van een functie een window function: berekent per rij zonder te groeperen.",
+              "`SUM(qty) OVER ()`"
+            ],
+            [
+              "`RANK() OVER (ORDER BY ...)`",
+              "Rangnummer; gelijke waarden krijgen dezelfde rang.",
+              "`RANK() OVER (ORDER BY revenue DESC)`"
+            ],
+            [
+              "`ROW_NUMBER() OVER (...)`",
+              "Doorlopend nummer, altijd uniek.",
+              "`ROW_NUMBER() OVER (ORDER BY created_at)`"
+            ],
+            [
+              "`PARTITION BY`",
+              "Window per groep apart.",
+              "`RANK() OVER (PARTITION BY customer_id ORDER BY total DESC)`"
+            ]
+          ]
+        },
+        {
+          "id": "schema-design",
+          "title": "Schema-ontwerpregels",
+          "intro": "Vuistregels voor tabellen die meegroeien met je applicatie.",
+          "section": "3.3",
+          "head": [
+            "Regel",
+            "Uitleg",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "Primary key overal",
+              "Elke tabel een technisch id; geen bedrijfswaarde als PK.",
+              "`id SERIAL PRIMARY KEY` en `email UNIQUE`"
+            ],
+            [
+              "One-to-many",
+              "De foreign key staat aan de veel-kant.",
+              "`orders.product_id REFERENCES products(id)`"
+            ],
+            [
+              "Many-to-many",
+              "Een koppeltabel met twee foreign keys.",
+              "`product_tags(product_id, tag_id)`"
+            ],
+            [
+              "Normaliseren",
+              "Elk feit op één plek opslaan.",
+              "categorienaam alleen in `categories`"
+            ],
+            [
+              "Bewuste types",
+              "Moment, dag, geld en vlaggen elk hun eigen type.",
+              "`TIMESTAMPTZ`, `DATE`, centen, `BOOLEAN`"
+            ],
+            [
+              "Index op filters en joins",
+              "PK en `UNIQUE` krijgen er automatisch een; de rest zelf.",
+              "`CREATE INDEX ON orders (product_id);`"
+            ],
+            [
+              "Audit-kolommen",
+              "Bijhouden wanneer iets ontstond of wijzigde.",
+              "`created_at`, `updated_at`"
+            ],
+            [
+              "Soft delete",
+              "Markeren als verwijderd in plaats van echt wissen.",
+              "`deleted_at TIMESTAMPTZ`"
+            ]
+          ]
+        },
+        {
+          "id": "psycopg",
+          "title": "psycopg: SQL vanuit Python",
+          "intro": "De databasedriver rechtstreeks gebruiken, veilig met parameters.",
+          "section": "3.4",
+          "head": [
+            "Onderdeel",
+            "Wat het doet",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`psycopg.connect(url)`",
+              "Opent een verbinding; als context manager commit hij bij succes.",
+              "`with psycopg.connect(DATABASE_URL) as conn:`"
+            ],
+            [
+              "`conn.cursor()`",
+              "Cursor om queries mee uit te voeren.",
+              "`with conn.cursor() as cur:`"
+            ],
+            [
+              "`cur.execute(sql, params)`",
+              "Voert SQL uit; waarden gaan los mee.",
+              "`cur.execute('... WHERE stock > %s', (10,))`"
+            ],
+            [
+              "`%s`",
+              "Placeholder: de driver vult veilig in, geen SQL injection.",
+              "Nooit `f\"... '{naam}'\"` in SQL."
+            ],
+            [
+              "`cur.fetchall()`",
+              "Alle resultaatrijen als tuples.",
+              "`for sku, name in cur.fetchall():`"
+            ],
+            [
+              "`cur.fetchone()`",
+              "Eén rij, bijvoorbeeld na `RETURNING`.",
+              "`new_id = cur.fetchone()[0]`"
+            ],
+            [
+              "`load_dotenv()`",
+              "Leest `.env` in de omgeving.",
+              "`os.environ['DATABASE_URL']`"
+            ]
+          ]
+        },
+        {
+          "id": "sqla-models",
+          "title": "SQLAlchemy 2.0: modellen",
+          "intro": "Tabellen als Python-klassen beschrijven.",
+          "section": "3.4",
+          "head": [
+            "Onderdeel",
+            "Wat het doet",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`create_engine(url)`",
+              "Verbindingspool naar de database.",
+              "`engine = create_engine(os.environ['DATABASE_URL'])`"
+            ],
+            [
+              "`sessionmaker(bind=engine)`",
+              "Fabriek voor sessies.",
+              "`SessionLocal = sessionmaker(bind=engine)`"
+            ],
+            [
+              "`class Base(DeclarativeBase)`",
+              "Basisklasse voor alle modellen.",
+              "`class Base(DeclarativeBase): pass`"
+            ],
+            [
+              "`__tablename__`",
+              "Naam van de tabel.",
+              "`__tablename__ = 'products'`"
+            ],
+            [
+              "`Mapped[type]`",
+              "Kolom met type; `X | None` betekent nullable.",
+              "`name: Mapped[str]`"
+            ],
+            [
+              "`mapped_column(...)`",
+              "Kolomopties zoals PK, uniek, default.",
+              "`mapped_column(String(20), unique=True)`"
+            ],
+            [
+              "`ForeignKey('tabel.kolom')`",
+              "Foreign key.",
+              "`mapped_column(ForeignKey('categories.id'))`"
+            ],
+            [
+              "`relationship(back_populates=)`",
+              "Navigeren tussen gekoppelde objecten, in beide richtingen.",
+              "`products: Mapped[list['Product']] = relationship(back_populates='category')`"
+            ],
+            [
+              "`server_default=func.now()`",
+              "Standaardwaarde die de database invult.",
+              "`mapped_column(DateTime(timezone=True), server_default=func.now())`"
+            ],
+            [
+              "`Base.metadata.create_all(engine)`",
+              "Maakt ontbrekende tabellen; wijzigt nooit bestaande. Alleen voor snelle start en tests.",
+              "`Base.metadata.create_all(engine)`"
+            ]
+          ]
+        },
+        {
+          "id": "sqla-queries",
+          "title": "SQLAlchemy 2.0: querypatronen",
+          "intro": "Lezen en schrijven via een sessie met `select()`.",
+          "section": "3.4",
+          "head": [
+            "Patroon",
+            "Wat het doet",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`with SessionLocal() as s:`",
+              "Sessie openen en netjes sluiten.",
+              "`with SessionLocal() as session:`"
+            ],
+            [
+              "`select(Model)`",
+              "Basis van elke query.",
+              "`stmt = select(Product)`"
+            ],
+            [
+              "`.where(...)`",
+              "Filter.",
+              "`.where(Product.stock < 10)`"
+            ],
+            [
+              "`.order_by(...)`",
+              "Sorteren; `.desc()` voor aflopend.",
+              "`.order_by(Note.created_at.desc())`"
+            ],
+            [
+              "`.limit(n).offset(m)`",
+              "Paging.",
+              "`.limit(20).offset(40)`"
+            ],
+            [
+              "`.ilike('%x%')`",
+              "Zoeken zonder hoofdlettergevoeligheid.",
+              "`Note.title.ilike(f'%{q}%')`"
+            ],
+            [
+              "`s.scalars(stmt).all()`",
+              "Lijst van objecten.",
+              "`session.scalars(stmt).all()`"
+            ],
+            [
+              "`s.scalar(stmt)`",
+              "Eén object of `None`.",
+              "`session.scalar(select(Product).where(Product.sku == 'A1'))`"
+            ],
+            [
+              "`s.get(Model, id)`",
+              "Ophalen op primary key.",
+              "`db.get(Note, note_id)`"
+            ],
+            [
+              "`s.add(obj)` / `s.add_all([...])`",
+              "Nieuwe objecten klaarzetten.",
+              "`session.add(note)`"
+            ],
+            [
+              "`s.commit()` / `s.rollback()`",
+              "Transactie vastleggen of terugdraaien.",
+              "`session.commit()`"
+            ],
+            [
+              "`s.flush()`",
+              "Stuurt wijzigingen al naar de database zonder commit, bijvoorbeeld om een id te krijgen.",
+              "`session.flush(); doc.id`"
+            ],
+            [
+              "`s.refresh(obj)`",
+              "Laadt gegenereerde waarden opnieuw in.",
+              "`db.refresh(note)`"
+            ],
+            [
+              "`s.delete(obj)`",
+              "Object verwijderen (na `commit`).",
+              "`db.delete(note)`"
+            ],
+            [
+              "`func.sum(...)`",
+              "SQL-functies zoals `SUM` en `COUNT`.",
+              "`select(func.sum(Product.stock))`"
+            ],
+            [
+              "`s.execute(text('...'))`",
+              "Ruwe SQL uitvoeren.",
+              "`db.execute(text('SELECT 1'))`"
+            ]
+          ]
+        },
+        {
+          "id": "alembic",
+          "title": "Alembic-commando's",
+          "intro": "Schemawijzigingen als versiebeheerde migraties.",
+          "section": "3.5",
+          "head": [
+            "Commando",
+            "Wat het doet",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`alembic init migrations`",
+              "Zet de migratiemap en `alembic.ini` op.",
+              "`alembic init migrations`"
+            ],
+            [
+              "`target_metadata`",
+              "In `env.py`: koppelt Alembic aan je modellen.",
+              "`target_metadata = Base.metadata`"
+            ],
+            [
+              "`alembic revision --autogenerate -m`",
+              "Vergelijkt modellen met de database en schrijft een migratie.",
+              "`alembic revision --autogenerate -m \"add priority\"`"
+            ],
+            [
+              "`alembic revision -m`",
+              "Lege migratie om zelf te vullen.",
+              "`alembic revision -m \"enable vector\"`"
+            ],
+            [
+              "`alembic upgrade head`",
+              "Voert alle openstaande migraties uit.",
+              "`alembic upgrade head`"
+            ],
+            [
+              "`alembic downgrade -1`",
+              "Draait de laatste migratie terug.",
+              "`alembic downgrade -1`"
+            ],
+            [
+              "`alembic history`",
+              "Lijst van alle migraties.",
+              "`alembic history`"
+            ],
+            [
+              "`alembic current`",
+              "Op welke versie de database nu staat.",
+              "`alembic current`"
+            ],
+            [
+              "Controleren",
+              "Autogenerate ziet een hernoeming als drop plus add; lees de migratie altijd na.",
+              "Model en migratie samen committen."
+            ]
+          ]
+        },
+        {
+          "id": "pgvector",
+          "title": "pgvector: vectoren in PostgreSQL",
+          "intro": "Embeddings opslaan en op betekenis zoeken in je eigen database.",
+          "section": "5.3",
+          "head": [
+            "Onderdeel",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`CREATE EXTENSION vector`",
+              "Zet pgvector aan (image `pgvector/pgvector:pg16`).",
+              "`CREATE EXTENSION IF NOT EXISTS vector;`"
+            ],
+            [
+              "`vector(n)`",
+              "Kolomtype met n dimensies.",
+              "`embedding vector(1536) NOT NULL`"
+            ],
+            [
+              "`<=>`",
+              "Cosine distance: kleiner is dichterbij.",
+              "`ORDER BY embedding <=> $1 LIMIT 5`"
+            ],
+            [
+              "`1 - (a <=> b)`",
+              "Cosine similarity: groter is meer gelijk.",
+              "`1 - (c.embedding <=> $1) AS similarity`"
+            ],
+            [
+              "`USING hnsw (... vector_cosine_ops)`",
+              "Index voor snel, benaderend zoeken op cosine.",
+              "`CREATE INDEX ON chunks USING hnsw (embedding vector_cosine_ops);`"
+            ],
+            [
+              "`Vector(n)`",
+              "Kolomtype in een SQLAlchemy-model.",
+              "`mapped_column(Vector(1536))`"
+            ],
+            [
+              "`.cosine_distance(v)`",
+              "Afstand in een SQLAlchemy-query.",
+              "`order_by(Chunk.embedding.cosine_distance(q)).limit(k)`"
+            ],
+            [
+              "Metadatafilter",
+              "Combineer vectorzoeken met een gewone `WHERE`.",
+              "`WHERE tenant_id = :tenant`"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "web",
+      "title": "HTTP & FastAPI",
+      "tables": [
+        {
+          "id": "http-methods",
+          "title": "HTTP-methodes",
+          "intro": "Welke methode je voor welke actie op een resource gebruikt.",
+          "section": "4.1",
+          "head": [
+            "Methode",
+            "Betekenis",
+            "Idempotent",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`GET`",
+              "Lezen, zonder bijwerkingen.",
+              "ja",
+              "`GET /notes/42`"
+            ],
+            [
+              "`POST`",
+              "Aanmaken of een actie starten.",
+              "nee",
+              "`POST /notes` met JSON-body"
+            ],
+            [
+              "`PUT`",
+              "Een resource helemaal vervangen.",
+              "ja",
+              "`PUT /notes/42`"
+            ],
+            [
+              "`PATCH`",
+              "Een resource gedeeltelijk bijwerken.",
+              "niet gegarandeerd",
+              "`PATCH /notes/42`"
+            ],
+            [
+              "`DELETE`",
+              "Verwijderen.",
+              "ja",
+              "`DELETE /notes/42`"
+            ],
+            [
+              "Query parameters",
+              "Filteren en pagineren na het `?`.",
+              "n.v.t.",
+              "`GET /orders?status=open&limit=20`"
+            ]
+          ]
+        },
+        {
+          "id": "status-codes",
+          "title": "HTTP-statuscodes",
+          "intro": "De codes die een API teruggeeft, en wanneer je welke gebruikt.",
+          "section": "4.1",
+          "head": [
+            "Code",
+            "Naam",
+            "Wanneer"
+          ],
+          "rows": [
+            [
+              "`200`",
+              "OK",
+              "Gelukt, met een body."
+            ],
+            [
+              "`201`",
+              "Created",
+              "Nieuwe resource aangemaakt (na `POST`)."
+            ],
+            [
+              "`204`",
+              "No Content",
+              "Gelukt, geen body (vaak na `DELETE`)."
+            ],
+            [
+              "`400`",
+              "Bad Request",
+              "Verzoek klopt niet."
+            ],
+            [
+              "`401`",
+              "Unauthorized",
+              "Niet ingelogd of token ongeldig: wie ben je?"
+            ],
+            [
+              "`403`",
+              "Forbidden",
+              "Ingelogd, maar dit mag je niet."
+            ],
+            [
+              "`404`",
+              "Not Found",
+              "Resource bestaat niet."
+            ],
+            [
+              "`422`",
+              "Unprocessable Entity",
+              "Validatie mislukt; FastAPI geeft dit bij foute invoer."
+            ],
+            [
+              "`429`",
+              "Too Many Requests",
+              "Rate limit bereikt."
+            ],
+            [
+              "`500`",
+              "Internal Server Error",
+              "Bug aan de serverkant."
+            ],
+            [
+              "`503`",
+              "Service Unavailable",
+              "Tijdelijk niet beschikbaar, bijvoorbeeld een afhankelijkheid ligt eruit."
+            ]
+          ]
+        },
+        {
+          "id": "http-headers",
+          "title": "HTTP-headers",
+          "intro": "Headers die in de training voorkomen.",
+          "section": "4.1",
+          "head": [
+            "Header",
+            "Richting",
+            "Doel"
+          ],
+          "rows": [
+            [
+              "`Content-Type`",
+              "beide",
+              "Formaat van de body, bijvoorbeeld `application/json`."
+            ],
+            [
+              "`Authorization: Bearer <token>`",
+              "request",
+              "Stuurt de JWT mee bij beveiligde routes."
+            ],
+            [
+              "`X-Request-ID`",
+              "beide",
+              "Uniek id om één verzoek in de logs terug te vinden."
+            ],
+            [
+              "`X-Total-Count`",
+              "response",
+              "Totaal aantal resultaten bij paging."
+            ],
+            [
+              "`X-Api-Key`",
+              "request",
+              "Eenvoudige API-sleutel bij sommige externe API's."
+            ],
+            [
+              "`text/event-stream`",
+              "response",
+              "Content-Type voor streaming met Server-Sent Events."
+            ]
+          ]
+        },
+        {
+          "id": "httpx",
+          "title": "httpx: API's aanroepen",
+          "intro": "HTTP-verzoeken doen vanuit Python, sync en async.",
+          "section": "4.1",
+          "head": [
+            "Onderdeel",
+            "Wat het doet",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`httpx.get(url, timeout=10)`",
+              "GET-verzoek met tijdslimiet.",
+              "`r = httpx.get(url, timeout=10)`"
+            ],
+            [
+              "`httpx.post(url, json=)`",
+              "POST met een JSON-body.",
+              "`httpx.post(url, json={'name': 'x'})`"
+            ],
+            [
+              "`headers=`",
+              "Eigen headers meesturen.",
+              "`headers={'X-Api-Key': '...'}`"
+            ],
+            [
+              "`r.status_code`",
+              "Statuscode van het antwoord.",
+              "`200`"
+            ],
+            [
+              "`r.headers[...]`",
+              "Een responseheader lezen.",
+              "`r.headers['content-type']`"
+            ],
+            [
+              "`r.json()`",
+              "Body als dict of list.",
+              "`data = r.json()`"
+            ],
+            [
+              "`r.raise_for_status()`",
+              "Gooit een fout bij een 4xx- of 5xx-code.",
+              "`r.raise_for_status()`"
+            ],
+            [
+              "`httpx.AsyncClient()`",
+              "Async client voor `async def`-code.",
+              "`async with httpx.AsyncClient() as c: await c.get(url)`"
+            ]
+          ]
+        },
+        {
+          "id": "fastapi-params",
+          "title": "FastAPI-parameters",
+          "intro": "Waar FastAPI een parameter vandaan haalt, afhankelijk van hoe je hem declareert.",
+          "section": "4.2",
+          "head": [
+            "Soort",
+            "Herkenning",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "Path parameter",
+              "Naam staat tussen `{}` in het pad.",
+              "`@app.get('/notes/{note_id}')` met `note_id: int`"
+            ],
+            [
+              "Query parameter",
+              "Enkelvoudig type, niet in het pad.",
+              "`tag: str | None = None`"
+            ],
+            [
+              "`Query(...)`",
+              "Query parameter met default en validatie.",
+              "`limit: int = Query(20, le=100)`"
+            ],
+            [
+              "Body",
+              "Parameter met een Pydantic-model als type.",
+              "`payload: NoteIn`"
+            ],
+            [
+              "`Depends(fn)`",
+              "Laat FastAPI een afhankelijkheid aanleveren.",
+              "`db: Session = Depends(get_db)`"
+            ],
+            [
+              "`dependencies=[...]`",
+              "Dependency die alleen draait, zonder waarde.",
+              "`@router.get('', dependencies=[Depends(rate_limit)])`"
+            ],
+            [
+              "`Request`",
+              "Het ruwe verzoek: client-IP, pad, headers.",
+              "`request.client.host`"
+            ],
+            [
+              "`BackgroundTasks`",
+              "Werk na het antwoord uitvoeren.",
+              "`tasks.add_task(send_mail, id)`"
+            ],
+            [
+              "`UploadFile`",
+              "Geüpload bestand.",
+              "`file: UploadFile`"
+            ],
+            [
+              "`OAuth2PasswordRequestForm`",
+              "Formulier met `username` en `password`.",
+              "`form: OAuth2PasswordRequestForm = Depends()`"
+            ]
+          ]
+        },
+        {
+          "id": "fastapi-blocks",
+          "title": "FastAPI-bouwstenen",
+          "intro": "De objecten en opties waarmee je een API opbouwt.",
+          "section": "4.2",
+          "head": [
+            "Onderdeel",
+            "Doel",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`FastAPI(title=, version=)`",
+              "De applicatie.",
+              "`app = FastAPI(title='Notes API')`"
+            ],
+            [
+              "`@app.get` / `.post` / `.patch` / `.delete`",
+              "Route koppelen aan methode en pad.",
+              "`@app.post('/notes')`"
+            ],
+            [
+              "`response_model=`",
+              "Bepaalt en filtert de vorm van het antwoord.",
+              "`response_model=list[NoteOut]`"
+            ],
+            [
+              "`status_code=`",
+              "Standaard statuscode van de route.",
+              "`status_code=201`"
+            ],
+            [
+              "`HTTPException`",
+              "Foutantwoord met code en melding.",
+              "`raise HTTPException(404, 'note not found')`"
+            ],
+            [
+              "`APIRouter(prefix=, tags=)`",
+              "Routes per resource groeperen.",
+              "`router = APIRouter(prefix='/notes')`"
+            ],
+            [
+              "`app.include_router()`",
+              "Router aan de app hangen.",
+              "`app.include_router(notes.router)`"
+            ],
+            [
+              "`@app.middleware('http')`",
+              "Code rond elk verzoek, bijvoorbeeld request-id.",
+              "`async def mw(request, call_next):`"
+            ],
+            [
+              "`app.dependency_overrides`",
+              "Dependency vervangen in tests.",
+              "`app.dependency_overrides[get_db] = fake_db`"
+            ],
+            [
+              "`TestClient(app)`",
+              "API testen zonder echte server.",
+              "`client.get('/notes/1').status_code`"
+            ],
+            [
+              "`StreamingResponse`",
+              "Antwoord in stukjes versturen.",
+              "`StreamingResponse(gen(), media_type='text/event-stream')`"
+            ],
+            [
+              "`JSONResponse`",
+              "JSON-antwoord met eigen statuscode.",
+              "`JSONResponse(checks, status_code=503)`"
+            ],
+            [
+              "`fastapi dev` / `fastapi run`",
+              "Dev-server met auto-reload, of productieserver.",
+              "`fastapi dev app/main.py`"
+            ],
+            [
+              "`/docs`",
+              "Automatisch gegenereerde Swagger UI.",
+              "`http://127.0.0.1:8000/docs`"
+            ]
+          ]
+        },
+        {
+          "id": "pydantic",
+          "title": "Pydantic: velden en validatie",
+          "intro": "Modellen die invoer valideren en uitvoer serialiseren.",
+          "section": "4.2",
+          "head": [
+            "Onderdeel",
+            "Wat het doet",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`class M(BaseModel)`",
+              "Model met getypeerde velden.",
+              "`class NoteIn(BaseModel):`"
+            ],
+            [
+              "Verplicht veld",
+              "Alleen een type, geen default.",
+              "`title: str`"
+            ],
+            [
+              "Default",
+              "Veld met standaardwaarde.",
+              "`body: str = ''`"
+            ],
+            [
+              "Optioneel",
+              "Mag ontbreken of `None` zijn.",
+              "`vat_number: str | None = None`"
+            ],
+            [
+              "`Field(min_length=, max_length=)`",
+              "Lengtegrenzen voor strings.",
+              "`title: str = Field(min_length=1, max_length=120)`"
+            ],
+            [
+              "`Field(ge=, le=)`",
+              "Grenzen voor getallen.",
+              "`urgency: int = Field(ge=1, le=5)`"
+            ],
+            [
+              "`EmailStr`",
+              "Controleert of het een e-mailadres is.",
+              "`email: EmailStr`"
+            ],
+            [
+              "`@field_validator('veld')`",
+              "Eigen controle of opschoning van één veld.",
+              "`v.strip()` en `ValueError` bij leeg"
+            ],
+            [
+              "`@model_validator`",
+              "Controle over meerdere velden samen.",
+              "`@model_validator(mode='after')`"
+            ],
+            [
+              "`M.model_validate(dict)`",
+              "Dict valideren tot model.",
+              "`Customer.model_validate(data)`"
+            ],
+            [
+              "`M.model_validate_json(str)`",
+              "JSON-string valideren tot model.",
+              "`Ticket.model_validate_json(raw)`"
+            ],
+            [
+              "`m.model_dump()`",
+              "Model naar dict.",
+              "`Note(**payload.model_dump())`"
+            ],
+            [
+              "`model_dump(exclude_unset=True)`",
+              "Alleen meegestuurde velden, voor `PATCH`.",
+              "`payload.model_dump(exclude_unset=True)`"
+            ],
+            [
+              "`m.model_dump_json()`",
+              "Model naar JSON-string.",
+              "`c.model_dump_json()`"
+            ],
+            [
+              "`M.model_json_schema()`",
+              "JSON Schema van het model, bijvoorbeeld voor een prompt.",
+              "`Ticket.model_json_schema()`"
+            ],
+            [
+              "`ConfigDict(from_attributes=True)`",
+              "Model vullen vanuit een ORM-object.",
+              "`model_config = ConfigDict(from_attributes=True)`"
+            ]
+          ]
+        },
+        {
+          "id": "pydantic-models",
+          "title": "In-, uit- en update-modellen",
+          "intro": "Waarom je per richting een apart Pydantic-model maakt.",
+          "section": "4.2",
+          "head": [
+            "Model",
+            "Rol",
+            "Kenmerk"
+          ],
+          "rows": [
+            [
+              "`NoteIn`",
+              "Wat de client stuurt bij aanmaken.",
+              "Geen `id` of tijdstempels."
+            ],
+            [
+              "`NoteOut`",
+              "Wat de API teruggeeft.",
+              "Wel `id` en `created_at`; nooit wachtwoord-hashes."
+            ],
+            [
+              "`NoteUpdate`",
+              "Gedeeltelijke wijziging via `PATCH`.",
+              "Alle velden optioneel."
+            ],
+            [
+              "`ValidationError`",
+              "Fout als data niet past.",
+              "FastAPI maakt er automatisch een 422 van."
+            ],
+            [
+              "`BaseSettings`",
+              "Configuratie uit omgevingsvariabelen en `.env`.",
+              "Uit het pakket `pydantic-settings`."
+            ]
+          ]
+        },
+        {
+          "id": "jwt",
+          "title": "JWT-onderdelen",
+          "intro": "Waaruit een JSON Web Token bestaat en hoe je het gebruikt.",
+          "section": "4.4",
+          "head": [
+            "Onderdeel",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "Structuur",
+              "Drie base64url-delen gescheiden door punten.",
+              "`header.payload.signature`"
+            ],
+            [
+              "Header",
+              "Type token en algoritme.",
+              "`{\"alg\": \"HS256\", \"typ\": \"JWT\"}`"
+            ],
+            [
+              "Payload (claims)",
+              "De gegevens; leesbaar voor iedereen, dus geen geheimen erin.",
+              "`{\"sub\": \"7\", \"exp\": ...}`"
+            ],
+            [
+              "`sub`",
+              "Subject: over wie het token gaat.",
+              "`\"sub\": str(user.id)`"
+            ],
+            [
+              "`exp`",
+              "Verloopmoment; daarna is het token ongeldig.",
+              "`now + timedelta(minutes=60)`"
+            ],
+            [
+              "Signature",
+              "Handtekening over header en payload met het geheim.",
+              "verandert iets, dan klopt hij niet meer"
+            ],
+            [
+              "`HS256`",
+              "Ondertekening met één gedeeld geheim.",
+              "`algorithm='HS256'`"
+            ],
+            [
+              "Secret",
+              "Lang, willekeurig geheim in `.env`.",
+              "`openssl rand -hex 32`"
+            ],
+            [
+              "`jwt.encode` / `jwt.decode`",
+              "Token maken of controleren (PyJWT).",
+              "`jwt.decode(t, secret, algorithms=['HS256'])`"
+            ],
+            [
+              "`jwt.PyJWTError`",
+              "Fout bij vervalst of verlopen token.",
+              "omzetten naar `401`"
+            ],
+            [
+              "Bearer",
+              "Zo stuurt de client het token mee.",
+              "`Authorization: Bearer <token>`"
+            ]
+          ]
+        },
+        {
+          "id": "auth",
+          "title": "Authenticatie in FastAPI",
+          "intro": "De onderdelen van inloggen en beveiligde routes.",
+          "section": "4.4",
+          "head": [
+            "Onderdeel",
+            "Doel",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "bcrypt-hash",
+              "Wachtwoord nooit als platte tekst opslaan.",
+              "`pwd.hash(p)` via passlib"
+            ],
+            [
+              "`verify_password`",
+              "Ingevoerd wachtwoord tegen de hash controleren.",
+              "`pwd.verify(p, hashed)`"
+            ],
+            [
+              "`POST /auth/token`",
+              "Inloggen; geeft een access token terug.",
+              "`{'access_token': ..., 'token_type': 'bearer'}`"
+            ],
+            [
+              "`OAuth2PasswordBearer`",
+              "Haalt het token uit de header; zet de Authorize-knop in `/docs`.",
+              "`OAuth2PasswordBearer(tokenUrl='/auth/token')`"
+            ],
+            [
+              "`current_user`",
+              "Dependency die het token decodeert en de gebruiker ophaalt.",
+              "`user: User = Depends(current_user)`"
+            ],
+            [
+              "Eigendomscontrole",
+              "Alleen eigen data tonen of wijzigen.",
+              "`if note.owner_id != user.id: 403`"
+            ],
+            [
+              "`401` vs `403`",
+              "Wie ben je? tegenover: dat mag je niet.",
+              "token fout: 401, andermans note: 403"
+            ]
+          ]
+        },
+        {
+          "id": "redis-cmd",
+          "title": "Redis-commando's",
+          "intro": "Commando's voor `redis-cli`; de Python-client heeft methodes met dezelfde namen.",
+          "section": "4.5",
+          "head": [
+            "Commando",
+            "Wat het doet",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`SET key waarde EX s`",
+              "Waarde opslaan, met verlooptijd in seconden.",
+              "`SET greeting \"hi\" EX 60`"
+            ],
+            [
+              "`GET key`",
+              "Waarde ophalen; `nil` als hij er niet is.",
+              "`GET greeting`"
+            ],
+            [
+              "`DEL key`",
+              "Key verwijderen, bijvoorbeeld cache ongeldig maken.",
+              "`DEL stats:notes`"
+            ],
+            [
+              "`INCR key`",
+              "Teller met 1 verhogen (begint bij 0).",
+              "`INCR api:calls:user:7`"
+            ],
+            [
+              "`EXPIRE key s`",
+              "Verlooptijd (TTL) zetten.",
+              "`EXPIRE rl:1.2.3.4 60`"
+            ],
+            [
+              "`TTL key`",
+              "Resterende levensduur in seconden.",
+              "`TTL greeting`"
+            ],
+            [
+              "`LPUSH key waarde`",
+              "Links aan een list toevoegen (wachtrij in).",
+              "`LPUSH jobs '{\"type\":\"email\"}'`"
+            ],
+            [
+              "`RPOP key`",
+              "Rechts eruit halen (wachtrij uit).",
+              "`RPOP jobs`"
+            ],
+            [
+              "`BRPOP key timeout`",
+              "Zoals `RPOP`, maar wacht tot er iets is; 0 is eindeloos.",
+              "`BRPOP jobs 0`"
+            ],
+            [
+              "`HSET key veld waarde`",
+              "Velden in een hash zetten.",
+              "`HSET user:7 name \"Aisha\"`"
+            ],
+            [
+              "`HGETALL key`",
+              "Alle velden van een hash.",
+              "`HGETALL user:7`"
+            ],
+            [
+              "`KEYS patroon`",
+              "Alle keys zoeken; blokkeert, dus niet in productie.",
+              "`KEYS *`"
+            ],
+            [
+              "`SCAN cursor`",
+              "Keys stapsgewijs doorlopen, wel productieveilig.",
+              "`SCAN 0 MATCH conv:*`"
+            ],
+            [
+              "`PING`",
+              "Leeft de server? Antwoord `PONG`.",
+              "`PING`"
+            ]
+          ]
+        },
+        {
+          "id": "redis-types",
+          "title": "Redis-datatypes en toepassingen",
+          "intro": "Welk Redis-type je waarvoor gebruikt.",
+          "section": "4.5",
+          "head": [
+            "Type",
+            "Geschikt voor",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "String",
+              "Losse waarden, JSON-cache, tellers.",
+              "`SET`, `GET`, `INCR`"
+            ],
+            [
+              "Hash",
+              "Kleine objecten met velden.",
+              "`HSET export:42 status done`"
+            ],
+            [
+              "List",
+              "Wachtrijen voor achtergrondtaken.",
+              "`LPUSH` plus `BRPOP`"
+            ],
+            [
+              "Set / sorted set",
+              "Uniciteit, ranglijsten, tijdgeordende ids.",
+              "`SADD`, `ZADD`"
+            ],
+            [
+              "Pub/sub en streams",
+              "Berichten tussen processen.",
+              "`PUBLISH`, `XADD`"
+            ],
+            [
+              "TTL",
+              "Data die vanzelf verdwijnt: cache, sessies, gesprekken.",
+              "`ex=3600`"
+            ]
+          ]
+        },
+        {
+          "id": "redis-py",
+          "title": "Redis vanuit Python",
+          "intro": "De async-client in FastAPI-code gebruiken.",
+          "section": "4.5",
+          "head": [
+            "Aanroep",
+            "Doel",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`Redis.from_url(url, decode_responses=True)`",
+              "Client maken die strings teruggeeft in plaats van bytes.",
+              "`from redis.asyncio import Redis`"
+            ],
+            [
+              "`await redis.get(key)`",
+              "Cache lezen.",
+              "`if (hit := await redis.get(k)) is not None:`"
+            ],
+            [
+              "`await redis.set(key, v, ex=ttl)`",
+              "Cache schrijven met TTL.",
+              "`await redis.set(k, json.dumps(v), ex=60)`"
+            ],
+            [
+              "`await redis.delete(key)`",
+              "Cache ongeldig maken na een wijziging.",
+              "`await redis.delete('stats:notes')`"
+            ],
+            [
+              "`await redis.incr` + `expire`",
+              "Rate-limitteller per tijdvenster.",
+              "bij `count == 1` de `expire` zetten"
+            ],
+            [
+              "`await redis.lpush(q, job)`",
+              "Taak in de wachtrij zetten.",
+              "`await redis.lpush('jobs', json.dumps(job))`"
+            ],
+            [
+              "`r.brpop(q)`",
+              "Worker wacht op de volgende taak (sync client).",
+              "`_, raw = r.brpop('jobs')`"
+            ],
+            [
+              "`await redis.ping()`",
+              "Gezondheidscheck.",
+              "`checks['redis'] = 'ok'`"
+            ]
+          ]
+        },
+        {
+          "id": "async-rules",
+          "title": "def of async def?",
+          "intro": "Welke route-stijl je kiest in FastAPI.",
+          "section": "4.3",
+          "head": [
+            "Situatie",
+            "Kies",
+            "Waarom"
+          ],
+          "rows": [
+            [
+              "Sync SQLAlchemy-code",
+              "`def`",
+              "FastAPI draait hem in een threadpool."
+            ],
+            [
+              "Externe API, LLM of Redis (async client)",
+              "`async def`",
+              "Tijdens het wachten kan de server andere verzoeken doen."
+            ],
+            [
+              "`await`",
+              "alleen in `async def`",
+              "Wacht op een async bewerking zonder te blokkeren."
+            ],
+            [
+              "`time.sleep` of `requests.get` in `async def`",
+              "nooit",
+              "Blokkeert de hele event loop."
+            ],
+            [
+              "Meerdere onafhankelijke calls",
+              "`asyncio.gather`",
+              "Ze lopen tegelijk in plaats van na elkaar."
+            ],
+            [
+              "Script starten",
+              "`asyncio.run(main())`",
+              "Start de event loop vanuit gewone code."
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ai",
+      "title": "LLM's & RAG",
+      "tables": [
+        {
+          "id": "llm-terms",
+          "title": "Begrippen bij LLM-calls",
+          "intro": "De woorden die je bij elke aanroep van een taalmodel tegenkomt.",
+          "section": "5.1",
+          "head": [
+            "Begrip",
+            "Betekenis",
+            "In de praktijk"
+          ],
+          "rows": [
+            [
+              "Token",
+              "Stukje tekst waarin het model rekent, vaak een deel van een woord.",
+              "Kosten en limieten tellen in tokens."
+            ],
+            [
+              "Context window",
+              "Maximale hoeveelheid tokens die het model in één keer ziet.",
+              "Lange documenten opdelen of retrieven."
+            ],
+            [
+              "Temperature",
+              "Hoe willekeurig het model kiest.",
+              "`0` voor extractie en classificatie, hoger voor creatief werk."
+            ],
+            [
+              "`max_tokens`",
+              "Bovengrens voor de lengte van het antwoord.",
+              "Altijd zetten, beschermt je budget."
+            ],
+            [
+              "System prompt",
+              "Rol, doel en regels voor het model.",
+              "`system='You are a concise assistant.'`"
+            ],
+            [
+              "Stateless",
+              "Het model onthoudt niets tussen calls.",
+              "Stuur de geschiedenis telkens mee."
+            ],
+            [
+              "Hallucinatie",
+              "Vloeiend, zelfverzekerd maar onjuist antwoord.",
+              "Grond in bronnen, vraag citaten, valideer."
+            ],
+            [
+              "`usage`",
+              "Aantal input- en outputtokens van een call.",
+              "`response.usage.input_tokens`"
+            ],
+            [
+              "Kosten",
+              "Input- en outputtokens maal hun prijs.",
+              "Log per call."
+            ],
+            [
+              "Modelnaam in config",
+              "Modellen worden vaak vervangen.",
+              "`settings.llm_model`, niet hardcoded"
+            ],
+            [
+              "Tokenizer",
+              "Telt tokens vooraf.",
+              "`tiktoken.get_encoding('cl100k_base')`"
+            ]
+          ]
+        },
+        {
+          "id": "llm-roles",
+          "title": "Rollen en berichtvelden",
+          "intro": "De opbouw van de `messages`-lijst die je naar een chatmodel stuurt.",
+          "section": "5.1",
+          "head": [
+            "Rol of veld",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`system`",
+              "Instructies voor het hele gesprek (bij Anthropic een apart argument).",
+              "`system='Antwoord in het Nederlands.'`"
+            ],
+            [
+              "`user`",
+              "Bericht van de gebruiker, of tool-resultaten terug naar het model.",
+              "`{'role': 'user', 'content': vraag}`"
+            ],
+            [
+              "`assistant`",
+              "Eerder antwoord van het model.",
+              "`{'role': 'assistant', 'content': resp.content}`"
+            ],
+            [
+              "`tool_use`",
+              "Blok waarin het model een tool wil aanroepen.",
+              "`block.name`, `block.input`, `block.id`"
+            ],
+            [
+              "`tool_result`",
+              "Jouw antwoord op die tool-aanroep.",
+              "`{'type': 'tool_result', 'tool_use_id': block.id, 'content': ...}`"
+            ],
+            [
+              "`stop_reason`",
+              "Waarom het model stopte.",
+              "`'tool_use'` betekent: voer een tool uit"
+            ],
+            [
+              "Antwoordtekst",
+              "Waar de tekst in het antwoord staat.",
+              "`response.content[0].text`"
+            ],
+            [
+              "OpenAI-vorm",
+              "Vergelijkbare vorm bij andere aanbieders.",
+              "`response.choices[0].message.content`"
+            ]
+          ]
+        },
+        {
+          "id": "prompting",
+          "title": "Prompttechnieken",
+          "intro": "De technieken die het meeste verschil maken.",
+          "section": "5.1",
+          "head": [
+            "Techniek",
+            "Wat je doet",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "Rol en doel",
+              "Zeg in de system prompt wie het model is en waarvoor.",
+              "support-assistent die alleen over roosters praat"
+            ],
+            [
+              "Formaat vastleggen",
+              "Taal, lengte en wat te doen bij onwetendheid.",
+              "max. drie zinnen; zeg het als je het niet weet"
+            ],
+            [
+              "Afgebakende blokken",
+              "Data in tags zetten, gescheiden van instructies.",
+              "`<document>...</document>`"
+            ],
+            [
+              "Few-shot",
+              "Twee of drie voorbeelden van invoer en uitvoer.",
+              "voorbeeldmail met de bijbehorende JSON"
+            ],
+            [
+              "Eerst redeneren",
+              "Bij moeilijke taken: denkstappen, dan het antwoord.",
+              "`<thinking>` en `<answer>`"
+            ],
+            [
+              "Begrenzen en valideren",
+              "Laat JSON beloven en controleer het in code.",
+              "Pydantic-validatie"
+            ],
+            [
+              "Testset",
+              "Vaste vragen opnieuw draaien na elke promptwijziging.",
+              "20 echte vragen met verwachte antwoorden"
+            ]
+          ]
+        },
+        {
+          "id": "structured-output",
+          "title": "Structured output",
+          "intro": "Het model een vast JSON-formaat laten teruggeven en dat afdwingen.",
+          "section": "5.2",
+          "head": [
+            "Stap",
+            "Wat je doet",
+            "Hulpmiddel"
+          ],
+          "rows": [
+            [
+              "1. Schema",
+              "Beschrijf de gewenste vorm als Pydantic-model.",
+              "`class Ticket(BaseModel): ...`"
+            ],
+            [
+              "2. Schema in prompt",
+              "Zet het JSON Schema in de system prompt; vraag alleen JSON.",
+              "`Ticket.model_json_schema()`"
+            ],
+            [
+              "3. Temperatuur laag",
+              "Voorspelbare uitvoer.",
+              "`temperature=0`"
+            ],
+            [
+              "4. Opschonen",
+              "Eventuele code fences rond de JSON weghalen.",
+              "`strip()` en `removeprefix('json')`"
+            ],
+            [
+              "5. Valideren",
+              "JSON omzetten naar het model.",
+              "`Ticket.model_validate_json(raw)`"
+            ],
+            [
+              "6. Retry",
+              "Bij `ValidationError` de fout terugsturen en opnieuw vragen.",
+              "maximaal een paar pogingen"
+            ],
+            [
+              "7. Opgeven",
+              "Na de laatste poging een duidelijke fout.",
+              "`raise RuntimeError(...)`"
+            ],
+            [
+              "Alternatief",
+              "Native JSON-modi of een library die de retry doet.",
+              "instructor"
+            ]
+          ]
+        },
+        {
+          "id": "tool-calling",
+          "title": "Tool calling",
+          "intro": "Het model laat jouw code een functie uitvoeren.",
+          "section": "5.2",
+          "head": [
+            "Onderdeel",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`name`",
+              "Naam van de tool.",
+              "`'get_work_orders'`"
+            ],
+            [
+              "`description`",
+              "Wat de tool doet; het model kiest op basis hiervan.",
+              "`'Zoek werkorders van een klant.'`"
+            ],
+            [
+              "`input_schema`",
+              "JSON Schema van de argumenten.",
+              "`{'type': 'object', 'properties': {...}}`"
+            ],
+            [
+              "`required`",
+              "Verplichte argumenten.",
+              "`['customer_name']`"
+            ],
+            [
+              "`enum`",
+              "Toegestane waarden.",
+              "`['planned', 'in_progress', 'done']`"
+            ],
+            [
+              "`tools=`",
+              "Toollijst meegeven aan de call.",
+              "`client.messages.create(..., tools=TOOLS)`"
+            ],
+            [
+              "Handler-dict",
+              "Koppelt toolnaam aan Python-functie.",
+              "`HANDLERS[block.name](**block.input)`"
+            ],
+            [
+              "Valideren",
+              "Argumenten van het model eerst met Pydantic controleren.",
+              "`ToolArgs.model_validate(block.input)`"
+            ],
+            [
+              "Loop",
+              "Herhaal tot `stop_reason` niet meer `'tool_use'` is.",
+              "`while True:`"
+            ],
+            [
+              "Bijwerkingen",
+              "Tools die iets veranderen alleen met bevestiging.",
+              "voorstel teruggeven, pas bij `confirm=true` uitvoeren"
+            ]
+          ]
+        },
+        {
+          "id": "agent-patterns",
+          "title": "Agent-patronen",
+          "intro": "Manieren om LLM's in een programma te organiseren, van eenvoudig naar complex.",
+          "section": "6.1",
+          "head": [
+            "Patroon",
+            "Werking",
+            "Wanneer"
+          ],
+          "rows": [
+            [
+              "Eén agent met tools",
+              "Eén system prompt, enkele tools, een stappenlimiet.",
+              "Het meeste klantwerk."
+            ],
+            [
+              "Workflow / pipeline",
+              "Vaste stappen, met een LLM in sommige stappen.",
+              "Als de stappen vooraf bekend zijn; goedkoop en testbaar."
+            ],
+            [
+              "Router",
+              "Goedkoop model kiest welke gespecialiseerde prompt het afhandelt.",
+              "Verschillende soorten vragen."
+            ],
+            [
+              "Orchestrator + workers",
+              "Eén agent plant en delegeert aan anderen.",
+              "Alleen als echt plannen nodig is; duur."
+            ],
+            [
+              "Human in the loop",
+              "Acties met gevolgen eerst door een mens laten bevestigen.",
+              "Altijd bij versturen, boeken, betalen, verwijderen."
+            ]
+          ]
+        },
+        {
+          "id": "agent-checklist",
+          "title": "Checklist voor een agent-loop",
+          "intro": "Wat elke agent in productie nodig heeft.",
+          "section": "6.1",
+          "head": [
+            "Maatregel",
+            "Waarom",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "Stappenlimiet",
+              "Voorkomt eindeloze loops.",
+              "`MAX_STEPS = 8`"
+            ],
+            [
+              "Tokenbudget",
+              "Begrenst de kosten.",
+              "dagbudget per gebruiker in Redis"
+            ],
+            [
+              "Pydantic op tool-input",
+              "Model-uitvoer is onbetrouwbare invoer.",
+              "schema per tool"
+            ],
+            [
+              "Identiteit uit je code",
+              "Het model mag niet bepalen wie de gebruiker is.",
+              "`handler(**args, user_id=user_id)`"
+            ],
+            [
+              "Toolfouten terug naar het model",
+              "Zo kan het zich herstellen.",
+              "`{'error': str(exc)}`"
+            ],
+            [
+              "Volledige trace",
+              "Elk bericht en elke toolcall terug te halen.",
+              "opgeslagen onder een request-id"
+            ],
+            [
+              "Evalset",
+              "Meerstapstaken testen.",
+              "aparte evals-map"
+            ]
+          ]
+        },
+        {
+          "id": "rag-pipeline",
+          "title": "De RAG-pijplijn in stappen",
+          "intro": "Retrieval-Augmented Generation: antwoorden uit je eigen documenten.",
+          "section": "5.3",
+          "head": [
+            "Stap",
+            "Fase",
+            "Wat er gebeurt",
+            "Hulpmiddel"
+          ],
+          "rows": [
+            [
+              "1",
+              "Index",
+              "Tekst uit PDF of document halen.",
+              "pypdf, pymupdf, python-docx"
+            ],
+            [
+              "2",
+              "Index",
+              "Tekst opdelen in chunks met overlap.",
+              "`chunk_text(text, size=800, overlap=150)`"
+            ],
+            [
+              "3",
+              "Index",
+              "Elke chunk omzetten naar een embedding, in batches.",
+              "`embed(pieces)`"
+            ],
+            [
+              "4",
+              "Index",
+              "Chunks met vector en metadata opslaan.",
+              "pgvector-tabel `chunks`"
+            ],
+            [
+              "5",
+              "Retrieve",
+              "De vraag zelf ook embedden.",
+              "`embed([vraag])[0]`"
+            ],
+            [
+              "6",
+              "Retrieve",
+              "Dichtstbijzijnde chunks zoeken (top-k).",
+              "`ORDER BY embedding <=> q LIMIT 5`"
+            ],
+            [
+              "7",
+              "Generate",
+              "Chunks in afgebakende blokken in de prompt zetten.",
+              "`<chunk id=\"12\">...</chunk>`"
+            ],
+            [
+              "8",
+              "Generate",
+              "Model laten antwoorden alleen uit die chunks, met citaten.",
+              "`temperature=0`"
+            ],
+            [
+              "9",
+              "Generate",
+              "Antwoord plus bronnen teruggeven; bij te weinig context: weet ik niet.",
+              "`{'answer': ..., 'sources': [...]}`"
+            ]
+          ]
+        },
+        {
+          "id": "embeddings",
+          "title": "Embeddings en chunking",
+          "intro": "Begrippen rond betekenis als getallen.",
+          "section": "5.3",
+          "head": [
+            "Begrip",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "Embedding",
+              "Lijst floats die de betekenis van een tekst weergeeft.",
+              "1536 getallen"
+            ],
+            [
+              "Cosine similarity",
+              "Hoe gelijk twee vectoren van richting zijn (dichter bij 1 = meer gelijk).",
+              "zelfde betekenis in een andere taal scoort hoog"
+            ],
+            [
+              "Chunk",
+              "Stuk tekst dat apart geïndexeerd wordt.",
+              "ca. 800 tekens"
+            ],
+            [
+              "Overlap",
+              "Chunks delen een stukje tekst zodat zinnen op de grens niet verloren gaan.",
+              "150 tekens"
+            ],
+            [
+              "Structuurbewust chunken",
+              "Knippen op koppen, alinea's of pagina's.",
+              "paginanummer als metadata"
+            ],
+            [
+              "Metadata",
+              "Extra velden voor citaten en filters.",
+              "document, pagina, sectie, tenant"
+            ],
+            [
+              "Batch embedden",
+              "Meerdere chunks in één API-call.",
+              "minder overhead en kosten"
+            ]
+          ]
+        },
+        {
+          "id": "rag-improve",
+          "title": "RAG verbeteren",
+          "intro": "Technieken die je op projecten tegenkomt als basis-RAG niet genoeg is.",
+          "section": "5.3",
+          "head": [
+            "Techniek",
+            "Idee",
+            "Effect"
+          ],
+          "rows": [
+            [
+              "Hybrid search",
+              "Vectorzoeken combineren met full-text search (`tsvector`).",
+              "Vindt ook exacte termen en codes."
+            ],
+            [
+              "Reciprocal rank fusion",
+              "Ranglijsten van meerdere zoekmethodes samenvoegen.",
+              "Eén gecombineerde top-k."
+            ],
+            [
+              "Re-ranking",
+              "Top 20 opnieuw sorteren met een cross-encoder of extra LLM-call.",
+              "Betere top-5."
+            ],
+            [
+              "Metadatafilter",
+              "`WHERE` op klant of document.",
+              "Geen data van andere klanten in de context."
+            ],
+            [
+              "Query rewriting",
+              "Model maakt van een kletsvraag een zoekvraag.",
+              "Betere retrieval."
+            ]
+          ]
+        },
+        {
+          "id": "streaming",
+          "title": "Streaming en Server-Sent Events",
+          "intro": "Tokens doorsturen terwijl het model nog schrijft.",
+          "section": "5.4",
+          "head": [
+            "Onderdeel",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "Async generator",
+              "Levert stukjes tekst zodra ze binnenkomen.",
+              "`async for text in stream.text_stream: yield ...`"
+            ],
+            [
+              "SSE-frame",
+              "Elk stukje begint met `data:` en eindigt met een lege regel.",
+              "`f'data: {json.dumps(d)}\\n\\n'`"
+            ],
+            [
+              "Eindsignaal",
+              "Laat de client weten dat het klaar is.",
+              "`data: [DONE]`"
+            ],
+            [
+              "`StreamingResponse`",
+              "FastAPI-antwoord dat de generator doorstuurt.",
+              "`media_type='text/event-stream'`"
+            ],
+            [
+              "`curl -N`",
+              "Streaming testen zonder buffering.",
+              "`curl -N -X POST .../chat/stream`"
+            ],
+            [
+              "Geschiedenis bijwerken",
+              "Na afloop het volledige antwoord opslaan.",
+              "deltas verzamelen in de generator"
+            ]
+          ]
+        },
+        {
+          "id": "llm-prod",
+          "title": "LLM-service productierijp maken",
+          "intro": "Maatregelen rond elke LLM-call in een API.",
+          "section": "5.4",
+          "head": [
+            "Onderwerp",
+            "Maatregel",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "Timeouts en retries",
+              "Tijdslimiet zetten, fouten netjes afhandelen.",
+              "`RateLimitError` wordt een `503`"
+            ],
+            [
+              "Caching",
+              "Zelfde prompt plus zelfde chunks geeft zelfde antwoord.",
+              "Redis-key op hash van de prompt, met TTL"
+            ],
+            [
+              "Concurrency",
+              "Onafhankelijke calls tegelijk uitvoeren.",
+              "`asyncio.gather(classify(), embed())`"
+            ],
+            [
+              "Guard-rails",
+              "Invoerlengte begrenzen, documenttekst als data behandelen.",
+              "verdedigen tegen prompt injection"
+            ],
+            [
+              "Kostenbeheer",
+              "`max_tokens`, korte prompts, goedkoper model voor eenvoudige taken.",
+              "dagbudget per gebruiker"
+            ],
+            [
+              "Gesprekstoestand",
+              "Geschiedenis per gesprek opslaan, nooit gebruikers mengen.",
+              "Redis met `ex=3600`"
+            ]
+          ]
+        },
+        {
+          "id": "eval-metrics",
+          "title": "Evaluatie-metrics",
+          "intro": "Wat je meet om te weten of een AI-feature werkt.",
+          "section": "5.5",
+          "head": [
+            "Laag",
+            "Metric",
+            "Hoe meet je het"
+          ],
+          "rows": [
+            [
+              "Retrieval",
+              "recall@k: zit de juiste chunk in de top k?",
+              "Vragen labelen met hun bron-chunk."
+            ],
+            [
+              "Generatie",
+              "Correctheid",
+              "Bevat het antwoord de verwachte feiten?"
+            ],
+            [
+              "Generatie",
+              "Groundedness",
+              "Komt alles uit de opgehaalde bronnen?"
+            ],
+            [
+              "Generatie",
+              "Toon",
+              "Rubric, gescoord door een mens of een judge-LLM."
+            ],
+            [
+              "Structured output",
+              "Schema-valid rate",
+              "Hoe vaak valideert de JSON?"
+            ],
+            [
+              "Structured output",
+              "Field accuracy",
+              "Vergelijken met handmatig gelabelde JSON."
+            ],
+            [
+              "Systeem",
+              "Latency p50 / p95",
+              "Mediaan en traagste 5 procent, uit de logs."
+            ],
+            [
+              "Systeem",
+              "Tokens en kosten per request",
+              "Usage per call loggen."
+            ],
+            [
+              "Systeem",
+              "Error rate",
+              "Aandeel mislukte calls."
+            ],
+            [
+              "Onbeantwoordbaar",
+              "Zegt het model eerlijk dat het het niet weet?",
+              "Vragen zonder antwoord in de evalset."
+            ]
+          ]
+        },
+        {
+          "id": "llm-logging",
+          "title": "Velden in een LLM-logrecord",
+          "intro": "Eén gestructureerd record per call, zodat je elk antwoord kunt naspelen.",
+          "section": "5.5",
+          "head": [
+            "Veld",
+            "Inhoud",
+            "Waarom"
+          ],
+          "rows": [
+            [
+              "`request_id`",
+              "Id van het HTTP-verzoek.",
+              "Alles van één verzoek terugvinden."
+            ],
+            [
+              "`user_id`",
+              "Wie de vraag stelde.",
+              "Budget en misbruik per gebruiker."
+            ],
+            [
+              "`model`",
+              "Gebruikte modelnaam.",
+              "Uitkomsten vergelijken tussen modellen."
+            ],
+            [
+              "`prompt_version`",
+              "Versie van de prompt uit Git.",
+              "Weten welke prompt een antwoord gaf."
+            ],
+            [
+              "`input_tokens` / `output_tokens`",
+              "Tokengebruik.",
+              "Kosten berekenen."
+            ],
+            [
+              "`latency_ms`",
+              "Duur van de call.",
+              "p50/p95 bepalen."
+            ],
+            [
+              "`retrieved_chunk_ids`",
+              "Welke chunks in de context zaten.",
+              "Precies zien wat het model zag."
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "prod",
+      "title": "Productie",
+      "tables": [
+        {
+          "id": "log-levels",
+          "title": "Logging-levels",
+          "intro": "Kies het level dat past bij de ernst van wat er gebeurt.",
+          "section": "6.2",
+          "head": [
+            "Level",
+            "Wanneer",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`DEBUG`",
+              "Details die alleen tijdens ontwikkelen nuttig zijn.",
+              "`log.debug('query klaar in 12 ms')`"
+            ],
+            [
+              "`INFO`",
+              "Normale bedrijfsgebeurtenissen.",
+              "`log.info('order completed')`"
+            ],
+            [
+              "`WARNING`",
+              "Iets ging mis, maar herstelbaar.",
+              "`log.warning('retrying LLM call')`"
+            ],
+            [
+              "`ERROR`",
+              "Een verzoek of taak is mislukt.",
+              "`log.error('export failed')`"
+            ],
+            [
+              "`CRITICAL`",
+              "De service kan niet verder.",
+              "`log.critical('database onbereikbaar')`"
+            ],
+            [
+              "`log.exception()`",
+              "Als `ERROR`, plus traceback; alleen in een `except`-blok.",
+              "`log.exception('embedding failed')`"
+            ]
+          ]
+        },
+        {
+          "id": "logging-setup",
+          "title": "Logging inrichten",
+          "intro": "Gestructureerde JSON-logs met een request-id.",
+          "section": "6.2",
+          "head": [
+            "Onderdeel",
+            "Doel",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`logging.getLogger(__name__)`",
+              "Logger per module.",
+              "`log = logging.getLogger(__name__)`"
+            ],
+            [
+              "`logging.basicConfig(level=, handlers=)`",
+              "Eenmalig bij het opstarten configureren.",
+              "`basicConfig(level='INFO', handlers=[h])`"
+            ],
+            [
+              "`StreamHandler(sys.stdout)`",
+              "Logs naar stdout; Docker vangt ze op.",
+              "`logging.StreamHandler(sys.stdout)`"
+            ],
+            [
+              "Eigen `Formatter`",
+              "Elk record als één JSON-regel.",
+              "`class JsonFormatter(logging.Formatter):`"
+            ],
+            [
+              "`extra=`",
+              "Extra velden meegeven.",
+              "`log.info('note created', extra={'note_id': 42})`"
+            ],
+            [
+              "`ContextVar`",
+              "Request-id per verzoek, ook in async code.",
+              "`request_id_var.set(rid)`"
+            ],
+            [
+              "Middleware",
+              "Geeft elk verzoek een id en zet hem in de response.",
+              "header `X-Request-ID`"
+            ],
+            [
+              "Nooit loggen",
+              "Wachtwoorden, tokens, API-keys, prompts met persoonsgegevens.",
+              "Maskeer of laat weg."
+            ],
+            [
+              "Geen `print`",
+              "In een service altijd via logging.",
+              "`log.info(...)`"
+            ]
+          ]
+        },
+        {
+          "id": "config-env",
+          "title": "Configuratie via omgevingsvariabelen",
+          "intro": "Eén codebase, meerdere omgevingen, alleen verschillend in configuratie.",
+          "section": "6.2",
+          "head": [
+            "Onderdeel",
+            "Rol",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "Omgevingsvariabele",
+              "Enige bron van configuratie (12-factor).",
+              "`DATABASE_URL`, `REDIS_URL`, `JWT_SECRET`"
+            ],
+            [
+              "`.env`",
+              "Lokale waarden; nooit committen.",
+              "`DATABASE_URL=postgresql://app:secret@localhost:5432/notes`"
+            ],
+            [
+              "`.env.example`",
+              "In Git, met nepwaarden: welke variabelen nodig zijn.",
+              "`JWT_SECRET=change-me`"
+            ],
+            [
+              "`BaseSettings`",
+              "Valideert alle settings bij het opstarten.",
+              "ontbrekende `jwt_secret` faalt direct"
+            ],
+            [
+              "`model_config = {'env_file': '.env'}`",
+              "Laat `pydantic-settings` het `.env`-bestand lezen.",
+              "`settings = Settings()`"
+            ],
+            [
+              "`os.environ['KEY']`",
+              "Direct lezen; `KeyError` als hij ontbreekt.",
+              "`os.environ['DATABASE_URL']`"
+            ],
+            [
+              "`load_dotenv()`",
+              "Laadt `.env` in de omgeving (python-dotenv).",
+              "eerst `from dotenv import load_dotenv`"
+            ],
+            [
+              "Compose `environment:`",
+              "Overschrijft waarden voor containers.",
+              "`DATABASE_URL: ...@db:5432/notes`"
+            ],
+            [
+              "Secret store",
+              "Productiegeheimen op het platform of de server, niet in Git.",
+              "GitHub secrets, `.env` alleen op de server"
+            ],
+            [
+              "Modelnamen",
+              "Ook modellen en dimensies in settings.",
+              "`LLM_MODEL`, `EMBEDDING_MODEL`"
+            ]
+          ]
+        },
+        {
+          "id": "security",
+          "title": "Security-checklist",
+          "intro": "De regels die de meeste incidenten in Python-services voorkomen.",
+          "section": "6.3",
+          "head": [
+            "Gebied",
+            "Regel",
+            "Hoe"
+          ],
+          "rows": [
+            [
+              "Geheimen",
+              "Nooit in code, Git, logs of prompts.",
+              "Uitgelekt? Direct roteren."
+            ],
+            [
+              "Invoer",
+              "Valideer elke body en query.",
+              "Pydantic, lengtegrenzen"
+            ],
+            [
+              "SQL",
+              "Alleen geparametriseerde queries.",
+              "SQLAlchemy of `%s`, nooit f-strings"
+            ],
+            [
+              "Wachtwoorden",
+              "Alleen gehasht opslaan.",
+              "bcrypt"
+            ],
+            [
+              "Tokens",
+              "Kort geldige JWT's.",
+              "`exp` in de payload"
+            ],
+            [
+              "Autorisatie",
+              "Eigendom controleren bij elk object; rollen voor admin-routes.",
+              "403 bij andermans data"
+            ],
+            [
+              "Transport",
+              "Alleen HTTPS.",
+              "reverse proxy zoals Caddy of Traefik"
+            ],
+            [
+              "CORS",
+              "Alleen je eigen front-end toestaan.",
+              "`CORSMiddleware(allow_origins=[...])`"
+            ],
+            [
+              "Dependencies",
+              "Versies vastzetten en regelmatig scannen.",
+              "`pip-audit`, Dependabot"
+            ],
+            [
+              "Containers",
+              "Niet als root, klein image, geen geheimen erin.",
+              "`USER appuser`, `trivy`"
+            ],
+            [
+              "Prompt injection",
+              "Tekst uit documenten en gebruikers is data, geen instructie.",
+              "tags rond data, uitvoer nooit blind uitvoeren"
+            ],
+            [
+              "Tenant-isolatie",
+              "Retrieval filteren op klant.",
+              "`WHERE tenant_id = ...`"
+            ],
+            [
+              "Misbruik",
+              "Limieten per gebruiker en IP; alarm bij kostenpieken.",
+              "rate limit, tokenbudget"
+            ],
+            [
+              "Privacy",
+              "Persoonsgegevens filteren waar nodig (AVG/GDPR).",
+              "output filtering"
+            ]
+          ]
+        },
+        {
+          "id": "asyncio",
+          "title": "asyncio-patronen",
+          "intro": "Gelijktijdig wachten op I/O, begrensd en met tijdslimiet.",
+          "section": "6.2",
+          "head": [
+            "Patroon",
+            "Doel",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`asyncio.run(main())`",
+              "Start de event loop vanuit een script.",
+              "`asyncio.run(main())`"
+            ],
+            [
+              "`await asyncio.gather(*taken)`",
+              "Meerdere coroutines tegelijk laten lopen.",
+              "`await asyncio.gather(*(fetch(u) for u in urls))`"
+            ],
+            [
+              "`return_exceptions=True`",
+              "Eén fout breekt de rest niet af; fouten komen in de resultaten.",
+              "`gather(..., return_exceptions=True)`"
+            ],
+            [
+              "`asyncio.Semaphore(n)`",
+              "Hooguit n taken tegelijk.",
+              "`async with sem: ...`"
+            ],
+            [
+              "`asyncio.wait_for(coro, timeout=)`",
+              "Tijdslimiet; daarna `TimeoutError`.",
+              "`await asyncio.wait_for(call_llm(p), timeout=30)`"
+            ],
+            [
+              "`asyncio.to_thread(fn, *args)`",
+              "Blokkerend of CPU-zwaar werk buiten de event loop.",
+              "`await asyncio.to_thread(extract_pdf_text, path)`"
+            ]
+          ]
+        },
+        {
+          "id": "cicd",
+          "title": "CI/CD-stappen",
+          "intro": "Wat de pipeline bij elke push en pull request doet.",
+          "section": "6.4",
+          "head": [
+            "Stap",
+            "Doel",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "Checkout",
+              "Code ophalen op een schone machine.",
+              "`uses: actions/checkout@v4`"
+            ],
+            [
+              "Python opzetten",
+              "Juiste versie met pip-cache.",
+              "`uses: actions/setup-python@v5`"
+            ],
+            [
+              "Installeren",
+              "Project plus dev-tools.",
+              "`run: pip install -e \".[dev]\"`"
+            ],
+            [
+              "Lint",
+              "Stijl en fouten controleren.",
+              "`ruff check . && ruff format --check .`"
+            ],
+            [
+              "Audit",
+              "Kwetsbare dependencies vinden.",
+              "`run: pip-audit`"
+            ],
+            [
+              "Migreren",
+              "Schema op de testdatabase zetten.",
+              "`run: alembic upgrade head`"
+            ],
+            [
+              "Testen",
+              "Tests met coverage tegen echte Postgres en Redis.",
+              "`pytest -q --cov=app`"
+            ],
+            [
+              "Image bouwen en pushen",
+              "Alleen op `main`, na geslaagde tests.",
+              "`docker/build-push-action` naar `ghcr.io`"
+            ],
+            [
+              "Deployen",
+              "Nieuwe image ophalen, starten en migreren.",
+              "`docker compose pull && ... up -d`"
+            ],
+            [
+              "LLM mocken",
+              "Geen echte LLM-calls in CI: snel, gratis, voorspelbaar.",
+              "`monkeypatch` of `unittest.mock`"
+            ],
+            [
+              "Branch protection",
+              "Merge pas na groene CI en een review.",
+              "GitHub-instellingen, Branches"
+            ]
+          ]
+        },
+        {
+          "id": "gha-keys",
+          "title": "GitHub Actions-sleutels",
+          "intro": "De velden in een workflowbestand onder `.github/workflows/`.",
+          "section": "6.4",
+          "head": [
+            "Sleutel",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`name:`",
+              "Naam van de workflow.",
+              "`name: CI`"
+            ],
+            [
+              "`on:`",
+              "Wanneer de workflow draait.",
+              "`push` naar `main` en elke `pull_request`"
+            ],
+            [
+              "`jobs:`",
+              "De jobs in de workflow.",
+              "`jobs:` met `test:`"
+            ],
+            [
+              "`runs-on:`",
+              "Type machine.",
+              "`runs-on: ubuntu-latest`"
+            ],
+            [
+              "`services:`",
+              "Hulpcontainers tijdens de job.",
+              "Postgres en Redis voor de tests"
+            ],
+            [
+              "`env:`",
+              "Omgevingsvariabelen voor de stappen.",
+              "`DATABASE_URL: postgresql://...`"
+            ],
+            [
+              "`steps:`",
+              "Stappen in volgorde.",
+              "lijst met `uses` en `run`"
+            ],
+            [
+              "`uses:`",
+              "Kant-en-klare action gebruiken.",
+              "`actions/checkout@v4`"
+            ],
+            [
+              "`run:`",
+              "Shell-commando uitvoeren.",
+              "`run: pytest -q`"
+            ],
+            [
+              "`with:`",
+              "Invoer voor een action.",
+              "`with: { python-version: \"3.12\" }`"
+            ],
+            [
+              "`needs:`",
+              "Job wacht op een andere job.",
+              "`needs: test`"
+            ],
+            [
+              "`if:`",
+              "Voorwaarde voor een job of stap.",
+              "`if: github.ref == 'refs/heads/main'`"
+            ],
+            [
+              "`permissions:`",
+              "Rechten van het token.",
+              "`{ contents: read, packages: write }`"
+            ],
+            [
+              "`secrets.NAAM`",
+              "Geheim uit de repo-instellingen.",
+              "`${{ secrets.GITHUB_TOKEN }}`"
+            ]
+          ]
+        },
+        {
+          "id": "deploy",
+          "title": "Deployment",
+          "intro": "Van gebouwd image naar draaiende service op een server.",
+          "section": "6.4",
+          "head": [
+            "Onderdeel",
+            "Rol",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "Image één keer bouwen",
+              "CI bouwt; de server haalt alleen op.",
+              "`ghcr.io/org/app:<sha>`"
+            ],
+            [
+              "Reverse proxy",
+              "HTTPS met automatische certificaten, doorsturen naar de API.",
+              "Caddy: `reverse_proxy api:8000`"
+            ],
+            [
+              "`compose.prod.yaml`",
+              "Productiestack op de server.",
+              "`restart: unless-stopped`"
+            ],
+            [
+              "Pull + up + migrate",
+              "De deploystap.",
+              "`docker compose pull`, `up -d`, `exec api alembic upgrade head`"
+            ],
+            [
+              "Rollback",
+              "Vorige image-tag weer starten.",
+              "tag met de vorige commit-sha"
+            ],
+            [
+              "Back-up",
+              "Dagelijkse dump van de database; test een restore.",
+              "`pg_dump` in een cron-container"
+            ],
+            [
+              "Andere doelen",
+              "Zelfde image, ander platform.",
+              "Cloud Run, Azure Container Apps, Fly.io, Kubernetes"
+            ]
+          ]
+        },
+        {
+          "id": "health",
+          "title": "Health en readiness",
+          "intro": "Hoe platformen bepalen of je container leeft en verkeer aankan.",
+          "section": "6.2",
+          "head": [
+            "Onderdeel",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`/health`-endpoint",
+              "Verplicht: meldt of de service en zijn afhankelijkheden werken.",
+              "`{'postgres': 'ok', 'redis': 'ok'}`"
+            ],
+            [
+              "Database-check",
+              "Kleinste mogelijke query.",
+              "`db.execute(text('SELECT 1'))`"
+            ],
+            [
+              "Redis-check",
+              "Ping naar Redis.",
+              "`await redis.ping()`"
+            ],
+            [
+              "`200` vs `503`",
+              "Alles ok geeft 200; iets stuk geeft 503.",
+              "`JSONResponse(checks, status_code=503)`"
+            ],
+            [
+              "Liveness",
+              "Draait het proces nog? Zo niet: herstarten.",
+              "Docker `HEALTHCHECK`"
+            ],
+            [
+              "Readiness",
+              "Kan de service verkeer aan (database, cache bereikbaar)?",
+              "load balancer stuurt pas verkeer als het klopt"
+            ],
+            [
+              "Compose-healthcheck",
+              "Andere services wachten tot deze gezond is.",
+              "`depends_on: { db: { condition: service_healthy } }`"
+            ],
+            [
+              "`pg_isready`",
+              "Standaardcheck voor Postgres-containers.",
+              "`pg_isready -U app -d notes`"
+            ],
+            [
+              "`/metrics`",
+              "Prometheus-metrics: aantallen en latency.",
+              "prometheus-fastapi-instrumentator"
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

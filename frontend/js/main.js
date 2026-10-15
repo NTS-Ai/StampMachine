@@ -18,4 +18,7 @@ document.addEventListener('keydown', e => {
   else if (F && !$('#cards').hidden) onCardsKey(e);
 });
 
-renderHome();
+// Start op de pagina uit de URL: het overzicht, of direct een les uit de kennisbank.
+// De HUD (level, thema, geluid) staat altijd klaar, ook als je direct in een les begint.
+renderHud();
+route();

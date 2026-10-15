@@ -24,6 +24,8 @@ const SCRIPTS = [
   'js/screens/game.js',
   'js/screens/cards.js',
   'js/screens/search.js',
+  'js/kb/highlight.js',
+  'js/kb/kb.js',
 ];
 
 /** Een nep-element dat alles slikt wat de scripts er bij het laden mee doen. */

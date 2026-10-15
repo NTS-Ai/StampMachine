@@ -444,6 +444,7 @@ function explain(q, right, chosen) {
     h += `<div class="whynot"><span class="lbl">Waarom jouw antwoord niet klopt</span><p><b>${fmt(q.wrong[chosen - 1])}</b> — ${fmt(whyWrong[chosen - 1])}</p></div>`;
   }
   h += `<div class="tech"><span class="lbl">Technisch</span><p>${fmt(q.explanation)}</p></div>`;
+  if (q.section) h += `<a class="fb-les" href="#/kennis/${esc(q.section)}" target="_blank" rel="noopener">Lees de les hierover (${esc(q.section)})<span class="sr-only">, opent in een nieuw tabblad</span></a>`;
 
   if (whyWrong) {
     const rest = q.wrong

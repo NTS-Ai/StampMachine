@@ -23,6 +23,7 @@
  * @property {string} [explanation]  Technische uitleg.
  * @property {string} [simple]       Uitleg in gewone taal ("Simpel gezegd").
  * @property {number} [week]         Wordt hieronder ingevuld.
+ * @property {string} [section]      Workbook-sectie, bijvoorbeeld "3.2"; koppelt de vraag aan een les.
  */
 
 /**
@@ -32,6 +33,7 @@
  * @property {string} back
  * @property {string} [simple]
  * @property {number} [week]
+ * @property {string} [section]
  */
 
 /**
