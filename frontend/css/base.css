@@ -2,22 +2,24 @@
 
 /* ---------- kleuren en lettertypes ---------- */
 :root {
-  --bg: #EFF2F9; --surface: #FFFFFF; --sunk: #F5F7FC; --ink: #0F1629; --muted: #4D5573;
-  --line: #E1E5EF; --line-strong: #CDD3E1;
-  --accent: #3550F0; --accent-2: #7C4DFF; --on-accent: #FFFFFF;
+  /* Licht: een warme papiertint, neutrale grijzen en één kobaltblauwe accentkleur. */
+  --bg: #F6F5F1; --surface: #FFFFFF; --sunk: #F1F0EB; --ink: #17191E; --muted: #555A64;
+  --line: #E3E1DA; --line-strong: #CFCCC3;
+  --accent: #2747D6; --accent-2: #2747D6; --on-accent: #FFFFFF;
   /* Licht: elke tekstkleur haalt minstens 4,5:1 contrast (WCAG AA), ook op getinte vlakken. */
   --good: #0A7550; --bad: #C22E2E; --gold: #B87A00;
   --w1: #0A7468; --w2: #7445D8; --w3: #2563EB; --w4: #08724A; --w5: #AD4514; --w6: #B8326F;
-  --shadow-sm: 0 1px 2px rgb(16 24 48 / .06), 0 1px 1px rgb(16 24 48 / .03);
-  --shadow-md: 0 12px 28px -12px rgb(16 24 48 / .18), 0 2px 6px rgb(16 24 48 / .05);
-  --shadow-lg: 0 28px 64px -16px rgb(16 24 48 / .28), 0 4px 12px rgb(16 24 48 / .06);
-  --glow: 10%;
+  /* Schaduwen alleen als hint van diepte, geen zwevende kaarten. */
+  --shadow-sm: 0 1px 0 rgb(23 25 30 / .05);
+  --shadow-md: 0 1px 2px rgb(23 25 30 / .06), 0 4px 12px -6px rgb(23 25 30 / .10);
+  --shadow-lg: 0 14px 36px -10px rgb(23 25 30 / .22), 0 2px 6px rgb(23 25 30 / .06);
+  --glow: 0%;
   --surface-fill: var(--surface);
   --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
   --f-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
   --f-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
   /* Vaste reeks afrondingen en overgangen, zodat alles als één geheel aanvoelt. */
-  --r-xs: 6px; --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 20px;
+  --r-xs: 4px; --r-sm: 6px; --r-md: 8px; --r-lg: 10px; --r-xl: 12px;
   --hud-h: 56px;
   --ease-out: cubic-bezier(.22, 1, .36, 1);
   --dur: .18s; --dur-slow: .28s;
@@ -27,34 +29,34 @@
 /* Donker: volgt het systeem, tenzij de gebruiker zelf 'Licht' koos. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0A0E1A; --surface: #131A2C; --sunk: #0F1424; --ink: #E8EBF6; --muted: #98A1C0;
-    --line: #232B46; --line-strong: #323C5E;
-    --accent: #8094FF; --accent-2: #B18CFF; --on-accent: #0A0E1A;
-    --good: #45C98F; --bad: #FF7575; --gold: #F7C552;
-    --w1: #4CC2B4; --w2: #A592F5; --w3: #78A2F5; --w4: #4FC393; --w5: #F29A6C; --w6: #EE86B3;
-    /* In donker geven een lichte bovenrand en een iets lichtere kaart de diepte, niet de schaduw. */
-    --shadow-sm: inset 0 1px 0 rgb(255 255 255 / .05), 0 1px 2px rgb(0 0 0 / .4);
-    --shadow-md: inset 0 1px 0 rgb(255 255 255 / .06), 0 16px 36px -14px rgb(0 0 0 / .7);
-    --shadow-lg: inset 0 1px 0 rgb(255 255 255 / .06), 0 30px 70px -16px rgb(0 0 0 / .75);
-    --surface-fill: linear-gradient(180deg, #182036, #131A2C 160px);
-    --glow: 16%;
+    /* Donker: neutraal bijna-zwart in plaats van blauwpaars; gedempte weekkleuren. */
+    --bg: #111214; --surface: #191A1E; --sunk: #151619; --ink: #ECECEE; --muted: #A2A4AC;
+    --line: #2A2C32; --line-strong: #3A3D44;
+    --accent: #8FA3FF; --accent-2: #8FA3FF; --on-accent: #111214;
+    --good: #5CC795; --bad: #F07B7B; --gold: #E8C063;
+    --w1: #5DBFB2; --w2: #AC9DF0; --w3: #86A8F2; --w4: #60BE91; --w5: #E8A47C; --w6: #E395B7;
+    --shadow-sm: 0 1px 0 rgb(0 0 0 / .35);
+    --shadow-md: 0 1px 2px rgb(0 0 0 / .4), 0 6px 16px -8px rgb(0 0 0 / .55);
+    --shadow-lg: 0 18px 44px -12px rgb(0 0 0 / .7), 0 2px 6px rgb(0 0 0 / .4);
+    --surface-fill: var(--surface);
+    --glow: 0%;
     color-scheme: dark;
   }
 }
 
 /* Donker: zelf gekozen in het themamenu. */
 :root[data-theme="dark"] {
-  --bg: #0A0E1A; --surface: #131A2C; --sunk: #0F1424; --ink: #E8EBF6; --muted: #98A1C0;
-  --line: #232B46; --line-strong: #323C5E;
-  --accent: #8094FF; --accent-2: #B18CFF; --on-accent: #0A0E1A;
-  --good: #45C98F; --bad: #FF7575; --gold: #F7C552;
-  --w1: #4CC2B4; --w2: #A592F5; --w3: #78A2F5; --w4: #4FC393; --w5: #F29A6C; --w6: #EE86B3;
-  /* In donker geven een lichte bovenrand en een iets lichtere kaart de diepte, niet de schaduw. */
-  --shadow-sm: inset 0 1px 0 rgb(255 255 255 / .05), 0 1px 2px rgb(0 0 0 / .4);
-  --shadow-md: inset 0 1px 0 rgb(255 255 255 / .06), 0 16px 36px -14px rgb(0 0 0 / .7);
-  --shadow-lg: inset 0 1px 0 rgb(255 255 255 / .06), 0 30px 70px -16px rgb(0 0 0 / .75);
-  --surface-fill: linear-gradient(180deg, #182036, #131A2C 160px);
-  --glow: 16%;
+  /* Donker: neutraal bijna-zwart in plaats van blauwpaars; gedempte weekkleuren. */
+  --bg: #111214; --surface: #191A1E; --sunk: #151619; --ink: #ECECEE; --muted: #A2A4AC;
+  --line: #2A2C32; --line-strong: #3A3D44;
+  --accent: #8FA3FF; --accent-2: #8FA3FF; --on-accent: #111214;
+  --good: #5CC795; --bad: #F07B7B; --gold: #E8C063;
+  --w1: #5DBFB2; --w2: #AC9DF0; --w3: #86A8F2; --w4: #60BE91; --w5: #E8A47C; --w6: #E395B7;
+  --shadow-sm: 0 1px 0 rgb(0 0 0 / .35);
+  --shadow-md: 0 1px 2px rgb(0 0 0 / .4), 0 6px 16px -8px rgb(0 0 0 / .55);
+  --shadow-lg: 0 18px 44px -12px rgb(0 0 0 / .7), 0 2px 6px rgb(0 0 0 / .4);
+  --surface-fill: var(--surface);
+  --glow: 0%;
   color-scheme: dark;
 }
 
@@ -81,13 +83,6 @@ body {
   -webkit-tap-highlight-color: transparent;
   -webkit-font-smoothing: antialiased;
 }
-/* Zachte kleurgloed achter de pagina voor wat diepte. */
-body::before {
-  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  background:
-    radial-gradient(900px 480px at 8% -8%, color-mix(in srgb, var(--accent) var(--glow), transparent), transparent 70%),
-    radial-gradient(700px 420px at 100% 0%, color-mix(in srgb, var(--accent-2) calc(var(--glow) * .7), transparent), transparent 70%);
-}
 ::selection { background: color-mix(in srgb, var(--accent) 28%, transparent); }
 button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulation; }
 button:focus-visible, input:focus-visible, textarea:focus-visible, .fc:focus-visible {
@@ -101,7 +96,8 @@ code { background: color-mix(in srgb, var(--accent) 10%, transparent); padding: 
 h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.1; }
 
 /* ---------- hulpklassen ---------- */
-.wrap { max-width: 1100px; margin: 0 auto; padding-inline: 20px; }
+/* Eén paginabreedte voor header, startscherm en kennisbank, zodat alles op één lijn staat. */
+.wrap { max-width: 1240px; margin: 0 auto; padding-inline: 20px; }
 @media (max-width: 480px) { .wrap { padding-inline: 16px; } }
 
 .sr-only {

@@ -2,12 +2,12 @@
 
 /* ---------- kleine bouwstenen ---------- */
 .pill {
-  font-size: 12.5px; font-weight: 700; padding: 4px 9px; border: 1px solid var(--line); border-radius: 99px;
+  font-size: 12.5px; font-weight: 700; padding: 4px 9px; border: 1px solid var(--line); border-radius: var(--r-sm);
   white-space: nowrap; font-variant-numeric: tabular-nums; background: var(--surface); box-shadow: var(--shadow-sm);
 }
 .iconbtn {
   display: inline-flex; align-items: center; gap: 6px; min-height: 34px; min-width: 34px; justify-content: center;
-  border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 4px 10px;
+  border: 1px solid var(--line); background: var(--surface); border-radius: var(--r-md); padding: 4px 10px;
   font-size: 13px; font-weight: 700; box-shadow: var(--shadow-sm);
   transition: border-color var(--dur) var(--ease-out), background var(--dur) var(--ease-out), transform var(--dur) var(--ease-out);
 }
@@ -50,45 +50,31 @@
 .menu-item[aria-checked="true"] .check { opacity: 1; transform: none; }
 @media (hover: none) and (pointer: coarse) { .iconbtn { min-height: 44px; min-width: 44px; } }
 
-/* Voortgangsbalken: kleurverloop, vullen bij het laden en een glans die eroverheen schuift. */
+/* Voortgangsbalken: effen kleur, die zich bij het laden één keer vult. */
 .bar {
-  height: 8px; border-radius: 99px; overflow: hidden;
-  background: color-mix(in srgb, var(--hue, var(--accent)) 12%, var(--line));
+  height: 6px; border-radius: 99px; overflow: hidden;
+  background: var(--line);
 }
 .bar i, .xpbar i, .timer i {
   position: relative; display: block; height: 100%; border-radius: 99px; overflow: hidden;
   transform-origin: left center;
 }
 .bar i {
-  background: linear-gradient(90deg, color-mix(in srgb, var(--hue) 55%, var(--surface)), var(--hue));
-  box-shadow: 0 0 12px color-mix(in srgb, var(--hue) 50%, transparent);
+  background: var(--hue);
   transition: width .9s var(--ease-out);
   animation: bar-grow 1.1s var(--ease-out) backwards;
 }
-.bar i::after, .xpbar i::after {
-  content: ""; position: absolute; inset: 0 auto 0 0; width: 45%;
-  background: linear-gradient(90deg, transparent, rgb(255 255 255 / .55), transparent);
-  transform: translateX(-120%);
-  animation: bar-shine 3.2s ease-in-out 1.1s infinite;
-}
 @keyframes bar-grow { from { transform: scaleX(0); } }
-@keyframes bar-shine { 0% { transform: translateX(-120%); } 45%, 100% { transform: translateX(340%); } }
-/* Op het startscherm glanzen de weekbalken alleen als je de kaart aanwijst: rustiger. */
-.ticket .bar i::after { animation: none; }
-@media (hover: hover) { .ticket:hover .bar i::after { animation: bar-shine 1.6s ease-in-out infinite; } }
 
 .chip {
-  font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  font-size: 12px; font-weight: 700;
   padding: 3px 8px; border-radius: var(--r-xs);
   /* Tekst iets richting de inktkleur gemengd: genoeg contrast op de getinte achtergrond, in licht én donker. */
   background: color-mix(in srgb, var(--hue, var(--accent)) 9%, transparent); color: color-mix(in srgb, var(--hue, var(--accent)) 82%, var(--ink));
 }
 .chip.retry { --hue: var(--bad); }
 .hint { font-size: 13px; color: var(--muted); }
-.lbl {
-  display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .08em;
-  text-transform: uppercase; color: var(--muted); margin-bottom: 2px;
-}
+.lbl { display: inline-block; font-size: 12.5px; font-weight: 700; color: var(--muted); margin-bottom: 2px; }
 
 /* ---------- knoppen ---------- */
 .btn {
@@ -96,16 +82,10 @@
   border: 1.5px solid var(--line); background: transparent;
   transition: border-color var(--dur) var(--ease-out), background var(--dur) var(--ease-out), transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out), filter var(--dur) var(--ease-out);
 }
-.btn:hover { border-color: var(--hue, var(--accent)); background: color-mix(in srgb, var(--hue, var(--accent)) 6%, transparent); }
+.btn:hover { border-color: var(--hue, var(--accent)); background: var(--sunk); }
 .btn:active { transform: translateY(1px) scale(.98); }
-.btn.primary {
-  background: var(--hue, var(--accent)); border-color: var(--hue, var(--accent)); color: var(--on-accent);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / .22), 0 6px 16px -8px var(--hue, var(--accent));
-}
-.btn.primary:hover {
-  background: var(--hue, var(--accent)); filter: brightness(1.08);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / .22), 0 10px 22px -8px var(--hue, var(--accent));
-}
+.btn.primary { background: var(--hue, var(--accent)); border-color: var(--hue, var(--accent)); color: var(--on-accent); }
+.btn.primary:hover { background: var(--hue, var(--accent)); filter: brightness(.93); }
 .btn.lg { padding: 12px 20px; font-size: 16px; }
 .btn.no { border-color: var(--bad); color: var(--bad); }
 .btn.yes { background: var(--good); border-color: var(--good); color: var(--on-accent); }
@@ -149,21 +129,21 @@
 /* Nog niet in beeld: wachten met binnenkomen (en met het vullen van de balk). */
 .ticket[data-reveal]:not(.in), .ticket[data-reveal]:not(.in) .bar i { animation: none; }
 .ticket[data-reveal]:not(.in) { opacity: 0; }
-/* Dunne kleurstreep bovenaan in de kleur van de week. */
-.ticket:not(.boss)::before {
-  content: ""; position: absolute; inset: 0 0 auto; height: 3px;
-  background: linear-gradient(90deg, var(--hue), color-mix(in srgb, var(--hue) 15%, transparent));
-}
+/* Effen streep bovenaan in de kleur van de week, zoals een tabblad in een map. */
+.ticket:not(.boss)::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; background: var(--hue); }
 @media (hover: hover) {
-  .ticket:not(.boss):hover {
-    transform: translateY(-3px); box-shadow: var(--shadow-md);
-    border-color: color-mix(in srgb, var(--hue) 35%, var(--line));
-  }
+  .ticket:not(.boss):hover { border-color: var(--line-strong); box-shadow: var(--shadow-md); }
 }
-@keyframes rise { from { opacity: 0; transform: translateY(12px); } }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } }
+/* De Quiz-knop per week: getint in de weekkleur in plaats van een fel blok. */
+.ticket:not(.boss) .btn.primary {
+  background: color-mix(in srgb, var(--hue) 12%, var(--surface)); border-color: color-mix(in srgb, var(--hue) 45%, var(--line));
+  color: color-mix(in srgb, var(--hue) 78%, var(--ink));
+}
+.ticket:not(.boss) .btn.primary:hover { background: color-mix(in srgb, var(--hue) 20%, var(--surface)); filter: none; }
 .t-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
 .t-num { font-family: var(--f-mono); font-weight: 600; font-size: 30px; color: var(--hue); line-height: 1; }
-.t-lvl { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.t-lvl { font-size: 12.5px; color: var(--muted); font-weight: 700; }
 .ticket h3 { font-size: 21px; font-weight: 600; }
 .t-topics { color: var(--muted); font-size: 14px; margin: 0; min-height: 3em; }
 .mast { display: grid; gap: 5px; }
@@ -179,16 +159,13 @@
   .t-topics { min-height: 0; }
 }
 
-/* Eindbaas: in beide thema's een donker incidentpaneel met een rode gloed. */
+/* Eindbaas: in beide thema's een effen donker incidentpaneel met een rode rand links. */
 .boss {
-  --b-red: #FF5C5C; --b-ink: #EEF0F8; --b-muted: #A3AAC4; --b-line: rgb(255 255 255 / .16);
-  --surface: #151A2D;
-  grid-column: 1 / -1; color: var(--b-ink); border-color: rgb(255 92 92 / .35);
-  background:
-    radial-gradient(520px 260px at 100% 0%, rgb(255 70 70 / .22), transparent 70%),
-    radial-gradient(400px 220px at 0% 100%, rgb(124 77 255 / .14), transparent 70%),
-    linear-gradient(160deg, #171C30, #0C0F1C);
-  box-shadow: var(--shadow-md), 0 20px 50px -24px rgb(255 60 60 / .45);
+  --b-red: #FF6B6B; --b-ink: #EFEFF1; --b-muted: #A9ABB3; --b-line: rgb(255 255 255 / .16);
+  --surface: #1B1C20;
+  grid-column: 1 / -1; color: var(--b-ink); border-color: #2C2E34; border-left: 4px solid var(--b-red);
+  background: #1B1C20;
+  box-shadow: var(--shadow-md);
   display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px; align-items: center; padding: 26px;
 }
 .boss .t-lvl { color: var(--b-red); }
@@ -202,10 +179,8 @@
 .boss .mast-row { color: var(--b-muted); }
 .pager {
   font-family: var(--f-mono); font-size: 46px; font-weight: 600; color: var(--b-red); line-height: 1; letter-spacing: -.02em;
-  padding: 14px 18px; border-radius: var(--r-lg); border: 1px solid rgb(255 92 92 / .3); background: rgb(255 60 60 / .08);
-  text-shadow: 0 0 18px rgb(255 80 80 / .6); animation: pager 2.4s ease-in-out infinite;
+  padding: 14px 18px; border-radius: var(--r-md); border: 1px solid rgb(255 107 107 / .3); background: rgb(255 107 107 / .06);
 }
-@keyframes pager { 50% { text-shadow: 0 0 6px rgb(255 80 80 / .25); opacity: .8; } }
 @media (max-width: 620px) {
   .boss { grid-template-columns: 1fr; padding: 18px; }
   .boss .t-btns { display: grid; grid-template-columns: 1fr 1fr; }
@@ -227,30 +202,20 @@
   position: absolute; top: 0; left: 22px; right: 22px; z-index: 3; height: 3px; overflow: hidden;
   border-radius: 0 0 3px 3px; background: color-mix(in srgb, var(--accent) 14%, transparent);
 }
-.timer i {
-  width: 100%;
-  background: linear-gradient(90deg, var(--accent), var(--accent-2));
-  box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 55%, transparent);
-}
+.timer i { width: 100%; background: var(--accent); }
 /* Bijna geen tijd meer: rood en pulserend. */
 .timer.low i {
-  background: linear-gradient(90deg, var(--bad), color-mix(in srgb, var(--bad) 60%, var(--gold)));
-  box-shadow: 0 0 14px var(--bad);
+  background: var(--bad);
   animation: timer-pulse .5s ease-in-out infinite alternate;
 }
 @keyframes timer-pulse { to { opacity: .55; } }
 .bossbar { margin-bottom: 14px; display: grid; gap: 4px; }
 .bossbar .lbl { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .bossbar .bar { --hue: var(--bad); height: 12px; }
-/* Gestreepte, bewegende HP-balk: het incident leeft nog. */
+/* HP-balk met rustige diagonale strepen: herkenbaar als 'gezondheid', zonder beweging. */
 .bossbar .bar i {
-  background:
-    repeating-linear-gradient(-45deg, rgb(255 255 255 / .18) 0 8px, transparent 8px 16px),
-    linear-gradient(90deg, color-mix(in srgb, var(--bad) 70%, var(--gold)), var(--bad));
-  background-size: 22.63px 22.63px, 100% 100%;
-  animation: bar-grow 1.1s var(--ease-out) backwards, stripes .8s linear infinite;
+  background: repeating-linear-gradient(-45deg, rgb(255 255 255 / .16) 0 6px, transparent 6px 12px), var(--bad);
 }
-@keyframes stripes { to { background-position: 22.63px 0, 0 0; } }
 
 /* ---------- vraagkaart ---------- */
 .card {
@@ -377,9 +342,9 @@ details.others li b { font-weight: 700; }
 .flash-half { border-color: var(--gold); animation: ring-half .8s var(--ease-out); }
 .flash-no { border-color: var(--bad); animation: ring-no .8s var(--ease-out); }
 .flash-no.shake { animation: shake .4s, ring-no .8s var(--ease-out); }
-@keyframes ring-ok { from { box-shadow: var(--shadow-md), 0 0 0 0 color-mix(in srgb, var(--good) 55%, transparent); } to { box-shadow: var(--shadow-md), 0 0 0 18px transparent; } }
-@keyframes ring-half { from { box-shadow: var(--shadow-md), 0 0 0 0 color-mix(in srgb, var(--gold) 55%, transparent); } to { box-shadow: var(--shadow-md), 0 0 0 18px transparent; } }
-@keyframes ring-no { from { box-shadow: var(--shadow-md), 0 0 0 0 color-mix(in srgb, var(--bad) 55%, transparent); } to { box-shadow: var(--shadow-md), 0 0 0 18px transparent; } }
+@keyframes ring-ok { from { box-shadow: var(--shadow-md), 0 0 0 0 color-mix(in srgb, var(--good) 55%, transparent); } to { box-shadow: var(--shadow-md), 0 0 0 8px transparent; } }
+@keyframes ring-half { from { box-shadow: var(--shadow-md), 0 0 0 0 color-mix(in srgb, var(--gold) 55%, transparent); } to { box-shadow: var(--shadow-md), 0 0 0 8px transparent; } }
+@keyframes ring-no { from { box-shadow: var(--shadow-md), 0 0 0 0 color-mix(in srgb, var(--bad) 55%, transparent); } to { box-shadow: var(--shadow-md), 0 0 0 8px transparent; } }
 
 /* ---------- flashcards ---------- */
 #cards { overflow-x: clip; } /* een weggeveegde kaart mag de pagina niet breder maken */
@@ -442,7 +407,7 @@ details.others li b { font-weight: 700; }
 .stat small { color: var(--muted); font-size: 12px; }
 .record {
   display: inline-block; justify-self: start; color: #241A00; font-weight: 700; font-size: 12px;
-  background: linear-gradient(135deg, #FFE08A, #F5B53A); box-shadow: 0 6px 18px -8px #F5B53A; padding: 3px 9px; border-radius: var(--r-xs); letter-spacing: .06em; text-transform: uppercase;
+  background: #F2C14E; padding: 3px 9px; border-radius: var(--r-xs);
 }
 .miss { display: grid; gap: 10px; margin: 18px 0; }
 .miss h2 { font-size: 18px; }
