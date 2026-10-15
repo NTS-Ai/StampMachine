@@ -122,7 +122,7 @@ function resultCard(it, terms, i) {
   return `<article class="sr" style="--hue:${hue(it.week)};--i:${Math.min(i, 8)}">
     <div class="sr-meta"><span class="chip">Week ${it.week}</span><span class="sr-kind">${kind}</span>${statusChip(it)}
       ${it.kind !== 'f' ? `<button class="btn sm" type="button" data-practice="${esc(it.item.id)}">Oefen</button>` : ''}</div>
-    <h3 class="sr-title">${highlight(fmt(it.title), terms)}</h3>
+    <h2 class="sr-title">${highlight(fmt(it.title), terms)}</h2>
     <p class="sr-answer"><span class="lbl">Antwoord</span>${highlight(fmt(it.answer), terms)}</p>
     ${more ? `<details class="sr-more"><summary>Uitleg</summary>${more}</details>` : ''}
   </article>`;

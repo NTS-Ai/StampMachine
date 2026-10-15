@@ -105,7 +105,7 @@ body:not([data-screen="home"]) footer { display: none; }
 @media (max-width: 620px) { .stage { padding-block: 12px 40px; } }
 .play-hud { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
 .play-hud .grow { flex: 1; min-width: 120px; }
-.mode-tag { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.mode-tag { font-family: var(--f-body); line-height: 1.5; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .score { font-family: var(--f-display); font-weight: 800; font-size: 26px; font-variant-numeric: tabular-nums; min-width: 4ch; text-align: right; }
 @media (max-width: 480px) {
   .play-hud { gap: 8px 10px; }

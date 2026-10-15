@@ -414,7 +414,7 @@ function showFeedback(q, outcome, info, requeued) {
   const cls = right ? 'ok' : outcome === 'almost' ? 'half' : 'no';
   const title = right ? (G.streak >= 3 ? `Goed. ${G.streak} op rij.` : 'Goed.') : outcome === 'almost' ? 'Bijna.' : 'Niet goed.';
 
-  let h = `<div class="fb ${cls}"><h4>${title}</h4>`;
+  let h = `<div class="fb ${cls}"><h2>${title}</h2>`;
   if (info.spelling) h += `<p>Let op de schrijfwijze: <span class="ans">${fmt(info.spelling)}</span></p>`;
   if (outcome === 'wrong' && q.type !== 'sentence') h += `<p>Juiste antwoord: <span class="ans">${fmt(rightText(q))}</span></p>`;
   if (q.type !== 'sentence') h += explain(q, right, info.chosen);
@@ -556,7 +556,7 @@ function finish() {
 
   const misses = [...new Map(g.mistakes.map(q => [q.id, q])).values()];
   const missHtml = misses.length
-    ? `<div class="miss"><h3>Dit moet er nog in (${misses.length})</h3>` + misses.map(q =>
+    ? `<div class="miss"><h2>Dit moet er nog in (${misses.length})</h2>` + misses.map(q =>
         `<div class="miss-item"><p>${fmt(q.question)}</p><p class="a">${fmt(rightText(q))}</p>`
         + (q.simple ? `<p class="j"><span class="lbl">Simpel gezegd</span><br>${fmt(q.simple)}</p>` : '')
         + (q.explanation ? `<p class="w">${fmt(q.explanation)}</p>` : '')

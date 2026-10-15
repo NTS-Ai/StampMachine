@@ -2,11 +2,12 @@
 
 /* ---------- kleuren en lettertypes ---------- */
 :root {
-  --bg: #EFF2F9; --surface: #FFFFFF; --sunk: #F5F7FC; --ink: #0F1629; --muted: #5A6382;
+  --bg: #EFF2F9; --surface: #FFFFFF; --sunk: #F5F7FC; --ink: #0F1629; --muted: #4D5573;
   --line: #E1E5EF; --line-strong: #CDD3E1;
   --accent: #3550F0; --accent-2: #7C4DFF; --on-accent: #FFFFFF;
-  --good: #0F8A5F; --bad: #D33A3A; --gold: #B87A00;
-  --w1: #0E8A7D; --w2: #7445D8; --w3: #2563EB; --w4: #0B8457; --w5: #C9561F; --w6: #B8326F;
+  /* Licht: elke tekstkleur haalt minstens 4,5:1 contrast (WCAG AA), ook op getinte vlakken. */
+  --good: #0A7550; --bad: #C22E2E; --gold: #B87A00;
+  --w1: #0A7468; --w2: #7445D8; --w3: #2563EB; --w4: #08724A; --w5: #AD4514; --w6: #B8326F;
   --shadow-sm: 0 1px 2px rgb(16 24 48 / .06), 0 1px 1px rgb(16 24 48 / .03);
   --shadow-md: 0 12px 28px -12px rgb(16 24 48 / .18), 0 2px 6px rgb(16 24 48 / .05);
   --shadow-lg: 0 28px 64px -16px rgb(16 24 48 / .28), 0 4px 12px rgb(16 24 48 / .06);

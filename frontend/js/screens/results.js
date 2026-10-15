@@ -27,7 +27,7 @@
  * @param {string} [r.extraHtml]        Bijvoorbeeld de lijst met fouten.
  */
 function showResult({ title, sub, stats, buttons, record = false, extraHtml = '' }) {
-  let h = `<div class="res-head">${record ? '<span class="record">Nieuw record</span>' : ''}<h2>${esc(title)}</h2><p>${esc(sub)}</p></div>`;
+  let h = `<div class="res-head">${record ? '<span class="record">Nieuw record</span>' : ''}<h1>${esc(title)}</h1><p>${esc(sub)}</p></div>`;
   // Bij een record krijgt de eerste tegel (de score) een gouden gloed.
   h += '<div class="stats">' + stats.map((s, i) =>
     `<div class="stat tone-${s.tone}${record && i === 0 ? ' is-record' : ''}" style="--i:${i}"><b data-i="${i}">${esc((s.prefix || '') + '0' + (s.suffix || ''))}</b><small>${esc(s.label)}</small></div>`
