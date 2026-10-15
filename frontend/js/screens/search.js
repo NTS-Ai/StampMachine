@@ -216,7 +216,6 @@ function renderSearch() {
 
 /** Opent het zoekscherm, eventueel met een zoekterm die al is ingetypt. @param {string} [prefill] */
 function openSearch(prefill) {
-  closeThemeMenu();
   // Een nieuwe zoeksessie begint zonder filters, zodat je niet per ongeluk in één week zoekt.
   if (document.body.dataset.screen !== 'search') { SR.kind = 'all'; SR.week = 0; }
   showScreen('search');
@@ -237,7 +236,7 @@ function openSearch(prefill) {
 }
 
 /** True op schermen waar je kunt gaan zoeken zonder een lopend spel te verliezen. */
-const canOpenSearch = () => ['home', 'result', 'search', 'kb'].includes(document.body.dataset.screen || '');
+const canOpenSearch = () => ['home', 'map', 'oefenen', 'profiel', 'speeltuin', 'result', 'search', 'kb'].includes(document.body.dataset.screen || '');
 
 /* ---------- invoer ---------- */
 
@@ -306,14 +305,18 @@ $('#search').addEventListener('click', e => {
   if (target.closest('#searchMore')) { SR.shown += SEARCH_PAGE; renderSearch(); }
 });
 
-$('#searchBack').addEventListener('click', goHome);
-$('#searchBtn').addEventListener('click', () => openSearch());
+$('#searchBack').addEventListener('click', () => goHome());
 
-// Typ je op het startscherm in het zoekveld? Dan ga je meteen door op het zoekscherm.
-$('#homeSearch').addEventListener('submit', e => e.preventDefault());
-$('#homeSearchIn').addEventListener('input', e => {
+// Een zoekveld elders (bijvoorbeeld op de home) met data-search-field opent bij typen meteen het zoekscherm.
+document.addEventListener('input', e => {
   const input = /** @type {HTMLInputElement} */ (e.target);
+  if (!input.matches || !input.matches('[data-search-field]')) return;
   const value = input.value;
   input.value = '';
   openSearch(value);
+});
+// Een knop met data-open-search opent het zoekscherm.
+document.addEventListener('click', e => {
+  const btn = /** @type {HTMLElement} */ (e.target).closest && /** @type {HTMLElement} */ (e.target).closest('[data-open-search]');
+  if (btn && canOpenSearch()) openSearch();
 });

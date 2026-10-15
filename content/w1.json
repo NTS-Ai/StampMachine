@@ -793,5 +793,90 @@
       ],
       "section": "1.1"
     }
+  ],
+  "puzzles": [
+    {
+      "id": "1-p0",
+      "type": "fill",
+      "section": "1.2",
+      "question": "Vul in: vraag de gebruiker om zijn naam.",
+      "code": "naam = ___(\"Hoe heet je? \")",
+      "answers": [
+        "input"
+      ],
+      "simple": "`input()` stelt een vraag in de terminal en geeft terug wat de gebruiker typt, altijd als tekst."
+    },
+    {
+      "id": "1-p1",
+      "type": "parsons",
+      "section": "1.2",
+      "question": "Zet de regels in de goede volgorde.",
+      "lines": [
+        "naam = input(\"Naam? \")",
+        "groet = f\"Hoi {naam}\"",
+        "print(groet)"
+      ],
+      "simple": "Je moet eerst iets hebben voordat je het kunt gebruiken: eerst de naam vragen, dan de groet maken, dan printen."
+    },
+    {
+      "id": "1-p2",
+      "type": "fill",
+      "section": "1.2",
+      "question": "Vul in: check of een getal even is.",
+      "code": "if getal ___ 2 == 0:\n    print(\"even\")",
+      "answers": [
+        "%"
+      ],
+      "simple": "Een getal is even als er bij delen door 2 niets overblijft. De rest pak je met `%`."
+    },
+    {
+      "id": "1-p3",
+      "type": "fill",
+      "section": "1.2",
+      "question": "Vul in: haal de spaties aan beide kanten weg.",
+      "code": "woord = \"  hoi  \"\nprint(woord.___())",
+      "answers": [
+        "strip"
+      ],
+      "simple": "`strip()` knipt de spaties aan het begin en eind weg, zoals een korstje van een boterham."
+    },
+    {
+      "id": "1-p4",
+      "type": "parsons",
+      "section": "1.2",
+      "question": "Zet de regels in de goede volgorde.",
+      "lines": [
+        "tekst = \" Hallo Python \"",
+        "schoon = tekst.strip()",
+        "print(schoon.upper())"
+      ],
+      "simple": "Eerst de tekst hebben, dan schoonmaken, dan pas in hoofdletters printen."
+    },
+    {
+      "id": "1-p5",
+      "type": "fill",
+      "section": "1.3",
+      "question": "Vul in: tel elke poging op.",
+      "code": "pogingen = 0\nwhile pogingen < 3:\n    pogingen ___ 1",
+      "answers": [
+        "+="
+      ],
+      "simple": "`+= 1` betekent: neem wat er al is en doe er 1 bij."
+    },
+    {
+      "id": "1-p6",
+      "type": "parsons",
+      "section": "1.3",
+      "question": "Zet het if-blok in de goede volgorde.",
+      "lines": [
+        "if temp > 30:",
+        "    print(\"Heet\")",
+        "elif temp > 20:",
+        "    print(\"Lekker\")",
+        "else:",
+        "    print(\"Koud\")"
+      ],
+      "simple": "Eerst `if`, dan eventueel `elif`, en `else` altijd als laatste. Onder elke regel met een dubbele punt komt ingesprongen code."
+    }
   ]
 }

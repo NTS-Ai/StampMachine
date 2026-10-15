@@ -88,67 +88,7 @@ function loadKB() {
   return KB.loading;
 }
 
-/* ---------- routing ---------- */
-
-/**
- * @typedef {{ name: 'home' } | { name: 'kb', page: 'home' | 'les' | 'naslag' | 'begrippen', id?: string }} Route
- * @returns {Route}
- */
-function parseRoute(hash = location.hash) {
-  const parts = hash.replace(/^#\/?/, '').split('/').filter(Boolean).map(decodeURIComponent);
-  if (parts[0] !== 'kennis') return { name: 'home' };
-  if (!parts[1]) return { name: 'kb', page: 'home' };
-  if (parts[1] === 'naslag') return { name: 'kb', page: 'naslag', id: parts[2] };
-  if (parts[1] === 'begrippen') return { name: 'kb', page: 'begrippen' };
-  return { name: 'kb', page: 'les', id: parts[1] };
-}
-
-/** Toont het scherm dat bij de huidige URL hoort. */
-function route() {
-  const r = parseRoute();
-  if (r.name === 'kb') openKB(r);
-  else goHome();
-}
-
-/** Gaat naar een route; ook als je er al bent wordt hij opnieuw getoond. @param {string} hash */
-function navigate(hash) {
-  if (location.hash === hash) route();
-  else location.hash = hash;
-}
-
-/** Een lopend spel stopt als je naar de kennisbank gaat (bijvoorbeeld met de terugknop). */
-function leaveGames() {
-  if (G) { clearInterval(tick); G = null; }
-  F = null;
-}
-
-window.addEventListener('hashchange', route);
-
-// Zoeken in de tabbalk op mobiel.
-$('[data-nav-search]').addEventListener('click', () => { if (canOpenSearch()) openSearch(); });
-
-// Tabbladen in de header: ook een klik op het tabblad waar je al bent, toont dat overzicht.
-document.querySelectorAll('[data-tab]').forEach(tab => {
-  tab.addEventListener('click', e => {
-    e.preventDefault();
-    navigate(/** @type {HTMLAnchorElement} */ (tab).getAttribute('href') || '#/');
-  });
-});
-
-/** Markeert het actieve tabblad. @param {ScreenId} screen */
-function markTab(screen) {
-  const active = screen === 'kb' ? 'kb' : screen === 'search' ? 'search' : 'home';
-  const search = document.querySelector('[data-nav-search]');
-  if (search) {
-    if (active === 'search') search.setAttribute('aria-current', 'page');
-    else search.removeAttribute('aria-current');
-  }
-  document.querySelectorAll('[data-tab]').forEach(tab => {
-    if (/** @type {HTMLElement} */ (tab).dataset.tab === active) tab.setAttribute('aria-current', 'page');
-    else tab.removeAttribute('aria-current');
-  });
-  if (screen !== 'kb') document.title = KB_TITLE;
-}
+/* Routing (#/kennis …) staat in js/core/router.js; die roept openKB aan. */
 
 /* ---------- openen en de zijbalk ---------- */
 

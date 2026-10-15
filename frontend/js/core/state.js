@@ -22,10 +22,12 @@ const KEEP_MS = KEEP_DAYS * 24 * 60 * 60 * 1000;
  * @property {boolean} sound
  * @property {number} last                         Tijdstip (ms) van de laatste keer spelen.
  * @property {string[]} [days]                     Oud formaat; wordt bij laden omgezet naar streak.
+ * @property {Object<string, number>} map          Kaart: sterren (1-3) per gehaald level, op sectie-id.
+ * @property {Object<string, boolean>} dragons     Kaart: verslagen draken, op weeknummer.
  */
 
 /** @returns {SaveState} */
-const freshState = () => ({ xp: 0, m: {}, best: {}, fc: {}, streak: { count: 0, day: '' }, sound: true, last: Date.now() });
+const freshState = () => ({ xp: 0, m: {}, best: {}, fc: {}, streak: { count: 0, day: '' }, sound: true, last: Date.now(), map: {}, dragons: {} });
 
 /** De voortgang van de speler. @type {SaveState} */
 let S = freshState();

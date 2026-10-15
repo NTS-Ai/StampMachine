@@ -4,7 +4,7 @@
 /** @typedef {'system' | 'light' | 'dark'} ThemePref */
 
 const THEME_KEY = 'nts-stamp-theme';
-const THEME_COLORS = { light: '#F3F5FA', dark: '#0A0E1A' };
+const THEME_COLORS = { light: '#EAF7DD', dark: '#14173A' };
 
 /** @returns {ThemePref} */
 function getThemePref() {
