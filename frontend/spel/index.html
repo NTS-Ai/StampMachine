@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important}</style>
+<title>Stampy Python Eiland</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: a phone-width game app. "Dag" (light) is a sunny meadow, "Nacht" (dark) an indigo night sky. Glass panels, chunky 3D answer tiles, an isometric island map; Stampy lives in a glass bubble in the top corner of every screen. */
+:root{
+  --bg1:#EAF7DD; --bg2:#CDEBB4; --glow1:#FFFFFF; --glow2:#E3F6CF;
+  --glass:rgba(255,255,255,.72); --glass2:rgba(255,255,255,.9); --glass3:#FFFFFF; --stroke:rgba(31,77,23,.12); --track:rgba(31,77,23,.12); --chipbg:rgba(31,77,23,.08);
+  --ink:#16380F; --muted:#5B7853; --btn1:#6AD54F; --btn2:#3FAE2C; --btn-sh:#2C7E1E;
+  --tile1:#FFFFFF; --tile2:#F1F9EA; --tile-ink:#16380F; --tile-d:#B9DAA2; --pl1:#FFFFFF; --pl2:#EEF8E6;
+  --field:#FFFFFF; --course1:#2B6B1F; --course2:#1F5418; --course3:#173F12; --nav-bg:rgba(255,255,255,.88);
+  --map1:#BFE6FF; --map2:#9AD3F5; --map3:#7BC1EC;
+  --blue:#3AA8FF; --blue-d:#1F72D0; --gold:#FFC93D; --gold-d:#C98512; --pink:#FF5C86;
+  --green:#2FBF71; --green-d:#1E9E66; --red:#FF5C7A; --red-d:#C23052; --violet:#7B5CFF;
+  --f-display:"Fredoka","Nunito",system-ui,sans-serif; --f-body:"Nunito","Segoe UI",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg1:#14173A; --bg2:#231C57; --glow1:#2E2A80; --glow2:#3A1F6E;
+  --glass:rgba(255,255,255,.06); --glass2:rgba(255,255,255,.11); --glass3:rgba(255,255,255,.16); --stroke:rgba(255,255,255,.13); --track:rgba(255,255,255,.12); --chipbg:rgba(255,255,255,.1);
+  --ink:#F3F2FF; --muted:#ABA8D9; --btn1:#4DB4FF; --btn2:#1F72D0; --btn-sh:#134A8C;
+  --tile1:#5247B0; --tile2:#3A3189; --tile-ink:#FFFFFF; --tile-d:#1E1A52; --pl1:#4A40A3; --pl2:#372E85;
+  --field:#0F1030; --course1:#2E7FD6; --course2:#3C4FC4; --course3:#4B2E9E; --nav-bg:rgba(22,20,62,.82);
+  --map1:#2B4C8C; --map2:#1C2A63; --map3:#181845; --green:#3DDC97; --violet:#8A6BFF; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg1:#14173A; --bg2:#231C57; --glow1:#2E2A80; --glow2:#3A1F6E;
+  --glass:rgba(255,255,255,.06); --glass2:rgba(255,255,255,.11); --glass3:rgba(255,255,255,.16); --stroke:rgba(255,255,255,.13); --track:rgba(255,255,255,.12); --chipbg:rgba(255,255,255,.1);
+  --ink:#F3F2FF; --muted:#ABA8D9; --btn1:#4DB4FF; --btn2:#1F72D0; --btn-sh:#134A8C;
+  --tile1:#5247B0; --tile2:#3A3189; --tile-ink:#FFFFFF; --tile-d:#1E1A52; --pl1:#4A40A3; --pl2:#372E85;
+  --field:#0F1030; --course1:#2E7FD6; --course2:#3C4FC4; --course3:#4B2E9E; --nav-bg:rgba(22,20,62,.82);
+  --map1:#2B4C8C; --map2:#1C2A63; --map3:#181845; --green:#3DDC97; --violet:#8A6BFF; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;background-color:var(--bg1);
+  background-image:radial-gradient(900px 600px at 15% -10%,var(--glow1) 0%,transparent 60%),radial-gradient(700px 500px at 110% 30%,var(--glow2) 0%,transparent 55%),linear-gradient(165deg,var(--bg1),var(--bg2));background-attachment:fixed}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+h1,h2,h3{font-family:var(--f-display);margin:0;line-height:1.1;text-wrap:balance}
+code,.mono{font-family:var(--f-mono)}
+.app{max-width:440px;min-height:100%;margin:0 auto;padding-inline:16px;display:flex;flex-direction:column}
+.screen{flex:1;display:flex;flex-direction:column;gap:16px;padding-block:18px 110px;animation:enter .35s ease}
+@keyframes enter{from{opacity:.0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.glass{background:var(--glass);border:1px solid var(--stroke);border-radius:24px;backdrop-filter:blur(10px)}
+.rbtn{width:48px;height:48px;flex:none;border-radius:50%;display:grid;place-items:center;background:linear-gradient(180deg,var(--btn1),var(--btn2));box-shadow:0 4px 0 var(--btn-sh),inset 0 1px 0 rgba(255,255,255,.35);transition:transform .1s,box-shadow .1s}
+.rbtn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--btn-sh)}
+.theme{height:34px;border-radius:99px;padding:0 12px;display:inline-flex;align-items:center;gap:6px;background:var(--glass2);border:1px solid var(--stroke);font-weight:800;font-size:13px}
+.theme svg{width:16px;height:16px}
+.tiles3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.st{border-radius:20px;padding:12px 8px;text-align:center;background:var(--glass2);border:1px solid var(--stroke);display:grid;gap:2px;justify-items:center}
+.st svg{width:26px;height:26px}
+.st small{color:var(--muted);font-weight:800;font-size:12px}
+.st b{font-family:var(--f-display);font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.quick{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;scroll-snap-type:x mandatory}
+.qcard{flex:none;width:132px;scroll-snap-align:start;border-radius:20px;padding:12px;text-align:left;background:var(--glass2);border:1px solid var(--stroke);display:grid;gap:6px;transition:transform .15s}
+.qcard:hover{transform:translateY(-3px)}
+.qcard .qi{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:#fff;font-family:var(--f-display);font-weight:700}
+.qcard b{font-family:var(--f-display);font-weight:600;font-size:16px}
+.qcard small{color:var(--muted);font-weight:700;font-size:12px;line-height:1.3}
+.sechead{display:flex;justify-content:space-between;align-items:baseline}
+.sechead span{color:var(--green);font-weight:800;font-size:13px}
+.rbtn svg{width:22px;height:22px}
+.topbar{display:flex;align-items:center;gap:10px}
+.grow{flex:1;min-width:0}
+
+/* mascot corner */
+.mascot{position:relative;width:66px;height:66px;flex:none;border-radius:50%;background:var(--glass2);border:1px solid var(--stroke);display:grid;place-items:center;box-shadow:0 0 0 4px rgba(138,107,255,.12)}
+.mascot .host{width:58px;margin-top:4px}
+.mascot .bubble{position:absolute;top:8px;width:max-content;max-width:210px;background:#fff;color:#1A1640;border:1px solid rgba(20,20,60,.12);box-shadow:0 8px 20px -10px rgba(0,0,0,.5);font-weight:800;font-size:13px;line-height:1.3;padding:7px 11px;border-radius:14px;opacity:0;transform:scale(.9);transition:opacity .2s,transform .2s;pointer-events:none;z-index:5}
+.mascot.right .bubble{right:76px;transform-origin:right center}
+.mascot.left .bubble{left:76px;transform-origin:left center}
+.mascot .bubble.on{opacity:1;transform:scale(1)}
+
+/* home */
+.hello{display:flex;align-items:center;gap:12px}
+.hello h1{font-size:30px;font-weight:700}
+.hello p{margin:2px 0 0;color:var(--muted);font-weight:700;font-size:14px}
+.xpbar{height:8px;border-radius:99px;background:var(--track);overflow:hidden;margin-top:6px;max-width:190px}
+.xpbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#FFE27A);border-radius:99px;transition:width .6s}
+.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.cat{display:grid;justify-items:center;gap:6px;font-size:12px;font-weight:800;color:var(--muted)}
+.cat .ic{width:62px;height:62px;border-radius:50%;display:grid;place-items:center;background:var(--glass2);border:1px solid var(--stroke);transition:transform .15s,background .15s}
+.cat:hover .ic{transform:translateY(-3px);background:var(--glass3)}
+.cat .ic svg{width:30px;height:30px}
+.cat[aria-current="true"] .ic{background:linear-gradient(180deg,#5A4BD8,#3A2E9E);box-shadow:0 0 0 3px rgba(138,107,255,.35)}
+.course{position:relative;overflow:hidden;color:#fff;border-radius:26px;padding:18px;min-height:210px;background:linear-gradient(150deg,var(--course1) 0%,var(--course2) 45%,var(--course3) 100%);border:1px solid rgba(255,255,255,.18);box-shadow:0 18px 40px -18px #000}
+.course::before{content:"";position:absolute;inset:auto -40px -60px auto;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.18),transparent 65%)}
+.course h2{font-size:22px;font-weight:600}
+.course .row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.pctpill{display:inline-flex;align-items:center;gap:8px;margin-top:10px;background:rgba(10,12,40,.45);border-radius:99px;padding:5px 12px 5px 14px;font-weight:800;font-variant-numeric:tabular-nums}
+.pctpill svg{width:18px;height:18px}
+.course .bot{position:absolute;right:6px;bottom:-14px;width:150px}
+.course .float{position:absolute;font-family:var(--f-mono);font-weight:700;font-size:15px;background:rgba(255,255,255,.92);color:#2A1F7A;border-radius:10px;padding:4px 8px;box-shadow:0 6px 14px -6px #000;animation:floaty 4s ease-in-out infinite}
+@keyframes floaty{50%{transform:translateY(-8px) rotate(-3deg)}}
+.sec-t{font-family:var(--f-display);font-size:19px;font-weight:600;margin-top:4px}
+.wlist{display:grid;gap:12px}
+.world{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:22px;text-align:left;background:var(--glass2);border:1px solid var(--stroke);transition:transform .15s}
+.world:hover{transform:translateY(-2px)}
+.world .num{width:46px;height:46px;flex:none;border-radius:14px;display:grid;place-items:center;font-family:var(--f-display);font-weight:700;font-size:20px;color:#fff;background:var(--wc);box-shadow:0 4px 0 rgba(0,0,0,.25)}
+.world .lock{color:var(--muted)}
+.world h3{font-size:17px;font-weight:600}
+.world p{margin:0;font-size:13px;color:var(--muted);font-weight:700}
+.world .lock{margin-left:auto;opacity:.7}
+.world[data-locked="true"]{filter:saturate(.35);opacity:.75}
+
+/* map */
+.mapbar{display:flex;align-items:center;gap:10px}
+.wsel{flex:1;min-width:0;height:48px;border-radius:99px;background:var(--glass2);border:1px solid var(--stroke);font-family:var(--f-display);font-weight:600;font-size:17px;display:flex;align-items:center;justify-content:center;gap:8px;padding-inline:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stats{display:flex;justify-content:space-around;align-items:center;padding:8px 10px;border-radius:99px;background:linear-gradient(90deg,rgba(138,107,255,.35),rgba(58,168,255,.18));border:1px solid var(--stroke);font-weight:800;font-variant-numeric:tabular-nums}
+.stats span{display:inline-flex;align-items:center;gap:6px}
+.stats svg{width:20px;height:20px}
+.mapwrap{position:relative;border-radius:28px;overflow:hidden;background:radial-gradient(120% 80% at 50% 20%,var(--map1) 0%,var(--map2) 45%,var(--map3) 100%);border:1px solid var(--stroke)}
+.mapwrap .mascot{position:absolute;left:12px;top:12px;z-index:3}
+.mapwrap svg.map{display:block;width:100%;height:auto}
+.node{cursor:pointer}
+.node .top{transition:transform .15s}
+.node:hover .top,.node:focus-visible .top{transform:translateY(-3px)}
+.node .pulse{animation:pulse 1.6s ease-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes pulse{0%{opacity:.8;transform:scale(1)}100%{opacity:0;transform:scale(1.9)}}
+.water-sh{animation:shimmer 6s ease-in-out infinite}
+@keyframes shimmer{50%{opacity:.35}}
+.cloud{animation:drift 14s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translateX(26px)}}
+.legend{display:flex;gap:14px;justify-content:center;font-size:12px;color:var(--muted);font-weight:800;flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+
+/* play */
+.pbar{flex:1;height:12px;border-radius:99px;background:var(--track);overflow:hidden}
+.pbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#FFE27A);border-radius:99px;transition:width .4s}
+.hearts{display:flex;gap:4px;align-items:center;font-weight:800;color:var(--pink)}
+.hearts svg{width:20px;height:20px}
+.hearts .lost{opacity:.2}
+.qtype{font-family:var(--f-mono);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--violet);text-align:center}
+.qtitle{font-size:24px;font-weight:600;text-align:center;line-height:1.25}
+.qtitle code{font-size:.85em;background:var(--chipbg);padding:1px 6px;border-radius:7px}
+pre.code{margin:0;background:#0F1030;color:#EDEBFF;border:1px solid var(--stroke);border-radius:18px;padding:16px;font-family:var(--f-mono);font-size:15px;line-height:1.6;overflow-x:auto;white-space:pre}
+pre.code .k{color:#C49BFF}pre.code .s{color:#7EE7A8}pre.code .n{color:#FFC27A}pre.code .f{color:#6FC8FF}
+.blank{font:inherit;font-family:var(--f-mono);width:7ch;background:rgba(255,255,255,.1);border:0;border-bottom:2px solid var(--gold);color:var(--gold);padding:1px 4px;border-radius:6px 6px 0 0;text-align:center}
+.tiles{display:grid;gap:14px;grid-template-columns:repeat(var(--cols,3),minmax(0,1fr));margin-top:auto}
+.tile{min-height:84px;border-radius:20px;padding:12px;font-family:var(--f-display);font-weight:700;font-size:26px;color:var(--tile-ink);background:linear-gradient(180deg,var(--tile1),var(--tile2));border:1px solid var(--stroke);box-shadow:0 7px 0 var(--tile-d),inset 0 1px 0 rgba(255,255,255,.22);transition:transform .1s,box-shadow .1s,background .2s;overflow-wrap:anywhere}
+.tile.mono{font-family:var(--f-mono);font-size:18px}
+.tile:hover{transform:translateY(-2px);box-shadow:0 9px 0 var(--tile-d),inset 0 1px 0 rgba(255,255,255,.22)}
+.tile:active{transform:translateY(5px);box-shadow:0 2px 0 var(--tile-d)}
+.tile.ok{color:#fff;background:linear-gradient(180deg,#4BE6A6,var(--green-d));box-shadow:0 7px 0 #136B45}
+.tile.no{color:#fff;background:linear-gradient(180deg,#FF7891,var(--red-d));box-shadow:0 7px 0 #7D1A33;animation:shake .35s}
+.tile[disabled]{cursor:default}
+@keyframes shake{25%,75%{transform:translateX(-6px)}50%{transform:translateX(6px)}}
+.field{width:100%;font-family:var(--f-mono);font-size:18px;padding:14px 16px;border-radius:16px;background:var(--field);border:1.5px solid var(--stroke);color:var(--ink)}
+textarea.field{min-height:120px;font-family:var(--f-body);font-size:16px;resize:vertical}
+.cta{margin-top:auto;width:100%;min-height:58px;border-radius:18px;font-family:var(--f-display);font-weight:700;font-size:20px;color:#1A1450;background:linear-gradient(180deg,#FFE27A,var(--gold));box-shadow:0 6px 0 var(--gold-d),inset 0 1px 0 rgba(255,255,255,.6);transition:transform .1s,box-shadow .1s}
+.cta:active{transform:translateY(4px);box-shadow:0 2px 0 var(--gold-d)}
+.cta[disabled]{filter:grayscale(1) brightness(.6);cursor:default;transform:none}
+.cta.blue{color:#fff;background:linear-gradient(180deg,var(--btn1),var(--btn2));box-shadow:0 6px 0 var(--btn-sh)}
+.parsons{display:grid;gap:8px}
+.plabel{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.pzone{min-height:58px;border-radius:16px;border:2px dashed var(--stroke);padding:8px;display:grid;gap:8px}
+.pline{text-align:left;font-family:var(--f-mono);font-size:14px;white-space:pre;padding:10px 12px;border-radius:12px;color:var(--tile-ink);background:linear-gradient(180deg,var(--pl1),var(--pl2));border:1px solid var(--stroke);box-shadow:0 4px 0 var(--tile-d);overflow-x:auto;transition:transform .1s}
+.pline:active{transform:translateY(3px);box-shadow:0 1px 0 var(--tile-d)}
+.pzone .pline{color:#fff;background:linear-gradient(180deg,#2F6FBF,#24569A);box-shadow:0 4px 0 #123566}
+.checks{display:grid;gap:8px;margin:8px 0 0}
+.checks label{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:var(--glass2);border:1px solid var(--stroke);font-weight:700}
+.checks input{width:20px;height:20px;accent-color:var(--green);flex:none;margin-top:1px}
+.model{border-radius:16px;padding:12px 14px;background:rgba(61,220,151,.1);border:1px solid rgba(61,220,151,.35)}
+.model b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--green);margin-bottom:2px}
+
+/* feedback sheet */
+.sheet{color:#fff;position:fixed;left:50%;bottom:0;transform:translate(-50%,105%);width:min(440px,100%);padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));border-radius:26px 26px 0 0;z-index:20;transition:transform .3s cubic-bezier(.2,.9,.2,1);display:grid;gap:8px}
+.sheet.on{transform:translate(-50%,0)}
+.sheet.ok{background:linear-gradient(180deg,#1E6B54,#164A3E);border-top:2px solid var(--green)}
+.sheet.no{background:linear-gradient(180deg,#6B1E37,#4A1628);border-top:2px solid var(--red)}
+.sheet h3{font-size:24px;font-weight:700}
+.sheet.ok h3{color:#8CF5C8}.sheet.no h3{color:#FFB3C3}
+.sheet p{margin:0}
+.sheet .simple{font-size:15px;background:rgba(0,0,0,.2);border-radius:12px;padding:8px 12px}
+.sheet .simple b{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.75}
+
+/* minigame */
+.gamehead{display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:800;font-variant-numeric:tabular-nums}
+.gamehead .score{font-family:var(--f-display);font-size:28px}
+.combo{background:var(--gold);color:#1A1450;border-radius:99px;padding:3px 10px;font-size:13px}
+.combo.pop{animation:pop .3s}
+@keyframes pop{50%{transform:scale(1.3) rotate(-4deg)}}
+.gtimer{height:10px;border-radius:99px;background:var(--track);overflow:hidden}
+.gtimer i{display:block;height:100%;background:linear-gradient(90deg,var(--pink),var(--gold))}
+.gcard{color:#fff;border-radius:26px;padding:26px 16px;text-align:center;background:radial-gradient(120% 120% at 50% 0%,#3B4FC9,#2A2276);border:1px solid rgba(255,255,255,.18);box-shadow:0 18px 40px -20px #000;display:grid;gap:8px}
+.gcard .prompt{font-family:var(--f-mono);font-size:30px;font-weight:700;overflow-wrap:anywhere}
+.gcard .cap{color:#C9C6F0;font-weight:800;font-size:14px}
+.gcard.flash-ok{animation:fok .3s}.gcard.flash-no{animation:fno .3s}
+@keyframes fok{50%{box-shadow:0 0 0 4px var(--green),0 0 40px var(--green)}}
+@keyframes fno{50%{box-shadow:0 0 0 4px var(--red);transform:translateX(-5px)}}
+.intro{display:grid;gap:12px;justify-items:center;text-align:center}
+.intro .badge{color:#fff;font-family:var(--f-mono);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:var(--violet);border-radius:99px;padding:4px 12px}
+.intro h2{font-size:30px}
+.intro p{margin:0;color:var(--muted);max-width:32ch}
+.bigbot{width:180px}
+
+/* result */
+.stars{display:flex;gap:8px;justify-content:center}
+.stars svg{width:62px;height:62px;filter:drop-shadow(0 6px 0 rgba(0,0,0,.25))}
+.stars .s{animation:starIn .5s cubic-bezier(.3,1.6,.5,1) both}
+.stars .s:nth-child(2){animation-delay:.18s;transform:translateY(-12px)}.stars .s:nth-child(3){animation-delay:.36s}
+@keyframes starIn{from{transform:scale(0) rotate(-40deg)}}
+.rgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.rstat{border-radius:18px;padding:12px;text-align:center;background:var(--glass2);border:1px solid var(--stroke)}
+.rstat b{display:block;font-family:var(--f-display);font-size:26px;font-variant-numeric:tabular-nums}
+.rstat small{color:var(--muted);font-weight:800}
+.upgrade{border-radius:18px;padding:12px 14px;background:linear-gradient(90deg,rgba(255,154,46,.25),rgba(255,201,61,.12));border:1px solid rgba(255,201,61,.4);font-weight:800;text-align:center}
+
+/* nav */
+.nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));width:min(408px,calc(100% - 32px));display:flex;justify-content:space-around;align-items:center;padding:8px;border-radius:99px;background:var(--nav-bg);backdrop-filter:blur(14px);border:1px solid var(--stroke);box-shadow:0 12px 30px -16px rgba(0,0,0,.45);z-index:10}
+.nav button{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;color:var(--muted);transition:background .15s,color .15s}
+.nav button svg{width:24px;height:24px}
+.nav button[aria-current="true"]{background:linear-gradient(180deg,#6D5BEA,#4733B8);color:#fff;box-shadow:0 0 0 4px rgba(138,107,255,.25)}
+.nav[hidden]{display:none!important}
+.soon{display:grid;gap:14px;justify-items:center;text-align:center;padding-top:30px}
+.soon p{color:var(--muted);margin:0;max-width:30ch}
+.toast{position:fixed;left:50%;top:calc(16px + env(safe-area-inset-top,0px));transform:translate(-50%,-140%);background:#fff;color:#1A1640;font-weight:800;border-radius:14px;padding:10px 16px;z-index:30;transition:transform .3s;max-width:90%;text-align:center}
+.toast.on{transform:translate(-50%,0)}
+
+/* robot */
+.robot{--shell:#F3F5FB;--accent-r:#2B47F0;--plate:#2B47F0;--nts:#FFFFFF;--screen:#0F1633;--led:#62F0FF;--ol:#131A2F;--bulb:#FFC93D;--rim:none;display:block;width:100%;height:auto;overflow:visible}
+.robot[data-expr="sleep"]{--led:#3F7F92}
+.robot .shell{fill:var(--shell)}.robot .accent{fill:var(--accent-r)}.robot .plate{fill:var(--plate)}.robot .screen{fill:var(--screen)}.robot .bulb{fill:var(--bulb)}
+.robot .ol{stroke:var(--ol);stroke-width:3;stroke-linejoin:round}.robot .ol-line{stroke:var(--ol);stroke-width:4;stroke-linecap:round}
+.robot .nts{font-family:var(--f-display);font-weight:700;fill:var(--nts);text-anchor:middle;letter-spacing:1.5px}
+.robot .eye{fill:var(--led)}.robot .eye-line{fill:none;stroke:var(--led);stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round}.robot .eye-line.thin{stroke-width:3.5}
+.robot .mouth-line{fill:none;stroke:var(--led);stroke-width:4;stroke-linecap:round}.robot .mouth-fill{fill:var(--led)}
+.robot .face{transition:transform .18s ease-out}
+.robot .blink{transform-box:fill-box;transform-origin:center;animation:blink 5.2s infinite}
+@keyframes blink{0%,93%,100%{transform:scaleY(1)}95.5%{transform:scaleY(.12)}}
+.robot .bob{transform-origin:100px 210px;animation:idle 3.2s ease-in-out infinite}
+@keyframes idle{50%{transform:translateY(-4px)}}
+.robot .arm{transform-box:fill-box;transform-origin:50% 8%}
+.robot .armor,.robot .sparkles{display:none}
+.robot .aura{opacity:0;transform-box:fill-box;transform-origin:50% 100%}
+.robot.s3 .bulb{animation:glow 2.2s ease-in-out infinite}
+@keyframes glow{50%{filter:drop-shadow(0 0 7px var(--bulb))}}
+.robot.s7 .aura{opacity:.85;animation:flicker 1.7s ease-in-out infinite}
+@keyframes flicker{50%{transform:scale(1.05,1.09);opacity:.6}}
+.robot.s14 .armor{display:inline}
+.robot.s30 .shell{stroke:var(--rim);stroke-width:4.5}.robot.s30 .sparkles{display:inline}
+.robot.anim-hop .bob{animation:hop .55s cubic-bezier(.3,1.6,.5,1) 2}
+@keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-16px)}}
+.robot.anim-hop .armL{animation:upL .55s ease-in-out 2}.robot.anim-hop .armR{animation:upR .55s ease-in-out 2}
+@keyframes upL{50%{transform:rotate(70deg)}}@keyframes upR{50%{transform:rotate(-70deg)}}
+.robot.anim-dance .bob{animation:dance .5s ease-in-out 4}
+@keyframes dance{0%,100%{transform:rotate(0)}25%{transform:rotate(-7deg) translateY(-7px)}75%{transform:rotate(7deg) translateY(-7px)}}
+.robot.anim-dance .armL{animation:waveL .5s ease-in-out 4}.robot.anim-dance .armR{animation:waveR .5s ease-in-out 4}
+@keyframes waveL{0%,100%{transform:rotate(120deg)}50%{transform:rotate(165deg)}}@keyframes waveR{0%,100%{transform:rotate(-120deg)}50%{transform:rotate(-165deg)}}
+.robot.anim-droop .bob{animation:droop 1.1s ease forwards}
+@keyframes droop{40%,100%{transform:translateY(5px) rotate(-3deg)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- HOME -->
+  <section class="screen" id="s-home">
+    <div class="hello">
+      <div class="grow">
+        <button class="theme" type="button" id="themeBtn" aria-label="Wissel tussen dag en nacht"></button>
+        <h1 style="margin-top:10px">Hoi, stagiair</h1>
+        <p id="lvlText">Speler-level 1 · 0 XP</p>
+        <div class="xpbar"><i id="xpFill" style="width:0%"></i></div>
+      </div>
+      <div class="mascot right" id="m-home"></div>
+    </div>
+    <div class="tiles3">
+      <div class="st"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z" fill="#FFB020"/></svg><small>Speler-level</small><b id="tLvl">1</b></div>
+      <div class="st"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.5 1.3 6.5L12 17l-5.9 3.3 1.3-6.5L2.5 9.3l6.6-.8z" fill="#FFC93D"/></svg><small>Sterren</small><b id="tStars">0</b></div>
+      <div class="st"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#7B5CFF"/><path d="M8 12l3 3 5-6" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><small>Levels</small><b id="tDone">0/8</b></div>
+    </div>
+    <nav class="cats" aria-label="Onderdelen">
+      <button class="cat" type="button" data-go="map" aria-current="true"><span class="ic"><svg viewBox="0 0 32 32"><rect x="3" y="9" width="26" height="15" rx="7.5" fill="#8A6BFF"/><rect x="8" y="14.5" width="7" height="2.5" rx="1" fill="#fff"/><rect x="10.25" y="12.25" width="2.5" height="7" rx="1" fill="#fff"/><circle cx="21" cy="14" r="1.8" fill="#FFC93D"/><circle cx="24" cy="18" r="1.8" fill="#3DDC97"/></svg></span>Spelen</button>
+      <button class="cat" type="button" data-go="soon" data-what="Oefenen"><span class="ic"><svg viewBox="0 0 32 32"><rect x="9" y="5" width="16" height="21" rx="3" fill="#3AA8FF" transform="rotate(10 17 15)"/><rect x="6" y="7" width="16" height="21" rx="3" fill="#FFC93D"/><path d="M11 17l3 3 6-7" stroke="#1A1450" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Oefenen</button>
+      <button class="cat" type="button" data-go="soon" data-what="Kennisbank"><span class="ic"><svg viewBox="0 0 32 32"><path d="M5 7c4-2 8-2 11 1v18c-3-3-7-3-11-1z" fill="#3DDC97"/><path d="M27 7c-4-2-8-2-11 1v18c3-3 7-3 11-1z" fill="#2FB57C"/></svg></span>Kennisbank</button>
+      <button class="cat" type="button" data-go="soon" data-what="Speeltuin"><span class="ic"><svg viewBox="0 0 32 32"><rect x="3" y="6" width="26" height="20" rx="4" fill="#FF5C86"/><path d="M8 13l4 3-4 3" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="14" y="18" width="8" height="2.4" rx="1.2" fill="#fff"/></svg></span>Speeltuin</button>
+    </nav>
+    <div class="course">
+      <div class="row">
+        <div><h2 id="cTitle">Wereld 1 · Python basis</h2><div class="pctpill"><span id="cPct">0%</span><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7.5" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="3"/><circle id="cRing" cx="10" cy="10" r="7.5" fill="none" stroke="#3AD0FF" stroke-width="3" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" transform="rotate(-90 10 10)"/></svg></div></div>
+        <button class="rbtn" type="button" data-go="map" aria-label="Verder spelen"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <span class="float" style="left:22px;bottom:70px">int</span><span class="float" style="left:78px;bottom:28px;animation-delay:-1.3s">print()</span><span class="float" style="left:150px;bottom:92px;animation-delay:-2.4s">"str"</span>
+      <div class="bot" id="courseBot"></div>
+    </div>
+    <div class="sechead"><div class="sec-t">Snel oefenen</div><span>uit de huidige Stampmachine</span></div>
+    <div class="quick">
+      <button class="qcard" type="button" data-go="soon" data-what="Quiz"><span class="qi" style="background:#3AA8FF">?</span><b>Quiz</b><small>12 vragen met uitleg</small></button>
+      <button class="qcard" type="button" data-go="soon" data-what="Flashcards"><span class="qi" style="background:#2FBF71">↻</span><b>Flashcards</b><small>Omdraaien en stampen</small></button>
+      <button class="qcard" type="button" data-go="soon" data-what="Speedrun"><span class="qi" style="background:#FF5C86">60</span><b>Speedrun</b><small>Zoveel mogelijk in 60 s</small></button>
+      <button class="qcard" type="button" data-go="soon" data-what="Eindbaas"><span class="qi" style="background:#7B5CFF">!</span><b>Eindbaas</b><small>Pager om 03:00</small></button>
+    </div>
+    <div class="sec-t">Werelden</div>
+    <div class="wlist" id="wlist"></div>
+  </section>
+
+  <!-- MAP -->
+  <section class="screen" id="s-map" hidden>
+    <div class="mapbar">
+      <button class="rbtn" type="button" data-go="home" aria-label="Terug naar home"><svg viewBox="0 0 24 24"><path d="M19 12H6M11 6l-6 6 6 6" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="wsel" type="button" id="wselBtn">Wereld 1 · Python basis <svg width="16" height="16" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg></button>
+      <button class="rbtn" type="button" aria-label="Meer" data-go="soon" data-what="Instellingen"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2" fill="#fff"/><circle cx="12" cy="12" r="2" fill="#fff"/><circle cx="19" cy="12" r="2" fill="#fff"/></svg></button>
+    </div>
+    <div class="stats" aria-label="Je stand">
+      <span title="Sterren"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.5 1.3 6.5L12 17l-5.9 3.3 1.3-6.5L2.5 9.3l6.6-.8z" fill="#FFC93D"/></svg><b id="stStars">0</b></span>
+      <span title="XP"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z" fill="#FFD84A"/></svg><b id="stXp">0</b></span>
+      <span title="Levens per level"><svg viewBox="0 0 24 24"><path d="M12 21s-8-5.3-8-11a4.5 4.5 0 018-2.8A4.5 4.5 0 0120 10c0 5.7-8 11-8 11z" fill="#FF5C86"/></svg><b>3</b></span>
+    </div>
+    <div class="mapwrap">
+      <div class="mascot left" id="m-map"></div>
+      <svg class="map" id="map" viewBox="0 0 360 470" role="group" aria-label="Levels van wereld 1"></svg>
+    </div>
+    <div class="legend"><span><i style="background:#FFC93D"></i>Gehaald</span><span><i style="background:#3AA8FF"></i>Volgende</span><span><i style="background:#7C7AA8"></i>Op slot</span></div>
+  </section>
+
+  <!-- PLAY -->
+  <section class="screen" id="s-play" hidden>
+    <div class="topbar">
+      <button class="rbtn" type="button" id="quitBtn" aria-label="Level stoppen"><svg viewBox="0 0 24 24"><path d="M19 12H6M11 6l-6 6 6 6" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="pbar"><i id="pFill" style="width:0%"></i></div>
+      <div class="hearts" id="hearts" aria-label="Levens"></div>
+      <div class="mascot right" id="m-play"></div>
+    </div>
+    <div id="qbox" style="display:flex;flex-direction:column;gap:16px;flex:1"></div>
+  </section>
+
+  <!-- RESULT -->
+  <section class="screen" id="s-result" hidden></section>
+
+  <!-- SOON -->
+  <section class="screen" id="s-soon" hidden>
+    <div class="topbar"><button class="rbtn" type="button" data-go="home" aria-label="Terug naar home"><svg viewBox="0 0 24 24"><path d="M19 12H6M11 6l-6 6 6 6" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+    <div class="soon"><div class="bigbot" id="soonBot"></div><h2 id="soonTitle">Kennisbank</h2><p id="soonText">Dit onderdeel komt in de volledige bouw. Dit prototype laat het spel zien.</p></div>
+  </section>
+</div>
+
+<nav class="nav" id="nav" aria-label="Hoofdmenu">
+  <button type="button" data-go="home" aria-label="Home" aria-current="true"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8a2 2 0 01-2 2h-3v-6H9v6H6a2 2 0 01-2-2z" fill="currentColor"/></svg></button>
+  <button type="button" data-go="map" aria-label="Spelen"><svg viewBox="0 0 24 24"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 4v14M15 6v14" stroke="currentColor" stroke-width="2"/></svg></button>
+  <button type="button" data-go="soon" data-what="Kennisbank" aria-label="Kennisbank"><svg viewBox="0 0 24 24"><path d="M4 5c3-1.5 6-1.5 8 .5v14c-2-2-5-2-8-.5zM20 5c-3-1.5-6-1.5-8 .5v14c2-2 5-2 8-.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></button>
+  <button type="button" data-go="soon" data-what="Speeltuin" aria-label="Speeltuin"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 10l3 2-3 2M12 15h5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></button>
+  <button type="button" data-go="soon" data-what="Profiel" aria-label="Profiel"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.5-4 4.5-6 8-6s6.5 2 8 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+</nav>
+<div class="sheet" id="sheet" role="dialog" aria-live="assertive"></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ================= Stampy ================= */
+const BODY=`<g class="armL arm"><rect class="shell ol" x="38" y="132" width="16" height="42" rx="8"/><circle class="accent ol" cx="46" cy="177" r="8"/></g>
+<g class="armR arm"><rect class="shell ol" x="146" y="132" width="16" height="42" rx="8"/><circle class="accent ol" cx="154" cy="177" r="8"/></g>
+<rect class="accent ol" x="70" y="190" width="22" height="14" rx="6"/><rect class="accent ol" x="108" y="190" width="22" height="14" rx="6"/>
+<rect class="shell ol" x="56" y="122" width="88" height="74" rx="28"/><rect class="plate ol" x="71" y="140" width="58" height="32" rx="10"/>
+<text class="nts" x="100" y="162" font-size="17">NTS</text>
+<rect class="armor accent ol" x="44" y="120" width="28" height="16" rx="8"/><rect class="armor accent ol" x="128" y="120" width="28" height="16" rx="8"/>
+<line class="ol-line" x1="100" y1="40" x2="100" y2="21"/><circle class="bulb ol" cx="100" cy="15" r="8"/>
+<rect class="accent ol" x="30" y="66" width="12" height="32" rx="6"/><rect class="accent ol" x="158" y="66" width="12" height="32" rx="6"/>
+<rect class="shell ol" x="38" y="38" width="124" height="88" rx="36"/><rect class="screen" x="51" y="51" width="98" height="62" rx="24"/><g class="face"></g>`;
+const G={lx:80,rx:120,ey:78,my:98};
+function star5(cx,cy,r){const p=[];for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.45:r;p.push((cx+Math.cos(a)*rr).toFixed(1)+","+(cy+Math.sin(a)*rr).toFixed(1))}return p.join(" ")}
+function face(e){const {lx,rx,ey,my}=G,c=100;
+  const pill=(x,h=18,dy=0)=>`<rect class="eye blink" x="${x-6}" y="${ey+dy-h/2}" width="12" height="${h}" rx="6"/>`;
+  const arc=x=>`<path class="eye-line" d="M${x-8} ${ey+3} Q${x} ${ey-10} ${x+8} ${ey+3}"/>`;
+  const brow=(a,b,c2,d)=>`<path class="eye-line thin" d="M${a} ${b} L${c2} ${d}"/>`;
+  switch(e){
+    case "happy":return arc(lx)+arc(rx)+`<path class="mouth-fill" d="M${c-11} ${my-3} Q${c} ${my+13} ${c+11} ${my-3} Z"/>`;
+    case "cheer":return `<polygon class="eye" points="${star5(lx,ey,10)}"/><polygon class="eye" points="${star5(rx,ey,10)}"/><path class="mouth-fill" d="M${c-13} ${my-4} Q${c} ${my+16} ${c+13} ${my-4} Z"/>`;
+    case "sad":return pill(lx,13,3)+pill(rx,13,3)+brow(lx-8,ey-9,lx+7,ey-14)+brow(rx-7,ey-14,rx+8,ey-9)+`<path class="mouth-line" d="M${c-8} ${my+5} Q${c} ${my-3} ${c+8} ${my+5}"/>`;
+    case "think":return pill(lx,16,-2)+pill(rx,16,-2)+brow(lx-8,ey-14,lx+7,ey-12)+`<path class="mouth-line" d="M${c-6} ${my+2} L${c+8} ${my}"/>`;
+    default:return pill(lx)+pill(rx)+`<path class="mouth-line" d="M${c-8} ${my} Q${c} ${my+6} ${c+8} ${my}"/>`;
+  }}
+const BOTS=[];let uid=0;
+class Bot{
+  constructor(host,{bubble=true}={}){this.id="b"+(++uid);
+    host.innerHTML=(bubble?'<div class="bubble" aria-live="polite"></div>':"")+`<div class="host"><svg class="robot" viewBox="0 0 200 230" role="img" aria-label="Stampy"><defs>
+      <linearGradient id="${this.id}g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFEFB8"/><stop offset=".5" stop-color="#F7C03C"/><stop offset="1" stop-color="#D98E10"/></linearGradient>
+      <radialGradient id="${this.id}f" cx=".5" cy=".6" r=".5"><stop offset="0" stop-color="#FFE08A" stop-opacity=".95"/><stop offset=".55" stop-color="#FF9A2E" stop-opacity=".55"/><stop offset="1" stop-color="#FF5A1F" stop-opacity="0"/></radialGradient></defs>
+      <ellipse class="aura" cx="100" cy="118" rx="92" ry="104" fill="url(#${this.id}f)"/><g class="bob">${BODY}</g></svg></div>`;
+    if(!host.classList.contains("mascot"))host.querySelector(".host").style.width="100%";
+    this.svg=host.querySelector("svg");this.faceEl=this.svg.querySelector(".face");this.bubble=host.querySelector(".bubble");
+    this.svg.addEventListener("click",()=>this.react("poke"));this.set("neutral");BOTS.push(this)}
+  set(e){this.expr=e;this.faceEl.innerHTML=face(e)}
+  anim(a){const c=this.svg.classList;["anim-hop","anim-dance","anim-droop"].forEach(k=>c.remove(k));if(!a)return;void this.svg.getBoundingClientRect();c.add("anim-"+a);clearTimeout(this.at);this.at=setTimeout(()=>c.remove("anim-"+a),2300)}
+  say(t,ms=2400){if(!this.bubble)return;this.bubble.textContent=t;this.bubble.classList.add("on");clearTimeout(this.bt);this.bt=setTimeout(()=>this.bubble.classList.remove("on"),ms)}
+  react(k,text){clearTimeout(this.t);const m={ok:["happy","hop"],no:["sad","droop"],combo:["cheer","dance"],think:["think",null],poke:["happy","hop"],win:["cheer","dance"]}[k];
+    this.set(m[0]);this.anim(m[1]);if(text)this.say(text);else if(k==="poke")this.say(pick(["Boop! Nog een level?","Ik ben er klaar voor.","Python? Ik spreek het vloeiend."]));
+    if(k!=="think")this.t=setTimeout(()=>this.set("neutral"),2200)}
+  stage(done){const c=this.svg.classList;["s3","s7","s14","s21","s30"].forEach(k=>c.remove(k));const L=[0,3,7,14,21,30][Math.min(done,5)];
+    [3,7,14,21,30].forEach(s=>{if(L>=s)c.add("s"+s)});const gold=L>=21;
+    this.svg.style.setProperty("--shell",gold?`url(#${this.id}g)`:"#F3F5FB");this.svg.style.setProperty("--accent-r",gold?"#9A6410":"#2B47F0");this.svg.style.setProperty("--plate",gold?"#4A3205":"#2B47F0")}
+}
+const UPGRADES=["Wakker","Antenne gloeit","Eerste vlam","Pantser-upgrade","Super-aura","Legendarisch"];
+let rafE=0,mx=0,my=0;
+addEventListener("pointermove",e=>{mx=e.clientX;my=e.clientY;if(!rafE)rafE=requestAnimationFrame(()=>{rafE=0;for(const b of BOTS){const r=b.svg.getBoundingClientRect();if(!r.width)continue;
+  const dx=Math.max(-5,Math.min(5,(mx-r.left-r.width/2)/r.width*9)),dy=Math.max(-4,Math.min(4,(my-r.top-r.height*.35)/r.height*8));b.faceEl.style.transform=`translate(${dx.toFixed(1)}px,${dy.toFixed(1)}px)`}})},{passive:true});
+
+/* ================= helpers & state ================= */
+const $=s=>document.querySelector(s);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const fmt=s=>esc(s).replace(/`([^`]+)`/g,"<code>$1</code>");
+function hl(code){return esc(code).replace(/(&quot;[^&]*?&quot;|"[^"]*")/g,'<span class="s">$1</span>')
+  .replace(/\b(for|in|if|elif|else|while|def|return|print|range|input|int|str|float|True|False|None)\b/g,m=>/print|range|input|int|str|float/.test(m)?`<span class="f">${m}</span>`:`<span class="k">${m}</span>`)
+  .replace(/\b(\d+(?:\.\d+)?)\b/g,'<span class="n">$1</span>')}
+const KEY="stampy-proto-v1";
+let S={xp:0,stars:{}};try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const doneCount=()=>Object.keys(S.stars).length;
+const PLVL=150;
+
+/* ================= content ================= */
+const LEVELS=[
+ {n:1,title:"Variabelen & types",game:"types",items:[
+  {t:"mc",q:"Welk type heeft `3.14`?",o:["float","int","str"],a:0,jip:"Een getal met een punt erin is een float, een kommagetal. Hele getallen zoals 3 zijn int."},
+  {t:"type",q:"Wat print deze code?",code:"x = 7\nprint(x / 2)",ans:["3.5"],jip:"De gewone deelstreep `/` geeft altijd een kommagetal terug, ook als het mooi uitkomt."},
+  {t:"fill",q:"Vul in: vraag de gebruiker om zijn naam.",code:"naam = ___(\"Hoe heet je? \")",ans:["input"],jip:"`input()` stelt een vraag in de terminal en geeft terug wat de gebruiker typt, altijd als tekst."},
+  {t:"parsons",q:"Zet de regels in de goede volgorde.",lines:["naam = input(\"Naam? \")","groet = f\"Hoi {naam}\"","print(groet)"],jip:"Je moet eerst iets hebben voordat je het kunt gebruiken: eerst de naam vragen, dan de groet maken, dan printen."},
+  {t:"open",q:"Leg uit waarom `int(\"42\") + 1` werkt, maar `\"42\" + 1` niet.",model:"`\"42\"` is tekst. Tekst en een getal kun je niet optellen, dat geeft een TypeError. Met `int(\"42\")` maak je er eerst een echt getal van, en dan werkt `+ 1` wel.",checks:["\"42\" is tekst (een str)","Je moet eerst omzetten met int()","Tekst + getal geeft een TypeError"],jip:"Je kunt geen appel optellen bij het woord 'appel'. Eerst omzetten, dan rekenen."}]},
+ {n:2,title:"Rekenen met operators",game:"arith",items:[
+  {t:"mc",q:"Wat is `7 // 2`?",o:["3","3.5","4"],a:0,jip:"`//` deelt en gooit de rest weg. 7 gedeeld door 2 is 3, rest 1."},
+  {t:"mc",q:"Wat is `7 % 2`?",o:["1","0","3"],a:0,jip:"`%` geeft juist de rest. 7 = 2 × 3 + 1, dus de rest is 1."},
+  {t:"type",q:"Wat print deze code?",code:"print(2 ** 3)",ans:["8"],jip:"`**` is machtsverheffen: 2 × 2 × 2 = 8."},
+  {t:"fill",q:"Vul in: check of een getal even is.",code:"if getal ___ 2 == 0:\n    print(\"even\")",ans:["%"],jip:"Een getal is even als er bij delen door 2 niets overblijft. De rest pak je met `%`."},
+  {t:"open",q:"Wat is het verschil tussen `/` en `//`?",model:"`/` deelt gewoon en geeft altijd een float, bijvoorbeeld 7 / 2 = 3.5. `//` deelt en rondt naar beneden af naar een heel getal: 7 // 2 = 3.",checks:["/ geeft altijd een float","// rondt naar beneden af","Een voorbeeld zoals 7 / 2 en 7 // 2"],jip:"Pizza delen: met / krijgt iedereen 3,5 stuk. Met // krijgt iedereen 3 hele stukken."}]},
+ {n:3,title:"Strings",game:"slice",items:[
+  {t:"mc",q:"Wat is `\"Python\"[0:3]`?",o:["'Pyt'","'Pyth'","'yth'"],a:0,jip:"Je telt vanaf 0 en het eindgetal doet niet mee: letters 0, 1 en 2."},
+  {t:"type",q:"Wat print deze code?",code:"print(\"ab\" * 3)",ans:["ababab"],jip:"Een string keer een getal plakt hem zo vaak achter elkaar."},
+  {t:"fill",q:"Vul in: haal de spaties aan beide kanten weg.",code:"woord = \"  hoi  \"\nprint(woord.___())",ans:["strip"],jip:"`strip()` knipt de spaties aan het begin en eind weg, zoals een korstje van een boterham."},
+  {t:"parsons",q:"Zet de regels in de goede volgorde.",lines:["tekst = \" Fayora AI \"","schoon = tekst.strip()","print(schoon.upper())"],jip:"Eerst de tekst hebben, dan schoonmaken, dan pas in hoofdletters printen."},
+  {t:"open",q:"Waarom kun je `woord[0] = \"J\"` niet doen?",model:"Strings zijn immutable: je kunt ze niet aanpassen. Je maakt in plaats daarvan een nieuwe string, bijvoorbeeld `\"J\" + woord[1:]`.",checks:["Strings zijn immutable","Je maakt een nieuwe string","Een voorbeeld zoals \"J\" + woord[1:]"],jip:"Een string is als een gedrukte zin. Je kunt hem niet uitgummen, wel een nieuwe zin printen."}]},
+ {n:4,title:"Keuzes & loops",game:"loops",items:[
+  {t:"mc",q:"Wat zit er in `list(range(2, 8, 2))`?",o:["[2, 4, 6]","[2, 4, 6, 8]","[2, 3, 4, 5, 6, 7]"],a:0,mono:true,jip:"Beginnen bij 2, stappen van 2, en 8 telt niet mee."},
+  {t:"type",q:"Wat print deze loop? (alles achter elkaar mag)",code:"for i in range(3):\n    print(i)",ans:["012"],strip:true,jip:"`range(3)` geeft 0, 1 en 2. Drie rondjes, en tellen begint bij 0."},
+  {t:"fill",q:"Vul in: tel elke poging op.",code:"pogingen = 0\nwhile pogingen < 3:\n    pogingen ___ 1",ans:["+="],jip:"`+= 1` betekent: neem wat er al is en doe er 1 bij."},
+  {t:"parsons",q:"Zet het if-blok in de goede volgorde.",lines:["if temp > 30:","    print(\"Heet\")","elif temp > 20:","    print(\"Lekker\")","else:","    print(\"Koud\")"],jip:"Eerst `if`, dan eventueel `elif`, en `else` altijd als laatste. Onder elke regel met een dubbele punt komt ingesprongen code."},
+  {t:"open",q:"Wat is het verschil tussen `break` en `continue`?",model:"`break` stopt de hele loop meteen. `continue` slaat alleen de rest van deze ronde over, en de loop gaat daarna gewoon verder.",checks:["break stopt de hele loop","continue slaat de rest van deze ronde over","Na continue gaat de loop verder"],jip:"Bij een rondje hardlopen: break = je stopt en gaat naar huis. continue = je slaat één rondje over en loopt verder."}]},
+ {n:5,title:"Lijsten & dicts",soon:true},{n:6,title:"Functies",soon:true},{n:7,title:"Bestanden & fouten",soon:true},{n:8,title:"Baas: het contactboek",soon:true,boss:true}
+];
+const WORLDS=[["Python basis","#3A5BD8"],["Echte programma's","#7A45D8"],["Databases","#2563EB"],["API's & Redis","#0E8A6C"],["AI met LLM's","#C9561F"],["Productie","#B8326F"]];
+const GAMES={
+  types:{name:"Sorteermachine",how:"Welk type heeft deze waarde? Tik zo snel mogelijk op het goede type.",gen(){
+    const V=[["42","int"],["3.14","float"],['"hoi"',"str"],["True","bool"],["[1, 2]","list"],["None","NoneType"],["{'a': 1}","dict"],["(1, 2)","tuple"],['"42"',"str"],["0.5","float"],["-7","int"],["False","bool"],["{3, 4}","set"]];
+    const [v,t]=pick(V);const all=["int","float","str","bool","list","dict","tuple","set","NoneType"].filter(x=>x!==t);return{prompt:v,cap:"type?",options:shuffle([t,...shuffle(all).slice(0,3)]),answer:t}}},
+  arith:{name:"Rekenrace",how:"Reken het uit zoals Python het doet. Let op het verschil tussen /, // en %.",gen(){
+    const ops=["//","%","**","/"];const op=pick(ops);let a,b;
+    if(op==="**"){a=2+Math.floor(Math.random()*4);b=2+Math.floor(Math.random()*2)}else if(op==="/"){b=pick([2,4]);a=b*(1+Math.floor(Math.random()*6))+pick([0,1,2,3].slice(0,b))}else{a=5+Math.floor(Math.random()*16);b=2+Math.floor(Math.random()*4)}
+    const f=(o)=>o==="//"?Math.floor(a/b):o==="%"?a%b:o==="**"?a**b:a/b;const show=(o,v)=>o==="/"?(Number.isInteger(v)?v+".0":String(v)):String(v);
+    const ans=show(op,f(op));const opts=new Set([ans]);for(const o of shuffle(ops)){if(opts.size>=3)break;opts.add(show(o,f(o)))}
+    while(opts.size<3)opts.add(String(Number(ans)+opts.size));return{prompt:`${a} ${op} ${b}`,cap:"uitkomst?",options:shuffle([...opts]),answer:ans}}},
+  slice:{name:"Slice-shooter",how:"`w = \"PYTHON\"`. Welke stukje tekst geeft deze slice?",gen(){
+    const w="PYTHON";let a,b,label;const k=Math.random();
+    if(k<.2){b=2+Math.floor(Math.random()*4);a=0;label=`w[:${b}]`}else if(k<.4){a=1+Math.floor(Math.random()*4);b=6;label=`w[${a}:]`}else if(k<.5){const n=2+Math.floor(Math.random()*3);a=6-n;b=6;label=`w[-${n}:]`}
+    else{a=Math.floor(Math.random()*4);b=a+1+Math.floor(Math.random()*(6-a-1))+1;b=Math.min(b,6);label=`w[${a}:${b}]`}
+    const ans=w.slice(a,b);const opts=new Set([ans]);[[a,b+1],[a+1,b],[a-1,b],[a,b-1]].forEach(([x,y])=>{if(opts.size<3&&x>=0&&y<=6&&y>x)opts.add(w.slice(x,y))});
+    while(opts.size<3)opts.add(w.slice(0,opts.size+1));return{prompt:label,cap:"geeft…",options:shuffle([...opts]).map(s=>`'${s}'`),answer:`'${ans}'`}}},
+  loops:{name:"Loop-teller",how:"Hoe vaak draait deze loop? Tel slim, niet op je vingers.",gen(){
+    const st=Math.floor(Math.random()*4),step=1+Math.floor(Math.random()*3),n=1+Math.floor(Math.random()*6),stop=st+step*n-Math.floor(Math.random()*step);
+    const cnt=Math.max(0,Math.ceil((stop-st)/step));const opts=new Set([String(cnt)]);[cnt+1,cnt-1,cnt+2].forEach(x=>{if(x>=0&&opts.size<3)opts.add(String(x))});
+    return{prompt:step===1?`range(${st}, ${stop})`:`range(${st}, ${stop}, ${step})`,cap:"aantal rondjes?",options:shuffle([...opts]),answer:String(cnt)}}}
+};
+
+/* ================= navigation ================= */
+const screens=["home","map","play","result","soon"];
+function go(id,what){
+  if(id==="soon"){$("#soonTitle").textContent=what||"Binnenkort";}
+  screens.forEach(s=>$("#s-"+s).hidden=s!==id);
+  $("#nav").hidden=id==="play"||id==="result";
+  document.querySelectorAll("#nav button").forEach(b=>b.setAttribute("aria-current",b.dataset.go===id&&(id!=="soon"||b.dataset.what===what)));
+  if(id==="home")renderHome();if(id==="map")renderMap();
+  scrollTo(0,0);
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(b)go(b.dataset.go,b.dataset.what)});
+function toast(t){const el=$("#toast");el.textContent=t;el.classList.add("on");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("on"),2600)}
+
+/* ================= home ================= */
+const bHome=new Bot($("#m-home")),bCourse=new Bot($("#courseBot"),{bubble:false}),bMap=new Bot($("#m-map")),bPlay=new Bot($("#m-play")),bSoon=new Bot($("#soonBot"),{bubble:false});
+function renderHome(){
+  const lvl=Math.floor(S.xp/PLVL)+1;$("#lvlText").textContent=`Speler-level ${lvl} · ${S.xp} XP`;$("#xpFill").style.width=(S.xp%PLVL)/PLVL*100+"%";
+  $("#tLvl").textContent=lvl;$("#tStars").textContent=Object.values(S.stars).reduce((a,b)=>a+b,0);$("#tDone").textContent=doneCount()+"/8";
+  const pct=Math.round(doneCount()/8*100);$("#cPct").textContent=pct+"%";$("#cRing").setAttribute("stroke-dashoffset",100-pct);
+  [bHome,bCourse,bMap,bPlay,bSoon].forEach(b=>b.stage(doneCount()));
+  $("#wlist").innerHTML=WORLDS.map(([t,c],i)=>`<button class="world" type="button" style="--wc:${c}" data-w="${i}" data-locked="${i>0}"><span class="num">${i+1}</span><span><h3>${t}</h3><p>${i===0?`${doneCount()} van 8 levels`:"Speel eerst wereld "+i+" uit"}</p></span>${i>0?'<svg class="lock" width="22" height="22" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2" fill="#fff"/><path d="M8 10V7a4 4 0 018 0v3" stroke="#fff" stroke-width="2" fill="none"/></svg>':""}</button>`).join("");
+}
+$("#wlist").addEventListener("click",e=>{const w=e.target.closest("[data-w]");if(!w)return;if(+w.dataset.w===0)go("map");else{toast("Speel eerst wereld 1 uit.");bHome.react("think","Die wereld zit nog op slot.")}});
+setTimeout(()=>bHome.say("Hoi! Zin in een level Python?"),700);
+
+/* ================= map ================= */
+const H=[[1,1,2,3,3,2,1],[1,1,2,2,3,2,1],[1,1,1,2,2,2,1],[1,1,1,1,2,1,1],[1,1,1,1,1,1,1],[1,1,1,1,1,1,1],[1,1,1,1,1,1,1]];
+const PATH=[[1,6],[3,6],[4,5],[3,4],[2,3],[3,2],[4,1],[3,0]];
+const iso=(x,y,z)=>[180+(x-y)*30,128+(x+y)*17-z*18];
+function renderMap(){
+  $("#stStars").textContent=Object.values(S.stars).reduce((a,b)=>a+b,0);$("#stXp").textContent=S.xp;
+  let s=`<defs><linearGradient id="wat" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3FA7E8"/><stop offset="1" stop-color="#1E5FB0"/></linearGradient></defs>`;
+  s+=`<g class="cloud" opacity=".55"><ellipse cx="300" cy="44" rx="26" ry="9" fill="#C9D6FF"/><ellipse cx="286" cy="38" rx="14" ry="10" fill="#C9D6FF"/></g>`;
+  const [wx,wy]=iso(3,3,0);s+=`<path d="M${wx} ${wy-150} L${wx+250} ${wy-3} L${wx} ${wy+144} L${wx-250} ${wy-3} Z" fill="url(#wat)" opacity=".9"/>`;
+  s+=`<path class="water-sh" d="M${wx-150} ${wy+40} q20 -6 40 0 M${wx+90} ${wy+70} q20 -6 40 0 M${wx-40} ${wy+110} q20 -6 40 0" stroke="#BFE6FF" stroke-width="2" fill="none" opacity=".6"/>`;
+  const tiles=[];for(let y=0;y<7;y++)for(let x=0;x<7;x++)tiles.push([x,y,H[y][x]]);tiles.sort((a,b)=>(a[0]+a[1])-(b[0]+b[1]));
+  const onPath=new Set(PATH.map(p=>p.join(",")));
+  for(const [x,y,h] of tiles){const [cx,cy]=iso(x,y,h);const hh=h*18+10;const alt=(x+y)%2;
+    const top=h>=3?(alt?"#7BD88F":"#6BCB80"):h===2?(alt?"#5CC28A":"#52B881"):(alt?"#47B57F":"#3FAA77");
+    s+=`<path d="M${cx-30} ${cy} L${cx} ${cy+17} L${cx} ${cy+17+hh} L${cx-30} ${cy+hh} Z" fill="${h>=2?"#7A5A8E":"#6B4A7A"}"/>`;
+    s+=`<path d="M${cx} ${cy+17} L${cx+30} ${cy} L${cx+30} ${cy+hh} L${cx} ${cy+17+hh} Z" fill="${h>=2?"#5F4473":"#553A66"}"/>`;
+    s+=`<path d="M${cx} ${cy-17} L${cx+30} ${cy} L${cx} ${cy+17} L${cx-30} ${cy} Z" fill="${top}"/>`;
+    if(onPath.has(x+","+y))s+=`<ellipse cx="${cx}" cy="${cy}" rx="17" ry="9" fill="#D9C38A" opacity=".55"/>`;}
+  const tree=(x,y,sc=1)=>{const [cx,cy]=iso(x,y,H[y][x]);return `<rect x="${cx-2.5}" y="${cy-16*sc}" width="5" height="${16*sc}" rx="2" fill="#7A4E2E"/><circle cx="${cx}" cy="${cy-24*sc}" r="${12*sc}" fill="#1F8F6A"/><circle cx="${cx-6*sc}" cy="${cy-18*sc}" r="${8*sc}" fill="#26A97A"/><circle cx="${cx+5*sc}" cy="${cy-30*sc}" r="${6*sc}" fill="#3CC48F"/>`};
+  s+=tree(0,4)+tree(6,3,.9)+tree(0,1,1.1)+tree(6,0,.8)+tree(5,6,.9)+tree(1,4,.7);
+  {const [cx,cy]=iso(5,4,1);s+=`<path d="M${cx-14} ${cy-2} L${cx} ${cy+6} L${cx+14} ${cy-2} L${cx} ${cy-10}Z" fill="#2A2A55"/><path d="M${cx-12} ${cy-26} L${cx+10} ${cy-34} L${cx+10} ${cy-14} L${cx-12} ${cy-6}Z" fill="#1A1A3A" stroke="#8A6BFF" stroke-width="2"/><text x="${cx-6}" y="${cy-15}" font-family="JetBrains Mono" font-size="9" fill="#7EE7A8" transform="skewY(-20 ${cx} ${cy})">&gt;_</text>`}
+  {const [cx,cy]=iso(4,0,3);s+=`<path d="M${cx-12} ${cy-6} L${cx} ${cy} L${cx} ${cy-44} L${cx-12} ${cy-50}Z" fill="#5A4B9E"/><path d="M${cx} ${cy} L${cx+12} ${cy-6} L${cx+12} ${cy-50} L${cx} ${cy-44}Z" fill="#43387C"/><path d="M${cx-12} ${cy-50} L${cx} ${cy-56} L${cx+12} ${cy-50} L${cx} ${cy-44}Z" fill="#7A6AD0"/><circle cx="${cx+6}" cy="${cy-38}" r="2" fill="#FF5C7A"/><circle cx="${cx+6}" cy="${cy-30}" r="2" fill="#3DDC97"/><circle cx="${cx+6}" cy="${cy-22}" r="2" fill="#FFC93D"/>`}
+  const pts=PATH.map(([x,y])=>iso(x,y,H[y][x]));
+  s+=`<path d="M${pts.map(p=>p[0]+" "+(p[1]-4)).join(" L")}" fill="none" stroke="#FFFFFF" stroke-opacity=".75" stroke-width="2.5" stroke-dasharray="2 6" stroke-linecap="round"/>`;
+  const done=doneCount();
+  LEVELS.forEach((L,i)=>{const [cx,cy0]=pts[i];const cy=cy0-6;const st=S.stars[L.n]?"done":i===done?"cur":"lock";const boss=L.boss;const rx=boss?20:15,ry=boss?11:8.5;
+    const topC=st==="done"?"#FFC93D":st==="cur"?"#3AA8FF":"#8C8AB8",sideC=st==="done"?"#B87500":st==="cur"?"#1C63B8":"#5D5B88";
+    s+=`<g class="node" role="button" tabindex="0" data-l="${i}" aria-label="Level ${L.n}: ${L.title}${st==="lock"?", op slot":st==="done"?", gehaald met "+S.stars[L.n]+" sterren":", volgende"}">`;
+    if(st==="cur")s+=`<ellipse class="pulse" cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="none" stroke="#7FD0FF" stroke-width="2.5"/>`;
+    s+=`<g class="top"><ellipse cx="${cx}" cy="${cy+5}" rx="${rx}" ry="${ry}" fill="${sideC}"/><ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${topC}" stroke="#fff" stroke-opacity=".5" stroke-width="1.5"/>`;
+    s+=`<text x="${cx}" y="${cy+4.5}" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="${boss?12:13}" fill="${st==="lock"?"#3B3966":"#1A1450"}">${boss?"BAAS":L.n}</text></g>`;
+    if(st==="done"){for(let k=0;k<3;k++){const sx=cx-13+k*13,sy=cy-17-(k===1?4:0);s+=`<polygon points="${star5(sx,sy,5.5)}" fill="${k<S.stars[L.n]?"#FFE27A":"#4B4880"}" stroke="#8A5A00" stroke-width=".8"/>`}}
+    if(st==="lock")s+=`<g transform="translate(${cx+rx-4} ${cy-12})"><rect x="-5" y="-1" width="10" height="8" rx="2" fill="#E6E5FF"/><path d="M-3 -1v-2a3 3 0 016 0v2" stroke="#E6E5FF" stroke-width="1.6" fill="none"/></g>`;
+    s+=`</g>`});
+  $("#map").innerHTML=s;
+  setTimeout(()=>{const L=LEVELS[done];bMap.say(L?(L.soon?"De volgende levels komen in de volledige bouw.":`Level ${L.n}: ${L.title}. Tik erop!`):"Alles gehaald!")},400);
+}
+function openNode(i){const L=LEVELS[i],done=doneCount();
+  if(i>done){bMap.react("think","Die zit nog op slot. Eerst level "+(done+1)+".");return}
+  if(L.soon){bMap.react("think",`Level ${L.n} komt in de volledige bouw.`);return}
+  startLevel(L)}
+$("#map").addEventListener("click",e=>{const n=e.target.closest(".node");if(n)openNode(+n.dataset.l)});
+$("#map").addEventListener("keydown",e=>{const n=e.target.closest(".node");if(n&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openNode(+n.dataset.l)}});
+$("#wselBtn").addEventListener("click",()=>{toast("Wereld 2 t/m 6 gaan open als je wereld 1 uitspeelt.")});
+
+/* ================= level engine ================= */
+let P=null;
+function startLevel(L){P={L,i:0,hearts:3,lost:0,correct:0,total:L.items.length,gameScore:0};go("play");bPlay.stage(doneCount());bPlay.say(`Level ${L.n}: ${L.title}`);renderItem()}
+function hearts(){$("#hearts").innerHTML=[0,1,2].map(k=>`<svg class="${k<P.hearts?"":"lost"}" viewBox="0 0 24 24"><path d="M12 21s-8-5.3-8-11a4.5 4.5 0 018-2.8A4.5 4.5 0 0120 10c0 5.7-8 11-8 11z" fill="currentColor"/></svg>`).join("")}
+function prog(){$("#pFill").style.width=(P.i/(P.total+1)*100)+"%"}
+const TYPE_LABEL={mc:"Kies het goede antwoord",type:"Typ de uitvoer",fill:"Vul het gat in",parsons:"Puzzel de code",open:"Leg het uit in je eigen woorden"};
+function renderItem(){
+  hearts();prog();closeSheet();
+  if(P.i>=P.total){renderGameIntro();return}
+  const it=P.L.items[P.i],box=$("#qbox");let h=`<div class="qtype">${TYPE_LABEL[it.t]}</div><h2 class="qtitle">${fmt(it.q)}</h2>`;
+  if(it.t==="mc"){const order=shuffle(it.o.map((o,k)=>({o,k})));P.order=order;
+    h+=`<div class="tiles" style="--cols:${it.o.length}">${order.map((x,k)=>`<button class="tile${it.mono||/[\[\]'"]/.test(x.o)?" mono":""}" type="button" data-k="${k}">${esc(x.o)}</button>`).join("")}</div>`}
+  else if(it.t==="type"){h+=`<pre class="code">${hl(it.code)}</pre><input class="field" id="ans" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Typ wat er geprint wordt"><button class="cta" type="button" id="check">Controleer</button>`}
+  else if(it.t==="fill"){const parts=esc(it.code).split("___");h+=`<pre class="code">${hl(it.code).split("___").join('<input class="blank" id="ans" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Wat hoort hier?">')}</pre><button class="cta" type="button" id="check">Controleer</button>`}
+  else if(it.t==="parsons"){P.pool=shuffle(it.lines.map((l,k)=>({l,k})));if(P.pool.every((x,k)=>x.k===k))P.pool.reverse();P.ansL=[];h+=`<div class="parsons"><span class="plabel">Jouw code</span><div class="pzone" id="pAns"></div><span class="plabel">Tik op een regel om hem toe te voegen</span><div class="parsons" id="pPool"></div></div><button class="cta" type="button" id="check" disabled>Controleer</button>`}
+  else if(it.t==="open"){h+=`<textarea class="field" id="ans" placeholder="Schrijf je uitleg… (een paar zinnen is genoeg)"></textarea><button class="cta" type="button" id="check">Laat het modelantwoord zien</button>`}
+  box.innerHTML=h;
+  if(it.t==="mc")box.querySelectorAll(".tile").forEach(b=>b.addEventListener("click",()=>pickMc(+b.dataset.k)));
+  if(it.t==="parsons")renderParsons();
+  const chk=$("#check");if(chk)chk.addEventListener("click",check);
+  const a=$("#ans");if(a&&it.t!=="open"){a.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();check()}});setTimeout(()=>a.focus({preventScroll:true}),60)}
+  bPlay.set("neutral");
+}
+function pickMc(k){const it=P.L.items[P.i];const btns=[...document.querySelectorAll("#qbox .tile")];btns.forEach(b=>b.disabled=true);
+  const ok=P.order[k].k===it.a;btns[k].classList.add(ok?"ok":"no");if(!ok)btns[P.order.findIndex(x=>x.k===it.a)].classList.add("ok");result(ok,it.o[it.a])}
+function renderParsons(){
+  $("#pAns").innerHTML=P.ansL.map((x,k)=>`<button class="pline" type="button" data-a="${k}">${esc(x.l)}</button>`).join("")||'<span style="color:var(--muted);font-size:14px;padding:8px">Nog leeg</span>';
+  $("#pPool").innerHTML=P.pool.map((x,k)=>`<button class="pline" type="button" data-p="${k}">${esc(x.l)}</button>`).join("");
+  $("#pAns").querySelectorAll("[data-a]").forEach(b=>b.addEventListener("click",()=>{P.pool.push(P.ansL.splice(+b.dataset.a,1)[0]);renderParsons()}));
+  $("#pPool").querySelectorAll("[data-p]").forEach(b=>b.addEventListener("click",()=>{P.ansL.push(P.pool.splice(+b.dataset.p,1)[0]);renderParsons()}));
+  $("#check").disabled=P.pool.length>0}
+const norm=(s,strip)=>{let v=String(s).trim().replace(/^['"]|['"]$/g,"");return strip?v.replace(/\s+/g,""):v.replace(/\s+/g," ")};
+function check(){const it=P.L.items[P.i];
+  if(it.t==="type"||it.t==="fill"){const el=$("#ans");const v=norm(el.value,it.strip||it.t==="fill");const ok=!!v&&it.ans.some(a=>norm(a,it.strip||it.t==="fill")===v);el.disabled=true;$("#check").disabled=true;result(ok,it.ans[0])}
+  else if(it.t==="parsons"){const ok=P.ansL.every((x,k)=>x.k===k);$("#check").disabled=true;result(ok,it.lines.join("\n"),true)}
+  else if(it.t==="open"){const el=$("#ans");el.disabled=true;
+    const extra=`<div class="model"><b>Modelantwoord</b>${fmt(it.model)}</div><div class="plabel">Wat zat er in jouw uitleg?</div><div class="checks">${it.checks.map((c,k)=>`<label><input type="checkbox" id="ck${k}">${fmt(c)}</label>`).join("")}</div><button class="cta blue" type="button" id="selfDone">Klaar met nakijken</button>`;
+    $("#check").remove();$("#qbox").insertAdjacentHTML("beforeend",extra);bPlay.react("think","Vergelijk je antwoord eens met dit.");
+    $("#selfDone").addEventListener("click",()=>{const n=it.checks.filter((_,k)=>$("#ck"+k).checked).length;$("#selfDone").disabled=true;result(n>=Math.ceil(it.checks.length/2),null,false,true)})}
+}
+function result(ok,right,isCode,isOpen){const it=P.L.items[P.i];
+  if(ok){P.correct++;bPlay.react("ok",pick(["Goed zo!","Die zit erin.","Netjes!"]))}
+  else{if(!isOpen){P.hearts--;P.lost++}bPlay.react("no",isOpen?"Lees het modelantwoord nog eens.":"Oei. Lees de uitleg even.")}
+  hearts();
+  const sh=$("#sheet");sh.className="sheet "+(ok?"ok":"no");
+  sh.innerHTML=`<h3>${ok?pick(["Goed!","Top!","Precies!"]):isOpen?"Bijna":"Niet goed"}</h3>${!ok&&right!=null?`<p>Juist is: ${isCode?`<pre class="code" style="margin-top:6px">${hl(right)}</pre>`:`<code>${esc(right)}</code>`}</p>`:""}<p class="simple"><b>Simpel gezegd</b>${fmt(it.jip)}</p><button class="cta" type="button" id="nextBtn">${P.hearts<=0?"Bekijk resultaat":"Verder"}</button>`;
+  requestAnimationFrame(()=>sh.classList.add("on"));$("#nextBtn").addEventListener("click",next);setTimeout(()=>$("#nextBtn")?.focus({preventScroll:true}),320)}
+function closeSheet(){$("#sheet").classList.remove("on")}
+function next(){closeSheet();if(P.hearts<=0){fail();return}P.i++;setTimeout(renderItem,120)}
+$("#quitBtn").addEventListener("click",()=>{stopGame();closeSheet();P=null;go("map")});
+
+/* ================= minigame ================= */
+let MG=null;
+function renderGameIntro(){prog();const g=GAMES[P.L.game];
+  $("#qbox").innerHTML=`<div class="intro"><span class="badge">Minigame</span><h2>${g.name}</h2><p>${fmt(g.how)}</p><p><b>30 seconden.</b> Hoe meer goed op rij, hoe meer punten.</p></div><button class="cta" type="button" id="gStart">Start minigame</button>`;
+  bPlay.react("combo","Minigame! Laat zien wat je kan.");$("#gStart").addEventListener("click",startGame)}
+function startGame(){MG={g:GAMES[P.L.game],score:0,combo:0,best:0,hits:0,end:performance.now()+30000};
+  $("#qbox").innerHTML=`<div class="gamehead"><span class="score" id="gScore">0</span><span class="combo" id="gCombo" hidden>×1</span><span id="gTime" class="mono">30s</span></div><div class="gtimer"><i id="gBar" style="width:100%"></i></div><div class="gcard" id="gCard"><div class="cap" id="gCap"></div><div class="prompt" id="gPrompt"></div></div><div class="tiles" id="gTiles" style="--cols:2"></div>`;
+  nextG();MG.raf=requestAnimationFrame(tickG)}
+function nextG(){const q=MG.g.gen();MG.q=q;$("#gPrompt").textContent=q.prompt;$("#gCap").textContent=q.cap;
+  $("#gTiles").style.setProperty("--cols",q.options.length>3?2:q.options.length);
+  $("#gTiles").innerHTML=q.options.map(o=>`<button class="tile mono" type="button">${esc(o)}</button>`).join("");
+  $("#gTiles").querySelectorAll(".tile").forEach(b=>b.addEventListener("click",()=>hitG(b.textContent)))}
+function hitG(v){if(!MG)return;const ok=v===MG.q.answer;const card=$("#gCard");card.classList.remove("flash-ok","flash-no");void card.offsetWidth;
+  if(ok){MG.combo++;MG.hits++;MG.best=Math.max(MG.best,MG.combo);MG.score+=10*(1+Math.floor(MG.combo/3));card.classList.add("flash-ok");if(MG.combo%5===0)bPlay.react("combo",`${MG.combo} op rij!`)}
+  else{MG.combo=0;card.classList.add("flash-no");bPlay.say(`Het was ${MG.q.answer}`,1200)}
+  $("#gScore").textContent=MG.score;const c=$("#gCombo");c.hidden=MG.combo<3;c.textContent="×"+(1+Math.floor(MG.combo/3));c.classList.remove("pop");void c.offsetWidth;c.classList.add("pop");nextG()}
+function tickG(t){if(!MG)return;const left=Math.max(0,MG.end-t);$("#gBar").style.width=left/300+"%";$("#gTime").textContent=Math.ceil(left/1000)+"s";
+  if(left<=0){const m=MG;MG=null;P.gameScore=m.score;P.gameHits=m.hits;P.gameBest=m.best;finishLevel();return}MG.raf=requestAnimationFrame(tickG)}
+function stopGame(){if(MG){cancelAnimationFrame(MG.raf);MG=null}}
+
+/* ================= result ================= */
+function finishLevel(){
+  const stars=P.lost===0?3:P.lost===1?2:1;const before=doneCount();const prev=S.stars[P.L.n]||0;S.stars[P.L.n]=Math.max(prev,stars);
+  const xp=P.correct*20+P.gameScore;S.xp+=xp;save();const after=doneCount();const up=after>before?UPGRADES[Math.min(after,5)]:null;
+  const rb=`<div class="bigbot" id="resBot" style="margin:0 auto"></div>`;
+  $("#s-result").innerHTML=`<div class="intro"><span class="badge">Level ${P.L.n} gehaald</span><h2>${P.L.title}</h2></div>
+    <div class="stars">${[0,1,2].map(k=>`<svg class="s" viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.5 1.3 6.5L12 17l-5.9 3.3 1.3-6.5L2.5 9.3l6.6-.8z" fill="${k<stars?"#FFC93D":"#3B3870"}" stroke="${k<stars?"#B87500":"#2A2760"}" stroke-width="1"/></svg>`).join("")}</div>
+    ${rb}
+    <div class="rgrid"><div class="rstat"><b>${P.correct}/${P.total}</b><small>vragen goed</small></div><div class="rstat"><b>${P.gameScore}</b><small>minigame</small></div><div class="rstat"><b>+${xp}</b><small>XP</small></div></div>
+    ${up?`<div class="upgrade">Stampy-upgrade: ${up}!</div>`:""}
+    <button class="cta" type="button" id="toMap">Naar de kaart</button><button class="cta blue" type="button" id="again">Level opnieuw</button>`;
+  go("result");const b=new Bot($("#resBot"),{bubble:false});b.stage(after);b.react("win");
+  $("#toMap").addEventListener("click",()=>{BOTS.splice(BOTS.indexOf(b),1);go("map")});$("#again").addEventListener("click",()=>{BOTS.splice(BOTS.indexOf(b),1);startLevel(P.L)})}
+function fail(){
+  $("#s-result").innerHTML=`<div class="intro"><span class="badge" style="background:var(--red)">Levens op</span><h2>Bijna!</h2><p>Je bent je drie levens kwijt. Lees de uitleg nog eens en probeer het opnieuw. Fouten maken hoort bij leren.</p></div><div class="bigbot" id="resBot" style="margin:0 auto"></div><button class="cta" type="button" id="again">Opnieuw proberen</button><button class="cta blue" type="button" id="toMap">Naar de kaart</button>`;
+  go("result");const b=new Bot($("#resBot"),{bubble:false});b.stage(doneCount());b.set("sad");
+  $("#toMap").addEventListener("click",()=>{BOTS.splice(BOTS.indexOf(b),1);go("map")});$("#again").addEventListener("click",()=>{BOTS.splice(BOTS.indexOf(b),1);startLevel(P.L)})}
+
+/* ================= dag / nacht ================= */
+const SUN='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="#FFB020"/><g stroke="#FFB020" stroke-width="2" stroke-linecap="round"><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></g></svg>';
+const MOON='<svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z" fill="#B9A8FF"/></svg>';
+const isDark=()=>{const t=document.documentElement.dataset.theme;return t?t==="dark":matchMedia("(prefers-color-scheme: dark)").matches};
+function paintTheme(){$("#themeBtn").innerHTML=isDark()?MOON+"Nacht":SUN+"Dag"}
+try{const t=localStorage.getItem("stampy-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}
+$("#themeBtn").addEventListener("click",()=>{const t=isDark()?"light":"dark";document.documentElement.dataset.theme=t;try{localStorage.setItem("stampy-theme",t)}catch(e){}paintTheme();bHome.react("poke",t==="dark"?"Nachtmodus. Lekker rustig.":"Goedemorgen! Dagmodus aan.")});
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",paintTheme);
+paintTheme();
+go("home");
+</script>
+</body>
+</html>
