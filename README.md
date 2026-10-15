@@ -74,8 +74,18 @@ frontend/           Alles wat de browser laadt (dit wordt gepubliceerd)
     ui/             dialog.js (bevestiging) · hud.js (level, thema, geluid)
     screens/        results.js · home.js · game.js · cards.js
     main.js         Sneltoetsen en opstarten
+tests/              Unit tests (Node, geen dependencies)
 .github/workflows/  pages.yml publiceert frontend/ op GitHub Pages
 ```
+
+## Testen
+
+```
+node --test tests/*.test.mjs          # unit tests: inhoud, nakijken, bakjes, reeksen, zoeken
+python tools/build_content.py --check  # inhoud geldig en content.js up-to-date
+```
+
+De unit tests laden de echte frontend-scripts in Node met een nagebootste DOM. Ze controleren onder meer dat elke id uniek is, dat elk goedgekeurd typ-antwoord ook echt goed wordt gerekend, en dat oude opslag (met een lijst speeldagen) netjes wordt omgezet.
 
 De scripts in `frontend/index.html` worden in een vaste volgorde geladen en delen hun globale variabelen. Houd die volgorde aan als je een bestand toevoegt.
 

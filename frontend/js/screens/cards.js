@@ -33,6 +33,7 @@ function renderCard() {
   const c = F.list[0];
   F.flipped = false;
   $('#fc').classList.remove('flipped');
+  showFace(false);
   $('#fcFoot').hidden = true;
   $('#fcWrap').style.setProperty('--hue', hue(c.week));
   $('#fcChip').textContent = 'Week ' + c.week + (S.fc[c.id] ? ' · kende je al' : '');
@@ -44,10 +45,17 @@ function renderCard() {
   $('#fcProg').style.width = (F.done / F.total * 100) + '%';
 }
 
+/** Alleen de zichtbare kant is voor schermlezers leesbaar. @param {boolean} back */
+function showFace(back) {
+  $('#fc .front').setAttribute('aria-hidden', String(back));
+  $('#fc .back').setAttribute('aria-hidden', String(!back));
+}
+
 function flip() {
   if (!F) return;
   F.flipped = !F.flipped;
   $('#fc').classList.toggle('flipped', F.flipped);
+  showFace(F.flipped);
   if (F.flipped) {
     $('#fcFoot').hidden = false;
     sfx('flip');
@@ -84,7 +92,10 @@ function finishCards() {
   showResult({
     title: `Alle ${f.total} kaarten gestampt.`,
     sub: "Elke kaart heb je minstens één keer als 'zit erin' gemarkeerd.",
-    stats: [[String(f.total), 'kaarten'], ['+' + xp, 'XP verdiend']],
+    stats: [
+      { value: f.total, label: 'kaarten', tone: 'good' },
+      { value: xp, label: 'XP verdiend', prefix: '+', tone: 'gold' },
+    ],
     buttons: [
       { label: f.week ? 'Nu de quiz van week ' + f.week : 'Nu de eindbaas', primary: true, week: f.week, onClick: () => startGame(f.week ? 'quiz' : 'boss', f.week) },
       { label: 'Kaarten opnieuw', onClick: () => startCards(f.week) },

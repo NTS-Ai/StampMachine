@@ -171,7 +171,8 @@ function renderQuestion() {
 
   const card = $('#qcard');
   card.innerHTML = h;
-  card.classList.remove('flash-ok', 'flash-no');
+  card.style.setProperty('--hue', hue(q.week));
+  card.classList.remove('flash-ok', 'flash-half', 'flash-no');
   bindAnswerArea(q, card);
 }
 
@@ -381,15 +382,18 @@ function answer(outcome, info = {}) {
     card.classList.add('shake');
   }
 
+  const before = G.score;
   G.score += points;
   if (points) floatPoints(card, points);
-  $('#score').textContent = nl(G.score);
+  countUp($('#score'), G.score, { from: before, ms: 500, format: nl });
+  card.classList.remove('flash-ok', 'flash-half', 'flash-no');
+  void card.offsetWidth; // herstart de puls
+  card.classList.add(right ? 'flash-ok' : outcome === 'almost' ? 'flash-half' : 'flash-no');
   renderCombo();
   if (G.mode === 'boss') renderBossState();
   save();
 
   if (G.mode === 'speed') {
-    card.classList.add(right ? 'flash-ok' : 'flash-no');
     if (!right) $('#fb').innerHTML = `<div class="fb no"><p>Goed was: <span class="ans">${fmt(rightText(q))}</span></p></div>`;
     const game = G;
     setTimeout(() => { if (G === game) next(); }, right ? 380 : 1300);
@@ -410,7 +414,7 @@ function showFeedback(q, outcome, info, requeued) {
   const cls = right ? 'ok' : outcome === 'almost' ? 'half' : 'no';
   const title = right ? (G.streak >= 3 ? `Goed. ${G.streak} op rij.` : 'Goed.') : outcome === 'almost' ? 'Bijna.' : 'Niet goed.';
 
-  let h = `<div class="fb ${cls}"><h4>${title}</h4>`;
+  let h = `<div class="fb ${cls}"><h2>${title}</h2>`;
   if (info.spelling) h += `<p>Let op de schrijfwijze: <span class="ans">${fmt(info.spelling)}</span></p>`;
   if (outcome === 'wrong' && q.type !== 'sentence') h += `<p>Juiste antwoord: <span class="ans">${fmt(rightText(q))}</span></p>`;
   if (q.type !== 'sentence') h += explain(q, right, info.chosen);
@@ -552,7 +556,7 @@ function finish() {
 
   const misses = [...new Map(g.mistakes.map(q => [q.id, q])).values()];
   const missHtml = misses.length
-    ? `<div class="miss"><h3>Dit moet er nog in (${misses.length})</h3>` + misses.map(q =>
+    ? `<div class="miss"><h2>Dit moet er nog in (${misses.length})</h2>` + misses.map(q =>
         `<div class="miss-item"><p>${fmt(q.question)}</p><p class="a">${fmt(rightText(q))}</p>`
         + (q.simple ? `<p class="j"><span class="lbl">Simpel gezegd</span><br>${fmt(q.simple)}</p>` : '')
         + (q.explanation ? `<p class="w">${fmt(q.explanation)}</p>` : '')
@@ -567,13 +571,19 @@ function finish() {
 
   showResult({
     record, title, sub,
-    stats: [[nl(g.score), 'score'], [acc + '%', 'goed'], [String(g.best), 'langste reeks'], ['+' + xp, 'XP verdiend']],
+    stats: [
+      { value: g.score, label: 'score', tone: 'gold' },
+      { value: acc, label: 'goed', suffix: '%', tone: acc >= 70 ? 'good' : 'bad' },
+      { value: g.best, label: 'langste reeks', tone: 'accent' },
+      { value: xp, label: 'XP verdiend', prefix: '+', tone: 'gold' },
+    ],
     extraHtml: missHtml,
     buttons,
   });
 
   const goodRound = won || (g.mode !== 'boss' && g.mode !== 'speed' && acc >= 80) || (g.mode === 'speed' && g.correct >= 15);
-  if (goodRound) { sfx('win'); confetti(); }
+  if (goodRound) sfx('win');
+  if (goodRound || record) confetti();
   else if (g.mode === 'boss') sfx('lose');
 }
 

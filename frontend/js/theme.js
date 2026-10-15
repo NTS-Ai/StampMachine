@@ -4,7 +4,7 @@
 /** @typedef {'system' | 'light' | 'dark'} ThemePref */
 
 const THEME_KEY = 'nts-stamp-theme';
-const THEME_COLORS = { light: '#ECEFF6', dark: '#0E1220' };
+const THEME_COLORS = { light: '#F3F5FA', dark: '#0A0E1A' };
 
 /** @returns {ThemePref} */
 function getThemePref() {
@@ -34,7 +34,11 @@ function setThemePref(pref) {
     if (pref === 'system') localStorage.removeItem(THEME_KEY);
     else localStorage.setItem(THEME_KEY, pref);
   } catch (e) { /* niet opslaan is geen ramp: het thema geldt dan alleen voor deze sessie */ }
-  applyTheme(pref);
+
+  // Waar de browser het kan, vloeien de kleuren zacht in elkaar over in plaats van te verspringen.
+  const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if ('startViewTransition' in document && !calm) document.startViewTransition(() => applyTheme(pref));
+  else applyTheme(pref);
 }
 
 applyTheme(getThemePref());
