@@ -1,1 +1,230 @@
-/* Wordt gebouwd in de volgende stap. */
+/* Kaart en levels: eilanden per wereld, wereldkiezer, paneel onderin, het level-scherm en de minigames.
+   Basis (.mapbar .wsel .mapstats .mapwrap .node .legend .pbar .hearts .gcard …) staat in app.css. */
+
+/* ================= kaart ================= */
+#map { position: relative; }
+:root {
+  --np-bg: #FFFFFF; --np-ink: #16380F; --np-muted: #4E6B47; --np-line: rgba(31, 77, 23, .14);
+  --lock-ink: #4A4870; --fire1: #FF9A5C; --fire2: #E2552B; --fire-sh: #9C2F12;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --np-bg: #262063; --np-ink: #F3F2FF; --np-muted: #C3C0EE; --np-line: rgba(255, 255, 255, .14); --lock-ink: #D4D2FF;
+} }
+:root[data-theme="dark"] { --np-bg: #262063; --np-ink: #F3F2FF; --np-muted: #C3C0EE; --np-line: rgba(255, 255, 255, .14); --lock-ink: #D4D2FF; }
+
+/* Kaart op een groot scherm iets groter, het eiland blijft een telefoon-spel. */
+@media (min-width: 700px) { body[data-screen="map"] { --app-w: 560px; } }
+
+.wsel { color: var(--ink); }
+.wsel .chev { width: 18px; height: 18px; flex: none; opacity: .8; transition: transform var(--dur) var(--ease-out); }
+.wsel[aria-expanded="true"] .chev { transform: rotate(180deg); }
+.wsel-num, .wopt .num, .wc-head .num {
+  display: grid; place-items: center; flex: none; color: #fff; font-family: var(--f-display); font-weight: 700;
+  background: var(--wc); box-shadow: 0 3px 0 rgba(0, 0, 0, .22);
+}
+.wsel-num { width: 30px; height: 30px; border-radius: 10px; font-size: 16px; }
+.wsel-t { overflow: hidden; text-overflow: ellipsis; }
+.wsel:hover { background: var(--glass3); }
+
+/* Wereldkiezer */
+.wpanel {
+  position: absolute; z-index: 12; top: 74px; left: 0; right: 0; padding: 14px;
+  background: var(--np-bg); color: var(--np-ink); border: 1px solid var(--np-line); border-radius: 24px;
+  box-shadow: var(--shadow-lg); animation: wpIn .2s var(--ease-out);
+}
+@keyframes wpIn { from { opacity: 0; transform: translateY(-6px); } }
+.wpanel-t { font-size: 15px; font-weight: 600; color: var(--np-muted); margin: 2px 4px 10px; }
+.wlist2 { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.wopt {
+  width: 100%; display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 16px; text-align: left;
+  border: 1px solid var(--np-line); background: transparent; transition: background var(--dur), transform var(--dur);
+}
+.wopt:hover { background: var(--chipbg); }
+.wopt[aria-current="true"] { background: var(--chipbg); box-shadow: inset 0 0 0 2px var(--violet); }
+.wopt .num { width: 38px; height: 38px; border-radius: 12px; font-size: 18px; }
+.wo-txt { display: grid; min-width: 0; flex: 1; }
+.wo-txt b { font-family: var(--f-display); font-weight: 600; font-size: 16px; line-height: 1.2; }
+.wo-txt small { color: var(--np-muted); font-weight: 700; font-size: 12.5px; }
+.wo-ic { width: 22px; height: 22px; flex: none; }
+.wo-ic svg { width: 100%; height: 100%; }
+.wo-ic.lock { color: var(--lock-ink); }
+.wo-ic.won { color: var(--good); }
+
+/* Eiland en lucht per wereld */
+.mapwrap { --sky1: var(--map1); --sky2: var(--map2); --sky3: var(--map3);
+  background: radial-gradient(120% 80% at 50% 20%, var(--sky1) 0%, var(--sky2) 45%, var(--sky3) 100%); }
+.mapwrap[data-world="2"] { --sky1: #D6F3E6; --sky2: #A8DFC9; --sky3: #84CDB2; }
+.mapwrap[data-world="3"] { --sky1: #EEF8FF; --sky2: #C8E6FA; --sky3: #A3D2F2; }
+.mapwrap[data-world="4"] { --sky1: #FFF1D6; --sky2: #FFDCA8; --sky3: #F9C285; }
+.mapwrap[data-world="5"] { --sky1: #F6E2FF; --sky2: #E0BDF6; --sky3: #C79CEA; }
+.mapwrap[data-world="6"] { --sky1: #5C64A8; --sky2: #3B4283; --sky3: #262B5E; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .mapwrap[data-world="2"] { --sky1: #1F4A4A; --sky2: #163640; --sky3: #10232E; }
+  :root:not([data-theme="light"]) .mapwrap[data-world="3"] { --sky1: #2A4A7A; --sky2: #1B2D5A; --sky3: #121B3F; }
+  :root:not([data-theme="light"]) .mapwrap[data-world="4"] { --sky1: #4A3A6A; --sky2: #2E2550; --sky3: #1B1838; }
+  :root:not([data-theme="light"]) .mapwrap[data-world="5"] { --sky1: #4A2368; --sky2: #2E1648; --sky3: #1A0E30; }
+  :root:not([data-theme="light"]) .mapwrap[data-world="6"] { --sky1: #1D2450; --sky2: #111638; --sky3: #080B22; }
+}
+:root[data-theme="dark"] .mapwrap[data-world="2"] { --sky1: #1F4A4A; --sky2: #163640; --sky3: #10232E; }
+:root[data-theme="dark"] .mapwrap[data-world="3"] { --sky1: #2A4A7A; --sky2: #1B2D5A; --sky3: #121B3F; }
+:root[data-theme="dark"] .mapwrap[data-world="4"] { --sky1: #4A3A6A; --sky2: #2E2550; --sky3: #1B1838; }
+:root[data-theme="dark"] .mapwrap[data-world="5"] { --sky1: #4A2368; --sky2: #2E1648; --sky3: #1A0E30; }
+:root[data-theme="dark"] .mapwrap[data-world="6"] { --sky1: #1D2450; --sky2: #111638; --sky3: #080B22; }
+
+/* Dag: wolken. Nacht: maan en sterren. */
+.map .nightonly { display: none; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .map .nightonly { display: inline; } :root:not([data-theme="light"]) .map .dayonly { display: none; } }
+:root[data-theme="dark"] .map .nightonly { display: inline; }
+:root[data-theme="dark"] .map .dayonly { display: none; }
+.map .twinkle { animation: twinkle 3.2s ease-in-out infinite; }
+@keyframes twinkle { 50% { opacity: .25; } }
+.map .zz { animation: zz 2.6s ease-in-out infinite; }
+@keyframes zz { 50% { opacity: .35; transform: translateY(-3px); } }
+.map .puff { animation: puff 1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: left center; }
+@keyframes puff { 50% { transform: scaleX(1.35); opacity: .6; } }
+.map .smoke { animation: smoke 4s ease-in-out infinite; }
+@keyframes smoke { 50% { transform: translateY(-5px); opacity: .4; } }
+.map .beam { animation: beam 3.4s ease-in-out infinite; transform-box: fill-box; transform-origin: left center; }
+@keyframes beam { 50% { opacity: .25; transform: scaleY(.6); } }
+.map .glow { animation: shimmer 3s ease-in-out infinite; }
+.map .signal { animation: shimmer 1.8s ease-in-out infinite; }
+
+/* Een wereld op slot: decor iets rustiger, maar alles blijft te zien. */
+.mapwrap[data-open="false"] svg.map > g:first-of-type { filter: saturate(.75); }
+
+.mapchip {
+  position: absolute; z-index: 3; top: 14px; right: 14px; display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: 99px; font-weight: 800; font-size: 13px; font-variant-numeric: tabular-nums;
+  background: var(--glass2); color: var(--ink); border: 1px solid var(--stroke); backdrop-filter: blur(8px);
+}
+.mapchip svg { width: 15px; height: 15px; }
+.mapchip.locked { background: #2E2C55; color: #FFFFFF; border-color: transparent; }
+.mapchip.won { color: var(--good); }
+
+.wnav {
+  position: absolute; z-index: 3; bottom: 12px; display: inline-flex; align-items: center; gap: 4px; min-height: 44px;
+  padding: 0 14px; border-radius: 99px; font-family: var(--f-display); font-weight: 600; font-size: 15px;
+  background: var(--glass2); color: var(--ink); border: 1px solid var(--stroke); backdrop-filter: blur(8px);
+  box-shadow: var(--shadow-md); transition: transform var(--dur), background var(--dur);
+}
+.wnav svg { width: 18px; height: 18px; }
+.wnav.prev { left: 12px; padding-left: 8px; }
+.wnav.next { right: 12px; padding-right: 8px; }
+.wnav:hover { background: var(--glass3); transform: translateY(-2px); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .wnav, :root:not([data-theme="light"]) .mapchip:not(.locked) { background: rgba(20, 18, 60, .72); } }
+:root[data-theme="dark"] .wnav, :root[data-theme="dark"] .mapchip:not(.locked) { background: rgba(20, 18, 60, .72); }
+
+/* Nodes */
+.node { outline: none; -webkit-tap-highlight-color: transparent; }
+.node:focus-visible { outline: none; }
+.node .ring { opacity: 0; transition: opacity var(--dur); }
+.node:focus-visible .ring, .node.sel .ring { opacity: 1; }
+.node.dragon:hover .top, .node.dragon:focus-visible .top { transform: translateY(-2px); }
+
+.legend { row-gap: 4px; }
+
+/* Wereldkaart onder het eiland */
+.wcard { padding: 16px; display: grid; gap: 10px; background: var(--glass2); }
+.wc-head { display: flex; align-items: center; gap: 12px; }
+.wc-head .num { width: 44px; height: 44px; border-radius: 14px; font-size: 20px; }
+.wc-head h2 { font-size: 18px; font-weight: 600; line-height: 1.2; }
+.wc-sub { margin: 2px 0 0; font-size: 13px; font-weight: 800; color: var(--muted); }
+.wc-topics { margin: 0; font-size: 14px; color: var(--ink); }
+.wc-bar { height: 10px; border-radius: 99px; background: var(--track); overflow: hidden; }
+.wc-bar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--gold), #FFE27A); transition: width .6s var(--ease-out); }
+.wc-stats { margin: 0; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; font-weight: 800; color: var(--muted); }
+.wc-lock { margin: 0; display: flex; gap: 8px; align-items: flex-start; font-size: 14px; font-weight: 700; padding: 10px 12px; border-radius: 14px; background: var(--chipbg); }
+.wc-lock svg { width: 18px; height: 18px; flex: none; margin-top: 2px; color: var(--lock-ink); }
+
+/* Paneel onderin bij een node */
+.npanel {
+  position: fixed; z-index: 25; left: 50%; bottom: 0; width: min(var(--app-w, 460px), 100%);
+  transform: translate(-50%, 105%); transition: transform .3s cubic-bezier(.2, .9, .2, 1);
+  padding: 20px 18px calc(18px + env(safe-area-inset-bottom, 0px)); display: grid; gap: 8px;
+  background: var(--np-bg); color: var(--np-ink); border: 1px solid var(--np-line); border-bottom: 0;
+  border-radius: 26px 26px 0 0; box-shadow: 0 -18px 40px -18px rgba(0, 0, 0, .45);
+  max-height: min(80vh, 560px); overflow-y: auto; overscroll-behavior: contain;
+}
+.npanel.on { transform: translate(-50%, 0); }
+.np-close {
+  position: absolute; top: 12px; right: 12px; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
+  color: var(--np-muted); background: var(--chipbg);
+}
+.np-close svg { width: 20px; height: 20px; }
+.np-close:hover { color: var(--np-ink); }
+.np-chip {
+  justify-self: start; margin: 0; padding: 3px 12px; border-radius: 99px; color: #fff; background: var(--wc);
+  font-family: var(--f-mono); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+}
+.npanel h2 { font-size: 24px; font-weight: 600; padding-right: 48px; }
+.np-sub { margin: -2px 0 0; color: var(--np-muted); font-weight: 700; font-size: 14px; }
+.np-facts { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 4px; font-weight: 700; font-size: 15px; }
+.np-facts li { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.np-facts li::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--violet); flex: none; }
+.np-stars { display: inline-flex; gap: 2px; color: var(--np-muted); }
+.np-stars svg { width: 20px; height: 20px; }
+.np-lock { margin: 4px 0 0; display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: 14px; background: var(--chipbg); font-weight: 800; font-size: 15px; }
+.np-lock svg { width: 20px; height: 20px; flex: none; margin-top: 1px; color: var(--lock-ink); }
+.np-btns { display: grid; gap: 12px; margin-top: 8px; }
+.np-btns .cta, .lvbtns .cta { display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; min-height: 54px; font-size: 19px; }
+.np-btns .cta svg, .lvbtns .cta svg { width: 20px; height: 20px; }
+.cta.blue:focus-visible, .cta:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+.cta.blue:focus-visible { outline-color: var(--violet); }
+.cta.fire { color: #fff; background: linear-gradient(180deg, var(--fire1), var(--fire2)); box-shadow: 0 6px 0 var(--fire-sh), inset 0 1px 0 rgba(255, 255, 255, .35); text-shadow: 0 1px 0 rgba(0, 0, 0, .25); }
+.cta.fire:active { box-shadow: 0 2px 0 var(--fire-sh); }
+
+/* ================= level ================= */
+.lvtop .pbar { min-width: 0; }
+.lvtop .hearts span { display: inline-flex; transition: opacity var(--dur); }
+.lvtop .hearts .just { animation: heartLost .5s ease; }
+@keyframes heartLost { 30% { transform: scale(1.5); } 60% { transform: scale(.8) rotate(-12deg); } }
+.lvmeta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: -4px; }
+.lvtitle { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 600; line-height: 1.25; }
+.lvchip {
+  flex: none; padding: 2px 10px; border-radius: 99px; color: #fff; background: var(--wc);
+  font-family: var(--f-mono); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+}
+.lvxp { font-weight: 800; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.lvbox { flex: 1; display: flex; flex-direction: column; gap: 16px; }
+.lvintro { padding-top: 12px; }
+.lvintro h2:focus, .lvresult h1:focus { outline: none; }
+.lvintro p code { font-family: var(--f-mono); font-size: .9em; background: var(--chipbg); padding: 1px 6px; border-radius: 7px; }
+.lvbest, .lvkeys { font-size: 14px; }
+.lvbtns { display: grid; gap: 14px; margin-top: auto; padding-top: 8px; }
+.lvbtns .cta { margin-top: 0; }
+.lvlink {
+  justify-self: center; min-height: 44px; padding: 0 16px; border-radius: 12px; display: inline-flex; align-items: center;
+  font-weight: 800; color: var(--ink); text-decoration: underline; text-underline-offset: 3px;
+}
+.lvlink:hover { background: var(--chipbg); }
+.lvlink:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+/* Minigame */
+.gtime { font-weight: 700; font-size: 16px; min-width: 4ch; text-align: right; }
+.gcard .prompt.txt { font-family: var(--f-display); font-size: 22px; line-height: 1.25; }
+.gcard .cap { color: #DAD8FF; }
+.gtiles { margin-top: 0; }
+.gtiles .tile { min-height: 72px; }
+
+/* Resultaat */
+.lvresult { flex: 1; display: flex; flex-direction: column; gap: 16px; }
+.lvresult .intro h1 { font-size: 30px; }
+.lvbig { margin: -6px auto 0; width: 160px; }
+.badge.lose { background: var(--red-d) !important; }
+.rgrid.two { grid-template-columns: repeat(2, 1fr); }
+.lvnews {
+  margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px; text-align: center;
+  padding: 12px 14px; border-radius: 18px; font-weight: 800; background: var(--glass2); border: 1px solid var(--stroke);
+}
+.lvnews svg { width: 20px; height: 20px; flex: none; color: var(--good); }
+.lvnews.fire { background: linear-gradient(90deg, rgba(255, 122, 77, .22), rgba(255, 201, 61, .14)); border-color: rgba(255, 122, 77, .45); }
+.lvnews.fire svg { color: #E2552B; }
+.upgrade { margin: 0; }
+
+@media (max-width: 380px) {
+  .wnav { font-size: 14px; padding-inline: 10px; }
+  .npanel h2 { font-size: 22px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .npanel, .wpanel { transition: none; animation: none; }
+}

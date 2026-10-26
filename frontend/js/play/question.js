@@ -21,6 +21,7 @@ const PLAY_TYPE_LABEL = {
   sentence: 'Leg het uit in je eigen woorden',
   fill: 'Vul het gat in',
   parsons: 'Puzzel de code',
+  card: 'Weet je dit nog?',
 };
 
 /** Code licht kleuren met de kleuring van de kennisbank (veilig: alles wordt ge-escaped). @param {string} code */
@@ -73,6 +74,9 @@ function renderPlayItem(box, item, opts) {
     h += `<div class="parsons"><span class="plabel">Jouw code</span><div class="pzone" id="pqAnsZone" aria-live="polite"></div>
       <span class="plabel">Tik op een regel om hem toe te voegen</span><div class="parsons" id="pqPool"></div></div>
       <button class="cta" type="button" id="pqCheck" disabled>Controleer</button>`;
+  } else if (q.type === 'card') {
+    h += `<div class="pcard" id="pqCard"><div class="pcard-back" id="pqBack" hidden>${fmt(q.back)}</div></div>
+      <button class="cta blue" type="button" id="pqFlip">Draai om</button>`;
   } else if (q.type === 'sentence') {
     h += `<textarea class="field" id="pqAns" placeholder="Schrijf je uitleg… (een paar zinnen is genoeg)" aria-label="Jouw uitleg"></textarea>
       <button class="cta" type="button" id="pqCheck">Laat het modelantwoord zien</button>`;
@@ -81,6 +85,7 @@ function renderPlayItem(box, item, opts) {
 
   box.querySelectorAll('.tile[data-k]').forEach(b => b.addEventListener('click', () => pickTile(state, Number(/** @type {HTMLElement} */ (b).dataset.k))));
   if (q.type === 'parsons') renderParsonsPick(state);
+  if (q.type === 'card') bindCardItem(state);
   const check = box.querySelector('#pqCheck');
   if (check) check.addEventListener('click', () => checkPlayItem(state));
   const field = /** @type {HTMLInputElement | null} */ (box.querySelector('#pqAns'));
@@ -102,6 +107,26 @@ function pickTile(state, k) {
   if (!chosen.ok && btns[okIndex]) btns[okIndex].classList.add('ok');
   const q = state.item;
   state.onAnswer({ outcome: chosen.ok ? 'right' : 'wrong', right: rightAnswerText(q), isCode: false, open: false, chosen: chosen.index });
+}
+
+/** Flashcard-item: omdraaien en zelf zeggen of je het wist. Kost nooit een leven. @param {any} state */
+function bindCardItem(state) {
+  const flip = /** @type {HTMLButtonElement} */ (state.box.querySelector('#pqFlip'));
+  flip.addEventListener('click', () => {
+    /** @type {HTMLElement} */ (state.box.querySelector('#pqBack')).hidden = false;
+    flip.remove();
+    state.box.insertAdjacentHTML('beforeend', `<div class="tiles" style="--cols:2"><button class="tile" type="button" data-know="0">Nog niet</button><button class="tile" type="button" data-know="1">Wist ik</button></div>`);
+    state.box.querySelectorAll('[data-know]').forEach(b => b.addEventListener('click', () => {
+      if (state.done) return;
+      state.done = true;
+      state.box.querySelectorAll('[data-know]').forEach(x => { /** @type {HTMLButtonElement} */ (x).disabled = true; });
+      const knew = /** @type {HTMLElement} */ (b).dataset.know === '1';
+      b.classList.add(knew ? 'ok' : 'no');
+      state.onAnswer({ outcome: knew ? 'right' : 'almost', right: null, isCode: false, open: true });
+    }));
+    /** @type {HTMLElement} */ (state.box.querySelector('[data-know="1"]')).focus({ preventScroll: true });
+  });
+  if (!isTouch()) setTimeout(() => flip.focus({ preventScroll: true }), 60);
 }
 
 /** @param {any} state */

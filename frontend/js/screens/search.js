@@ -78,6 +78,9 @@ function kbEntries() {
   ];
 }
 
+/** Stampy naast de titel van het zoekscherm. @type {any} */
+let searchBot = null;
+
 const SR = {
   query: '',
   /** @type {SearchKind} */ kind: 'all',
@@ -136,8 +139,8 @@ function statusChip(it) {
 /** Resultaat uit de kennisbank: een link naar de les, het begrip of de tabel. @param {SearchItem} it @param {string[]} terms @param {number} i */
 function kbResultCard(it, terms, i) {
   const label = { l: 'Les', b: 'Begrip', n: 'Naslag' }[it.kind] + (it.sub ? ' · ' + esc(it.sub) : '');
-  return `<article class="sr sr-kb" style="--hue:${hue(it.week)};--i:${Math.min(i, 8)}">
-    <div class="sr-meta">${it.week ? `<span class="chip">Week ${it.week}</span>` : ''}<span class="sr-kind">${label}</span>
+  return `<article class="sr sr-kb" style="--wc:${hue(it.week)};--i:${Math.min(i, 8)}">
+    <div class="sr-meta">${it.week ? `<span class="wchip">Week ${it.week}</span>` : ''}<span class="sr-kind">${label}</span>
       <a class="btn sm" href="${esc(it.href || '#/kennis')}">Open</a></div>
     <h2 class="sr-title"><a href="${esc(it.href || '#/kennis')}">${highlight(fmt(it.title), terms)}</a></h2>
     ${it.answer ? `<p class="sr-answer">${highlight(fmt(it.answer), terms)}</p>` : ''}
@@ -156,8 +159,8 @@ function resultCard(it, terms, i) {
   if (q.explanation) more += `<div class="sr-block"><span class="lbl">Technisch</span><p>${highlight(fmt(q.explanation), terms)}</p></div>`;
   if (q.points && q.points.length) more += `<div class="sr-block"><span class="lbl">Moet erin staan</span><ul>${q.points.map(p => `<li>${highlight(fmt(p), terms)}</li>`).join('')}</ul></div>`;
 
-  return `<article class="sr" style="--hue:${hue(it.week)};--i:${Math.min(i, 8)}">
-    <div class="sr-meta"><span class="chip">Week ${it.week}</span><span class="sr-kind">${kind}</span>${statusChip(it)}
+  return `<article class="sr" style="--wc:${hue(it.week)};--i:${Math.min(i, 8)}">
+    <div class="sr-meta"><span class="wchip">Week ${it.week}</span><span class="sr-kind">${kind}</span>${statusChip(it)}
       ${it.kind !== 'f' ? `<button class="btn sm" type="button" data-practice="${esc(it.item.id)}">Oefen</button>` : ''}</div>
     <h2 class="sr-title">${highlight(fmt(it.title), terms)}</h2>
     <p class="sr-answer"><span class="lbl">Antwoord</span>${highlight(fmt(it.answer), terms)}</p>
@@ -169,7 +172,7 @@ function resultCard(it, terms, i) {
 function emptyState() {
   return `<div class="sr-empty">
     <p>Typ een begrip, commando of foutmelding. Of begin bij een onderwerp:</p>
-    ${WEEKS.map(w => `<div class="topic-row" style="--hue:${hue(w.week)}">
+    ${WEEKS.map(w => `<div class="topic-row" style="--wc:${hue(w.week)}">
       <span class="t-num">W${w.week}</span>
       <div class="topic-chips">${w.topics.split(/,\s*/).map(t => `<button class="topic" type="button" data-topic="${esc(t)}">${esc(t)}</button>`).join('')}</div>
     </div>`).join('')}
@@ -185,10 +188,10 @@ function renderSearch() {
   const counts = { all: byWeek.length, l: 0, b: 0, n: 0, q: 0, t: 0, f: 0 };
   for (const h of byWeek) counts[h.kind]++;
   $('#searchKinds').innerHTML = /** @type {SearchKind[]} */ (['all', 'l', 'b', 'n', 'q', 't', 'f']).map(k =>
-    `<button class="seg-btn" type="button" role="radio" aria-checked="${SR.kind === k}" data-kind="${k}">${KIND_LABELS[k]}${terms.length ? `<span class="seg-count">${counts[k]}</span>` : ''}</button>`
+    `<button class="seg-btn" type="button" role="radio" aria-checked="${SR.kind === k}" tabindex="${SR.kind === k ? 0 : -1}" data-kind="${k}">${KIND_LABELS[k]}${terms.length ? `<span class="seg-count">${counts[k]}</span>` : ''}</button>`
   ).join('');
   $('#searchWeeks').innerHTML = [0, ...WEEKS.map(w => w.week)].map(wk =>
-    `<button class="seg-btn" type="button" role="radio" aria-checked="${SR.week === wk}" data-week="${wk}" style="--hue:${hue(wk)}">${wk ? 'W' + wk : 'Alle weken'}</button>`
+    `<button class="seg-btn" type="button" role="radio" aria-checked="${SR.week === wk}" tabindex="${SR.week === wk ? 0 : -1}" data-week="${wk}" style="--wc:${hue(wk)}">${wk ? 'W' + wk : 'Alle weken'}</button>`
   ).join('');
 
   SR.hits = SR.kind === 'all' ? byWeek : byWeek.filter(h => h.kind === SR.kind);
@@ -196,6 +199,7 @@ function renderSearch() {
 
   const status = $('#searchStatus');
   const results = $('#searchResults');
+  if (searchBot) searchBot.set(!terms.length ? 'neutral' : SR.hits.length ? 'happy' : 'think');
   if (!terms.length) {
     status.innerHTML = '';
     results.innerHTML = emptyState();
@@ -219,6 +223,7 @@ function openSearch(prefill) {
   // Een nieuwe zoeksessie begint zonder filters, zodat je niet per ongeluk in één week zoekt.
   if (document.body.dataset.screen !== 'search') { SR.kind = 'all'; SR.week = 0; }
   showScreen('search');
+  if (!searchBot && typeof mountBot === 'function') searchBot = mountBot($('#searchBot'));
   const input = /** @type {HTMLInputElement} */ ($('#searchIn'));
   if (prefill != null) { SR.query = prefill; SR.shown = SEARCH_PAGE; }
   input.value = SR.query;
@@ -281,6 +286,25 @@ $('#searchWeeks').addEventListener('click', e => {
   SR.shown = SEARCH_PAGE;
   renderSearch();
 });
+
+/**
+ * Pijltjestoetsen in een filtergroep: kies de vorige of volgende optie, zoals bij radioknoppen.
+ * @param {KeyboardEvent} e
+ */
+function onSegKey(e) {
+  const keys = { ArrowLeft: -1, ArrowUp: -1, ArrowRight: 1, ArrowDown: 1 };
+  if (!(e.key in keys)) return;
+  const group = /** @type {HTMLElement} */ (e.currentTarget);
+  const btns = /** @type {HTMLElement[]} */ (Array.from(group.querySelectorAll('.seg-btn')));
+  const at = btns.indexOf(/** @type {HTMLElement} */ (e.target));
+  if (at < 0) return;
+  e.preventDefault();
+  btns[(at + keys[e.key] + btns.length) % btns.length].click();
+  const checked = /** @type {HTMLElement | null} */ (group.querySelector('[aria-checked="true"]'));
+  if (checked) checked.focus();
+}
+$('#searchKinds').addEventListener('keydown', onSegKey);
+$('#searchWeeks').addEventListener('keydown', onSegKey);
 
 $('#search').addEventListener('click', e => {
   const target = /** @type {HTMLElement} */ (e.target);

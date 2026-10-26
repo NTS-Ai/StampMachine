@@ -108,12 +108,27 @@ function recordDragon(week) {
   save();
 }
 
+/** Minimaal aantal items in een level; lessen met minder vragen vullen aan met hun flashcards. */
+const LEVEL_MIN = 6;
+
 /**
- * Vragen voor een level: quiz- en typvragen en puzzels van die les.
- * @param {string} id
- * @returns {(Question | Puzzle)[]}
+ * Een flashcard als level-item "Weet je dit nog?": voorkant als vraag, omdraaien en zelf beoordelen.
+ * Een nieuw object, zodat de flashcard zelf niet verandert.
+ * @param {Flashcard} c
  */
-const levelPool = id => [...ALLQ, ...ALLT, ...ALLP].filter(q => q.section === id);
+const cardItem = c => ({ type: 'card', id: c.id, question: c.front, back: c.back, simple: c.simple, section: c.section, week: c.week });
+
+/**
+ * Vragen voor een level: quiz- en typvragen en puzzels van die les; heeft de les er minder dan
+ * LEVEL_MIN, dan komen de flashcards van die les erbij.
+ * @param {string} id
+ * @returns {any[]}
+ */
+function levelPool(id) {
+  const pool = [...ALLQ, ...ALLT, ...ALLP].filter(q => q.section === id);
+  if (pool.length >= LEVEL_MIN) return pool;
+  return pool.concat(ALLF.filter(c => c.section === id).map(cardItem));
+}
 
 /** Alle vragen van een wereld, voor het gevecht met de draak. @param {number} week */
 const dragonPool = week => [...ALLQ, ...ALLT, ...ALLP].filter(q => q.week === week);

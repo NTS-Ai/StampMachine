@@ -321,3 +321,7 @@ body[data-screen="boss"] .nav, body[data-screen="result"] .nav { display: none; 
 .sheet .sheet-more p{margin-top:6px;font-size:14px;opacity:.9}
 .sheet .sheet-les{color:#fff;font-weight:800;font-size:14px;text-decoration:underline;text-underline-offset:3px}
 .sheet .cta{margin-top:4px}
+
+.pcard{border-radius:22px;padding:18px;background:var(--glass2);border:1px solid var(--stroke);min-height:70px}
+.pcard-back{font-size:17px;line-height:1.55}
+.pcard-back code{font-family:var(--f-mono);font-size:.9em;background:var(--chipbg);padding:1px 6px;border-radius:7px}

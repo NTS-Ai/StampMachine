@@ -49,6 +49,8 @@ const KB = {
   /** @type {KbTerm[]} */ terms: [],
   /** Code van de blokken op de huidige pagina, voor kopiëren en uitvoeren. @type {string[]} */ codes: [],
   /** Teller voor unieke namen van tabellen op de huidige pagina. */ tables: 0,
+  /** Stampy's op de huidige pagina; worden opgeruimd bij de volgende pagina. @type {any[]} */ bots: [],
+  /** Stampy bij de inleverlijst, die reageert op het afvinken. @type {any} */ checkBot: null,
 };
 
 const KB_TITLE = document.title;
@@ -99,43 +101,97 @@ async function openKB(r) {
   showScreen('kb');
   const main = $('#kbMain');
   if (!KB.ok) {
+    clearKbBots();
+    main.dataset.page = 'laden';
     main.innerHTML = '<div class="kb-loading" aria-busy="true"><span></span><span></span><span></span></div>';
     const ok = await loadKB();
     if (!ok) {
+      main.dataset.page = 'fout';
       main.innerHTML = `<div class="kb-empty"><h1>Kennisbank niet geladen</h1><p>De lessen konden niet worden opgehaald. Open de site via een webserver (bijvoorbeeld <code>python -m http.server</code>), niet als los bestand.</p></div>`;
+      buildToc();
       return;
     }
     renderKbNav();
   }
   if (parseRoute().name !== 'kb') return; // intussen weggenavigeerd
 
+  clearKbBots();
   KB.codes = [];
   KB.tables = 0;
   let title = 'Kennisbank';
-  if (r.page === 'home') main.innerHTML = kbHomePage();
-  else if (r.page === 'begrippen') { main.innerHTML = kbGlossaryPage(); title = 'Begrippen A–Z'; }
+  let page = 'home';
+  let html = '';
+  if (r.page === 'home') html = kbHomePage();
+  else if (r.page === 'begrippen') { html = kbGlossaryPage(); page = 'begrippen'; title = 'Begrippen A–Z'; }
   else if (r.page === 'naslag') {
     const group = KB.groups.find(g => g.id === r.id);
-    main.innerHTML = group ? kbGroupPage(group) : kbReferencePage();
+    html = group ? kbGroupPage(group) : kbReferencePage();
+    page = group ? 'groep' : 'naslag';
     title = group ? `${group.title} · Naslag` : 'Naslag';
   } else {
     const sec = KB.byId.get(r.id || '');
-    main.innerHTML = sec ? kbLessonPage(sec) : kbNotFound();
-    if (sec) title = `${sec.id} ${sec.title}`;
+    html = sec ? kbLessonPage(sec) : kbNotFound();
+    page = sec ? 'les' : '404';
+    title = sec ? `${sec.id} ${sec.title}` : 'Pagina niet gevonden';
   }
-  document.title = `${title} · Kennisbank · NTS Stampmachine`;
+  // Het paginatype bepaalt de vorm: een lesvel van glas, of losse kaarten en tegels.
+  main.dataset.page = page;
+  main.innerHTML = html;
+  mountKbBots(main);
+  markScrollableCode(main);
+  document.title = `${title} · Kennisbank · Stampy Python Eiland`;
   markKbNav(location.hash);
   buildToc();
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
+/* ---------- Stampy in de kennisbank ---------- */
+
+/** Zet Stampy in elk hoekje met data-kb-bot ('hero', 'simple', 'check' of '404'). @param {HTMLElement} root */
+function mountKbBots(root) {
+  if (typeof mountBot !== 'function') return;
+  root.querySelectorAll('[data-kb-bot]').forEach(el => {
+    const host = /** @type {HTMLElement} */ (el);
+    const kind = host.dataset.kbBot;
+    // Alleen bij de inleverlijst praat Stampy terug; elders staat zijn tekst vast op de pagina.
+    const bot = mountBot(host, { bubble: kind === 'check' });
+    if (kind === 'hero') bot.set('happy');
+    else if (kind === '404') bot.set('sad');
+    KB.bots.push(bot);
+    if (kind === 'check') KB.checkBot = bot;
+  });
+}
+
+/**
+ * Een codeblok dat breder is dan de kolom, scrolt opzij. Zo'n blok krijgt een tabstop en een naam,
+ * zodat je het ook met het toetsenbord kunt scrollen (zoals de tabellen).
+ * @param {HTMLElement} root
+ */
+function markScrollableCode(root) {
+  root.querySelectorAll('.cb-code').forEach(el => {
+    const pre = /** @type {HTMLElement} */ (el);
+    if (pre.scrollWidth <= pre.clientWidth + 1) return;
+    const lang = pre.closest('.code-block')?.querySelector('.cb-lang')?.textContent || 'Code';
+    pre.tabIndex = 0;
+    pre.setAttribute('role', 'region');
+    pre.setAttribute('aria-label', `Codevoorbeeld ${lang}, scrolt opzij`);
+  });
+}
+
+/** Ruimt de Stampy's van de vorige pagina op. */
+function clearKbBots() {
+  KB.bots.forEach(b => b.destroy());
+  KB.bots = [];
+  KB.checkBot = null;
+}
+
 function renderKbNav() {
-  const weeks = KB.weeks.map(w => `<details class="kbn-group" data-week="${w.week}" style="--hue:${hue(w.week)}">
-      <summary><span class="kbn-num">W${w.week}</span><span>${esc(w.title)}</span></summary>
+  const weeks = KB.weeks.map(w => `<details class="kbn-group" data-week="${w.week}" style="--wc:${hue(w.week)}">
+      <summary><span class="kbn-num" aria-hidden="true">${w.week}</span><span><span class="sr-only">Wereld ${w.week}: </span>${esc(w.title)}</span></summary>
       <ul>${w.sections.map(s => `<li><a class="kbn-link" href="#/kennis/${esc(s.id)}"><span class="kbn-id">${s.kind === 'assessment' ? 'Opdracht' : esc(s.id)}</span><span>${esc(s.title)}</span></a></li>`).join('')}</ul>
     </details>`).join('');
   const groups = KB.groups.length ? `<details class="kbn-group">
-      <summary><span class="kbn-num">${ICON_TABLE}</span><span>Naslag</span></summary>
+      <summary><span class="kbn-num icon">${ICON_TABLE}</span><span>Naslag</span></summary>
       <ul><li><a class="kbn-link" href="#/kennis/naslag"><span>Alle tabellen</span></a></li>${KB.groups.map(g => `<li><a class="kbn-link" href="#/kennis/naslag/${esc(g.id)}"><span>${esc(g.title)}</span></a></li>`).join('')}</ul>
     </details>` : '';
   $('#kbNav').innerHTML = `
@@ -167,6 +223,14 @@ const ICON_TABLE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
 const ICON_PLAY = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
 const ICON_COPY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
 const ICON_EXT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>';
+const ICON_SEARCH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>';
+const ICON_NEXT = '<svg class="kb-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>';
+const ICON_MAP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg>';
+const ICON_LOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>';
+const ICON_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const ICON_PENCIL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg>';
+const ICON_LIST = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>';
+const ICON_CARDS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="7" y="3" width="13" height="17" rx="2.5" transform="rotate(8 13 11)"/><rect x="4" y="5" width="13" height="17" rx="2.5"/></svg>';
 const CALLOUT = {
   tip: { label: 'Tip', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/></svg>' },
   info: { label: 'Goed om te weten', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></svg>' },
@@ -174,26 +238,60 @@ const CALLOUT = {
 };
 const LANG_NAMES = { python: 'Python', bash: 'Terminal', sql: 'SQL', json: 'JSON', yaml: 'YAML', toml: 'TOML', dockerfile: 'Dockerfile', ini: 'Config', text: 'Tekst', http: 'HTTP' };
 
+/** Waar je op de kaart bent: de wereld en of je al iets gespeeld hebt (de kaart is optioneel). */
+function kbWhere() {
+  const world = typeof currentWorld === 'function' ? currentWorld() : 1;
+  const started = typeof mapTotals === 'function' ? mapTotals().done > 0 : false;
+  return { world, started };
+}
+
+/** Eén wereldkaart op het overzicht: de lessen van die week en de stand op de kaart. @param {{ week: number, title: string, sections: KbSection[] }} w */
+function kbWorldCard(w) {
+  const p = typeof worldProgress === 'function' ? worldProgress(w.week) : null;
+  // Lezen mag altijd; spelen pas als de wereld op de kaart open is.
+  const open = typeof worldOpen === 'function' ? worldOpen(w.week) : true;
+  const state = !p ? 'Speel de levels van deze wereld'
+    : !open ? 'Op de kaart nog op slot, lezen kan al'
+    : p.dragon ? `Alle ${p.levels} levels en de draak gehaald`
+    : `${p.done} van ${p.levels} levels gehaald`;
+  return `<article class="kb-world" style="--wc:${hue(w.week)}" aria-labelledby="kbw-${w.week}">
+      <div class="kb-world-head"><span class="kb-wnum" aria-hidden="true">${w.week}</span><div><p class="kb-wlabel">Wereld ${w.week}</p><h3 id="kbw-${w.week}">${esc(w.title)}</h3></div></div>
+      <ol class="kb-wlist">${w.sections.map(s => `<li><a href="#/kennis/${esc(s.id)}"><span class="kbn-id">${s.kind === 'assessment' ? 'Opdracht' : esc(s.id)}</span><span>${esc(s.title)}</span>${s.minutes ? `<small>${s.minutes} min</small>` : ''}</a></li>`).join('')}</ol>
+      <a class="kb-wmap" href="#/kaart/${w.week}">${open ? ICON_MAP : ICON_LOCK}<span>${state}</span><span class="go">Naar de kaart</span></a>
+    </article>`;
+}
+
 function kbHomePage() {
-  const first = KB.sections[0];
+  const { world, started } = kbWhere();
+  const here = KB.weeks.find(w => w.week === world) || KB.weeks[0];
+  const start = here && here.sections[0];
+  const tables = KB.groups.reduce((n, g) => n + g.tables.length, 0);
+  const tip = started && here
+    ? `Je bent in wereld ${here.week}. Lees de les voordat je het level speelt.`
+    : 'Hoi! Lees eerst een les, dan gaat het level op de kaart veel makkelijker.';
   return `<header class="kb-hero">
-      <p class="kb-eyebrow">Kennisbank</p>
-      <h1>Alles uit het workbook, om na te lezen.</h1>
-      <p class="kb-lead">Per les een uitleg in gewone taal, codevoorbeelden die je kunt kopiëren of zelf uitvoeren, opzoektabellen en een begrippenlijst. Gebruik de zijbalk, of zoek met <kbd class="keycap">/</kbd>.</p>
-      <div class="kb-hero-btns">
-        ${first ? `<a class="btn primary lg" href="#/kennis/${esc(first.id)}">Begin bij ${esc(first.id)}</a>` : ''}
-        <button class="btn lg" type="button" data-kb-search>Zoek in de kennisbank</button>
+      <div class="kb-hero-text">
+        <p class="kb-eyebrow">Kennisbank</p>
+        <h1>Alles uit het workbook, om na te lezen.</h1>
+        <p class="kb-lead">Per les een uitleg in gewone taal, codevoorbeelden die je kunt kopiëren of zelf uitvoeren, opzoektabellen en een begrippenlijst. Zoek met <kbd class="keycap">/</kbd>.</p>
+        <div class="kb-hero-btns">
+          ${start ? `<a class="cta kb-cta" href="#/kennis/${esc(start.id)}">${started ? `Lees wereld ${here.week}` : `Begin bij ${esc(start.id)}`}${ICON_NEXT}</a>` : ''}
+          <button class="kb-glassbtn" type="button" data-kb-search>${ICON_SEARCH}Zoek in de kennisbank</button>
+        </div>
+      </div>
+      <div class="kb-hero-bot">
+        <span class="kb-float" style="left:-6px;bottom:96px" aria-hidden="true">def</span>
+        <span class="kb-float" style="right:-10px;bottom:46px;animation-delay:-1.6s" aria-hidden="true">print()</span>
+        <p class="kb-say">${esc(tip)}</p>
+        <div class="kb-bot-host" data-kb-bot="hero"></div>
       </div>
     </header>
-    <div class="kb-weeks">
-      ${KB.weeks.map(w => `<section class="kb-week" style="--hue:${hue(w.week)}">
-        <div class="kb-week-head"><span class="t-num">W${w.week}</span><h2>${esc(w.title)}</h2></div>
-        <ol>${w.sections.map(s => `<li><a href="#/kennis/${esc(s.id)}"><span class="kbn-id">${s.kind === 'assessment' ? 'Opdracht' : esc(s.id)}</span><span>${esc(s.title)}</span>${s.minutes ? `<small>${s.minutes} min</small>` : ''}</a></li>`).join('')}</ol>
-      </section>`).join('')}
-    </div>
-    <div class="kb-extra">
-      ${KB.groups.length ? `<a class="kb-extra-card" href="#/kennis/naslag">${ICON_TABLE}<b>Naslag</b><span>${KB.groups.reduce((n, g) => n + g.tables.length, 0)} opzoektabellen: methodes, commando's, statuscodes en meer.</span></a>` : ''}
-      ${KB.terms.length ? `<a class="kb-extra-card" href="#/kennis/begrippen">${ICON_BOOK}<b>Begrippen A–Z</b><span>${KB.terms.length} begrippen, elk in één zin en in gewone taal.</span></a>` : ''}
+    <h2 class="kb-sec-t">Werelden</h2>
+    <div class="kb-wgrid">${KB.weeks.map(kbWorldCard).join('')}</div>
+    <h2 class="kb-sec-t">Opzoeken</h2>
+    <div class="kb-tiles">
+      ${KB.groups.length ? `<a class="kb-tile" href="#/kennis/naslag" style="--ic:var(--blue-d)"><span class="kb-tile-ic">${ICON_TABLE}</span><b>Naslag</b><span>${tables} opzoektabellen: methodes, commando's, statuscodes en meer.</span>${ICON_NEXT}</a>` : ''}
+      ${KB.terms.length ? `<a class="kb-tile" href="#/kennis/begrippen" style="--ic:var(--green-d)"><span class="kb-tile-ic">${ICON_BOOK}</span><b>Begrippen A–Z</b><span>${KB.terms.length} begrippen, elk in één zin en in gewone taal.</span>${ICON_NEXT}</a>` : ''}
     </div>`;
 }
 
@@ -208,28 +306,28 @@ function kbLessonPage(sec) {
   const isTask = sec.kind === 'assessment';
 
   let h = `<nav class="kb-crumbs" aria-label="Kruimelpad"><a href="#/kennis">Kennisbank</a><span aria-hidden="true">/</span><span>Week ${sec.week}${week ? ' · ' + esc(week.title) : ''}</span></nav>
-    <header class="kb-head" style="--hue:${hue(sec.week)}">
-      <div class="kb-meta"><span class="chip">${isTask ? 'Eindopdracht' : 'Les ' + esc(sec.id)}</span>${sec.minutes ? `<span class="kb-time">${sec.minutes} min</span>` : ''}</div>
+    <header class="kb-head" style="--wc:${hue(sec.week)}">
+      <div class="kb-meta"><span class="kb-chip">${isTask ? 'Eindopdracht' : 'Les ' + esc(sec.id)}</span>${sec.minutes ? `<span class="kb-time">${sec.minutes} min</span>` : ''}</div>
       <h1>${esc(sec.title)}</h1>
       <p class="kb-lead">${kbText(sec.summary)}</p>
     </header>
-    <div class="callout callout-simple"><span class="callout-label">Simpel gezegd</span><p>${kbText(withoutLabel(sec.simple))}</p></div>
+    ${kbSimpleHtml(sec, !isTask)}
     <div class="kb-toc-inline" id="kbTocInline" hidden></div>
     <div class="prose">${sec.blocks.map(renderBlock).join('')}</div>`;
 
   if (sec.takeaways && sec.takeaways.length) {
-    h += `<section class="kb-box kb-takeaways"><h2>Onthoud</h2><ul>${sec.takeaways.map(t => `<li>${kbText(t)}</li>`).join('')}</ul></section>`;
+    h += `<section class="kb-box kb-takeaways"><div class="kb-box-h">${ICON_CHECK}<h2>Onthoud</h2></div><ul>${sec.takeaways.map(t => `<li>${kbText(t)}</li>`).join('')}</ul></section>`;
   }
   if (sec.checklist && sec.checklist.length) h += checklistHtml(sec);
   if (sec.exercise) {
-    h += `<section class="kb-box kb-exercise"><h2>Oefening uit het workbook</h2><p>${kbText(sec.exercise)}</p></section>`;
+    h += `<section class="kb-box kb-exercise"><div class="kb-box-h">${ICON_PENCIL}<h2>Oefening uit het workbook</h2></div><p>${kbText(sec.exercise)}</p></section>`;
   }
   if (practice.length || cards.length) {
-    h += `<section class="kb-practice" style="--hue:${hue(sec.week)}">
+    h += `<section class="kb-practice" style="--wc:${hue(sec.week)}">
         <div><h2>Oefen deze les</h2><p>${practice.length ? `${practice.length} ${practice.length === 1 ? 'vraag' : 'vragen'}` : ''}${practice.length && cards.length ? ' en ' : ''}${cards.length ? `${cards.length} flashcards` : ''} over precies deze stof.</p></div>
         <div class="kb-practice-btns">
-          ${practice.length ? `<button class="btn primary" type="button" data-kb-practice="${esc(sec.id)}">Oefen ${Math.min(practice.length, 15)} vragen</button>` : ''}
-          ${cards.length ? `<button class="btn" type="button" data-kb-cards="${esc(sec.id)}">Flashcards</button>` : ''}
+          ${practice.length ? `<button class="cta kb-cta" type="button" data-kb-practice="${esc(sec.id)}">${ICON_PLAY}Oefen ${Math.min(practice.length, 15)} vragen</button>` : ''}
+          ${cards.length ? `<button class="kb-tilebtn" type="button" data-kb-cards="${esc(sec.id)}">${ICON_CARDS}Flashcards</button>` : ''}
         </div>
       </section>`;
   }
@@ -243,6 +341,18 @@ function kbLessonPage(sec) {
   return h;
 }
 
+/**
+ * "Simpel gezegd" als tekstballon. Bij een gewone les zegt Stampy het; bij een eindopdracht
+ * staat Stampy al bij de inleverlijst, dan alleen de ballon.
+ * @param {KbSection} sec @param {boolean} withBot
+ */
+function kbSimpleHtml(sec, withBot) {
+  return `<div class="kb-simple${withBot ? '' : ' no-bot'}">
+      ${withBot ? '<div class="mascot kb-mini" data-kb-bot="simple"></div>' : ''}
+      <div class="kb-simple-text"><span class="kb-label">Simpel gezegd</span><p>${kbText(withoutLabel(sec.simple))}</p></div>
+    </div>`;
+}
+
 /** @param {KbBlock} b */
 function renderBlock(b) {
   switch (b.type) {
@@ -254,7 +364,7 @@ function renderBlock(b) {
     }
     case 'note': {
       const c = CALLOUT[b.tone || 'info'] || CALLOUT.info;
-      return `<div class="callout callout-${b.tone || 'info'}">${c.icon}<div><span class="callout-label">${c.label}</span><p>${kbText(b.text || '')}</p></div></div>`;
+      return `<div class="callout callout-${b.tone || 'info'}">${c.icon}<div><span class="kb-label">${c.label}</span><p>${kbText(b.text || '')}</p></div></div>`;
     }
     case 'table': return tableHtml(b.head || [], b.rows || [], '');
     case 'code': return codeBlockHtml(b);
@@ -302,13 +412,23 @@ function loadChecks() {
   } catch (e) { return {}; }
 }
 
+/** @param {number} done @param {number} total */
+const checkCountHtml = (done, total) => `<b>${done}</b> van ${total} afgevinkt · wordt alleen in deze browser bewaard`;
+
 /** @param {KbSection} sec */
 function checklistHtml(sec) {
   const checks = loadChecks();
   const list = sec.checklist || [];
   const done = list.filter((_, i) => checks[`${sec.id}:${i}`]).length;
-  return `<section class="kb-box kb-checklist"><h2>Inleverlijst</h2>
-      <p class="kb-check-count" aria-live="polite"><b>${done}</b> van ${list.length} afgevinkt · wordt alleen in deze browser bewaard</p>
+  return `<section class="kb-box kb-checklist">
+      <div class="kb-check-top">
+        <div class="mascot left kb-mini" data-kb-bot="check"></div>
+        <div>
+          <h2>Inleverlijst</h2>
+          <p class="kb-check-count" aria-live="polite">${checkCountHtml(done, list.length)}</p>
+          <div class="kb-check-bar" aria-hidden="true"><i style="width:${list.length ? Math.round(done / list.length * 100) : 0}%"></i></div>
+        </div>
+      </div>
       <ul>${list.map((item, i) => `<li><label><input type="checkbox" data-check="${esc(sec.id)}:${i}"${checks[`${sec.id}:${i}`] ? ' checked' : ''}><span>${kbText(item)}</span></label></li>`).join('')}</ul>
     </section>`;
 }
@@ -316,15 +436,16 @@ function checklistHtml(sec) {
 /* ---------- naslag en begrippen ---------- */
 
 function kbReferencePage() {
-  return `<header class="kb-hero small"><p class="kb-eyebrow">Naslag</p><h1>Opzoektabellen</h1>
-      <p class="kb-lead">Snel de juiste methode, het juiste commando of de betekenis van een statuscode vinden. Elke tabel verwijst naar de les waar het vandaan komt.</p></header>
-    <div class="kb-extra grid">${KB.groups.map(g => `<a class="kb-extra-card" href="#/kennis/naslag/${esc(g.id)}">${ICON_TABLE}<b>${esc(g.title)}</b><span>${g.tables.map(t => esc(t.title)).join(' · ')}</span></a>`).join('')}</div>`;
+  return `<nav class="kb-crumbs" aria-label="Kruimelpad"><a href="#/kennis">Kennisbank</a><span aria-hidden="true">/</span><span>Naslag</span></nav>
+    <header class="kb-head-card"><span class="kb-tile-ic" style="--ic:var(--blue-d)">${ICON_TABLE}</span>
+      <div><h1>Opzoektabellen</h1><p class="kb-lead">Snel de juiste methode, het juiste commando of de betekenis van een statuscode vinden. Elke tabel verwijst naar de les waar het vandaan komt.</p></div></header>
+    <div class="kb-tiles">${KB.groups.map((g, i) => `<a class="kb-tile compact" href="#/kennis/naslag/${esc(g.id)}" style="--ic:${hue((i % 6) + 1)}"><span class="kb-tile-ic">${ICON_TABLE}</span><b>${esc(g.title)}</b><span>${g.tables.map(t => esc(t.title)).join(' · ')}</span></a>`).join('')}</div>`;
 }
 
 /** @param {KbGroup} g */
 function kbGroupPage(g) {
   return `<nav class="kb-crumbs" aria-label="Kruimelpad"><a href="#/kennis">Kennisbank</a><span aria-hidden="true">/</span><a href="#/kennis/naslag">Naslag</a></nav>
-    <header class="kb-head"><h1>${esc(g.title)}</h1><p class="kb-lead">${g.tables.length} tabellen om op te zoeken.</p></header>
+    <header class="kb-head"><div class="kb-meta"><span class="kb-chip">Naslag</span></div><h1>${esc(g.title)}</h1><p class="kb-lead">${g.tables.length} tabellen om op te zoeken.</p></header>
     <div class="kb-toc-inline" id="kbTocInline" hidden></div>
     <div class="prose">${g.tables.map(t => `<h2>${esc(t.title)}</h2>
       <p class="kb-table-intro">${kbText(t.intro || '')}${t.section && KB.byId.has(t.section) ? ` <a class="kb-src" href="#/kennis/${esc(t.section)}">Les ${esc(t.section)}</a>` : ''}</p>
@@ -333,14 +454,15 @@ function kbGroupPage(g) {
 
 function kbGlossaryPage() {
   const letters = [...new Set(KB.terms.map(t => firstLetter(t.term)))].sort((a, b) => Number(a === '#') - Number(b === '#') || a.localeCompare(b));
-  return `<header class="kb-hero small"><p class="kb-eyebrow">Begrippen</p><h1>Begrippen A–Z</h1>
-      <p class="kb-lead">${KB.terms.length} begrippen uit de zes weken. Elk begrip in één zin, plus een uitleg in gewone taal.</p></header>
+  return `<nav class="kb-crumbs" aria-label="Kruimelpad"><a href="#/kennis">Kennisbank</a><span aria-hidden="true">/</span><span>Begrippen</span></nav>
+    <header class="kb-head-card"><span class="kb-tile-ic" style="--ic:var(--green-d)">${ICON_BOOK}</span>
+      <div><h1>Begrippen A–Z</h1><p class="kb-lead">${KB.terms.length} begrippen uit de zes weken. Elk begrip in één zin, plus een uitleg in gewone taal.</p></div></header>
     <div class="gl-tools">
-      <label class="gl-filter">${'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>'}<input id="glFilter" type="search" placeholder="Filter begrippen" aria-label="Filter begrippen" autocomplete="off"></label>
+      <label class="gl-filter">${ICON_SEARCH}<input id="glFilter" type="search" placeholder="Filter begrippen" aria-label="Filter begrippen" autocomplete="off"></label>
       <nav class="gl-letters" aria-label="Spring naar letter">${letters.map(l => `<button type="button" data-letter="${esc(l)}">${esc(l)}</button>`).join('')}</nav>
     </div>
     <div class="gl-list" id="glList">${letters.map(l => `<section class="gl-letter" data-letter-group="${esc(l)}"><h2 id="gl-${esc(l)}">${esc(l)}</h2>
-      <dl>${KB.terms.filter(t => firstLetter(t.term) === l).map(t => `<div class="gl-item" data-term="${esc(fold(t.term + ' ' + t.short))}" style="--hue:${hue(Number(String(t.section).split('.')[0]) || 0)}">
+      <dl>${KB.terms.filter(t => firstLetter(t.term) === l).map(t => `<div class="gl-item" data-term="${esc(fold(t.term + ' ' + t.short))}" style="--wc:${hue(Number(String(t.section).split('.')[0]) || 0)}">
         <dt>${kbText(t.term)}</dt><dd><p>${kbText(t.short)}</p><p class="gl-simple">${kbText(t.simple)}</p>${KB.byId.has(t.section) ? `<a class="kb-src" href="#/kennis/${esc(t.section)}">Les ${esc(t.section)}</a>` : ''}</dd>
       </div>`).join('')}</dl></section>`).join('')}</div>
     <p class="gl-none" id="glNone" hidden>Geen begrip gevonden. Probeer het zoeken met <kbd class="keycap">/</kbd>.</p>`;
@@ -359,7 +481,15 @@ const firstLetter = term => {
 };
 
 function kbNotFound() {
-  return `<div class="kb-empty"><h1>Deze pagina bestaat niet</h1><p>Misschien is de les verplaatst. Kies een onderwerp in de zijbalk of ga naar het <a href="#/kennis">overzicht</a>.</p></div>`;
+  return `<div class="kb-empty">
+      <div class="kb-bot-host" data-kb-bot="404"></div>
+      <h1>Deze pagina bestaat niet</h1>
+      <p>Stampy heeft overal gezocht, maar deze les staat er niet. Misschien is hij verplaatst. Kies een onderwerp of zoek in de kennisbank.</p>
+      <div class="kb-hero-btns">
+        <a class="cta kb-cta" href="#/kennis">Naar het overzicht</a>
+        <button class="kb-tilebtn" type="button" data-kb-search>${ICON_SEARCH}Zoeken</button>
+      </div>
+    </div>`;
 }
 
 /* ---------- inhoudsopgave "Op deze pagina" ---------- */
@@ -372,6 +502,8 @@ function buildToc() {
   const side = $('#kbToc');
   const inline = document.querySelector('#kbTocInline');
   if (tocSpy) { tocSpy.disconnect(); tocSpy = null; }
+  // Zonder inhoudsopgave krijgt de pagina de ruimte van de rechterkolom.
+  $('#kbLayout').classList.toggle('no-toc', heads.length < 2);
   if (heads.length < 2) { side.innerHTML = ''; if (inline) /** @type {HTMLElement} */ (inline).hidden = true; return; }
 
   heads.forEach((h, i) => { h.id = h.id || `kb-h-${i}`; });
@@ -388,7 +520,7 @@ function buildToc() {
         if (!e.isIntersecting) continue;
         side.querySelectorAll('[data-toc]').forEach(a => a.classList.toggle('on', /** @type {HTMLElement} */ (a).dataset.toc === e.target.id));
       }
-    }, { rootMargin: '-80px 0px -70% 0px' });
+    }, { rootMargin: '-40px 0px -70% 0px' });
     heads.forEach(h => tocSpy && tocSpy.observe(h));
   }
 }
@@ -419,17 +551,19 @@ $('#kb').addEventListener('click', e => {
     const id = practice.dataset.kbPractice || '';
     const list = ALLQ.concat(ALLT).filter(q => q.section === id);
     startGame('retry', 0, shuffle(list).slice(0, 15));
-    $('#modeTag').textContent = 'Oefenen · les ' + id;
+    const tag = document.querySelector('#modeTag');
+    if (tag) tag.textContent = 'Oefenen · les ' + id;
     return;
   }
   const cards = /** @type {HTMLElement | null} */ (target.closest('[data-kb-cards]'));
   if (cards) {
     const id = cards.dataset.kbCards || '';
     startCards(0, ALLF.filter(c => c.section === id));
-    $('#fcTag').textContent = 'Flashcards · les ' + id;
+    const tag = document.querySelector('#fcTag');
+    if (tag) tag.textContent = 'Flashcards · les ' + id;
     return;
   }
-  if (target.closest('[data-kb-search]')) { openSearch(''); return; }
+  if (target.closest('[data-kb-search]')) { closeKbDrawer(); openSearch(''); return; }
   const letter = /** @type {HTMLElement | null} */ (target.closest('[data-letter]'));
   if (letter) {
     const h = document.getElementById('gl-' + letter.dataset.letter);
@@ -449,7 +583,15 @@ $('#kb').addEventListener('change', e => {
     const all = section.querySelectorAll('[data-check]');
     const done = section.querySelectorAll('[data-check]:checked').length;
     const count = section.querySelector('.kb-check-count');
-    if (count) count.innerHTML = `<b>${done}</b> van ${all.length} afgevinkt · wordt alleen in deze browser bewaard`;
+    if (count) count.innerHTML = checkCountHtml(done, all.length);
+    const bar = /** @type {HTMLElement | null} */ (section.querySelector('.kb-check-bar i'));
+    if (bar) bar.style.width = `${Math.round(done / all.length * 100)}%`;
+    // Stampy kijkt mee bij het afvinken, en juicht als alles af is.
+    if (KB.checkBot && box.checked) {
+      const left = all.length - done;
+      if (left === 0) KB.checkBot.react('win', 'Alles afgevinkt. Inleveren maar!');
+      else KB.checkBot.react('ok', left === 1 ? 'Nog één te gaan.' : `Nog ${left} te gaan.`);
+    }
   }
 });
 
@@ -536,8 +678,8 @@ function openEditor(fig) {
       <label class="sr-only" for="cb-in-${fig.dataset.code}">Pas de code aan</label>
       <textarea class="cb-input" id="cb-in-${fig.dataset.code}" spellcheck="false" autocapitalize="off" autocomplete="off" rows="${Math.min(18, code.split('\n').length + 1)}">${esc(code)}</textarea>
       <div class="cb-run-bar">
-        <button class="btn primary sm" type="button" data-act="run">${ICON_PLAY}<span>Run</span></button>
-        <button class="btn sm ghost" type="button" data-act="reset">Herstel</button>
+        <button class="cb-run" type="button" data-act="run">${ICON_PLAY}<span>Run</span></button>
+        <button class="cb-reset" type="button" data-act="reset">Herstel</button>
         <span class="hint kbd">Ctrl+Enter = run</span>
       </div>
       <div class="cb-result" aria-live="polite"></div>
@@ -648,12 +790,13 @@ $('#kbMenuBtn').addEventListener('click', () => {
   else openKbDrawer();
 });
 $('#kbBackdrop').addEventListener('click', () => { closeKbDrawer(); $('#kbMenuBtn').focus(); });
+$('#kbClose').addEventListener('click', () => { closeKbDrawer(); $('#kbMenuBtn').focus(); });
 $('#kbSide').addEventListener('keydown', e => {
   if (!$('#kbSide').classList.contains('open')) return;
   if (e.key === 'Escape') { e.stopPropagation(); closeKbDrawer(); $('#kbMenuBtn').focus(); return; }
   if (e.key !== 'Tab') return;
   // Focus blijft in de lade zolang die open is.
-  const items = Array.from($('#kbSide').querySelectorAll('input, a, summary')).filter(el => /** @type {HTMLElement} */ (el).offsetParent !== null);
+  const items = Array.from($('#kbSide').querySelectorAll('button, input, a, summary')).filter(el => /** @type {HTMLElement} */ (el).offsetParent !== null);
   const first = /** @type {HTMLElement} */ (items[0]);
   const last = /** @type {HTMLElement} */ (items[items.length - 1]);
   if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }

@@ -1,6 +1,7 @@
 /* ---------- flashcards ----------
    Kaarten die je nog niet kent komen eerst. 'Nog niet' legt de kaart drie plekken terug;
-   de ronde is klaar als je elke kaart één keer als 'zit erin' hebt gemarkeerd. */
+   de ronde is klaar als je elke kaart één keer als 'zit erin' hebt gemarkeerd.
+   De kaart is een glazen 3D-kaart die omdraait; Stampy in de hoek leeft mee. */
 
 /**
  * @typedef {Object} CardSession
@@ -16,6 +17,8 @@
 let F = null;
 /** Minimale veegafstand in pixels om een kaart te beoordelen. */
 const SWIPE_MIN = 80;
+/** Stampy in de hoek van het flashcard-scherm; pas getekend bij de eerste ronde. @type {any} */
+let cardsBot = null;
 
 /**
  * @param {number} week  0 = alle weken
@@ -28,6 +31,12 @@ function startCards(week, list) {
   F = { week, list: shuffle(unknown).concat(shuffle(known)), total: deck.length, done: 0, rated: 0, flipped: false };
   $('#fcTag').textContent = 'Flashcards · ' + (week ? 'Week ' + week : 'alle weken');
   showScreen('cards');
+  if (!cardsBot && typeof mountBot === 'function') cardsBot = mountBot($('#fcBot'));
+  if (cardsBot) {
+    cardsBot.stage(currentStreak());
+    cardsBot.set('neutral');
+    cardsBot.say(unknown.length ? 'Draai de kaart om en wees eerlijk.' : 'Deze kende je al. Even opfrissen!', 2600);
+  }
   renderCard();
 }
 
@@ -38,12 +47,12 @@ function renderCard() {
   $('#fc').classList.remove('flipped');
   showFace(false);
   $('#fcFoot').hidden = true;
-  $('#fcWrap').style.setProperty('--hue', hue(c.week));
+  $('#fcWrap').style.setProperty('--wc', hue(c.week));
   $('#fcChip').textContent = 'Week ' + c.week + (S.fc[c.id] ? ' · kende je al' : '');
   $('#fcFront').innerHTML = fmt(c.front);
   $('#fcBack').innerHTML = fmt(c.back);
   $('#fcJip').hidden = !c.simple;
-  $('#fcJip').innerHTML = c.simple ? '<span class="lbl">Simpel gezegd</span><br>' + fmt(c.simple) : '';
+  $('#fcJip').innerHTML = c.simple ? '<b>Simpel gezegd</b>' + fmt(c.simple) : '';
   $('#fcCount').textContent = F.done + ' / ' + F.total;
   $('#fcProg').style.width = (F.done / F.total * 100) + '%';
 }
@@ -74,10 +83,12 @@ function rate(known) {
     S.fc[c.id] = 1;
     F.done++;
     sfx('ok');
+    if (cardsBot) cardsBot.react(F.done % 5 === 0 ? 'combo' : 'ok', F.done % 5 === 0 ? `Al ${F.done} gestampt!` : '');
   } else {
     delete S.fc[c.id];
     F.list.splice(Math.min(3, F.list.length), 0, c);
     sfx('bad');
+    if (cardsBot) cardsBot.react('think', 'Die komt zo nog een keer.');
   }
   markPlayed();
   save();
@@ -93,6 +104,8 @@ function finishCards() {
   renderHud();
 
   showResult({
+    badge: $('#fcTag').textContent || 'Flashcards',
+    mood: 'win',
     title: `Alle ${f.total} kaarten gestampt.`,
     sub: "Elke kaart heb je minstens één keer als 'zit erin' gemarkeerd.",
     stats: [
@@ -100,7 +113,7 @@ function finishCards() {
       { value: xp, label: 'XP verdiend', prefix: '+', tone: 'gold' },
     ],
     buttons: [
-      { label: f.week ? 'Nu de quiz van week ' + f.week : 'Nu de eindbaas', primary: true, week: f.week, onClick: () => startGame(f.week ? 'quiz' : 'boss', f.week) },
+      { label: f.week ? 'Nu de quiz van week ' + f.week : 'Nu de eindbaas', primary: true, onClick: () => startGame(f.week ? 'quiz' : 'boss', f.week) },
       { label: 'Kaarten opnieuw', onClick: () => startCards(f.week) },
       { label: 'Naar overzicht', onClick: goHome },
     ],
