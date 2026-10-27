@@ -24,7 +24,13 @@
 }
 .wsel-num { width: 30px; height: 30px; border-radius: 10px; font-size: 16px; }
 .wsel-t { overflow: hidden; text-overflow: ellipsis; }
-.wsel:hover { background: var(--glass3); }
+@media (hover: hover) and (pointer: fine) { .wsel:hover { background: var(--glass3); } }
+/* Terugknop in dezelfde glazen stijl als de wereldkiezer ernaast: één knoptaal per rij. */
+.mapbar .rbtn { background: var(--glass2); border: 1px solid var(--stroke); box-shadow: 0 3px 0 var(--tile-d); }
+.mapbar .rbtn path { stroke: var(--ink); }
+.mapbar .rbtn:active { box-shadow: 0 1px 0 var(--tile-d); }
+.wsel { transition: transform .1s var(--ease-out), background .15s ease; }
+.wsel:active, .wopt:active, .wnav:active { transform: scale(.97); }
 
 /* Wereldkiezer */
 .wpanel {
@@ -39,12 +45,12 @@
   width: 100%; display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 16px; text-align: left;
   border: 1px solid var(--np-line); background: transparent; transition: background var(--dur), transform var(--dur);
 }
-.wopt:hover { background: var(--chipbg); }
+@media (hover: hover) and (pointer: fine) { .wopt:hover { background: var(--chipbg); } }
 .wopt[aria-current="true"] { background: var(--chipbg); box-shadow: inset 0 0 0 2px var(--violet); }
 .wopt .num { width: 38px; height: 38px; border-radius: 12px; font-size: 18px; }
 .wo-txt { display: grid; min-width: 0; flex: 1; }
 .wo-txt b { font-family: var(--f-display); font-weight: 600; font-size: 16px; line-height: 1.2; }
-.wo-txt small { color: var(--np-muted); font-weight: 700; font-size: 12.5px; }
+.wo-txt small { color: var(--np-muted); font-weight: 700; font-size: 13px; }
 .wo-ic { width: 22px; height: 22px; flex: none; }
 .wo-ic svg { width: 100%; height: 100%; }
 .wo-ic.lock { color: var(--lock-ink); }
@@ -110,7 +116,7 @@
 .wnav svg { width: 18px; height: 18px; }
 .wnav.prev { left: 12px; padding-left: 8px; }
 .wnav.next { right: 12px; padding-right: 8px; }
-.wnav:hover { background: var(--glass3); transform: translateY(-2px); }
+@media (hover: hover) and (pointer: fine) { .wnav:hover { background: var(--glass3); transform: translateY(-2px); } }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .wnav, :root:not([data-theme="light"]) .mapchip:not(.locked) { background: rgba(20, 18, 60, .72); } }
 :root[data-theme="dark"] .wnav, :root[data-theme="dark"] .mapchip:not(.locked) { background: rgba(20, 18, 60, .72); }
 
@@ -119,7 +125,8 @@
 .node:focus-visible { outline: none; }
 .node .ring { opacity: 0; transition: opacity var(--dur); }
 .node:focus-visible .ring, .node.sel .ring { opacity: 1; }
-.node.dragon:hover .top, .node.dragon:focus-visible .top { transform: translateY(-2px); }
+.node.dragon:focus-visible .top { transform: translateY(-2px); }
+@media (hover: hover) and (pointer: fine) { .node.dragon:hover .top { transform: translateY(-2px); } }
 
 .legend { row-gap: 4px; }
 
@@ -131,7 +138,7 @@
 .wc-sub { margin: 2px 0 0; font-size: 13px; font-weight: 800; color: var(--muted); }
 .wc-topics { margin: 0; font-size: 14px; color: var(--ink); }
 .wc-bar { height: 10px; border-radius: 99px; background: var(--track); overflow: hidden; }
-.wc-bar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--gold), #FFE27A); transition: width .6s var(--ease-out); }
+.wc-bar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--gold), #FFE27A); transition: transform .6s var(--ease-out); }
 .wc-stats { margin: 0; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; font-weight: 800; color: var(--muted); }
 .wc-lock { margin: 0; display: flex; gap: 8px; align-items: flex-start; font-size: 14px; font-weight: 700; padding: 10px 12px; border-radius: 14px; background: var(--chipbg); }
 .wc-lock svg { width: 18px; height: 18px; flex: none; margin-top: 2px; color: var(--lock-ink); }
@@ -139,19 +146,20 @@
 /* Paneel onderin bij een node */
 .npanel {
   position: fixed; z-index: 25; left: 50%; bottom: 0; width: min(var(--app-w, 460px), 100%);
-  transform: translate(-50%, 105%); transition: transform .3s cubic-bezier(.2, .9, .2, 1);
+  transform: translate(-50%, 105%); transition: transform .2s var(--ease-out);
   padding: 20px 18px calc(18px + env(safe-area-inset-bottom, 0px)); display: grid; gap: 8px;
   background: var(--np-bg); color: var(--np-ink); border: 1px solid var(--np-line); border-bottom: 0;
   border-radius: 26px 26px 0 0; box-shadow: 0 -18px 40px -18px rgba(0, 0, 0, .45);
   max-height: min(80vh, 560px); overflow-y: auto; overscroll-behavior: contain;
 }
-.npanel.on { transform: translate(-50%, 0); }
+/* Erin 300 ms, eruit 200 ms. */
+.npanel.on { transform: translate(-50%, 0); transition-duration: .3s; }
 .np-close {
   position: absolute; top: 12px; right: 12px; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
   color: var(--np-muted); background: var(--chipbg);
 }
 .np-close svg { width: 20px; height: 20px; }
-.np-close:hover { color: var(--np-ink); }
+@media (hover: hover) and (pointer: fine) { .np-close:hover { color: var(--np-ink); } }
 .np-chip {
   justify-self: start; margin: 0; padding: 3px 12px; border-radius: 99px; color: #fff; background: var(--wc);
   font-family: var(--f-mono); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
@@ -170,6 +178,9 @@
 .np-btns .cta svg, .lvbtns .cta svg { width: 20px; height: 20px; }
 .cta.blue:focus-visible, .cta:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 .cta.blue:focus-visible { outline-color: var(--violet); }
+/* "Lees de les" is de tweede keuze naast "Speel": een rustige omlijnde knop, niet nog een grote 3D-knop. */
+.np-btns .np-read { min-height: 50px; font-size: 17px; color: var(--np-ink); background: transparent; border: 2px solid var(--np-line); box-shadow: none; }
+.np-btns .np-read:active { transform: scale(.98); box-shadow: none; }
 .cta.fire { color: #fff; background: linear-gradient(180deg, var(--fire1), var(--fire2)); box-shadow: 0 6px 0 var(--fire-sh), inset 0 1px 0 rgba(255, 255, 255, .35); text-shadow: 0 1px 0 rgba(0, 0, 0, .25); }
 .cta.fire:active { box-shadow: 0 2px 0 var(--fire-sh); }
 
@@ -186,6 +197,8 @@
 }
 .lvxp { font-weight: 800; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .lvbox { flex: 1; display: flex; flex-direction: column; gap: 16px; }
+/* Antwoorden direct onder de vraag, net als in de quiz; niet onderaan met een half leeg scherm ertussen. */
+.lvbox .tiles { margin-top: 8px; }
 .lvintro { padding-top: 12px; }
 .lvintro h2:focus, .lvresult h1:focus { outline: none; }
 .lvintro p code { font-family: var(--f-mono); font-size: .9em; background: var(--chipbg); padding: 1px 6px; border-radius: 7px; }
@@ -196,7 +209,7 @@
   justify-self: center; min-height: 44px; padding: 0 16px; border-radius: 12px; display: inline-flex; align-items: center;
   font-weight: 800; color: var(--ink); text-decoration: underline; text-underline-offset: 3px;
 }
-.lvlink:hover { background: var(--chipbg); }
+@media (hover: hover) and (pointer: fine) { .lvlink:hover { background: var(--chipbg); } }
 .lvlink:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 
 /* Minigame */

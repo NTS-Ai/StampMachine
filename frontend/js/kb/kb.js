@@ -585,7 +585,7 @@ $('#kb').addEventListener('change', e => {
     const count = section.querySelector('.kb-check-count');
     if (count) count.innerHTML = checkCountHtml(done, all.length);
     const bar = /** @type {HTMLElement | null} */ (section.querySelector('.kb-check-bar i'));
-    if (bar) bar.style.width = `${Math.round(done / all.length * 100)}%`;
+    if (bar) setBar(bar, done / all.length);
     // Stampy kijkt mee bij het afvinken, en juicht als alles af is.
     if (KB.checkBot && box.checked) {
       const left = all.length - done;

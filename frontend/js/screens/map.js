@@ -626,7 +626,7 @@ function openNodePanel(i) {
     const gameNames = typeof levelGames === 'function' ? levelGames(L.id).map(k => GAMES[k].name) : [];
     h += `<p class="np-chip" style="--wc:${WORLD_HEX[week - 1]}">Wereld ${week} · Level ${L.index + 1}</p>
       <h2 id="npTitle">${esc(shortTitle(L.title))}</h2>
-      ${shortTitle(L.title) !== L.title ? `<p class="np-sub">${esc(L.title)}</p>` : ''}
+      ${shortTitle(L.title) !== L.title ? `<p class="np-sub">${esc(L.title.slice(shortTitle(L.title).length).replace(/^:\s*/, ''))}</p>` : ''}
       <ul class="np-facts">
         <li>${count} vragen · 3 levens</li>
         ${gameNames.length ? `<li>Daarna een minigame: ${esc(gameNames.join(' of '))}</li>` : ''}

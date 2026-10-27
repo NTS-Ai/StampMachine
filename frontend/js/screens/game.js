@@ -160,7 +160,7 @@ function onTick() {
     if (frac <= 0 && G.mode === 'boss') { answer('wrong', { timeUp: true }); return; }
   }
   frac = Math.min(1, Math.max(0, frac));
-  $('#timerFill').style.width = (frac * 100) + '%';
+  setBar($('#timerFill'), frac);
   $('#timer').classList.toggle('low', frac < .25);
 }
 
@@ -197,7 +197,7 @@ function renderQuestion() {
   renderProgress();
   if (G.mode === 'boss') renderBossState();
   if (G.mode !== 'speed') {
-    $('#timerFill').style.width = '100%';
+    setBar($('#timerFill'), 1);
     $('#timer').classList.remove('low');
   }
 
@@ -217,8 +217,12 @@ function renderQuestion() {
   bindAnswerArea(q, card);
 }
 
-/** Zelfde regel als op de kaart: code en symbolen in een monospace-letter. @param {string} text */
-const looksLikeCode = text => /`/.test(text) || /^[\[\]{}()'"0-9.\-]/.test(text);
+/**
+ * Zelfde regel als op de kaart: een antwoord dat helemaal code is (één codestuk, of een waarde als [1, 2]) krijgt een
+ * monospace-letter. Gewone tekst met een stukje code erin blijft in de gewone letter; alleen dat stukje is mono.
+ * @param {string} text
+ */
+const looksLikeCode = text => /^`[^`]+`$/.test(text.trim()) || (!/`/.test(text) && /^[\[\]{}()'"0-9.\-]/.test(text));
 
 /** HTML voor de manier van antwoorden: tegels, een regel typen of een zin typen. @param {Question} q */
 function answerArea(q) {
@@ -537,7 +541,7 @@ function renderProgress() {
   if (G.mode === 'boss') pct = (BOSS_HP - G.hp) / BOSS_HP * 100;
   else if (G.mode === 'speed') pct = Math.min(100, G.correct * 4);
   else pct = G.idx / G.queue.length * 100;
-  $('#progFill').style.width = pct + '%';
+  setBar($('#progFill'), pct / 100);
 }
 
 function renderBossState() {
@@ -545,9 +549,9 @@ function renderBossState() {
   hearts.innerHTML = [0, 1, 2].map(i => `<span class="${i < G.hearts ? '' : 'lost'}">${HEART}</span>`).join('');
   hearts.setAttribute('aria-label', `Levens: ${G.hearts} van 3`);
   hearts.setAttribute('role', 'img');
-  $('#bossHp').style.width = (G.hp / BOSS_HP * 100) + '%';
+  setBar($('#bossHp'), G.hp / BOSS_HP);
   $('#bossHpText').textContent = G.hp + ' / ' + BOSS_HP;
-  $('#progFill').style.width = ((BOSS_HP - G.hp) / BOSS_HP * 100) + '%';
+  setBar($('#progFill'), (BOSS_HP - G.hp) / BOSS_HP);
 }
 
 function renderCombo() {

@@ -190,11 +190,21 @@ function minigames() {
   if (!list.length) return '';
   return `<div class="sechead"><h2 class="sec-t">Minigames</h2><span>30 seconden, zo veel mogelijk goed</span></div>
     <div class="games">${list.map(([key, g]) => `<button class="game" type="button" data-game="${esc(key)}">
-      <span class="qi" style="--qc:#7B5CFF">${HUB_ICON.game}</span>
+      <span class="qi" style="--qc:${(GAME_LOOK[key] || {}).color || '#7B5CFF'}">${(GAME_LOOK[key] || {}).icon || HUB_ICON.game}</span>
       <b>${esc((g && (g.name || g.title)) || key)}</b>
       ${g && (g.how || g.desc) ? `<small>${fmt(g.how || g.desc)}</small>` : ''}
     </button>`).join('')}</div>`;
 }
+
+/** Eigen icoon en kleur per minigame, zodat je ze niet alleen aan de titel herkent. Onbekende games krijgen de gamepad. */
+const GAME_LOOK = {
+  types: { color: '#2F6FD6', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12.5 11.5 4H20v8.5L11.5 21z"/><circle cx="15.5" cy="8.5" r="1.4" fill="#fff"/></svg>' },
+  arith: { color: '#D2691E', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h6M7 4v6M14 7h6M5 15l4 4M9 15l-4 4M14 15h6M14 19h6"/></svg>' },
+  slice: { color: '#C2305F', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="6" cy="7" r="2.6"/><circle cx="6" cy="17" r="2.6"/><path d="M8.2 8.5 20 18M8.2 15.5 20 6"/></svg>' },
+  loops: { color: '#178A5C', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 2 3 3-3 3"/><path d="M4 11V9a4 4 0 0 1 4-4h12"/><path d="m7 22-3-3 3-3"/><path d="M20 13v2a4 4 0 0 1-4 4H4"/></svg>' },
+  sql: { color: '#3A4FC4', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" aria-hidden="true"><ellipse cx="12" cy="5.5" rx="7" ry="2.5"/><path d="M5 5.5v13c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-13M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"/></svg>' },
+  http: { color: '#6A4BEF', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>' },
+};
 
 /** Een tip die past bij waar je staat. @param {number} week */
 function hubTip(week) {

@@ -54,7 +54,7 @@ function renderCard() {
   $('#fcJip').hidden = !c.simple;
   $('#fcJip').innerHTML = c.simple ? '<b>Simpel gezegd</b>' + fmt(c.simple) : '';
   $('#fcCount').textContent = F.done + ' / ' + F.total;
-  $('#fcProg').style.width = (F.done / F.total * 100) + '%';
+  setBar($('#fcProg'), F.done / F.total);
 }
 
 /** Alleen de zichtbare kant is voor schermlezers leesbaar. @param {boolean} back */

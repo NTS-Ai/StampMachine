@@ -10,8 +10,6 @@ let homeClearedSeen = false;
 
 /** Iconen van de home (inline SVG, geen emoji). */
 const HOME_ICONS = {
-  sun: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5" fill="#FFB020"/><g stroke="#E0900A" stroke-width="2" stroke-linecap="round"><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></g></svg>',
-  moon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z" fill="#B9A8FF"/></svg>',
   bolt: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z" fill="#FFB020"/></svg>',
   star: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.5 1.3 6.5L12 17l-5.9 3.3 1.3-6.5L2.5 9.3l6.6-.8z" fill="#FFC93D"/></svg>',
   check: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="#7B5CFF"/><path d="M8 12l3 3 5-6" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -27,27 +25,11 @@ const HOME_ICONS = {
   speed: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13.5" r="7.5" fill="none" stroke="#fff" stroke-width="2.2"/><path d="M12 13.5V9.5M10 2.5h4" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg>',
   boss: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 16H3z" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/><path d="M12 9.5v4" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="16.6" r="1.3" fill="#fff"/></svg>',
   retry: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="#fff" stroke-width="2.2"/><circle cx="12" cy="12" r="3.5" fill="#fff"/></svg>',
+  play: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8l4 4-4 4M12 17h6" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
 };
 
-/** De vier onderdelen onder je stand. */
-const HOME_CATS = [
-  { href: '#/kaart', label: 'Kaart', main: true, icon: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 9l7-3 10 3 7-3v17l-7 3-10-3-7 3z" fill="#8A6BFF"/><path d="M11 6v17M21 9v17" stroke="#fff" stroke-width="1.8"/><circle cx="16" cy="15" r="2.4" fill="#FFC93D"/></svg>' },
-  { href: '#/oefenen', label: 'Oefenen', icon: '<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="9" y="5" width="16" height="21" rx="3" fill="#3AA8FF" transform="rotate(10 17 15)"/><rect x="6" y="7" width="16" height="21" rx="3" fill="#FFC93D"/><path d="M11 17l3 3 6-7" stroke="#1A1450" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>' },
-  { href: '#/kennis', label: 'Kennisbank', icon: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 7c4-2 8-2 11 1v18c-3-3-7-3-11-1z" fill="#3DDC97"/><path d="M27 7c-4-2-8-2-11 1v18c3-3 7-3 11-1z" fill="#2FB57C"/></svg>' },
-  { href: '#/speeltuin', label: 'Speeltuin', icon: '<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="6" width="26" height="20" rx="4" fill="#FF5C86"/><path d="M8 13l4 3-4 3" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="14" y="18" width="8" height="2.4" rx="1.2" fill="#fff"/></svg>' },
-];
-
-/** Zwevende code-stukjes op de kaart van je huidige wereld, per week. */
-const HOME_FLOATS = {
-  1: ['print()', 'int', '"str"'], 2: ['def', 'try:', 'json'], 3: ['SELECT', 'docker', 'JOIN'],
-  4: ['@app.get', 'redis', '200 OK'], 5: ['prompt', 'LLM', 'tokens'], 6: ['pytest', 'deploy', 'logs'],
-};
-
-/** Is het nu Nacht (donker)? Volgt de eigen keuze, anders het systeem. */
-function isNightTheme() {
-  const t = document.documentElement.dataset.theme;
-  return t ? t === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
-}
+/** Zwevend code-stukje boven Stampy op de kaart van je huidige wereld, per week. Eén is genoeg: meer botst met de titel. */
+const HOME_FLOATS = { 1: 'print()', 2: 'def', 3: 'SELECT', 4: '@app.get', 5: 'prompt', 6: 'pytest' };
 
 /** Naam van de draak van een wereld, als de draken al bestaan. @param {number} week */
 function homeDragonName(week) {
@@ -86,7 +68,6 @@ function openHome() {
   el.innerHTML = `
     <header class="hello">
       <div class="grow">
-        <button class="theme hm-theme" type="button" id="hmTheme"></button>
         <h1>Hoi, stagiair</h1>
         <p id="hmLevel"></p>
         <div class="xpbar" id="hmXpBar" role="progressbar" aria-label="XP tot het volgende speler-level" aria-valuemin="0" aria-valuemax="100"><i id="hmXp"></i></div>
@@ -97,9 +78,6 @@ function openHome() {
       <p><b>Je voortgang is gewist.</b> Je had meer dan 30 dagen niet gespeeld, dus je begint opnieuw. Stampy helpt je weer op weg.</p>
       <button class="hm-x" type="button" id="hmNoticeClose" aria-label="Melding sluiten">${HOME_ICONS.close}</button></div>` : ''}
     <div class="tiles3" id="hmTiles"></div>
-    <nav class="cats" aria-label="Onderdelen">
-      ${HOME_CATS.map(c => `<a class="cat${c.main ? ' main' : ''}" href="${c.href}"><span class="ic">${c.icon}</span>${c.label}</a>`).join('')}
-    </nav>
     <section class="course hm-course" id="hmCourse" aria-labelledby="hmCourseTitle">
       <div class="hm-course-text">
         <p class="hm-eyebrow">Je bent nu hier</p>
@@ -114,7 +92,7 @@ function openHome() {
     <label class="hm-search">
       ${HOME_ICONS.search}
       <span class="sr-only">Zoeken</span>
-      <input type="search" data-search-field autocomplete="off" spellcheck="false" enterkeyhint="search" placeholder="Zoek een begrip, commando of vraag">
+      <input type="search" data-search-field autocomplete="off" spellcheck="false" enterkeyhint="search" placeholder="Zoek begrip of commando">
       <span class="keycap kbd" aria-hidden="true">/</span>
     </label>
     <section class="hm-sec" aria-labelledby="hmQuickTitle">
@@ -130,18 +108,12 @@ function openHome() {
   const courseBot = mountBot($('#hmCourseBot'), { bubble: false, label: null });
   homeBots = [bot, courseBot];
 
-  $('#hmTheme').addEventListener('click', () => {
-    const night = !isNightTheme();
-    setThemePref(night ? 'dark' : 'light');
-    paintHomeTheme(night);
-    bot.react('poke', night ? 'Nachtmodus. Lekker rustig.' : 'Goedemorgen! Dagmodus aan.');
-  });
   const close = document.getElementById('hmNoticeClose');
   if (close) close.addEventListener('click', () => {
     homeClearedSeen = true;
     const notice = document.getElementById('hmNotice');
     if (notice) notice.remove();
-    /** @type {HTMLElement} */ ($('#hmTheme')).focus();
+    /** @type {HTMLElement} */ ($('#hmPlay')).focus();
   });
   $('#hmPlay').addEventListener('click', continuePlaying);
   $('#hmQuick').addEventListener('click', e => {
@@ -157,18 +129,11 @@ function openHome() {
   setTimeout(() => { if (!$('#home').hidden && homeBots[0] === bot) bot.say(hello.text, 4200); }, 600);
 }
 
-/** De dag/nacht-knop: toont het thema dat nu aan staat. @param {boolean} night */
-function paintHomeTheme(night) {
-  const btn = document.getElementById('hmTheme');
-  if (!btn) return;
-  btn.innerHTML = night ? HOME_ICONS.moon + 'Nacht' : HOME_ICONS.sun + 'Dag';
-  btn.setAttribute('aria-label', night ? 'Nacht, wissel naar dag' : 'Dag, wissel naar nacht');
-}
-
 /** Start een snelle oefening voor je huidige week. @param {string} kind */
 function startQuick(kind) {
   const week = currentWorld();
-  if (kind === 'quiz') startGame('quiz', week);
+  if (kind === 'play') navigate('#/speeltuin');
+  else if (kind === 'quiz') startGame('quiz', week);
   else if (kind === 'speed') startGame('speed', week);
   else if (kind === 'cards') startCards(week);
   else if (kind === 'boss') startGame('boss', 0);
@@ -178,13 +143,12 @@ function startQuick(kind) {
 /** Vult alles op de home dat van je voortgang afhangt (ook na een spel, via HUD_HOOKS). */
 function paintHome() {
   if (!document.getElementById('hmTiles')) return;
-  paintHomeTheme(isNightTheme());
 
   const lvl = levelInfo();
   const totals = mapTotals();
   const pctXp = Math.round(lvl.progress * 100);
   $('#hmLevel').textContent = `Speler-level ${lvl.number} · ${lvl.title} · ${nl(S.xp)} XP`;
-  $('#hmXp').style.width = pctXp + '%';
+  setBar($('#hmXp'), lvl.progress);
   const bar = $('#hmXpBar');
   bar.setAttribute('aria-valuenow', String(pctXp));
   bar.setAttribute('aria-valuetext', `${pctXp}% van speler-level ${lvl.number} naar ${lvl.number + 1}`);
@@ -211,7 +175,7 @@ function paintHome() {
   else next = 'Alle werelden gehaald en alle draken verslagen. Knap werk!';
   $('#hmNext').textContent = next;
   $('#hmPlayLabel').textContent = step.type === 'done' ? 'Bekijk de kaart' : step.type === 'dragon' ? 'Versla de draak' : 'Verder spelen';
-  $('#hmFloats').innerHTML = (HOME_FLOATS[week] || HOME_FLOATS[1]).map((t, i) => `<span class="float f${i}">${esc(t)}</span>`).join('');
+  $('#hmFloats').innerHTML = `<span class="float f0">${esc(HOME_FLOATS[week] || HOME_FLOATS[1])}</span>`;
 
   // Snel oefenen voor je huidige week
   const weak = weakItems().length;
@@ -221,9 +185,10 @@ function paintHome() {
     { kind: 'cards', title: 'Flashcards', sub: `${flash} kaarten om te stampen`, color: '#1E9E66', icon: HOME_ICONS.cards },
     { kind: 'speed', title: 'Speedrun', sub: 'Zoveel mogelijk in 60 s', color: '#D63A68', icon: HOME_ICONS.speed },
     { kind: 'boss', title: 'Eindbaas', sub: 'Pager om 03:00, alle weken', color: '#6A4BEF', icon: HOME_ICONS.boss },
+    { kind: 'play', title: 'Speeltuin', sub: 'Zelf Python uitproberen', color: '#D6336C', icon: HOME_ICONS.play },
   ];
   if (weak) quick.splice(1, 0, { kind: 'retry', title: 'Zwakke plekken', sub: `${weak} ${weak === 1 ? 'vraag' : 'vragen'} die je fout had`, color: '#C2304F', icon: HOME_ICONS.retry });
-  $('#hmQuickWeek').textContent = `Week ${week}`;
+  $('#hmQuickWeek').textContent = `Week ${week} · telt niet voor de kaart`;
   $('#hmQuick').innerHTML = quick.map(q => `<button class="qcard" type="button" data-quick="${q.kind}">
       <span class="qi" style="background:${q.color}">${q.icon}</span><b>${q.title}</b><small>${esc(q.sub)}</small></button>`).join('');
 
@@ -240,7 +205,7 @@ function homeWorldRow(wk, here) {
   let status;
   let badge;
   if (!open) {
-    status = `Op slot: versla eerst de draak van wereld ${wk.week - 1}`;
+    status = `Na de draak van wereld ${wk.week - 1}`;
     badge = `<span class="hm-wbadge locked">${HOME_ICONS.lock}<span class="sr-only">Op slot</span></span>`;
   } else if (p.dragon) {
     status = `${p.done} van ${p.levels} levels · ${p.stars} van ${p.maxStars} sterren · ${homeCap(homeDragonName(wk.week))} verslagen`;
@@ -263,6 +228,3 @@ HUD_HOOKS.push(() => {
   const home = document.getElementById('home');
   if (home && !home.hidden) paintHome();
 });
-
-// Staat het thema op 'systeem', dan volgt de dag/nacht-knop het systeem.
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => paintHomeTheme(isNightTheme()));

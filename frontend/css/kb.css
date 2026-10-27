@@ -60,7 +60,7 @@
 #kbNav { overflow-y: auto; overscroll-behavior: contain; padding-right: 6px; scrollbar-width: thin; }
 
 /* Rechts "Op deze pagina". */
-.kb-toc { position: sticky; top: var(--kb-sticky); padding: 16px 14px; border-radius: 22px; background: var(--glass); border: 1px solid var(--stroke); font-size: 13.5px; }
+.kb-toc { position: sticky; top: var(--kb-sticky); padding: 16px 14px; border-radius: 22px; background: var(--glass); border: 1px solid var(--stroke); font-size: 14px; }
 .kb-toc:empty { display: none; }
 
 /* Middelbreed: geen rechterkolom, de inhoudsopgave staat dan boven de les. */
@@ -79,7 +79,7 @@
   .kb-bar button {
     display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 99px;
     background: var(--nav-bg); border: 1px solid var(--stroke); backdrop-filter: blur(14px);
-    box-shadow: 0 8px 20px -14px rgba(0, 0, 0, .45); font-weight: 800; font-size: 14.5px; color: var(--ink);
+    box-shadow: 0 8px 20px -14px rgba(0, 0, 0, .45); font-weight: 800; font-size: 15px; color: var(--ink);
   }
   .kb-bar button svg { width: 18px; height: 18px; flex: none; }
   .kb-bar .kb-bar-search { margin-left: auto; padding: 0 14px; }
@@ -113,7 +113,7 @@ body.no-scroll { overflow: hidden; }
 }
 .kb-filter:focus-within { border-color: var(--kb-focus); }
 .kb-filter svg { width: 16px; height: 16px; color: var(--kb-muted); flex: none; }
-.kb-filter input { flex: 1; min-width: 0; height: 40px; border: 0; outline: none; background: transparent; color: var(--ink); font: inherit; font-size: 14.5px; font-weight: 700; }
+.kb-filter input { flex: 1; min-width: 0; height: 40px; border: 0; outline: none; background: transparent; color: var(--ink); font: inherit; font-size: 16px; font-weight: 700; }
 .kb-filter input::placeholder { color: var(--kb-muted); font-weight: 700; }
 #kb .kb-filter input:focus-visible { outline: none; }
 .kb-filter input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
@@ -123,7 +123,7 @@ body.no-scroll { overflow: hidden; }
   color: var(--ink); text-decoration: none; font-size: 14px; font-weight: 700; line-height: 1.35;
   transition: background var(--dur) var(--ease-out);
 }
-.kbn-link:hover { background: var(--chipbg); }
+@media (hover: hover) and (pointer: fine) { .kbn-link:hover { background: var(--chipbg); } }
 #kb .kbn-link[aria-current="page"] {
   background: color-mix(in srgb, var(--wc, var(--violet)) 16%, transparent);
   box-shadow: inset 3px 0 0 var(--wc, var(--violet)); font-weight: 800;
@@ -143,7 +143,7 @@ body.no-scroll { overflow: hidden; }
   transform: rotate(-45deg); transition: transform var(--dur) var(--ease-out); flex: none;
 }
 .kbn-group[open] summary::after { transform: rotate(45deg); }
-.kbn-group summary:hover { background: var(--chipbg); }
+@media (hover: hover) and (pointer: fine) { .kbn-group summary:hover { background: var(--chipbg); } }
 /* Het weeknummer als klein 3D-blokje in de wereldkleur, zoals op de home. */
 .kbn-num {
   display: inline-grid; place-items: center; width: 28px; height: 28px; flex: none; border-radius: 9px;
@@ -160,7 +160,7 @@ body.no-scroll { overflow: hidden; }
   display: inline-flex; align-items: center; gap: 6px; padding: 3px 11px; border-radius: 99px;
   font-family: var(--f-display); font-weight: 600; font-size: 14px; color: var(--kb-on-w); background: var(--kb-wbg, var(--kb-violet));
 }
-.kb-time { font-size: 13.5px; font-weight: 800; color: var(--kb-muted); }
+.kb-time { font-size: 14px; font-weight: 800; color: var(--kb-muted); }
 
 /* 3D-knoppen: .cta uit het ontwerp, hier compact en naast elkaar. */
 #kb .cta.kb-cta {
@@ -168,7 +168,7 @@ body.no-scroll { overflow: hidden; }
   display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; color: #1A1450;
 }
 #kb .cta.kb-cta svg { width: 18px; height: 18px; flex: none; }
-.cta.kb-cta:hover { filter: brightness(1.04); }
+@media (hover: hover) and (pointer: fine) { .cta.kb-cta:hover { filter: brightness(1.04); } }
 /* Tweede knop: een witte (Dag) of paarse (Nacht) tegel met een 3D-rand, zoals de antwoordtegels. */
 .kb-tilebtn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 50px; padding: 0 20px; border-radius: 16px;
@@ -210,7 +210,7 @@ body.no-scroll { overflow: hidden; }
   background: rgba(255, 255, 255, .14); border: 1px solid rgba(255, 255, 255, .3);
   transition: background var(--dur) var(--ease-out);
 }
-.kb-glassbtn:hover { background: rgba(255, 255, 255, .22); }
+@media (hover: hover) and (pointer: fine) { .kb-glassbtn:hover { background: rgba(255, 255, 255, .22); } }
 .kb-glassbtn svg { width: 18px; height: 18px; flex: none; }
 .kb-hero-bot { position: relative; align-self: stretch; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 10px; }
 .kb-hero-bot .kb-bot-host { width: 170px; margin-bottom: -14px; }
@@ -245,22 +245,22 @@ body.no-scroll { overflow: hidden; }
   font-family: var(--f-display); font-weight: 700; font-size: 22px; color: var(--kb-on-w); background: var(--kb-wbg);
   box-shadow: 0 4px 0 rgba(0, 0, 0, .25);
 }
-.kb-wlabel { margin: 0; font-size: 12.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--kb-wtext); }
+.kb-wlabel { margin: 0; font-size: 13px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--kb-wtext); }
 .kb-world h3 { font-size: 18px; font-weight: 600; line-height: 1.2; }
 .kb-wlist { list-style: none; margin: 0; padding: 8px 10px; display: grid; gap: 2px; flex: 1; }
 #kb .kb-wlist a {
   display: flex; align-items: baseline; gap: 10px; padding: 7px 8px; border-radius: 12px;
-  color: var(--ink); text-decoration: none; font-size: 14.5px; font-weight: 700; line-height: 1.35;
+  color: var(--ink); text-decoration: none; font-size: 15px; font-weight: 700; line-height: 1.35;
   transition: background var(--dur) var(--ease-out);
 }
-.kb-wlist a:hover { background: color-mix(in srgb, var(--wc) 12%, transparent); }
+@media (hover: hover) and (pointer: fine) { .kb-wlist a:hover { background: color-mix(in srgb, var(--wc) 12%, transparent); } }
 .kb-wlist .kbn-id { color: var(--kb-wtext); }
-.kb-wlist small { margin-left: auto; padding-left: 8px; color: var(--kb-muted); font-size: 12.5px; font-weight: 800; white-space: nowrap; }
+.kb-wlist small { margin-left: auto; padding-left: 8px; color: var(--kb-muted); font-size: 13px; font-weight: 800; white-space: nowrap; }
 #kb .kb-wmap {
   display: flex; align-items: center; gap: 8px; margin: 0 10px 12px; padding: 9px 12px; border-radius: 14px;
-  background: var(--chipbg); color: var(--ink); text-decoration: none; font-size: 13.5px; font-weight: 800;
+  background: var(--chipbg); color: var(--ink); text-decoration: none; font-size: 14px; font-weight: 800;
 }
-.kb-wmap:hover { background: color-mix(in srgb, var(--wc) 14%, transparent); }
+@media (hover: hover) and (pointer: fine) { .kb-wmap:hover { background: color-mix(in srgb, var(--wc) 14%, transparent); } }
 .kb-wmap svg { width: 18px; height: 18px; flex: none; color: var(--kb-wtext); }
 .kb-wmap .go { margin-left: auto; color: var(--kb-wtext); white-space: nowrap; }
 
@@ -271,7 +271,7 @@ body.no-scroll { overflow: hidden; }
   color: var(--tile-ink); text-decoration: none; background: linear-gradient(180deg, var(--tile1), var(--tile2)); border: 1px solid var(--stroke);
   box-shadow: 0 7px 0 var(--tile-d), inset 0 1px 0 rgba(255, 255, 255, .22); transition: transform .1s, box-shadow .1s;
 }
-.kb-tile:hover { transform: translateY(-2px); box-shadow: 0 9px 0 var(--tile-d), inset 0 1px 0 rgba(255, 255, 255, .22); }
+@media (hover: hover) and (pointer: fine) { .kb-tile:hover { transform: translateY(-2px); box-shadow: 0 9px 0 var(--tile-d), inset 0 1px 0 rgba(255, 255, 255, .22); } }
 .kb-tile:active { transform: translateY(5px); box-shadow: 0 2px 0 var(--tile-d); }
 .kb-tile-ic {
   grid-row: span 2; width: 54px; height: 54px; border-radius: 16px; display: grid; place-items: center; color: #fff;
@@ -293,7 +293,7 @@ body.no-scroll { overflow: hidden; }
   .kb-hero-text { padding-bottom: 6px; }
   .kb-hero-bot { flex-direction: row; align-items: flex-end; justify-content: flex-start; gap: 6px; }
   .kb-hero-bot .kb-bot-host { width: 104px; order: -1; margin-bottom: -8px; flex: none; }
-  .kb-say { margin-bottom: 26px; font-size: 13.5px; }
+  .kb-say { margin-bottom: 26px; font-size: 14px; }
   .kb-say::after { left: -6px; bottom: auto; top: 50%; transform: translateY(-50%) rotate(45deg); border-radius: 0 0 0 3px; }
   .kb-float { display: none; }
   .kb-hero-btns > * { flex: 1 1 auto; }
@@ -313,9 +313,9 @@ body.no-scroll { overflow: hidden; }
   padding: 28px 36px 32px; border-radius: 28px; background: var(--kb-paper); border: 1px solid var(--stroke);
   box-shadow: 0 18px 40px -26px rgba(0, 0, 0, .45);
 }
-.kb-crumbs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 13.5px; font-weight: 700; color: var(--kb-muted); margin-bottom: 16px; }
+.kb-crumbs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 14px; font-weight: 700; color: var(--kb-muted); margin-bottom: 16px; }
 #kb .kb-crumbs a { color: var(--kb-muted); text-decoration: none; }
-#kb .kb-crumbs a:hover { color: var(--link); text-decoration: underline; text-underline-offset: 3px; }
+@media (hover: hover) and (pointer: fine) { #kb .kb-crumbs a:hover { color: var(--link); text-decoration: underline; text-underline-offset: 3px; } }
 .kb-head { margin-bottom: 20px; }
 .kb-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
 .kb-head h1 { font-size: clamp(28px, 3.8vw, 40px); font-weight: 700; line-height: 1.1; }
@@ -337,7 +337,7 @@ body.no-scroll { overflow: hidden; }
 .kb-simple-text p { margin: 2px 0 0; position: relative; }
 .kb-simple.no-bot .kb-simple-text::before { display: none; }
 .kb-label {
-  display: block; position: relative; font-family: var(--f-mono); font-size: 11.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  display: block; position: relative; font-family: var(--f-mono); font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
   color: color-mix(in srgb, var(--violet) 70%, var(--ink));
 }
 
@@ -385,7 +385,7 @@ body.no-scroll { overflow: hidden; }
   background: var(--kb-code-head); border-bottom: 1px solid var(--kb-code-line);
 }
 .cb-lang {
-  display: inline-flex; align-items: center; gap: 8px; font-family: var(--f-mono); font-size: 11.5px; font-weight: 700;
+  display: inline-flex; align-items: center; gap: 8px; font-family: var(--f-mono); font-size: 12px; font-weight: 700;
   letter-spacing: .12em; text-transform: uppercase; color: #C49BFF;
 }
 .cb-lang::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #C49BFF; box-shadow: 13px 0 0 #6FC8FF, 26px 0 0 #7EE7A8; margin-right: 28px; }
@@ -396,23 +396,23 @@ body.no-scroll { overflow: hidden; }
   transition: background var(--dur) var(--ease-out), color var(--dur) var(--ease-out), transform .1s, box-shadow .1s;
 }
 .cb-btn svg { width: 14px; height: 14px; flex: none; }
-.cb-btn:hover { background: rgba(255, 255, 255, .08); color: #fff; }
+@media (hover: hover) and (pointer: fine) { .cb-btn:hover { background: rgba(255, 255, 255, .08); color: #fff; } }
 .cb-btn.done { color: #7EE7A8; }
 /* "Probeer het zelf" is de gouden 3D-knop uit het ontwerp, in het klein. */
 .cb-btn.cb-try {
   color: #1A1450; font-family: var(--f-display); font-weight: 600; font-size: 14px;
   background: linear-gradient(180deg, #FFE27A, var(--gold)); box-shadow: 0 3px 0 var(--gold-d), inset 0 1px 0 rgba(255, 255, 255, .6);
 }
-.cb-btn.cb-try:hover { color: #1A1450; filter: brightness(1.05); background: linear-gradient(180deg, #FFE27A, var(--gold)); }
+@media (hover: hover) and (pointer: fine) { .cb-btn.cb-try:hover { color: #1A1450; filter: brightness(1.05); background: linear-gradient(180deg, #FFE27A, var(--gold)); } }
 .cb-btn.cb-try:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--gold-d); }
 #kb .code-block :focus-visible { outline-color: var(--gold); }
 @media (hover: none) and (pointer: coarse) { .cb-btn { min-height: 40px; } }
-.cb-code { margin: 0; padding: 16px; overflow-x: auto; white-space: pre; font-family: var(--f-mono); font-size: 14.5px; line-height: 1.6; tab-size: 4; }
+.cb-code { margin: 0; padding: 16px; overflow-x: auto; white-space: pre; font-family: var(--f-mono); font-size: 15px; line-height: 1.6; tab-size: 4; }
 .cb-code code { background: none; padding: 0; font-size: inherit; color: inherit; }
 .cb-out { border-top: 1px dashed var(--kb-code-line); padding: 10px 16px 12px; }
 .cb-out-lbl { font-family: var(--f-mono); font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--kb-code-muted); }
-.cb-out pre, .cb-stdout, .cb-stderr { margin: 4px 0 0; font-family: var(--f-mono); font-size: 13.5px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; color: #B7F5D2; }
-.code-block figcaption { padding: 9px 16px 11px; font-size: 13.5px; font-weight: 600; color: var(--kb-code-muted); border-top: 1px solid var(--kb-code-line); }
+.cb-out pre, .cb-stdout, .cb-stderr { margin: 4px 0 0; font-family: var(--f-mono); font-size: 14px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; color: #B7F5D2; }
+.code-block figcaption { padding: 9px 16px 11px; font-size: 14px; font-weight: 600; color: var(--kb-code-muted); border-top: 1px solid var(--kb-code-line); }
 #kb .code-block figcaption code { background: rgba(255, 255, 255, .1); color: var(--kb-code-ink); }
 
 /* Syntaxkleuren uit het ontwerp (k, s, n, f), allemaal minstens 4,5:1 op het donkere vlak. */
@@ -433,7 +433,7 @@ body.no-scroll { overflow: hidden; }
 .cb-editor { padding: 12px 12px 14px; }
 .cb-input {
   display: block; width: 100%; min-height: 120px; resize: vertical; margin: 0; padding: 12px 14px;
-  font-family: var(--f-mono); font-size: 14.5px; line-height: 1.6; tab-size: 4; white-space: pre; overflow: auto;
+  font-family: var(--f-mono); font-size: 15px; line-height: 1.6; tab-size: 4; white-space: pre; overflow: auto;
   color: var(--kb-code-ink); background: var(--kb-code-field); border: 1px solid var(--kb-code-line); border-radius: 14px; caret-color: var(--gold);
 }
 #kb .cb-input:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
@@ -448,8 +448,8 @@ body.no-scroll { overflow: hidden; }
 .cb-run:active { transform: translateY(3px); box-shadow: 0 1px 0 #1E7F4E; }
 .cb-run[disabled] { filter: grayscale(.6) brightness(.8); cursor: default; transform: none; }
 .cb-reset { min-height: 40px; padding: 0 14px; border-radius: 13px; color: var(--kb-code-ink); font-weight: 800; font-size: 14px; border: 1px solid var(--kb-code-line); }
-.cb-reset:hover { background: rgba(255, 255, 255, .08); }
-.cb-run-bar .hint { color: var(--kb-code-muted); margin-left: auto; font-size: 12.5px; font-weight: 700; }
+@media (hover: hover) and (pointer: fine) { .cb-reset:hover { background: rgba(255, 255, 255, .08); } }
+.cb-run-bar .hint { color: var(--kb-code-muted); margin-left: auto; font-size: 13px; font-weight: 700; }
 .cb-result:not(:empty) { margin-top: 12px; padding: 10px 12px; border-radius: 14px; background: var(--kb-code-field); border: 1px solid var(--kb-code-line); }
 .cb-stderr { color: #FFB3C3; }
 .cb-status { display: flex; align-items: center; gap: 8px; margin: 6px 0 0; font-size: 13px; font-weight: 700; color: var(--kb-code-muted); }
@@ -469,21 +469,21 @@ body.no-scroll { overflow: hidden; }
 .table-wrap {
   margin: 0 0 22px; overflow-x: auto; border: 1px solid var(--stroke); border-radius: 18px; background: var(--glass3);
 }
-.table-wrap table { width: 100%; border-collapse: collapse; font-size: 14.5px; line-height: 1.5; }
+.table-wrap table { width: 100%; border-collapse: collapse; font-size: 15px; line-height: 1.5; }
 .table-wrap th {
-  text-align: left; padding: 11px 14px; font-size: 13.5px; font-weight: 800; color: var(--ink);
+  text-align: left; padding: 11px 14px; font-size: 14px; font-weight: 800; color: var(--ink);
   background: var(--chipbg); border-bottom: 1px solid var(--stroke); white-space: nowrap;
 }
 .table-wrap td { padding: 10px 14px; border-bottom: 1px solid var(--stroke); vertical-align: top; min-width: 120px; }
 .table-wrap tr:last-child td { border-bottom: 0; }
 .table-wrap tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--ink) 3.5%, transparent); }
-.table-wrap tbody tr:hover td { background: color-mix(in srgb, var(--violet) 8%, transparent); }
+@media (hover: hover) and (pointer: fine) { .table-wrap tbody tr:hover td { background: color-mix(in srgb, var(--violet) 8%, transparent); } }
 .kb-table-intro { color: var(--kb-muted); font-size: 15px; }
 #kb .kb-src {
-  display: inline-flex; align-items: center; padding: 1px 9px; margin-left: 4px; border-radius: 99px; font-size: 12.5px; font-weight: 800;
+  display: inline-flex; align-items: center; padding: 1px 9px; margin-left: 4px; border-radius: 99px; font-size: 13px; font-weight: 800;
   color: var(--link); background: color-mix(in srgb, var(--link) 11%, transparent); text-decoration: none; white-space: nowrap;
 }
-#kb .kb-src:hover { background: color-mix(in srgb, var(--link) 18%, transparent); }
+@media (hover: hover) and (pointer: fine) { #kb .kb-src:hover { background: color-mix(in srgb, var(--link) 18%, transparent); } }
 
 /* ---------- vakken onder de les ---------- */
 .kb-box {
@@ -519,13 +519,13 @@ body.no-scroll { overflow: hidden; }
   display: flex; gap: 12px; align-items: flex-start; padding: 10px 12px; border-radius: 14px; cursor: pointer; line-height: 1.5;
   background: var(--glass2); border: 1px solid var(--stroke); font-weight: 600;
 }
-.kb-checklist label:hover { border-color: color-mix(in srgb, var(--good) 45%, transparent); }
+@media (hover: hover) and (pointer: fine) { .kb-checklist label:hover { border-color: color-mix(in srgb, var(--good) 45%, transparent); } }
 .kb-checklist input { width: 20px; height: 20px; margin-top: 2px; flex: none; accent-color: var(--green-d); }
 .kb-checklist input:checked + span { color: var(--kb-muted); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--kb-muted) 60%, transparent); }
-.kb-check-count { margin: 4px 0 0; color: var(--kb-muted); font-size: 13.5px; font-weight: 700; }
+.kb-check-count { margin: 4px 0 0; color: var(--kb-muted); font-size: 14px; font-weight: 700; }
 .kb-check-count b { color: var(--good); font-family: var(--f-display); font-size: 16px; }
 .kb-check-bar { height: 10px; margin-top: 8px; border-radius: 99px; background: var(--track); overflow: hidden; }
-.kb-check-bar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--green), #8CF5C8); transition: width .4s var(--ease-out); }
+.kb-check-bar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--green), #8CF5C8); transition: transform .4s var(--ease-out); }
 
 /* Oefen deze les: een kaart in de wereldkleur met 3D-knoppen. */
 .kb-practice {
@@ -541,7 +541,7 @@ body.no-scroll { overflow: hidden; }
 .kb-links h2 { font-size: 20px; font-weight: 600; margin-bottom: 10px; }
 .kb-links ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 #kb .kb-links a { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; text-decoration: none; text-underline-offset: 3px; }
-.kb-links a:hover { text-decoration: underline; }
+@media (hover: hover) and (pointer: fine) { .kb-links a:hover { text-decoration: underline; } }
 .kb-links a svg { width: 15px; height: 15px; flex: none; }
 
 /* Vorige en volgende les als 3D-tegels. */
@@ -551,10 +551,10 @@ body.no-scroll { overflow: hidden; }
   background: linear-gradient(180deg, var(--tile1), var(--tile2)); border: 1px solid var(--stroke);
   box-shadow: 0 5px 0 var(--tile-d); transition: transform .1s, box-shadow .1s;
 }
-.kb-pager-link small { color: var(--kb-muted); font-size: 12.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
+.kb-pager-link small { color: var(--kb-muted); font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
 .kb-pager-link span { font-family: var(--f-display); font-weight: 600; font-size: 16px; line-height: 1.3; }
 .kb-pager-link.next { text-align: right; }
-.kb-pager-link:hover { transform: translateY(-2px); box-shadow: 0 7px 0 var(--tile-d); }
+@media (hover: hover) and (pointer: fine) { .kb-pager-link:hover { transform: translateY(-2px); box-shadow: 0 7px 0 var(--tile-d); } }
 .kb-pager-link:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--tile-d); }
 @media (max-width: 560px) { .kb-pager { grid-template-columns: 1fr; } .kb-pager-link.next { text-align: left; } }
 
@@ -566,11 +566,11 @@ body.no-scroll { overflow: hidden; }
   color: var(--kb-muted); text-decoration: none; font-weight: 700; line-height: 1.35;
   transition: color var(--dur) var(--ease-out), border-color var(--dur) var(--ease-out);
 }
-#kb .kb-toc a:hover, #kb .kb-toc-inline a:hover { color: var(--ink); }
+@media (hover: hover) and (pointer: fine) { #kb .kb-toc a:hover, #kb .kb-toc-inline a:hover { color: var(--ink); } }
 #kb .kb-toc a.on { color: var(--ink); border-left-color: var(--violet); font-weight: 800; }
 .kb-toc-inline { margin: 0 0 22px; }
 .kb-toc-inline details { border: 1px solid var(--stroke); border-radius: 16px; background: var(--glass3); padding: 4px 14px; }
-.kb-toc-inline summary { cursor: pointer; padding: 8px 0; font-weight: 800; font-size: 14.5px; }
+.kb-toc-inline summary { cursor: pointer; padding: 8px 0; font-weight: 800; font-size: 15px; }
 .kb-toc-inline ul { margin-bottom: 10px; }
 @media (min-width: 1180px) { .kb-toc-inline { display: none; } }
 
@@ -594,7 +594,7 @@ body.no-scroll { overflow: hidden; }
   min-width: 32px; min-height: 32px; padding: 2px 6px; border-radius: 10px; background: var(--glass3); border: 1px solid var(--stroke);
   box-shadow: 0 3px 0 var(--tile-d); font-family: var(--f-display); font-size: 15px; font-weight: 600; color: var(--ink); transition: transform .1s, box-shadow .1s;
 }
-.gl-letters button:hover { transform: translateY(-1px); }
+@media (hover: hover) and (pointer: fine) { .gl-letters button:hover { transform: translateY(-1px); } }
 .gl-letters button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--tile-d); }
 @media (hover: none) and (pointer: coarse) { .gl-letters button { min-width: 38px; min-height: 38px; } }
 .gl-letter h2 {
@@ -610,7 +610,7 @@ body.no-scroll { overflow: hidden; }
   box-shadow: inset 0 4px 0 var(--wc, var(--violet));
 }
 .gl-item dt { font-family: var(--f-display); font-weight: 600; font-size: 18px; }
-.gl-item dd { margin: 4px 0 0; font-size: 14.5px; line-height: 1.5; }
+.gl-item dd { margin: 4px 0 0; font-size: 15px; line-height: 1.5; }
 .gl-item dd p { margin: 0 0 4px; }
 .gl-simple { color: var(--kb-muted); font-weight: 600; }
 #kb .gl-item .kb-src { margin: 4px 0 0; }
@@ -645,7 +645,7 @@ body.no-scroll { overflow: hidden; }
   .kb-simple-text { width: 100%; padding: 12px 14px; font-size: 16px; }
   .kb-simple-text::before { left: 24px; top: -8px; transform: rotate(135deg); }
   .code-block { margin-inline: -6px; border-radius: 16px; }
-  .cb-code { font-size: 13.5px; padding: 14px; }
+  .cb-code { font-size: 14px; padding: 14px; }
   .cb-lang::before { display: none; }
   .table-wrap { margin-inline: -6px; }
   .kb-box { padding: 16px; }
@@ -659,12 +659,17 @@ body.no-scroll { overflow: hidden; }
 
 /* ---------- gedeeld met zoeken en de feedback na een vraag ---------- */
 .sr-title a { color: inherit; text-decoration: none; }
-.sr-title a:hover { color: var(--link); text-decoration: underline; text-underline-offset: 3px; }
+@media (hover: hover) and (pointer: fine) { .sr-title a:hover { color: var(--link); text-decoration: underline; text-underline-offset: 3px; } }
 .sr-simple { margin: 6px 0 0; color: var(--muted); font-size: 15px; }
 .fb-les {
   display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 14px; font-weight: 800; color: var(--link);
   text-decoration: none;
 }
 .fb-les::after { content: "→"; transition: transform var(--dur) var(--ease-out); }
-.fb-les:hover::after { transform: translateX(3px); }
-.fb-les:hover { text-decoration: underline; text-underline-offset: 3px; }
+@media (hover: hover) and (pointer: fine) { .fb-les:hover::after { transform: translateX(3px); } }
+@media (hover: hover) and (pointer: fine) { .fb-les:hover { text-decoration: underline; text-underline-offset: 3px; } }
+
+/* Op een touchscreen minstens 16 px in invoervelden, anders zoomt iOS in en niet meer terug. */
+@media (pointer: coarse) { .cb-input { font-size: 16px; } }
+/* In de lade op de telefoon: tikvlakken van minstens 44 px. */
+@media (pointer: coarse) { #kb .kbn-link { min-height: 44px; align-items: center; } .kb-close { width: 44px; height: 44px; } }

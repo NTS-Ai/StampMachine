@@ -203,7 +203,7 @@ function paintProfile() {
         <small>${nl(S.xp)} XP · nog ${nl(XP_PER_LEVEL - (S.xp % XP_PER_LEVEL))} tot level ${lvl.number + 1}</small></div>
       <div class="pf-tile"><small>Sterren</small><b>${nl(t.stars)}<span> / ${t.levels * 3}</span></b></div>
       <div class="pf-tile"><small>Levels</small><b>${t.done}<span> / ${t.levels}</span></b></div>
-      <div class="pf-tile"><small>Draken verslagen</small><b>${t.dragons}<span> / ${WEEKS.length}</span></b></div>
+      <div class="pf-tile"><small>Draken</small><b>${t.dragons}<span> / ${WEEKS.length}</span></b></div>
     </div>
     <h3 class="pf-sub">Beheersing per week</h3>
     <ul class="pf-mastery">${WEEKS.map(w => {

@@ -57,7 +57,8 @@ function renderPlayItem(box, item, opts) {
     const long = opts2.some(o => o.text.length > 18);
     const cols = long ? 1 : opts2.length === 4 ? 2 : opts2.length;
     h += `<div class="tiles${long ? ' long' : ''}" style="--cols:${cols}">${opts2.map((o, k) => {
-      const mono = /`/.test(o.text) || /^[\[\]{}()'"0-9.\-]/.test(o.text);
+      // Mono alleen als het hele antwoord code is; tekst met een stukje code blijft in de gewone letter.
+      const mono = /^`[^`]+`$/.test(o.text.trim()) || (!/`/.test(o.text) && /^[\[\]{}()'"0-9.\-]/.test(o.text));
       return `<button class="tile${mono ? ' mono' : ''}" type="button" data-k="${k}"><span class="tkey" aria-hidden="true">${k + 1}</span><span>${fmt(o.text)}</span></button>`;
     }).join('')}</div>`;
   } else if (q.type === 'type') {

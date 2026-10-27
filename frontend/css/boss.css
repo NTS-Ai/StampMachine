@@ -95,7 +95,7 @@ body[data-screen="boss"] { --app-w: 460px; }
 .boss-title { margin: 0; color: var(--muted); font-weight: 800; font-size: 13px; }
 .boss-hptext { font-family: var(--f-display); font-weight: 700; font-size: 16px; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .boss-hpbar { height: 14px; border-radius: 99px; background: var(--track); overflow: hidden; border: 1px solid var(--stroke); }
-.boss-hpbar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #4BE6A6, var(--green-d)); transition: width .5s var(--ease-out), background .3s; }
+.boss-hpbar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #4BE6A6, var(--green-d)); transition: transform .5s var(--ease-out), background .3s; }
 .boss-hpbar[data-level="mid"] i { background: linear-gradient(90deg, #FFE27A, var(--gold)); }
 .boss-hpbar[data-level="low"] i { background: linear-gradient(90deg, #FF7891, var(--red-d)); }
 

@@ -136,7 +136,7 @@ function renderBossStatus(lostLife = false) {
   bar.setAttribute('aria-valuenow', String(B.hp));
   bar.setAttribute('aria-valuetext', `${B.hp} van ${DRAGON_HP}`);
   bar.dataset.level = frac > .5 ? 'high' : frac > .25 ? 'mid' : 'low';
-  /** @type {HTMLElement} */ (bar.firstElementChild).style.width = (frac * 100) + '%';
+  setBar(/** @type {HTMLElement} */ (bar.firstElementChild), frac);
   $('#bossHpText').textContent = `${B.hp} / ${DRAGON_HP} HP`;
 
   const hearts = $('#bossHearts');

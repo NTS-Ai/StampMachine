@@ -245,7 +245,7 @@ function renderLevelHud(lostOne = false) {
   const pct = Math.round(/** @type {number} */ (LV.i) / steps * 100);
   const bar = document.getElementById('lvBar');
   const fill = document.getElementById('lvFill');
-  if (bar && fill) { fill.style.width = pct + '%'; bar.setAttribute('aria-valuenow', String(pct)); }
+  if (bar && fill) { setBar(fill, pct / 100); bar.setAttribute('aria-valuenow', String(pct)); }
   const hearts = document.getElementById('lvHearts');
   if (hearts) {
     const left = /** @type {number} */ (LV.hearts);
@@ -445,7 +445,7 @@ function tickGame(now) {
   if (!MG || MG.paused) return;
   const left = Math.max(0, MG.end - now);
   MG.left = left;
-  $('#gBar').style.width = (left / GAME_MS * 100).toFixed(2) + '%';
+  setBar($('#gBar'), left / GAME_MS);
   const sec = Math.ceil(left / 1000);
   if (sec !== MG.sec) { MG.sec = sec; $('#gTime').textContent = sec + ' s'; }
   if (left <= 0) {

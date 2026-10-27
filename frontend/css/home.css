@@ -66,42 +66,44 @@
 #home .sechead span, #profiel .sechead span { color: var(--good); }
 
 /* ================= home ================= */
-#home .hello h1 { margin-top: 10px; }
-.hm-theme { cursor: pointer; }
+/* Ritme: wat bij elkaar hoort staat dicht op elkaar (12 px), nieuwe secties krijgen lucht (24–32 px). */
+#home { gap: 12px; }
+#home .hm-course { margin-top: 12px; }
+#home .hm-search { margin-top: 4px; }
+#home .hm-sec { margin-top: 20px; }
 #home .xpbar { max-width: 220px; }
 
 .hm-notice { display: flex; align-items: flex-start; gap: 12px; padding: 12px 12px 12px 14px; border-radius: 20px; }
 .hm-notice > svg { width: 24px; height: 24px; flex: none; margin-top: 1px; }
 .hm-notice p { margin: 0; flex: 1; font-size: 14px; line-height: 1.4; }
-.hm-x { width: 36px; height: 36px; flex: none; border-radius: 50%; display: grid; place-items: center; color: var(--muted); }
-.hm-x:hover { background: var(--chipbg); color: var(--ink); }
+.hm-x { width: 44px; height: 44px; flex: none; border-radius: 50%; display: grid; place-items: center; color: var(--muted); }
+@media (hover: hover) and (pointer: fine) { .hm-x:hover { background: var(--chipbg); color: var(--ink); } }
 .hm-x svg { width: 18px; height: 18px; }
-
-#home .cat { text-decoration: none; color: var(--muted); border-radius: 16px; }
-#home .cat:hover { color: var(--ink); }
-#home .cat.main .ic { box-shadow: 0 0 0 3px rgba(138, 107, 255, .35); }
+/* Platte knoppen geven ook meteen gevoel als je ze indrukt. */
+.hm-x, .np-close { transition: transform .12s var(--ease-out); }
+.hm-x:active, .pg-chip:active, .np-close:active { transform: scale(.94); }
 
 .hm-course { min-height: 0; padding-bottom: 20px; }
-.hm-course-text { position: relative; z-index: 2; max-width: calc(100% - 112px); display: grid; gap: 6px; justify-items: start; }
+/* De titel krijgt de volle breedte; alleen de regels onderin wijken voor Stampy rechtsonder. */
+.hm-course-text { position: relative; z-index: 2; display: grid; gap: 6px; justify-items: start; }
 .hm-eyebrow { margin: 0; font-family: var(--f-mono); font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(255, 255, 255, .9); }
-.hm-course h2 { font-size: 21px; line-height: 1.2; }
+.hm-course h2 { font-size: 22px; line-height: 1.2; }
 .hm-course .pctpill { margin-top: 2px; }
-.hm-next { margin: 2px 0 6px; font-weight: 700; font-size: 14px; line-height: 1.35; color: rgba(255, 255, 255, .95); }
+.hm-next { max-width: calc(100% - 120px); margin: 2px 0 6px; font-weight: 700; font-size: 14px; line-height: 1.35; color: rgba(255, 255, 255, .95); }
 .hm-play {
   display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 18px; border-radius: 16px;
   font-family: var(--f-display); font-weight: 700; font-size: 18px; color: #1A1450;
   background: linear-gradient(180deg, #FFE27A, var(--gold)); box-shadow: 0 5px 0 var(--gold-d), inset 0 1px 0 rgba(255, 255, 255, .6);
-  transition: transform .1s, box-shadow .1s;
+  transition: transform .1s var(--ease-out), box-shadow .1s var(--ease-out);
 }
-.hm-play:hover { transform: translateY(-1px); }
+@media (hover: hover) and (pointer: fine) { .hm-play:hover { transform: translateY(-1px); } }
 .hm-play:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--gold-d); }
 .hm-play svg { width: 20px; height: 20px; }
 .hm-play:focus-visible { outline-color: #fff; }
 .hm-course .bot { width: 124px; right: 2px; bottom: -14px; z-index: 1; }
 .hm-floats .float { z-index: 1; }
-.hm-floats .f0 { right: 16px; top: 16px; }
-.hm-floats .f1 { right: 62px; top: 52px; animation-delay: -1.3s; }
-.hm-floats .f2 { right: 10px; top: 86px; animation-delay: -2.4s; }
+/* Het code-stukje zweeft boven Stampy, ver van de titel. */
+.hm-floats .f0 { right: 14px; bottom: 150px; }
 
 .hm-search {
   display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 16px; border-radius: 99px;
@@ -113,7 +115,7 @@
 .hm-search input:focus-visible { outline: none; }
 .hm-search:focus-within { outline: 3px solid var(--gold); outline-offset: 2px; }
 
-.hm-sec { display: grid; gap: 10px; }
+.hm-sec { display: grid; gap: 12px; }
 #home .quick { padding: 4px 2px 6px; margin-inline: -2px; }
 #home .qcard { cursor: pointer; }
 #home .qcard .qi svg { width: 24px; height: 24px; }
@@ -124,6 +126,12 @@
 #home .world .grow { display: grid; gap: 3px; }
 #home .world[data-locked="true"] { filter: none; opacity: 1; }
 #home .world[data-locked="true"] .num { background: var(--track); color: var(--muted); box-shadow: none; }
+/* Werelden op slot: compacte rij, zodat de lijst niet vooral laat zien wat nog niet kan. */
+#home .world[data-locked="true"] { padding-block: 10px; gap: 12px; }
+#home .world[data-locked="true"] .num { width: 38px; height: 38px; font-size: 17px; border-radius: 12px; }
+#home .world[data-locked="true"] h3 { font-size: 15px; }
+#home .world[data-locked="true"] p { font-size: 13px; }
+#home .wlist { gap: 10px; }
 #home .world[aria-current] { border-color: var(--wc); box-shadow: 0 0 0 2px color-mix(in srgb, var(--wc) 35%, transparent); }
 .hm-here {
   justify-self: start; font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
@@ -187,15 +195,20 @@
 .pf-cta { justify-self: start; margin-top: 10px; }
 
 .pf-ladder { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
-@media (max-width: 640px) { .pf-ladder { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+/* Op de telefoon één rij die horizontaal scrollt, in plaats van 4 + 3 met een halve tweede rij. */
+@media (max-width: 640px) {
+  .pf-ladder { display: flex; overflow-x: auto; scroll-snap-type: x proximity; scroll-padding-inline: 16px; overscroll-behavior-x: contain; scrollbar-width: none; margin-inline: -16px; padding: 2px 16px 6px; }
+  .pf-ladder::-webkit-scrollbar { display: none; }
+  .pf-rung { flex: none; width: 92px; scroll-snap-align: start; }
+}
 .pf-rung {
   background: var(--glass2); border: 1px solid var(--stroke); border-radius: 16px; padding: 8px 6px 10px;
   display: grid; gap: 2px; justify-items: center; align-content: start; text-align: center;
 }
 .pf-rung-bot { width: 76%; margin-bottom: 2px; }
 .pf-rung b { font-family: var(--f-mono); font-size: 11px; font-variant-numeric: tabular-nums; }
-.pf-rung span { font-size: 12.5px; font-weight: 800; line-height: 1.2; }
-.pf-rung small { font-size: 11.5px; font-weight: 800; color: var(--muted); }
+.pf-rung span { font-size: 13px; font-weight: 800; line-height: 1.2; }
+.pf-rung small { font-size: 12px; font-weight: 800; color: var(--muted); }
 .pf-rung[data-state="done"] small { color: var(--good); }
 .pf-rung[data-state="current"] { border-color: var(--fire); box-shadow: 0 0 0 2px rgba(255, 138, 31, .35); }
 .pf-rung[data-state="current"] small { color: var(--warn); }
@@ -204,7 +217,7 @@
 .pf-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .pf-tile { background: var(--glass2); border: 1px solid var(--stroke); border-radius: 20px; padding: 12px 14px; display: grid; gap: 2px; align-content: start; min-width: 0; }
 .pf-tile.wide { grid-column: 1 / -1; }
-.pf-tile small { color: var(--muted); font-weight: 800; font-size: 12.5px; }
+.pf-tile small { color: var(--muted); font-weight: 800; font-size: 13px; }
 .pf-tile b { font-family: var(--f-display); font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.15; }
 .pf-tile b span { font-size: 15px; color: var(--muted); font-weight: 600; }
 .pf-tile .xpbar { max-width: none; margin: 6px 0 4px; }
@@ -212,7 +225,7 @@
 .pf-sub { font-size: 16px; font-weight: 600; margin: 8px 0 0; }
 .pf-mastery { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 .pf-mastery li { display: grid; grid-template-columns: minmax(0, 1fr) 46px; gap: 4px 10px; align-items: center; }
-.pf-mlabel { grid-column: 1 / -1; font-size: 13.5px; font-weight: 700; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pf-mlabel { grid-column: 1 / -1; font-size: 14px; font-weight: 700; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pf-mlabel b { color: var(--ink); }
 .pf-mbar { height: 10px; border-radius: 99px; background: var(--track); overflow: hidden; }
 .pf-mbar i { display: block; height: 100%; border-radius: 99px; background: var(--wc); }
@@ -224,7 +237,7 @@
 .pf-row { display: flex; align-items: center; justify-content: space-between; gap: 10px 14px; flex-wrap: wrap; padding: 12px 0; border-top: 1px solid var(--stroke); }
 .pf-row > div { flex: 1 1 220px; min-width: 0; }
 .pf-row b, .pf-theme legend { font-weight: 800; }
-.pf-row p { margin: 2px 0 0; font-size: 13.5px; color: var(--muted); }
+.pf-row p { margin: 2px 0 0; font-size: 14px; color: var(--muted); }
 fieldset.pf-theme { margin: 0; min-width: 0; border: 0; border-top: 1px solid var(--stroke); }
 .pf-theme legend { float: left; padding: 0; margin-right: auto; }
 .pf-seg { display: inline-flex; padding: 4px; border-radius: 99px; background: var(--chipbg); gap: 2px; }
@@ -248,10 +261,10 @@ fieldset.pf-theme { margin: 0; min-width: 0; border: 0; border-top: 1px solid va
 .pg-head p { max-width: 46ch; }
 .pg-examples { display: flex; flex-wrap: wrap; gap: 8px; }
 .pg-chip {
-  min-height: 40px; padding: 6px 14px; border-radius: 99px; background: var(--glass2); border: 1px solid var(--stroke);
-  font-weight: 800; font-size: 14px; color: var(--ink); transition: transform .12s, background .15s;
+  min-height: 44px; padding: 6px 14px; border-radius: 99px; background: var(--glass2); border: 1px solid var(--stroke);
+  font-weight: 800; font-size: 14px; color: var(--ink); transition: transform .12s var(--ease-out), background .15s ease;
 }
-.pg-chip:hover { transform: translateY(-1px); background: var(--glass3); }
+@media (hover: hover) and (pointer: fine) { .pg-chip:hover { transform: translateY(-1px); background: var(--glass3); } }
 .pg-chip[aria-pressed="true"] { background: linear-gradient(180deg, #6D5BEA, #4733B8); color: #fff; border-color: transparent; }
 
 .pg-editor { border-radius: 22px; overflow: hidden; background: #0F1030; border: 1px solid var(--stroke); box-shadow: var(--shadow-md); }
@@ -260,7 +273,7 @@ fieldset.pf-theme { margin: 0; min-width: 0; border: 0; border-top: 1px solid va
 .pg-keys .keycap { color: #DCD9FF; background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .2); }
 .pg-code {
   display: block; width: 100%; min-height: 280px; resize: vertical; border: 0; margin: 0; padding: 14px 16px;
-  background: #0F1030; color: #EDEBFF; caret-color: #FFC93D; font-family: var(--f-mono); font-size: 14.5px; line-height: 1.6;
+  background: #0F1030; color: #EDEBFF; caret-color: #FFC93D; font-family: var(--f-mono); font-size: 15px; line-height: 1.6;
   tab-size: 4; white-space: pre; overflow: auto;
 }
 .pg-code:focus-visible { outline: 3px solid var(--gold); outline-offset: -3px; }
@@ -271,7 +284,7 @@ fieldset.pf-theme { margin: 0; min-width: 0; border: 0; border-top: 1px solid va
   display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border-radius: 14px;
   color: #EDEBFF; border: 1.5px solid rgba(255, 255, 255, .25); font-weight: 800; transition: background .15s;
 }
-.pg-stop:hover, .pg-reset:hover { background: rgba(255, 255, 255, .08); }
+@media (hover: hover) and (pointer: fine) { .pg-stop:hover, .pg-reset:hover { background: rgba(255, 255, 255, .08); } }
 .pg-stop { color: #FFC2CD; border-color: #FF7A93; }
 .pg-stop svg, .pg-reset svg { width: 16px; height: 16px; }
 .pg-reset { margin-left: auto; }
@@ -294,3 +307,6 @@ fieldset.pf-theme { margin: 0; min-width: 0; border: 0; border-top: 1px solid va
 @keyframes pg-spin { to { transform: rotate(360deg); } }
 .pg-tip { margin: 0; font-size: 14px; line-height: 1.45; color: var(--muted); }
 .pg-tip b { color: var(--ink); }
+
+/* Op een touchscreen minstens 16 px in de editor, anders zoomt iOS in en niet meer terug. */
+@media (pointer: coarse) { .pg-code { font-size: 16px; } }

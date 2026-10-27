@@ -61,6 +61,17 @@ function toast(text) {
   /** @type {any} */ (el)._t = setTimeout(() => el.classList.remove('on'), 2600);
 }
 
+/**
+ * Zet de vulling van een voortgangsbalk (de <i> in .pbar, .xpbar enz.) op een fractie van 0 tot 1.
+ * De vulling is altijd 100% breed en schuift met transform: dat animeert zonder layout en houdt de ronde kop rond.
+ * @param {HTMLElement} el
+ * @param {number} frac
+ */
+function setBar(el, frac) {
+  el.style.width = '100%';
+  el.style.transform = `translateX(${((Math.max(0, Math.min(1, frac)) - 1) * 100).toFixed(2)}%)`;
+}
+
 /** Getal in Nederlandse notatie, bijvoorbeeld 1.234. @param {number} n */
 const nl = n => n.toLocaleString('nl-NL');
 
