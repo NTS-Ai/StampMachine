@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -26,7 +27,8 @@ HEADER = (
     "/** @type {Week[]} */\n"
 )
 
-WEEK_FIELDS = ("week", "level", "title", "topics", "questions", "flashcards", "typing")
+WEEK_FIELDS = ("week", "level", "title", "topics", "questions", "flashcards", "typing", "puzzles")
+LESSONS_DIR = ROOT / "frontend" / "data" / "kb" / "lessons"
 
 
 class ContentError(Exception):
@@ -37,6 +39,42 @@ def require(item: dict, field: str, kind: type | tuple[type, ...], where: str) -
     value = item.get(field)
     if not isinstance(value, kind) or value in ("", []):
         raise ContentError(f"{where}: veld '{field}' ontbreekt of is leeg")
+
+
+def check_section(item: dict, week: int, where: str) -> None:
+    """Elk item hoort bij een workbook-sectie van dezelfde week, bijvoorbeeld "3.2" of "3.A" (de eindopdracht)."""
+    section = item.get("section")
+    if not isinstance(section, str) or not re.fullmatch(r"[1-6]\.(?:[1-9]|A)", section):
+        raise ContentError(f"{where}: veld 'section' ontbreekt of is ongeldig (verwacht bv. \"{week}.2\")")
+    if int(section.split(".")[0]) != week:
+        raise ContentError(f"{where}: sectie '{section}' hoort niet bij week {week}")
+
+
+def check_puzzle(p: dict, where: str) -> None:
+    """Puzzels voor de kaart: 'fill' (gat in code invullen) en 'parsons' (regels ordenen)."""
+    require(p, "id", str, where)
+    require(p, "question", str, where)
+    require(p, "simple", str, where)
+    if p.get("type") == "fill":
+        require(p, "code", str, where)
+        require(p, "answers", list, where)
+        if p["code"].count("___") != 1:
+            raise ContentError(f"{where}: 'code' moet precies één gat ___ hebben")
+    elif p.get("type") == "parsons":
+        require(p, "lines", list, where)
+        if len(p["lines"]) < 2 or len(set(p["lines"])) != len(p["lines"]):
+            raise ContentError(f"{where}: 'lines' moet minstens 2 verschillende regels hebben")
+    else:
+        raise ContentError(f"{where}: puzzel-type moet 'fill' of 'parsons' zijn")
+
+
+def lesson_sections(week: int) -> list[dict]:
+    """Lestitels uit de kennisbank, zodat de kaart de levels kan tonen zonder de hele kennisbank te laden."""
+    path = LESSONS_DIR / f"w{week}.json"
+    if not path.exists():
+        raise ContentError(f"{path.name}: lessen van week {week} ontbreken")
+    data = json.loads(path.read_text(encoding="utf-8"))
+    return [{"id": s["id"], "title": s["title"], **({"kind": s["kind"]} if s.get("kind") else {})} for s in data["sections"]]
 
 
 def check_question(q: dict, where: str) -> None:
@@ -93,7 +131,15 @@ def load_weeks() -> list[dict]:
             require(card, "front", str, where)
             require(card, "back", str, where)
 
-        for item in week["questions"] + week["typing"] + week["flashcards"]:
+        for puzzle in week["puzzles"]:
+            check_puzzle(puzzle, f"{name} {puzzle.get('id', '?')}")
+
+        week["sections"] = lesson_sections(week["week"])
+        known = {s["id"] for s in week["sections"]}
+        for item in week["questions"] + week["typing"] + week["flashcards"] + week["puzzles"]:
+            check_section(item, week["week"], f"{name} {item.get('id', '?')}")
+            if item["section"] not in known:
+                raise ContentError(f"{name} {item['id']}: sectie '{item['section']}' bestaat niet in de kennisbank")
             if item["id"] in seen_ids:
                 raise ContentError(f"{name}: id '{item['id']}' komt dubbel voor")
             seen_ids.add(item["id"])
@@ -122,7 +168,8 @@ def main() -> int:
     counts = (
         f"{sum(len(w['questions']) for w in weeks)} vragen, "
         f"{sum(len(w['typing']) for w in weeks)} typvragen, "
-        f"{sum(len(w['flashcards']) for w in weeks)} flashcards"
+        f"{sum(len(w['flashcards']) for w in weeks)} flashcards, "
+        f"{sum(len(w['puzzles']) for w in weeks)} puzzels"
     )
 
     if args.check:

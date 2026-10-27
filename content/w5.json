@@ -20,7 +20,8 @@
         "Het model maakt geen hele zin in één keer; het bouwt de zin stukje voor stukje op.",
         "Het model weet niet wat waar is; het kiest wat waarschijnlijk klinkt, en dat kan ook onzin zijn.",
         "Een SQL-query kan het wel schrijven, maar dat doet het ook token voor token, net als elke andere tekst."
-      ]
+      ],
+      "section": "5.1"
     },
     {
       "id": "5-1",
@@ -38,7 +39,8 @@
         "Eén letter is te klein; meestal zitten er meerdere letters in één token.",
         "Een zin bestaat uit veel tokens, niet uit één.",
         "Een alinea is nog veel groter en bevat tientallen tot honderden tokens."
-      ]
+      ],
+      "section": "5.1"
     },
     {
       "id": "5-2",
@@ -56,7 +58,8 @@
         "De API onthoudt niets tussen calls; zonder history begint het model elke keer blanco.",
         "Temperature gaat over hoe willekeurig het model kiest, niet over geheugen.",
         "Ook grote modellen zijn stateless; groot betekent niet dat ze je gesprek bewaren."
-      ]
+      ],
+      "section": "5.1"
     },
     {
       "id": "5-3",
@@ -74,7 +77,8 @@
         "Bij 1 kiest het model gevarieerder, en dat wil je juist niet als je steeds hetzelfde etiket of veld wilt.",
         "Bij 2 wordt de output erg willekeurig en vaak rommelig, dat past bij geen enkele extractie.",
         "Het maakt wel uit: een hogere temperature geeft wisselende antwoorden op dezelfde vraag."
-      ]
+      ],
+      "section": "5.1"
     },
     {
       "id": "5-4",
@@ -92,7 +96,8 @@
         "Een hogere temperature maakt het model juist wilder, dus eerder meer verzinsels.",
         "Een langere prompt zonder echte feiten voorkomt niet dat het model iets verzint.",
         "Meer max_tokens geeft het model alleen meer ruimte om te praten, niet om gelijk te hebben."
-      ]
+      ],
+      "section": "5.1"
     },
     {
       "id": "5-5",
@@ -110,7 +115,8 @@
         "Hardcoded in elke call betekent dat je bij een nieuw model overal in je code moet gaan zoeken en wijzigen.",
         "In de prompt doet de naam niets; de API kiest het model via de `model`-parameter, niet via tekst.",
         "De README is documentatie voor mensen; je code leest daar niets uit."
-      ]
+      ],
+      "section": "5.1"
     },
     {
       "id": "5-6",
@@ -128,7 +134,8 @@
         "Een extra functie maakt de call niet sneller; het gaat om makkelijk kunnen wisselen.",
         "De provider eist dit niet; je kunt de SDK ook direct gebruiken, het is jouw eigen keuze voor nette code.",
         "Het helpt bij alles, niet alleen bij streaming: ook bij logging, retries en van model wisselen."
-      ]
+      ],
+      "section": "5.1"
     },
     {
       "id": "5-7",
@@ -146,7 +153,8 @@
         "Er is geen vaste prijs per request; een lange vraag kost meer dan een korte.",
         "De input telt ook mee, en bij lange prompts of veel context is dat vaak het grootste deel.",
         "Je betaalt per token, niet per karakter."
-      ]
+      ],
+      "section": "5.1"
     },
     {
       "id": "5-8",
@@ -164,7 +172,8 @@
         "Een limiet maakt het model niet slimmer; het kapt het antwoord alleen af als het te lang wordt.",
         "Het is niet speciaal voor streaming; je zet het bij elke call als veiligheidsgrens.",
         "Het heeft wel effect: het model stopt zodra het de limiet bereikt."
-      ]
+      ],
+      "section": "5.1"
     },
     {
       "id": "5-9",
@@ -182,7 +191,8 @@
         "Het model leest gewone tekst prima; de tags zijn alleen een duidelijke scheiding, geen HTML-eis.",
         "Tags maken niets sneller; ze voegen zelfs een paar tokens toe.",
         "Tags rond een document zijn er om data van instructies te scheiden, niet om JSON terug te krijgen."
-      ]
+      ],
+      "section": "5.1"
     },
     {
       "id": "5-10",
@@ -200,7 +210,8 @@
         "Weinig tokens gebruiken is zuinig zijn, dat heeft niets met voorbeelden te maken.",
         "Een lage temperature gaat over hoe willekeurig het model kiest, niet over voorbeelden in de prompt.",
         "Het aantal API-calls staat los van few-shot; het gaat om voorbeelden binnen de prompt."
-      ]
+      ],
+      "section": "5.1"
     },
     {
       "id": "5-11",
@@ -218,7 +229,8 @@
         "Een regex is broos: een klein verschil in de tekst en je patroon matcht niet meer, en het checkt geen types.",
         "Blind vertrouwen gaat mis, want het model levert soms kapotte of incomplete JSON.",
         "Temperature 1 maakt de output juist wisselender, dus eerder fouten in het formaat."
-      ]
+      ],
+      "section": "5.2"
     },
     {
       "id": "5-12",
@@ -236,7 +248,8 @@
         "Dezelfde call opnieuw doen geeft het model geen aanwijzing, dus het maakt vaak dezelfde fout weer.",
         "Een nieuwe system prompt vertelt het model niet wat er precies fout ging in dit antwoord.",
         "Meteen een error naar de gebruiker sturen geeft het model geen kans om het te herstellen."
-      ]
+      ],
+      "section": "5.2"
     },
     {
       "id": "5-13",
@@ -254,7 +267,8 @@
         "Het model kan zelf niets uitvoeren; het schrijft alleen een verzoek in tekst.",
         "De provider stuurt alleen het verzoek terug; de functie draait niet bij hen maar in jouw code.",
         "De gebruiker drukt niet zelf op de knop; jouw code voert de tool automatisch uit (en vraagt alleen bevestiging bij gevaarlijke acties)."
-      ]
+      ],
+      "section": "5.2"
     },
     {
       "id": "5-14",
@@ -272,7 +286,8 @@
         "Na één call is het model vaak nog niet klaar, omdat het eerst het resultaat van een tool nodig heeft.",
         "Het model kan tekst sturen en tegelijk om een tool vragen, dus tekst betekent nog niet dat het klaar is.",
         "Een loop die nooit stopt blijft calls doen en tokens kosten; hij moet stoppen zodra er geen tool meer gevraagd wordt."
-      ]
+      ],
+      "section": "5.2"
     },
     {
       "id": "5-15",
@@ -290,7 +305,8 @@
         "Vrij laten aanroepen betekent dat één fout of één trucje in de tekst echte schade kan doen.",
         "Temperature 0 maakt het model voorspelbaarder, maar niet betrouwbaar genoeg voor gevaarlijke acties.",
         "Nooit gebruiken is te streng; met bevestiging of een allow-list kun je ze veilig inzetten."
-      ]
+      ],
+      "section": "5.2"
     },
     {
       "id": "5-16",
@@ -308,7 +324,8 @@
         "Het model onthoudt niets tussen calls, dus daar kun je niets bewaren.",
         "Een globale Python-lijst is weg bij een herstart, wordt niet gedeeld tussen meerdere servers en mengt snel gebruikers door elkaar.",
         "Een JWT is een soort pasje om te laten zien wie je bent; een heel gesprek past daar niet in en hoort daar niet."
-      ]
+      ],
+      "section": "5.2"
     },
     {
       "id": "5-17",
@@ -326,7 +343,8 @@
         "Train, test, deploy is het stappenplan voor zelf een model trainen; bij RAG train je niets.",
         "Bij RAG train je het model niet; je zoekt de juiste stukken tekst op en geeft die mee.",
         "Prompt, parse, print beschrijft gewoon een call doen en de output tonen, zonder iets op te zoeken."
-      ]
+      ],
+      "section": "5.3"
     },
     {
       "id": "5-18",
@@ -344,7 +362,8 @@
         "Een samenvatting is gewone tekst; een embedding is een rij getallen.",
         "Een token is een stukje tekst; een embedding beschrijft de betekenis van een heel stuk tekst.",
         "Een hash verandert compleet bij één andere letter, terwijl een embedding juist gelijk blijft bij dezelfde betekenis."
-      ]
+      ],
+      "section": "5.3"
     },
     {
       "id": "5-19",
@@ -362,7 +381,8 @@
         "Levenshtein telt hoeveel letters je moet veranderen; dat zegt iets over spelling, niet over betekenis.",
         "SHA-256 is een hash: elke kleine wijziging geeft een totaal ander resultaat, dus je kunt er geen gelijkenis mee meten.",
         "De lengte van een tekst zegt niets over waar die tekst over gaat."
-      ]
+      ],
+      "section": "5.3"
     },
     {
       "id": "5-20",
@@ -380,7 +400,8 @@
         "Gelijkheid schrijf je in SQL gewoon met `=`.",
         "Groter dan is `>`; `<=>` vergelijkt geen getallen maar vectoren.",
         "Een JSON-pad schrijf je in Postgres met operators als `->` en `->>`."
-      ]
+      ],
+      "section": "5.3"
     },
     {
       "id": "5-21",
@@ -398,7 +419,8 @@
         "Meer tokens maken een antwoord niet vanzelf beter; overlap is er alleen om zinnen niet doormidden te knippen.",
         "Overlap maakt het juist iets trager en groter, omdat je meer tekst opslaat.",
         "Het is niet verplicht; het is een slimme keuze om informatie op de grens niet kwijt te raken."
-      ]
+      ],
+      "section": "5.3"
     },
     {
       "id": "5-22",
@@ -416,7 +438,8 @@
         "Een B-tree is goed voor sorteren en exacte waarden, maar kan niet 'lijkt het meest op' zoeken in honderden dimensies.",
         "GIN met trigrammen zoekt op stukjes letters in tekst, niet op betekenis in vectoren.",
         "Zonder index vergelijkt Postgres je vraag met elke rij, en dat wordt traag als je veel chunks hebt."
-      ]
+      ],
+      "section": "5.3"
     },
     {
       "id": "5-23",
@@ -434,7 +457,8 @@
         "Een model kun je vragen wat je wilt, maar het kan zich vergissen of misleid worden; het is geen slot.",
         "Een aparte prompt houdt niet tegen dat de zoekopdracht documenten van een andere klant ophaalt.",
         "Een strengere drempel filtert op hoe goed iets lijkt, niet op van wie het is; een document van klant B kan ook prima lijken."
-      ]
+      ],
+      "section": "5.3"
     },
     {
       "id": "5-24",
@@ -452,7 +476,8 @@
         "Lange antwoorden zijn niet beter en geven meer ruimte voor verzinsels en kosten.",
         "Eigen kennis van het model kan verouderd of verzonnen zijn; daarom wil je juist dat het bij de bronnen blijft.",
         "Zonder bronnen kan niemand controleren of het antwoord echt uit de documenten komt."
-      ]
+      ],
+      "section": "5.3"
     },
     {
       "id": "5-25",
@@ -470,7 +495,8 @@
         "Een lijst teruggeven betekent wachten tot alles klaar is en het dan in één keer sturen.",
         "WebSockets kunnen ook, maar zijn niet de enige manier; voor tekst naar de gebruiker is SSE met `StreamingResponse` simpeler.",
         "Bij polling vraagt de browser steeds 'is er al iets nieuws?', wat trager en omslachtiger is."
-      ]
+      ],
+      "section": "5.4"
     },
     {
       "id": "5-26",
@@ -488,7 +514,8 @@
         "Een JSON-array kun je pas lezen als hij helemaal af is, terwijl je bij streaming losse stukjes wilt sturen.",
         "Een CSV-regel is een tabelformaat; SSE gebruikt regels die met `data:` beginnen.",
         "Headers worden één keer aan het begin van het antwoord gestuurd, niet per stukje tekst."
-      ]
+      ],
+      "section": "5.4"
     },
     {
       "id": "5-27",
@@ -506,7 +533,8 @@
         "pypdf leest de tekst gewoon goed uit; de tekst staat echt in de PDF.",
         "Het is niet onschuldig: zo'n zin kan het model laten afwijken van jouw instructies.",
         "Het is geen feature maar een aanval die gebruikmaakt van het feit dat het model alle tekst leest."
-      ]
+      ],
+      "section": "5.4"
     },
     {
       "id": "5-28",
@@ -524,7 +552,8 @@
         "Snelheid meet je met latency, niet met recall@k.",
         "Kosten tel je met tokens en prijzen, niet met recall@k.",
         "De toon beoordeel je bij het antwoord zelf, niet bij het zoeken."
-      ]
+      ],
+      "section": "5.5"
     },
     {
       "id": "5-29",
@@ -542,7 +571,8 @@
         "Alleen errors loggen helpt niet als een antwoord wel lukte maar inhoudelijk fout was.",
         "Een API-key is geheim en hoort nooit in een log, want wie het log leest kan dan op jouw kosten calls doen.",
         "Zonder logs kun je problemen, kosten en rare antwoorden achteraf niet uitzoeken."
-      ]
+      ],
+      "section": "5.5"
     },
     {
       "id": "5-30",
@@ -550,7 +580,8 @@
       "question": "Je bouwt de eval set pas nadat je de prompt hebt getuned.",
       "answer": false,
       "explanation": "Eerst de eval set, dan tunen. Anders weet je niet of je verbetert.",
-      "simple": "Eerst maak je de toets, dan ga je oefenen. Als je de vragen pas achteraf bedenkt, kies je ongemerkt vragen die je prompt al goed doet, en weet je niet of een wijziging echt beter is."
+      "simple": "Eerst maak je de toets, dan ga je oefenen. Als je de vragen pas achteraf bedenkt, kies je ongemerkt vragen die je prompt al goed doet, en weet je niet of een wijziging echt beter is.",
+      "section": "5.5"
     },
     {
       "id": "5-31",
@@ -568,7 +599,8 @@
         "Met 0 test je nooit of de assistent durft te zeggen dat hij het niet weet.",
         "Met maar 1 vraag is het toeval of hij goed of fout gaat; de afspraak is minstens 3.",
         "15 is het minimale totaal van de hele set; dan zou er geen enkele beantwoordbare vraag meer in zitten."
-      ]
+      ],
+      "section": "5.A"
     },
     {
       "id": "5-32",
@@ -586,7 +618,8 @@
         "Twee LLM's laten praten is geen zoekmethode; hybrid search gaat over het ophalen van tekst.",
         "Redis en Postgres zijn twee databases, maar hybrid search combineert twee zoekmanieren binnen Postgres.",
         "Regex zoekt op letterpatronen en snapt geen betekenis; hybrid search gebruikt vectoren en full-text."
-      ]
+      ],
+      "section": "5.3"
     },
     {
       "id": "5-33",
@@ -604,7 +637,8 @@
         "Temperature verandert hoe het model kiest, niet hoeveel tokens je betaalt.",
         "Meer context betekent meer input-tokens, dus juist hogere kosten.",
         "Een langere system prompt gaat bij elke call mee en kost dus elke keer extra tokens."
-      ]
+      ],
+      "section": "5.4"
     }
   ],
   "flashcards": [
@@ -612,103 +646,120 @@
       "id": "5-f0",
       "front": "LLM in vier regels",
       "back": "De prompt is het programma · de context is het geheugen · output is waarschijnlijkheid (temperature) · modellen hallucineren",
-      "simple": "Wat je in de prompt schrijft is je programma, en alles wat het model weet staat in de context die je meestuurt. Het antwoord is een kansspel dat je met temperature regelt, en het model kan dingen verzinnen, dus controleer altijd."
+      "simple": "Wat je in de prompt schrijft is je programma, en alles wat het model weet staat in de context die je meestuurt. Het antwoord is een kansspel dat je met temperature regelt, en het model kan dingen verzinnen, dus controleer altijd.",
+      "section": "5.1"
     },
     {
       "id": "5-f1",
       "front": "Eerste API-call",
       "back": "`client.messages.create(model=settings.llm_model, max_tokens=..., temperature=0, system=..., messages=[...])`. Log `usage`.",
-      "simple": "Een eerste call is als een bestelformulier invullen: welk model (uit je settings), hoe lang het antwoord mag zijn, hoe voorspelbaar (temperature 0), de rol (system) en het gesprek (messages). Daarna schrijf je `usage` op, zodat je weet wat het kostte."
+      "simple": "Een eerste call is als een bestelformulier invullen: welk model (uit je settings), hoe lang het antwoord mag zijn, hoe voorspelbaar (temperature 0), de rol (system) en het gesprek (messages). Daarna schrijf je `usage` op, zodat je weet wat het kostte.",
+      "section": "5.1"
     },
     {
       "id": "5-f2",
       "front": "Kosten",
       "back": "`input_tokens × prijs_in + output_tokens × prijs_out`. Altijd `max_tokens`. Schat tokens vooraf met tiktoken.",
-      "simple": "Je betaalt apart voor wat erin gaat en wat eruit komt, elk met een eigen prijs per token. Zet altijd `max_tokens` als rem, en met tiktoken kun je vooraf al ongeveer tellen hoeveel tokens je tekst is."
+      "simple": "Je betaalt apart voor wat erin gaat en wat eruit komt, elk met een eigen prijs per token. Zet altijd `max_tokens` als rem, en met tiktoken kun je vooraf al ongeveer tellen hoeveel tokens je tekst is.",
+      "section": "5.1"
     },
     {
       "id": "5-f3",
       "front": "Zeven prompt-regels",
       "back": "Rol en doel · format expliciet · data in tags · voorbeelden (few-shot) · redeneren bij moeilijke taken · beperken en dan valideren · itereren met een testset",
-      "simple": "Een goede prompt is als een goede opdracht aan een nieuwe stagiair: zeg wie hij is en wat het doel is, hoe het resultaat eruit moet zien, wat data is (in tags), laat voorbeelden zien en laat hem bij lastige dingen eerst nadenken. Daarna controleer je het werk en verbeter je de opdracht met een vaste set testvragen."
+      "simple": "Een goede prompt is als een goede opdracht aan een nieuwe stagiair: zeg wie hij is en wat het doel is, hoe het resultaat eruit moet zien, wat data is (in tags), laat voorbeelden zien en laat hem bij lastige dingen eerst nadenken. Daarna controleer je het werk en verbeter je de opdracht met een vaste set testvragen.",
+      "section": "5.1"
     },
     {
       "id": "5-f4",
       "front": "Structured output",
       "back": "Schema in de prompt → `Model.model_validate_json(raw)` → bij `ValidationError` de fout terugsturen en opnieuw proberen.",
-      "simple": "Je vertelt het model welke vorm de JSON moet hebben, en Pydantic controleert of het klopt. Zo niet, dan stuur je de foutmelding terug zodat het model het kan verbeteren, net als een formulier dat terugkomt met 'dit veld is verplicht'."
+      "simple": "Je vertelt het model welke vorm de JSON moet hebben, en Pydantic controleert of het klopt. Zo niet, dan stuur je de foutmelding terug zodat het model het kan verbeteren, net als een formulier dat terugkomt met 'dit veld is verplicht'.",
+      "section": "5.2"
     },
     {
       "id": "5-f5",
       "front": "Tool calling",
       "back": "Jij beschrijft tools als JSON-schema → model vraagt om een call → jouw code voert uit en stuurt `tool_result` terug → herhalen tot `stop_reason != \"tool_use\"`.",
-      "simple": "Je geeft het model een menukaart met tools. Het model bestelt er een, jouw code maakt het klaar en brengt het resultaat terug (`tool_result`). Dat herhaal je tot het model geen nieuwe bestelling meer doet."
+      "simple": "Je geeft het model een menukaart met tools. Het model bestelt er een, jouw code maakt het klaar en brengt het resultaat terug (`tool_result`). Dat herhaal je tot het model geen nieuwe bestelling meer doet.",
+      "section": "5.2"
     },
     {
       "id": "5-f6",
       "front": "Tool-veiligheid",
       "back": "Lees-tools vrij. Tools met side effects: bevestiging of allow-list. Argumenten altijd valideren met Pydantic.",
-      "simple": "Opzoeken mag het model vrij, want dat verandert niets. Iets veranderen (versturen, verwijderen, betalen) mag alleen na bevestiging of als het op een vaste lijst staat. En wat het model aan de tool meegeeft controleer je altijd met Pydantic, want het kan zich vergissen."
+      "simple": "Opzoeken mag het model vrij, want dat verandert niets. Iets veranderen (versturen, verwijderen, betalen) mag alleen na bevestiging of als het op een vaste lijst staat. En wat het model aan de tool meegeeft controleer je altijd met Pydantic, want het kan zich vergissen.",
+      "section": "5.2"
     },
     {
       "id": "5-f7",
       "front": "Conversation state",
       "back": "API is stateless. Actief gesprek in Redis met TTL, permanent in Postgres. Trimmen of samenvatten als het lang wordt.",
-      "simple": "De API onthoudt niets, dus jij bewaart het gesprek: het lopende gesprek op een snel whiteboard (Redis, met TTL), het blijvende verslag in het archief (Postgres). Wordt het gesprek te lang, dan knip je oude stukken weg of vat je ze samen."
+      "simple": "De API onthoudt niets, dus jij bewaart het gesprek: het lopende gesprek op een snel whiteboard (Redis, met TTL), het blijvende verslag in het archief (Postgres). Wordt het gesprek te lang, dan knip je oude stukken weg of vat je ze samen.",
+      "section": "5.2"
     },
     {
       "id": "5-f8",
       "front": "RAG",
       "back": "Index (chunk → embed → opslaan) · retrieve (vraag embedden → dichtstbijzijnde chunks) · generate (alleen uit die chunks, met citaties)",
-      "simple": "RAG is een bibliotheek voor je model: eerst knip je teksten in stukken, zet je ze om in getallen en sla je ze op. Bij een vraag zoek je de stukken die er het meest op lijken, en het model antwoordt alleen daaruit, met bronvermelding."
+      "simple": "RAG is een bibliotheek voor je model: eerst knip je teksten in stukken, zet je ze om in getallen en sla je ze op. Bij een vraag zoek je de stukken die er het meest op lijken, en het model antwoordt alleen daaruit, met bronvermelding.",
+      "section": "5.3"
     },
     {
       "id": "5-f9",
       "front": "Embedding",
       "back": "Lijst floats (bv. 1536) die betekenis voorstelt. Vergelijken met cosine similarity.",
-      "simple": "Een embedding is een lange rij getallen (bijvoorbeeld 1536) die zegt waar een tekst over gaat, als een adres op een betekenis-kaart. Met cosine similarity kijk je of twee adressen dicht bij elkaar liggen."
+      "simple": "Een embedding is een lange rij getallen (bijvoorbeeld 1536) die zegt waar een tekst over gaat, als een adres op een betekenis-kaart. Met cosine similarity kijk je of twee adressen dicht bij elkaar liggen.",
+      "section": "5.3"
     },
     {
       "id": "5-f10",
       "front": "pgvector",
       "back": "`CREATE EXTENSION vector` · kolom `vector(1536)` · `ORDER BY embedding <=> $1 LIMIT 5` · `USING hnsw (embedding vector_cosine_ops)`",
-      "simple": "pgvector leert Postgres rekenen met embeddings. Je zet de extensie aan, maakt een kolom voor vectoren, sorteert met `<=>` op afstand (kleinst eerst) en zet er een HNSW-index op zodat zoeken snel blijft."
+      "simple": "pgvector leert Postgres rekenen met embeddings. Je zet de extensie aan, maakt een kolom voor vectoren, sorteert met `<=>` op afstand (kleinst eerst) en zet er een HNSW-index op zodat zoeken snel blijft.",
+      "section": "5.3"
     },
     {
       "id": "5-f11",
       "front": "Chunking",
       "back": "Stukken met overlap (bv. 800/150). Beter: structuur volgen (koppen, pagina's) en metadata opslaan voor citaties.",
-      "simple": "Je knipt teksten in stukken die een beetje overlappen, zodat geen zin op de knip verloren gaat. Nog beter is knippen langs de natuurlijke grenzen zoals koppen en pagina's, en per stuk opschrijven waar het vandaan kwam, zodat je later netjes de bron kunt noemen."
+      "simple": "Je knipt teksten in stukken die een beetje overlappen, zodat geen zin op de knip verloren gaat. Nog beter is knippen langs de natuurlijke grenzen zoals koppen en pagina's, en per stuk opschrijven waar het vandaan kwam, zodat je later netjes de bron kunt noemen.",
+      "section": "5.3"
     },
     {
       "id": "5-f12",
       "front": "RAG verbeteren",
       "back": "Hybrid search (+ tsvector) · re-ranking · metadata-filters (tenant id!) · query rewriting",
-      "simple": "Je RAG wordt beter door slimmer te zoeken: ook op exacte woorden (hybrid search), de gevonden stukken nog eens netjes op volgorde zetten (re-ranking), filteren op wie iets mag zien (tenant id) en een rommelige vraag eerst herschrijven tot een goede zoekvraag."
+      "simple": "Je RAG wordt beter door slimmer te zoeken: ook op exacte woorden (hybrid search), de gevonden stukken nog eens netjes op volgorde zetten (re-ranking), filteren op wie iets mag zien (tenant id) en een rommelige vraag eerst herschrijven tot een goede zoekvraag.",
+      "section": "5.3"
     },
     {
       "id": "5-f13",
       "front": "Streaming",
       "back": "Generator die `data: {json}\\n\\n` yieldt → `StreamingResponse(..., media_type=\"text/event-stream\")`.",
-      "simple": "Een generator geeft steeds een klein stukje antwoord, elk in de vorm `data: ...` met een lege regel erachter. `StreamingResponse` met type `text/event-stream` stuurt die stukjes direct door, zodat de gebruiker het antwoord ziet verschijnen terwijl het nog geschreven wordt."
+      "simple": "Een generator geeft steeds een klein stukje antwoord, elk in de vorm `data: ...` met een lege regel erachter. `StreamingResponse` met type `text/event-stream` stuurt die stukjes direct door, zodat de gebruiker het antwoord ziet verschijnen terwijl het nog geschreven wordt.",
+      "section": "5.4"
     },
     {
       "id": "5-f14",
       "front": "Productieklaar",
       "back": "Timeouts en retries · caching op hash van de prompt · async + gather · guard-rails tegen prompt injection · kostenbeheer",
-      "simple": "Klaar voor echt gebruik betekent: niet eeuwig wachten (timeouts) en het nog eens proberen bij een hapering (retries), hetzelfde antwoord hergebruiken bij dezelfde prompt (caching), meerdere calls tegelijk doen (async), je beschermen tegen trucjes in teksten en de kosten in de gaten houden."
+      "simple": "Klaar voor echt gebruik betekent: niet eeuwig wachten (timeouts) en het nog eens proberen bij een hapering (retries), hetzelfde antwoord hergebruiken bij dezelfde prompt (caching), meerdere calls tegelijk doen (async), je beschermen tegen trucjes in teksten en de kosten in de gaten houden.",
+      "section": "5.4"
     },
     {
       "id": "5-f15",
       "front": "Evaluatie",
       "back": "Retrieval: recall@k · generatie: correct, gegrond, toon · structured: schema-valid rate · systeem: latency p50/p95, tokens, errors",
-      "simple": "Je kijkt elk onderdeel apart na, zoals een rapport met vakken: vond het zoeken het goede stuk (recall@k), klopt het antwoord en komt het uit de bronnen, is de JSON geldig, en hoe snel en duur is het geheel. Zo weet je precies waar het misgaat."
+      "simple": "Je kijkt elk onderdeel apart na, zoals een rapport met vakken: vond het zoeken het goede stuk (recall@k), klopt het antwoord en komt het uit de bronnen, is de JSON geldig, en hoe snel en duur is het geheel. Zo weet je precies waar het misgaat.",
+      "section": "5.5"
     },
     {
       "id": "5-f16",
       "front": "Observability",
       "back": "Elke call één record: request_id, user_id, model, prompt_version, tokens, latency_ms, chunk ids. Prompts versioneren in Git.",
-      "simple": "Per call schrijf je één regel in het logboek met alles wat je later nodig hebt: wie, welk model, welke promptversie, hoeveel tokens, hoe lang het duurde en welke chunks erbij zaten. Je prompts bewaar je in Git, zodat je altijd weet welke versie welk antwoord gaf."
+      "simple": "Per call schrijf je één regel in het logboek met alles wat je later nodig hebt: wie, welk model, welke promptversie, hoeveel tokens, hoe lang het duurde en welke chunks erbij zaten. Je prompts bewaar je in Git, zodat je altijd weet welke versie welk antwoord gaf.",
+      "section": "5.5"
     }
   ],
   "typing": [
@@ -722,7 +773,8 @@
         "temperature 0"
       ],
       "explanation": "Met `temperature=0` kiest het model steeds de meest waarschijnlijke tokens. Handig voor extractie en tests.",
-      "simple": "Temperature is de creativiteitsknop. Op 0 kiest het model steeds het meest voor de hand liggende woord."
+      "simple": "Temperature is de creativiteitsknop. Op 0 kiest het model steeds het meest voor de hand liggende woord.",
+      "section": "5.1"
     },
     {
       "id": "5-t1",
@@ -733,7 +785,8 @@
       ],
       "exact": true,
       "explanation": "`max_tokens` begrenst hoeveel tokens het model mag genereren. Zonder grens kan één call onverwacht duur worden.",
-      "simple": "Je zegt vooraf: je mag maximaal zoveel woorden gebruiken. Zo weet je dat de rekening niet ontploft."
+      "simple": "Je zegt vooraf: je mag maximaal zoveel woorden gebruiken. Zo weet je dat de rekening niet ontploft.",
+      "section": "5.1"
     },
     {
       "id": "5-t2",
@@ -745,7 +798,8 @@
         "Model.model_validate_json"
       ],
       "explanation": "`Model.model_validate_json(raw)` parset en valideert in één stap. Bij fouten krijg je een `ValidationError`.",
-      "simple": "Pydantic leest de tekst van het model en checkt of alles klopt met jouw formulier. Zo niet, dan krijg je een duidelijke foutmelding."
+      "simple": "Pydantic leest de tekst van het model en checkt of alles klopt met jouw formulier. Zo niet, dan krijg je een duidelijke foutmelding.",
+      "section": "5.2"
     },
     {
       "id": "5-t3",
@@ -758,7 +812,8 @@
         "cosinusgelijkenis"
       ],
       "explanation": "Cosine similarity meet de hoek tussen twee vectoren: hoe kleiner de hoek, hoe meer de betekenis lijkt.",
-      "simple": "Twee pijlen die dezelfde kant op wijzen, betekenen ongeveer hetzelfde. Cosine meet hoe gelijk die richting is."
+      "simple": "Twee pijlen die dezelfde kant op wijzen, betekenen ongeveer hetzelfde. Cosine meet hoe gelijk die richting is.",
+      "section": "5.3"
     },
     {
       "id": "5-t4",
@@ -770,7 +825,8 @@
       ],
       "exact": true,
       "explanation": "`CREATE EXTENSION vector` geeft je het kolomtype `vector(1536)` en operators zoals `<=>` voor cosine distance.",
-      "simple": "Een uitbreiding die Postgres leert om met lijsten getallen te zoeken naar wat qua betekenis het dichtst bij ligt."
+      "simple": "Een uitbreiding die Postgres leert om met lijsten getallen te zoeken naar wat qua betekenis het dichtst bij ligt.",
+      "section": "5.3"
     },
     {
       "id": "5-t5",
@@ -781,7 +837,8 @@
         "Retrieval Augmented Generation"
       ],
       "explanation": "Retrieval-Augmented Generation: eerst relevante stukken ophalen, dan het model laten antwoorden op basis daarvan.",
-      "simple": "Eerst opzoeken, dan antwoorden. Zoals een open-boek-toets."
+      "simple": "Eerst opzoeken, dan antwoorden. Zoals een open-boek-toets.",
+      "section": "5.3"
     },
     {
       "id": "5-t6",
@@ -792,7 +849,8 @@
         "Indexeren: chunken, embedden, opslaan",
         "Ophalen: dichtstbijzijnde chunks bij de vraag",
         "Genereren: alleen uit die chunks, met bronnen"
-      ]
+      ],
+      "section": "5.3"
     },
     {
       "id": "5-t7",
@@ -803,7 +861,8 @@
         "`ValidationError` vangen",
         "Foutmelding terugsturen en opnieuw proberen",
         "Maximum aantal pogingen"
-      ]
+      ],
+      "section": "5.2"
     },
     {
       "id": "5-t8",
@@ -814,7 +873,8 @@
         "Het model kan verkeerde of gemanipuleerde argumenten sturen",
         "Argumenten valideren met Pydantic",
         "Bevestiging door een mens of een allow-list"
-      ]
+      ],
+      "section": "5.2"
     },
     {
       "id": "5-t9",
@@ -825,7 +885,9 @@
         "De API onthoudt niets tussen calls",
         "Elke call de geschiedenis meesturen",
         "Opslaan met TTL en inkorten als het lang wordt"
-      ]
+      ],
+      "section": "5.2"
     }
-  ]
+  ],
+  "puzzles": []
 }

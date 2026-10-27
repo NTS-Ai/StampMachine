@@ -1,0 +1,1431 @@
+{
+  "week": 1,
+  "title": "Python basis & developer setup",
+  "sections": [
+    {
+      "id": "1.1",
+      "title": "Developer setup: WSL2, Ubuntu, VS Code, Python en Git",
+      "summary": "Je richt een professionele werkomgeving in: Ubuntu via WSL2, VS Code als editor, de terminal als gereedschap en Git met GitHub voor versiebeheer.",
+      "minutes": 60,
+      "simple": "Simpel gezegd: voordat je gaat timmeren, richt je eerst je werkplaats in. Windows is je bureau, Ubuntu (via WSL2) is de werkplaats waar je code draait, en VS Code is de deur tussen die twee. Git is je fotoalbum: het bewaart momentopnames van je project, zodat je altijd terug kunt.",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Waarom Linux, en wat is WSL2?"
+        },
+        {
+          "type": "p",
+          "text": "Professioneel Python-werk gebeurt bijna altijd op Linux-achtige systemen. Servers, Docker-containers en de meeste tutorials gaan uit van een Unix-shell. Werk je op Windows, dan geeft **WSL2** (Windows Subsystem for Linux) je het beste van twee werelden: een volwaardige Ubuntu die binnen Windows draait. Alles wat je in deze training gebruikt, van Python tot Docker, Postgres en Redis, draait daarin."
+        },
+        {
+          "type": "p",
+          "text": "De installatie doe je één keer. Open PowerShell als Administrator en voer dit commando uit:"
+        },
+        {
+          "type": "code",
+          "lang": "bash",
+          "code": "wsl --install -d Ubuntu",
+          "caption": "In PowerShell als Administrator, dus nog niet in Ubuntu."
+        },
+        {
+          "type": "p",
+          "text": "Herstart de computer als daarom gevraagd wordt. Bij de eerste start vraagt Ubuntu om een gebruikersnaam en een wachtwoord. Kies een korte naam in kleine letters en onthoud het wachtwoord: `sudo` vraagt erom zodra je iets met beheerdersrechten doet. Werk daarna de pakketlijsten bij en installeer de basisgereedschappen:"
+        },
+        {
+          "type": "code",
+          "lang": "bash",
+          "code": "$ sudo apt update && sudo apt upgrade -y\n$ sudo apt install -y build-essential curl git python3 python3-venv python3-pip\n$ python3 --version\nPython 3.12.3",
+          "caption": "In de Ubuntu-terminal. Je versienummer kan iets afwijken."
+        },
+        {
+          "type": "note",
+          "tone": "info",
+          "text": "`apt` is de pakketbeheerder van Ubuntu: daarmee installeer je software. `sudo` voert één commando uit met beheerdersrechten, en daarom vraagt het om je wachtwoord."
+        },
+        {
+          "type": "h",
+          "text": "VS Code koppelen aan WSL"
+        },
+        {
+          "type": "p",
+          "text": "Installeer Visual Studio Code aan de Windows-kant en voeg deze extensies toe: WSL (van Microsoft), Python, Pylance, Docker en GitLens. Vanuit een Ubuntu-terminal maak je daarna een projectmap en open je die in de editor:"
+        },
+        {
+          "type": "code",
+          "lang": "bash",
+          "code": "mkdir -p ~/projects/week1 && cd ~/projects/week1\ncode ."
+        },
+        {
+          "type": "p",
+          "text": "Linksonder in VS Code hoort nu **WSL: Ubuntu** te staan. Het venster draait dan op Windows, maar je bestanden, de terminal en Python leven in Linux."
+        },
+        {
+          "type": "note",
+          "tone": "warn",
+          "text": "Bewaar je projecten in je Linux home-map (`~/projects`) en niet onder `/mnt/c/...`. Dat laatste is de Windows-schijf: daar is alles veel trager en loop je tegen problemen met bestandsrechten aan."
+        },
+        {
+          "type": "h",
+          "text": "De terminal: de belangrijkste commando's"
+        },
+        {
+          "type": "p",
+          "text": "Je brengt veel tijd door in de shell. Met dit handjevol commando's kom je al een heel eind:"
+        },
+        {
+          "type": "table",
+          "head": [
+            "Commando",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`pwd`",
+              "toon de map waarin je nu staat (print working directory)",
+              "`pwd`"
+            ],
+            [
+              "`ls -la`",
+              "toon alle bestanden, ook de verborgen",
+              "`ls -la ~/projects`"
+            ],
+            [
+              "`cd <map>`",
+              "ga naar een map; `..` is een niveau omhoog, `~` is je home",
+              "`cd ~/projects/week1`"
+            ],
+            [
+              "`mkdir -p a/b`",
+              "maak mappen aan, inclusief tussenliggende mappen",
+              "`mkdir -p src/tests`"
+            ],
+            [
+              "`touch f.py`",
+              "maak een leeg bestand",
+              "`touch main.py`"
+            ],
+            [
+              "`cat f.py`",
+              "toon de inhoud van een bestand",
+              "`cat main.py`"
+            ],
+            [
+              "`rm -r map`",
+              "verwijder een map met alles erin",
+              "`rm -r build`"
+            ],
+            [
+              "`python3 f.py`",
+              "voer een Python-script uit",
+              "`python3 main.py`"
+            ],
+            [
+              "Ctrl + C",
+              "stop het programma dat nu draait",
+              "-"
+            ],
+            [
+              "Tab",
+              "vul een bestands- of commandonaam automatisch aan",
+              "-"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "tone": "warn",
+          "text": "De shell heeft geen prullenbak. Wat je met `rm` verwijdert, ben je echt kwijt. Kijk dus goed voordat je op Enter drukt."
+        },
+        {
+          "type": "h",
+          "text": "Git en GitHub"
+        },
+        {
+          "type": "p",
+          "text": "**Git** is een versiebeheersysteem. Het legt momentopnames van je project vast, die je **commits** noemt. Zo kun je terug naar een eerdere versie, wijzigingen vergelijken en samenwerken. **GitHub** bewaart Git-repositories online; elke assessment lever je daar in. Maak een gratis account aan en stel Git eenmalig in met je naam, je e-mailadres en `main` als standaardbranch:"
+        },
+        {
+          "type": "code",
+          "lang": "bash",
+          "code": "git config --global user.name \"Jouw Naam\"\ngit config --global user.email \"jij@example.com\"\ngit config --global init.defaultBranch main"
+        },
+        {
+          "type": "p",
+          "text": "Maak op GitHub een lege repository voor je trainingswerk, zonder README. Op je eigen machine maak je een map, zet je er een eerste bestand in, maak je je eerste commit en koppel je de map aan GitHub:"
+        },
+        {
+          "type": "code",
+          "lang": "bash",
+          "code": "mkdir -p ~/projects/python-training && cd ~/projects/python-training\ngit init\necho \"# Python training\" > README.md\ngit add README.md\ngit commit -m \"Initial commit\"\ngit remote add origin git@github.com:<jouw-gebruikersnaam>/python-training.git\ngit push -u origin main"
+        },
+        {
+          "type": "p",
+          "text": "Klaagt `git push` over rechten, dan heeft GitHub nog geen SSH key van je. Maak er een aan en druk drie keer op Enter om de standaardinstellingen te accepteren. Kopieer daarna de inhoud van het publieke deel (`~/.ssh/id_ed25519.pub`) naar GitHub, onder Settings bij SSH and GPG keys."
+        },
+        {
+          "type": "code",
+          "lang": "bash",
+          "code": "ssh-keygen -t ed25519 -C \"jij@example.com\"\ncat ~/.ssh/id_ed25519.pub"
+        },
+        {
+          "type": "h",
+          "text": "De dagelijkse Git-cyclus"
+        },
+        {
+          "type": "p",
+          "text": "Aan het eind van elke sessie doe je hetzelfde rondje, ook als je werk nog niet af is. Zo staat alles veilig op GitHub:"
+        },
+        {
+          "type": "code",
+          "lang": "bash",
+          "code": "git status                          # wat is er veranderd?\ngit add -A                          # zet alle wijzigingen klaar\ngit commit -m \"Week 1: contactenboek v1\"\ngit push                            # stuur je commits naar GitHub"
+        },
+        {
+          "type": "note",
+          "tone": "tip",
+          "text": "Schrijf commitberichten die zeggen wat je gedaan hebt, zoals `Zoekfunctie toegevoegd`. Over een paar weken ben je blij dat er niet tien keer `update` staat."
+        }
+      ],
+      "takeaways": [
+        "Windows is je bureau, Ubuntu in WSL2 is waar je code draait, en VS Code verbindt de twee.",
+        "Bewaar projecten in `~/projects` en niet onder `/mnt/c`.",
+        "Met `pwd`, `ls`, `cd`, `mkdir`, `cat` en `rm` red je je in de shell; `rm` heeft geen prullenbak.",
+        "Git legt commits vast, GitHub bewaart ze online; bij een rechtenfout heb je een SSH key nodig.",
+        "Sluit elke sessie af met `git status`, `git add -A`, `git commit` en `git push`."
+      ],
+      "links": [
+        {
+          "label": "W3Schools — Git Tutorial",
+          "url": "https://www.w3schools.com/git/"
+        },
+        {
+          "label": "W3Schools — Git Intro",
+          "url": "https://www.w3schools.com/git/git_intro.asp"
+        },
+        {
+          "label": "Visual Studio Code",
+          "url": "https://code.visualstudio.com/"
+        }
+      ],
+      "tags": [
+        "WSL2",
+        "Ubuntu",
+        "VS Code",
+        "terminal",
+        "shell",
+        "Git",
+        "GitHub",
+        "SSH key",
+        "commit"
+      ]
+    },
+    {
+      "id": "1.2",
+      "title": "Je eerste programma: variabelen, types, strings, input en output",
+      "summary": "Je leert hoe je Python uitvoert, hoe variabelen en datatypes werken, hoe je rekent en vergelijkt, en hoe je met strings, f-strings en invoer van de gebruiker omgaat.",
+      "minutes": 60,
+      "simple": "Simpel gezegd: een variabele is een etiket dat je op een doos plakt, zodat je de inhoud later terugvindt. Het type vertelt wat voor spul er in de doos zit: een heel getal, een kommagetal, tekst of ja/nee. Met `print()` laat je iets zien en met `input()` stel je de gebruiker een vraag.",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Python is een geïnterpreteerde, dynamisch getypeerde taal op hoog niveau. Vrij vertaald: je schrijft leesbare tekst, Python voert die regel voor regel uit, je hoeft niet vooraf op te geven welk type een variabele heeft, en veel technische details worden voor je geregeld. Dat maakt Python een fijne eerste taal, en het is ook de taal waarin het meeste AI-werk gebeurt."
+        },
+        {
+          "type": "h",
+          "text": "Python uitvoeren"
+        },
+        {
+          "type": "p",
+          "text": "Er zijn drie manieren om Python te draaien, en je gaat ze alle drie gebruiken:"
+        },
+        {
+          "type": "list",
+          "ordered": true,
+          "items": [
+            "De **REPL**: typ `python3` en je krijgt een `>>>`-prompt waar je meteen resultaat ziet. Met `exit()` ga je er weer uit.",
+            "Een **script** uitvoeren: `python3 hello.py` draait alle regels in het bestand.",
+            "Een **one-liner** vanuit de shell: `python3 -c \"print('hoi')\"`."
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Maak in VS Code een bestand `hello.py` met de volgende inhoud en voer het uit:"
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "# hello.py: mijn eerste programma\nnaam = \"Sam\"\njaar = 2026\nprint(\"Hallo,\", naam)\nprint(f\"{naam} begint in {jaar} met Python.\")",
+          "output": "Hallo, Sam\nSam begint in 2026 met Python.",
+          "run": true,
+          "caption": "Let op de `f` voor de laatste string: daarmee vul je waarden in tussen `{}`."
+        },
+        {
+          "type": "h",
+          "text": "Variabelen en datatypes"
+        },
+        {
+          "type": "p",
+          "text": "Een variabele is een naam die naar een waarde wijst. Python maakt de variabele aan op het moment dat je er met `=` iets aan toekent. Dit zijn de ingebouwde types die je het vaakst tegenkomt:"
+        },
+        {
+          "type": "table",
+          "head": [
+            "Type",
+            "Voorbeeld",
+            "Let op"
+          ],
+          "rows": [
+            [
+              "`int`",
+              "`42`, `-7`, `1_000_000`",
+              "hele getallen, zo groot als je wilt"
+            ],
+            [
+              "`float`",
+              "`3.14`, `2.0`, `1e-3`",
+              "kommagetallen, binair opgeslagen: `0.1 + 0.2` is niet precies `0.3`"
+            ],
+            [
+              "`str`",
+              "`\"tekst\"`, `'tekst'`, `\"\"\"meerdere regels\"\"\"`",
+              "tekst (Unicode); kan niet ter plekke veranderd worden"
+            ],
+            [
+              "`bool`",
+              "`True`, `False`",
+              "altijd met hoofdletter"
+            ],
+            [
+              "`NoneType`",
+              "`None`",
+              "betekent 'geen waarde'; dit geeft een functie zonder `return` terug"
+            ],
+            [
+              "`list`",
+              "`[1, 2, 3]`",
+              "geordend en aanpasbaar (les 1.4)"
+            ],
+            [
+              "`dict`",
+              "`{\"a\": 1}`",
+              "koppelt keys aan waarden (les 1.4)"
+            ]
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "leeftijd = 31            # int\nlengte = 1.75            # float\nvoornaam = \"Noor\"        # str\nis_stagiair = False      # bool\nniets = None             # NoneType\n\nprint(type(leeftijd), type(lengte), type(voornaam))\nprint(type(is_stagiair), type(niets))\nprint(0.1 + 0.2)",
+          "output": "<class 'int'> <class 'float'> <class 'str'>\n<class 'bool'> <class 'NoneType'>\n0.30000000000000004",
+          "run": true,
+          "caption": "Twijfel je over een type? Vraag het op met `type()`."
+        },
+        {
+          "type": "p",
+          "text": "Een waarde omzetten naar een ander type heet **casting**. Dat doe je expliciet met `int()`, `float()` en `str()`. Twee dingen verrassen beginners vaak: `int()` kapt de decimalen af in plaats van af te ronden, en `round()` rondt een getal dat precies op .5 eindigt af naar het dichtstbijzijnde **even** getal (banker's rounding)."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "print(int(\"10\") + 5)\nprint(float(\"2.5\") * 4)\nprint(str(7) + \" dagen\")\nprint(int(9.99))\nprint(round(1.5), round(2.5), round(3.5))",
+          "output": "15\n10.0\n7 dagen\n9\n2 2 4",
+          "run": true
+        },
+        {
+          "type": "p",
+          "text": "Een naam bestaat uit letters, cijfers en underscores, mag niet met een cijfer beginnen en is hoofdlettergevoelig: `Score` en `score` zijn twee verschillende variabelen. De stijlgids **PEP 8** spreekt af: `snake_case` voor variabelen en functies, `UPPER_CASE` voor constanten en `PascalCase` voor classes. Kies een naam die zegt wat erin zit: `aantal_klanten` vertelt meer dan `ak`."
+        },
+        {
+          "type": "h",
+          "text": "Operators"
+        },
+        {
+          "type": "p",
+          "text": "Python heeft rekenkundige operators, vergelijkingen (die altijd een `bool` opleveren) en logische operators. Let vooral op het verschil tussen `/`, dat altijd een float geeft, en `//`, dat naar beneden afrondt op een heel getal."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "print(9 + 4, 9 - 4, 9 * 4, 9 / 4)\nprint(9 // 4, 9 % 4, 9 ** 2)\nprint(3 == 3, 3 != 4, 7 > 2, 4 <= 3)\nprint(True and False, True or False, not False)\n\nteller = 0\nteller += 5    # hetzelfde als teller = teller + 5\nteller *= 3\nprint(teller)",
+          "output": "13 5 36 2.25\n2 1 81\nTrue True True False\nFalse True True\n15",
+          "run": true
+        },
+        {
+          "type": "table",
+          "head": [
+            "Operator",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`/`",
+              "delen, geeft altijd een float",
+              "`9 / 4` is `2.25`"
+            ],
+            [
+              "`//`",
+              "floor division: delen en naar beneden afronden",
+              "`9 // 4` is `2`"
+            ],
+            [
+              "`%`",
+              "modulo: de rest van de deling",
+              "`9 % 4` is `1`"
+            ],
+            [
+              "`**`",
+              "machtsverheffen",
+              "`9 ** 2` is `81`"
+            ],
+            [
+              "`==`, `!=`",
+              "gelijk aan, niet gelijk aan",
+              "`3 == 3` is `True`"
+            ],
+            [
+              "`<`, `>`, `<=`, `>=`",
+              "kleiner, groter, kleiner of gelijk, groter of gelijk",
+              "`4 <= 3` is `False`"
+            ],
+            [
+              "`and`, `or`, `not`",
+              "logisch en, of, niet",
+              "`not False` is `True`"
+            ],
+            [
+              "`+=`, `-=`, `*=`",
+              "een variabele bijwerken",
+              "`x += 1` verhoogt `x` met 1"
+            ]
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Strings"
+        },
+        {
+          "type": "p",
+          "text": "Strings kom je overal tegen: invoer van gebruikers, bestandspaden, JSON en prompts voor taalmodellen. De belangrijkste bewerkingen:"
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "s = \"  Python is leuk  \"\nprint(len(s))\nprint(s.strip())\nprint(s.strip().upper(), s.strip().lower())\nprint(s.strip().split(\" \"))\nprint(\"+\".join([\"x\", \"y\", \"z\"]))\nprint(\"leuk\" in s)\nprint(s.strip().replace(\"leuk\", \"krachtig\"))\nprint(s.strip().startswith(\"Py\"), s.strip().endswith(\"!\"))",
+          "output": "18\nPython is leuk\nPYTHON IS LEUK python is leuk\n['Python', 'is', 'leuk']\nx+y+z\nTrue\nPython is krachtig\nTrue False",
+          "run": true
+        },
+        {
+          "type": "table",
+          "head": [
+            "Bewerking",
+            "Wat het doet",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`len(s)`",
+              "aantal tekens, spaties tellen mee",
+              "`len(\"ab \")` is `3`"
+            ],
+            [
+              "`s.strip()`",
+              "witruimte aan begin en eind weghalen",
+              "`\" a \".strip()` is `'a'`"
+            ],
+            [
+              "`s.lower()`, `s.upper()`",
+              "alles naar kleine of hoofdletters",
+              "`\"Ab\".upper()` is `'AB'`"
+            ],
+            [
+              "`s.split(sep)`",
+              "opknippen tot een list",
+              "`\"a b\".split(\" \")` is `['a', 'b']`"
+            ],
+            [
+              "`sep.join(list)`",
+              "een list aan elkaar plakken",
+              "`\"-\".join([\"a\", \"b\"])` is `'a-b'`"
+            ],
+            [
+              "`s.replace(a, b)`",
+              "elk stukje `a` vervangen door `b`",
+              "`\"aa\".replace(\"a\", \"o\")` is `'oo'`"
+            ],
+            [
+              "`s.startswith(x)`, `s.endswith(x)`",
+              "begint of eindigt `s` met `x`?",
+              "`\"py\".startswith(\"p\")` is `True`"
+            ],
+            [
+              "`x in s`",
+              "komt `x` ergens in `s` voor?",
+              "`\"th\" in \"Python\"` is `True`"
+            ]
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Met **indexing** pak je één teken, met **slicing** een stuk. Tellen begint bij 0, de eindindex telt niet mee en negatieve getallen tellen vanaf het einde. Een stap van `-1` loopt achteruit."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "woord = \"Kennis\"\nprint(woord[0], woord[-1])\nprint(woord[0:3], woord[3:])\nprint(woord[::-1])",
+          "output": "K s\nKen nis\nsinneK",
+          "run": true
+        },
+        {
+          "type": "note",
+          "tone": "warn",
+          "text": "Strings zijn **immutable**: `woord[0] = \"Z\"` geeft een `TypeError`. Elke string-methode levert een nieuwe string op en laat het origineel ongemoeid. `s.upper()` verandert `s` dus niet; schrijf `s = s.upper()` als je het resultaat wilt bewaren."
+        },
+        {
+          "type": "h",
+          "text": "f-strings en opmaak"
+        },
+        {
+          "type": "p",
+          "text": "Met een **f-string** zet je een `f` voor de aanhalingstekens en schrijf je expressies tussen `{}`. Na een dubbele punt geef je de opmaak op: duizendtallen scheiden, aantal decimalen, uitlijning in een vak van vaste breedte of een percentage."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "bedrag = 98765.4\nprint(f\"Bedrag: {bedrag:,.2f}\")\nprint(f\"[{'links':<8}][{'rechts':>8}]\")\nprint(f\"Score: {0.873:.1%}\")\nprint(f\"Volgend jaar: {30 + 1}\")",
+          "output": "Bedrag: 98,765.40\n[links   ][  rechts]\nScore: 87.3%\nVolgend jaar: 31",
+          "run": true
+        },
+        {
+          "type": "table",
+          "head": [
+            "Opmaak",
+            "Betekenis",
+            "Resultaat"
+          ],
+          "rows": [
+            [
+              "`{x:.2f}`",
+              "twee decimalen",
+              "`3.14159` wordt `3.14`"
+            ],
+            [
+              "`{x:,.2f}`",
+              "duizendtalscheiding plus twee decimalen",
+              "`1234.5` wordt `1,234.50`"
+            ],
+            [
+              "`{t:<8}`",
+              "links uitlijnen in een vak van 8 tekens",
+              "`'ab      '`"
+            ],
+            [
+              "`{t:>8}`",
+              "rechts uitlijnen in een vak van 8 tekens",
+              "`'      ab'`"
+            ],
+            [
+              "`{x:.1%}`",
+              "als percentage met één decimaal",
+              "`0.256` wordt `25.6%`"
+            ],
+            [
+              "`{n:4d}`",
+              "heel getal in een vak van 4 tekens",
+              "`7` wordt `'   7'`"
+            ]
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Input en output"
+        },
+        {
+          "type": "p",
+          "text": "`print()` schrijft naar het scherm. `input()` toont een vraag en wacht tot de gebruiker iets typt en op Enter drukt. Wat je terugkrijgt is **altijd een string**, ook als de gebruiker een getal intypt. Wil je ermee rekenen, dan zet je het zelf om."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "naam = input(\"Hoe heet je? \")                 # altijd een str\nleeftijd = int(input(\"Hoe oud ben je? \"))     # zelf omzetten naar int\nprint(f\"Hoi {naam}, volgend jaar ben je {leeftijd + 1}.\")",
+          "caption": "Draai dit lokaal in je terminal: `input()` wacht op toetsenbordinvoer."
+        }
+      ],
+      "takeaways": [
+        "Alles in Python is een object met een type; met `type()` controleer je welk.",
+        "Zet types expliciet om met `int()`, `float()` en `str()`; `int()` kapt af en `round()` rondt .5 naar het even getal.",
+        "`/` geeft altijd een float, `//` deelt naar beneden af en `%` geeft de rest.",
+        "Strings zijn immutable: elke methode geeft een nieuwe string terug.",
+        "Gebruik f-strings voor nette uitvoer, en onthoud dat `input()` altijd een string oplevert."
+      ],
+      "exercise": "Schrijf `receipt.py`: vraag om een productnaam, een stukprijs en een aantal, en print één bonregel met het totaal inclusief 21% btw, rechts uitgelijnd en met twee decimalen.",
+      "links": [
+        {
+          "label": "W3Schools — Python Variables",
+          "url": "https://www.w3schools.com/python/python_variables.asp"
+        },
+        {
+          "label": "W3Schools — Python Data Types",
+          "url": "https://www.w3schools.com/python/python_datatypes.asp"
+        },
+        {
+          "label": "W3Schools — Python Casting",
+          "url": "https://www.w3schools.com/python/python_casting.asp"
+        },
+        {
+          "label": "W3Schools — Python Strings",
+          "url": "https://www.w3schools.com/python/python_strings.asp"
+        },
+        {
+          "label": "W3Schools — Python String Formatting",
+          "url": "https://www.w3schools.com/python/python_string_formatting.asp"
+        },
+        {
+          "label": "W3Schools — Python Operators",
+          "url": "https://www.w3schools.com/python/python_operators.asp"
+        },
+        {
+          "label": "W3Schools — Python User Input",
+          "url": "https://www.w3schools.com/python/python_user_input.asp"
+        }
+      ],
+      "tags": [
+        "variabelen",
+        "datatypes",
+        "casting",
+        "operators",
+        "strings",
+        "slicing",
+        "f-strings",
+        "input",
+        "PEP 8"
+      ]
+    },
+    {
+      "id": "1.3",
+      "title": "Beslissen en herhalen: conditionals en loops",
+      "summary": "Je laat een programma keuzes maken met if, elif en else, en je herhaalt werk met while- en for-loops, inclusief break, continue, range() en enumerate().",
+      "minutes": 60,
+      "simple": "Simpel gezegd: een `if` is een wegwijzer: regent het, dan neem je een paraplu, anders je zonnebril. Een loop is rondjes lopen op een atletiekbaan tot je klaar bent. Met `break` stap je van de baan af, met `continue` sla je de rest van één rondje over.",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Programma's nemen beslissingen en herhalen werk. Python geeft blokken code niet aan met accolades, maar met **inspringing** van vier spaties. Die inspringing is dus echte syntax. Wees er consequent in: anders krijg je een `IndentationError`, of erger, code die iets anders doet dan je bedoelt."
+        },
+        {
+          "type": "h",
+          "text": "if, elif en else"
+        },
+        {
+          "type": "p",
+          "text": "Python test de voorwaarden van boven naar beneden en voert alleen het eerste blok uit waarvan de voorwaarde waar is. `elif` en `else` zijn optioneel. Voorwaarden kun je combineren met `and`, `or` en `not`."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "temperatuur = 24\n\nif temperatuur > 30:\n    print(\"Heet: zet de airco aan\")\nelif temperatuur > 20:\n    print(\"Aangenaam\")\nelse:\n    print(\"Koud\")\n\nuur, is_weekend = 10, False\nif 9 <= uur < 17 and not is_weekend:\n    print(\"De winkel is open\")",
+          "output": "Aangenaam\nDe winkel is open",
+          "run": true
+        },
+        {
+          "type": "note",
+          "tone": "tip",
+          "text": "Python mag vergelijkingen aan elkaar rijgen: `9 <= uur < 17` betekent hetzelfde als `9 <= uur and uur < 17`, maar leest veel prettiger."
+        },
+        {
+          "type": "h",
+          "text": "Truthiness en de conditional expression"
+        },
+        {
+          "type": "p",
+          "text": "Een `if` werkt niet alleen met `True` en `False`. Elke waarde telt als waar (**truthy**) of onwaar (**falsy**). Falsy zijn `0`, een lege string, lege collecties, `None` en `False`. Al het andere is truthy, ook `[0]`: die lijst is niet leeg, want er zit een element in."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "for waarde in [0, \"\", [], None, 3, \"a\", [0]]:\n    print(repr(waarde), bool(waarde))\n\nuur = 18\nstatus = \"open\" if uur < 17 else \"gesloten\"\nprint(status)",
+          "output": "0 False\n'' False\n[] False\nNone False\n3 True\n'a' True\n[0] True\ngesloten",
+          "run": true
+        },
+        {
+          "type": "p",
+          "text": "De laatste regels tonen een **conditional expression**, ook wel ternary genoemd: een if/else in één expressie die meteen een waarde oplevert. Handig voor korte keuzes; voor alles wat langer is, schrijf je een gewone `if`."
+        },
+        {
+          "type": "h",
+          "text": "while-loops"
+        },
+        {
+          "type": "p",
+          "text": "Een `while`-loop herhaalt zijn blok zolang de voorwaarde waar is. Met `break` verlaat je de loop meteen. Een `while` kan ook een `else` hebben: dat blok draait alleen als de loop eindigt **zonder** `break`. Dat is handig voor een melding als 'niet gevonden' of 'te veel pogingen'."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "geheim = 7\ngokken = [3, 9, 7]      # in een echt programma komen deze uit input()\npogingen = 0\n\nwhile pogingen < len(gokken):\n    gok = gokken[pogingen]\n    pogingen += 1\n    if gok == geheim:\n        print(f\"Geraden in {pogingen} pogingen\")\n        break\nelse:\n    print(\"Niet geraden\")",
+          "output": "Geraden in 3 pogingen",
+          "run": true,
+          "caption": "Zet de 7 eens om in een 8: dan draait het `else`-blok."
+        },
+        {
+          "type": "note",
+          "tone": "warn",
+          "text": "Zorg dat de voorwaarde ooit onwaar wordt, hier met `pogingen += 1`. Vergeet je dat, dan draait de loop eindeloos. Stop zo'n programma met Ctrl + C."
+        },
+        {
+          "type": "h",
+          "text": "for-loops en range()"
+        },
+        {
+          "type": "p",
+          "text": "Een `for`-loop loopt langs alles wat **iterable** is: strings, lists, ranges, en later ook regels in een bestand of rijen uit een database. `range(start, stop, stap)` maakt een reeks getallen waarbij de stopwaarde zelf niet meedoet. Met `enumerate()` krijg je bij elk element ook een volgnummer."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "for letter in \"hoi\":\n    print(letter)\n\nprint(list(range(4)))\nprint(list(range(3, 13, 3)))\n\nfor nummer, naam in enumerate([\"Sem\", \"Lotte\", \"Ravi\"], start=1):\n    print(f\"{nummer}. {naam}\")",
+          "output": "h\no\ni\n[0, 1, 2, 3]\n[3, 6, 9, 12]\n1. Sem\n2. Lotte\n3. Ravi",
+          "run": true
+        },
+        {
+          "type": "p",
+          "text": "Met `continue` sla je de rest van de huidige ronde over en ga je meteen door naar de volgende. Dit voorbeeld telt de getallen 1 tot en met 20 bij elkaar op, behalve de veelvouden van 5:"
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "totaal = 0\nfor n in range(1, 21):\n    if n % 5 == 0:\n        continue\n    totaal += n\nprint(totaal)",
+          "output": "160",
+          "run": true
+        },
+        {
+          "type": "table",
+          "head": [
+            "Onderdeel",
+            "Wat het doet"
+          ],
+          "rows": [
+            [
+              "`break`",
+              "verlaat de loop direct"
+            ],
+            [
+              "`continue`",
+              "slaat de rest van deze ronde over, de loop gaat door"
+            ],
+            [
+              "`else` na een loop",
+              "draait alleen als de loop eindigde zonder `break`"
+            ],
+            [
+              "`range(n)`",
+              "de getallen 0 tot en met n - 1"
+            ],
+            [
+              "`range(a, b, stap)`",
+              "van a tot (niet tot en met) b, in stappen van `stap`"
+            ],
+            [
+              "`enumerate(x, start=1)`",
+              "levert paren (volgnummer, element)"
+            ]
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Veelgebruikte patronen"
+        },
+        {
+          "type": "p",
+          "text": "Een paar patronen kom je steeds weer tegen: tellen, het grootste element zoeken en een loop binnen een loop (nested loop)."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "# Tellen\nklinkers = 0\nfor letter in \"programmeren\":\n    if letter in \"aeiou\":\n        klinkers += 1\nprint(klinkers)\n\n# Het maximum zoeken (later gebruik je hiervoor max())\nmetingen = [7.5, 12.25, 3.0, 9.75]\nhoogste = metingen[0]\nfor m in metingen:\n    if m > hoogste:\n        hoogste = m\nprint(hoogste)",
+          "output": "4\n12.25",
+          "run": true
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "# Nested loops: een kleine tafel van vermenigvuldiging\nfor rij in range(1, 4):\n    regel = \"\"\n    for kolom in range(1, 5):\n        regel += f\"{rij * kolom:4d}\"\n    print(regel)",
+          "output": "   1   2   3   4\n   2   4   6   8\n   3   6   9  12",
+          "run": true
+        }
+      ],
+      "takeaways": [
+        "`if`/`elif`/`else` kiest, `while` herhaalt tot een voorwaarde verandert, `for` loopt langs een collectie.",
+        "Inspringing van vier spaties bepaalt wat bij een blok hoort.",
+        "`break` verlaat de loop, `continue` gaat door naar de volgende ronde, en `else` na een loop draait alleen zonder `break`.",
+        "Lege waarden, `0` en `None` zijn falsy; al het andere is truthy.",
+        "`range()` stopt vóór de stopwaarde; `enumerate()` geeft je er een volgnummer bij."
+      ],
+      "exercise": "Schrijf eerst FizzBuzz: print 1 tot en met 100, maar 'Fizz' bij veelvouden van 3, 'Buzz' bij veelvouden van 5 en 'FizzBuzz' bij beide. Bouw daarna een raadspel dat met `random.randint(1, 100)` een getal kiest, 'hoger' of 'lager' zegt tot de gok klopt en het aantal pogingen bijhoudt.",
+      "links": [
+        {
+          "label": "W3Schools — Python If...Else",
+          "url": "https://www.w3schools.com/python/python_conditions.asp"
+        },
+        {
+          "label": "W3Schools — Python While Loops",
+          "url": "https://www.w3schools.com/python/python_while_loops.asp"
+        },
+        {
+          "label": "W3Schools — Python For Loops",
+          "url": "https://www.w3schools.com/python/python_for_loops.asp"
+        }
+      ],
+      "tags": [
+        "if",
+        "elif",
+        "else",
+        "truthiness",
+        "while",
+        "for",
+        "range",
+        "break",
+        "continue",
+        "enumerate"
+      ]
+    },
+    {
+      "id": "1.4",
+      "title": "Collecties: lists, tuples, dictionaries en sets",
+      "summary": "Je leert de vier ingebouwde collecties van Python kennen, wat ze kunnen en wanneer je welke kiest.",
+      "minutes": 60,
+      "simple": "Simpel gezegd: een list is een boodschappenlijst die je kunt aanvullen en doorstrepen. Een tuple is het adres op een envelop: vast en niet te veranderen. Een dict is een telefoonboek waarin je op naam opzoekt, en een set is een stickeralbum waarin elke sticker maar één keer past.",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Echte programma's werken met veel waarden tegelijk: een lijst klanten, prijzen per product-id, een verzameling unieke tags. Python heeft daarvoor vier ingebouwde collecties. Het belangrijkste is weten wanneer je welke kiest."
+        },
+        {
+          "type": "table",
+          "head": [
+            "Collectie",
+            "Geordend / aanpasbaar",
+            "Duplicaten",
+            "Typisch gebruik"
+          ],
+          "rows": [
+            [
+              "list `[1, 2]`",
+              "ja / ja",
+              "ja",
+              "een reeks items die je aanvult of wijzigt"
+            ],
+            [
+              "tuple `(1, 2)`",
+              "ja / nee",
+              "ja",
+              "vaste records, meerdere returnwaarden, dict-keys"
+            ],
+            [
+              "dict `{\"k\": v}`",
+              "ja, op invoegvolgorde / ja",
+              "keys zijn uniek",
+              "een waarde opzoeken via een key: JSON, configuratie, records"
+            ],
+            [
+              "set `{1, 2}`",
+              "nee / ja",
+              "nee",
+              "snel testen of iets erin zit, dubbele waarden weghalen, verzamelingen vergelijken"
+            ]
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Lists"
+        },
+        {
+          "type": "p",
+          "text": "Een list is een geordende reeks die je kunt aanpassen. Indexing en slicing werken precies zoals bij strings, maar anders dan een string kun je een list wél ter plekke wijzigen."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "taken = [\"mail lezen\", \"bug fixen\", \"release\"]\ntaken.append(\"code review\")       # achteraan toevoegen\ntaken.insert(0, \"stand-up\")       # invoegen op positie 0\nprint(taken[0], taken[-1], len(taken))\nprint(taken[1:3])                 # slicing, net als bij strings\ntaken[2] = \"bug echt fixen\"       # een element vervangen\ntaken.remove(\"release\")           # eerste match verwijderen\nlaatste = taken.pop()             # laatste element eruit halen\nprint(laatste, taken)\nprint(\"release\" in taken)",
+          "output": "stand-up code review 5\n['mail lezen', 'bug fixen']\ncode review ['stand-up', 'mail lezen', 'bug echt fixen']\nFalse",
+          "run": true
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "cijfers = [8, 2, 6, 4]\ncijfers.sort()                        # past de lijst zelf aan\nprint(cijfers)\nprint(sorted(cijfers, reverse=True))  # geeft een nieuwe lijst\nprint(sum(cijfers), min(cijfers), max(cijfers))\nprint(cijfers.index(6), cijfers.count(2))",
+          "output": "[2, 4, 6, 8]\n[8, 6, 4, 2]\n20 2 8\n2 1",
+          "run": true
+        },
+        {
+          "type": "table",
+          "head": [
+            "Methode",
+            "Wat het doet"
+          ],
+          "rows": [
+            [
+              "`lst.append(x)`",
+              "`x` achteraan toevoegen"
+            ],
+            [
+              "`lst.insert(i, x)`",
+              "`x` invoegen op positie `i`"
+            ],
+            [
+              "`lst.remove(x)`",
+              "de eerste `x` verwijderen"
+            ],
+            [
+              "`lst.pop()`",
+              "het laatste element verwijderen en teruggeven"
+            ],
+            [
+              "`lst.sort()`",
+              "de lijst zelf sorteren"
+            ],
+            [
+              "`sorted(lst)`",
+              "een nieuwe, gesorteerde lijst maken"
+            ],
+            [
+              "`lst.index(x)`, `lst.count(x)`",
+              "positie van `x`, aantal keer `x`"
+            ],
+            [
+              "`lst.copy()`",
+              "een losse kopie maken"
+            ]
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Een klassieke valkuil: toewijzen maakt **geen** kopie. Na `b = a` hebben `a` en `b` het over dezelfde lijst. Wil je een losse kopie, gebruik dan `a.copy()`, `list(a)` of `a[:]`."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "a = [1, 2, 3]\nb = a            # geen kopie: twee namen, één lijst\nb.append(4)\nprint(a)\n\nc = a.copy()     # of list(a) of a[:]\nc.append(5)\nprint(a, c)",
+          "output": "[1, 2, 3, 4]\n[1, 2, 3, 4] [1, 2, 3, 4, 5]",
+          "run": true
+        },
+        {
+          "type": "h",
+          "text": "Tuples"
+        },
+        {
+          "type": "p",
+          "text": "Een tuple lijkt op een list, maar is immutable. Je gebruikt hem voor gegevens die bij elkaar horen en niet veranderen, zoals coördinaten. Met **unpacking** haal je de waarden er in één keer uit. Een functie die meerdere waarden teruggeeft, geeft in werkelijkheid één tuple terug."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "locatie = (51.92, 4.48)\nbreedte, lengte = locatie         # unpacking\nprint(breedte)\n\ndef kleinste_en_grootste(getallen):\n    return min(getallen), max(getallen)   # dit is een tuple\n\nlaag, hoog = kleinste_en_grootste([6, 2, 9])\nprint(laag, hoog)",
+          "output": "51.92\n2 9",
+          "run": true
+        },
+        {
+          "type": "h",
+          "text": "Dictionaries"
+        },
+        {
+          "type": "p",
+          "text": "Een dict koppelt keys aan waarden. Het is de Python-vorm van een JSON-object, een databaserij, een API-antwoord of een configuratiebestand, dus je gaat hem voortdurend gebruiken. Opzoeken met `d[key]` geeft een `KeyError` als de key niet bestaat; `d.get(key, default)` geeft dan netjes de default terug."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "klant = {\"id\": 7, \"naam\": \"Bakkerij De Korst\", \"actief\": True}\n\nprint(klant[\"naam\"])                      # KeyError als de key ontbreekt\nprint(klant.get(\"telefoon\", \"onbekend\"))  # veilig, met een default\nklant[\"telefoon\"] = \"010-1234567\"         # toevoegen of overschrijven\ndel klant[\"actief\"]\nprint(\"id\" in klant)                      # in kijkt naar de keys\n\nfor key, waarde in klant.items():\n    print(f\"{key:>8}: {waarde}\")",
+          "output": "Bakkerij De Korst\nonbekend\nTrue\n      id: 7\n    naam: Bakkerij De Korst\ntelefoon: 010-1234567",
+          "run": true
+        },
+        {
+          "type": "p",
+          "text": "Dicts en lists kun je in elkaar nesten. Zo ziet JSON eruit zodra je het in Python hebt ingelezen:"
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "bestelling = {\n    \"klant\": \"Bakkerij De Korst\",\n    \"regels\": [\n        {\"artikel\": \"meel\", \"aantal\": 3, \"prijs\": 4.50},\n        {\"artikel\": \"gist\", \"aantal\": 2, \"prijs\": 1.25},\n    ],\n}\ntotaal = 0\nfor regel in bestelling[\"regels\"]:\n    totaal += regel[\"aantal\"] * regel[\"prijs\"]\nprint(f\"Totaal: {totaal:.2f}\")",
+          "output": "Totaal: 16.00",
+          "run": true
+        },
+        {
+          "type": "p",
+          "text": "Een dict is ook ideaal om te tellen. Met `get(w, 0)` begin je bij nul als een woord nog niet bestaat:"
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "woorden = \"de kat en de hond en de muis\".split()\naantallen = {}\nfor w in woorden:\n    aantallen[w] = aantallen.get(w, 0) + 1\nprint(aantallen)",
+          "output": "{'de': 3, 'kat': 1, 'en': 2, 'hond': 1, 'muis': 1}",
+          "run": true
+        },
+        {
+          "type": "table",
+          "head": [
+            "Bewerking",
+            "Wat het doet"
+          ],
+          "rows": [
+            [
+              "`d[key]`",
+              "waarde opzoeken; `KeyError` als de key ontbreekt"
+            ],
+            [
+              "`d.get(key, default)`",
+              "veilig opzoeken met een reservewaarde"
+            ],
+            [
+              "`d[key] = waarde`",
+              "toevoegen of overschrijven"
+            ],
+            [
+              "`del d[key]`",
+              "een key met zijn waarde verwijderen"
+            ],
+            [
+              "`key in d`",
+              "bestaat deze key?"
+            ],
+            [
+              "`d.keys()`, `d.values()`",
+              "alle keys, alle waarden"
+            ],
+            [
+              "`d.items()`",
+              "alle paren (key, waarde), handig in een `for`-loop"
+            ]
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Sets"
+        },
+        {
+          "type": "p",
+          "text": "Een set bevat elke waarde maar één keer en heeft geen vaste volgorde. Testen of iets in een set zit, gaat razendsnel (O(1)), terwijl een list alle elementen één voor één moet aflopen. Daarnaast kun je met sets rekenen: doorsnede (`&`), vereniging (`|`) en verschil (`-`)."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "talen = {\"python\", \"sql\", \"python\", \"bash\"}\nprint(len(talen))                 # de dubbele is verdwenen\ntalen.add(\"yaml\")\nprint(\"sql\" in talen)             # zeer snelle membership-test\nprint(sorted(talen))\n\na = {1, 2, 3, 4}\nb = {3, 4, 5}\nprint(a & b, a | b, a - b)\nprint(set([5, 1, 5, 2, 1]))       # snel ontdubbelen",
+          "output": "3\nTrue\n['bash', 'python', 'sql', 'yaml']\n{3, 4} {1, 2, 3, 4, 5} {1, 2}\n{1, 2, 5}",
+          "run": true
+        },
+        {
+          "type": "note",
+          "tone": "info",
+          "text": "Omdat een set geen vaste volgorde heeft, kan een set met strings bij elke run in een andere volgorde geprint worden. Wil je een voorspelbare uitvoer, gebruik dan `sorted()`."
+        },
+        {
+          "type": "note",
+          "tone": "warn",
+          "text": "Lists en dicts zijn mutable en worden gedeeld via verwijzingen. Geef je een list door of wijs je hem toe, dan werk je met hetzelfde object. Maak expliciet een kopie als je een onafhankelijke versie nodig hebt."
+        }
+      ],
+      "takeaways": [
+        "List voor een reeks die verandert, tuple voor vaste records, dict om op te zoeken (en voor JSON), set voor unieke waarden.",
+        "`b = a` kopieert een list niet; gebruik `a.copy()`, `list(a)` of `a[:]`.",
+        "`d.get(key, default)` voorkomt een `KeyError` bij een ontbrekende key.",
+        "Membership-tests met `in` zijn bij een set veel sneller dan bij een list.",
+        "Met tuple-unpacking haal je meerdere waarden in één regel uit elkaar."
+      ],
+      "exercise": "Je krijgt een lijst van tuples met een naam en een verkoopbedrag, waarin namen vaker voorkomen. Maak een dict met de totale verkoop per persoon, print die van hoog naar laag, en print de set van namen die samen meer dan 1000 hebben verkocht.",
+      "links": [
+        {
+          "label": "W3Schools — Python Lists",
+          "url": "https://www.w3schools.com/python/python_lists.asp"
+        },
+        {
+          "label": "W3Schools — Python Tuples",
+          "url": "https://www.w3schools.com/python/python_tuples.asp"
+        },
+        {
+          "label": "W3Schools — Python Sets",
+          "url": "https://www.w3schools.com/python/python_sets.asp"
+        },
+        {
+          "label": "W3Schools — Python Dictionaries",
+          "url": "https://www.w3schools.com/python/python_dictionaries.asp"
+        }
+      ],
+      "tags": [
+        "list",
+        "tuple",
+        "dict",
+        "set",
+        "collecties",
+        "unpacking",
+        "KeyError",
+        "kopiëren"
+      ]
+    },
+    {
+      "id": "1.5",
+      "title": "Functies",
+      "summary": "Je schrijft herbruikbare functies met parameters, defaults en returnwaarden, je leert de valkuilen van mutable defaults en globale variabelen kennen, en je voegt docstrings en type hints toe.",
+      "minutes": 60,
+      "simple": "Simpel gezegd: een functie is een recept met een naam. Je geeft ingrediënten mee (de parameters), het recept doet zijn werk en je krijgt een gerecht terug (de returnwaarde). Schrijf je het recept één keer goed op, dan kun je het zo vaak gebruiken als je wilt.",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Een functie is een herbruikbaar blok code met een naam. Ze krijgt invoer via **parameters** en levert meestal een **returnwaarde** op. Met functies voorkom je dat je jezelf herhaalt, geef je een stuk logica een duidelijke naam, en (vanaf volgende week) maak je je code testbaar."
+        },
+        {
+          "type": "h",
+          "text": "Een functie definiëren en aanroepen"
+        },
+        {
+          "type": "p",
+          "text": "Je definieert een functie met `def`, een naam, parameters tussen haakjes en een dubbele punt. Een parameter kan een **default** krijgen; die geldt als je bij de aanroep niets meegeeft. Bij het aanroepen geef je argumenten op volgorde mee (positioneel) of met naam (keyword); met namen maakt de volgorde niet uit."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "def btw(bedrag, tarief=0.21):\n    \"\"\"Geef de btw over bedrag bij het opgegeven tarief.\"\"\"\n    return round(bedrag * tarief, 2)\n\nprint(btw(200))                    # tarief krijgt de default\nprint(btw(200, 0.09))              # positioneel argument\nprint(btw(tarief=0.09, bedrag=50)) # keyword-argumenten",
+          "output": "42.0\n18.0\n4.5",
+          "run": true
+        },
+        {
+          "type": "p",
+          "text": "Heeft een functie geen `return`, dan geeft ze toch iets terug: `None`. Dat zie je als je het resultaat bewaart en print."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "def begroet(naam):\n    print(f\"Hallo {naam}\")      # geen return\n\nresultaat = begroet(\"Mila\")\nprint(resultaat)",
+          "output": "Hallo Mila\nNone",
+          "run": true
+        },
+        {
+          "type": "h",
+          "text": "*args en **kwargs"
+        },
+        {
+          "type": "p",
+          "text": "Soms weet je niet vooraf hoeveel argumenten er komen. Een parameter met één sterretje (`*args`) vangt alle extra positionele argumenten op in een **tuple**. Een parameter met twee sterretjes (`**kwargs`) vangt alle extra keyword-argumenten op in een **dict**."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "def profiel(naam, *talen, **extra):\n    print(naam, talen, extra)\n\nprofiel(\"Daan\", \"Python\", \"SQL\", stad=\"Utrecht\", niveau=\"junior\")\nprofiel(\"Fleur\")",
+          "output": "Daan ('Python', 'SQL') {'stad': 'Utrecht', 'niveau': 'junior'}\nFleur () {}",
+          "run": true
+        },
+        {
+          "type": "table",
+          "head": [
+            "Soort",
+            "Voorbeeld",
+            "Wat je krijgt"
+          ],
+          "rows": [
+            [
+              "positioneel",
+              "`f(1, 2)`",
+              "argumenten op volgorde"
+            ],
+            [
+              "keyword",
+              "`f(b=2, a=1)`",
+              "argumenten op naam, volgorde maakt niet uit"
+            ],
+            [
+              "default",
+              "`def f(a, b=0)`",
+              "`b` is 0 als je hem weglaat"
+            ],
+            [
+              "`*args`",
+              "`def f(*args)`",
+              "extra positionele argumenten als tuple"
+            ],
+            [
+              "`**kwargs`",
+              "`def f(**kwargs)`",
+              "extra keyword-argumenten als dict"
+            ]
+          ]
+        },
+        {
+          "type": "h",
+          "text": "De valkuil van de mutable default"
+        },
+        {
+          "type": "p",
+          "text": "Een default wordt maar **één keer** gemaakt: op het moment dat Python de functie definieert, niet bij elke aanroep. Is die default een lege list, dan delen alle aanroepen dezelfde list en blijven oude items erin staan. De oplossing: gebruik `None` als default en maak binnen de functie een nieuwe list."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "def voeg_toe(item, mand=[]):       # fout!\n    mand.append(item)\n    return mand\n\nprint(voeg_toe(\"appel\"))\nprint(voeg_toe(\"peer\"))            # dezelfde lijst als hierboven\n\ndef voeg_toe_goed(item, mand=None):\n    if mand is None:\n        mand = []\n    mand.append(item)\n    return mand\n\nprint(voeg_toe_goed(\"appel\"))\nprint(voeg_toe_goed(\"peer\"))",
+          "output": "['appel']\n['appel', 'peer']\n['appel']\n['peer']",
+          "run": true
+        },
+        {
+          "type": "note",
+          "tone": "warn",
+          "text": "Gebruik nooit een list, dict of set als default-waarde. Kies `None` en maak de collectie pas binnen de functie aan."
+        },
+        {
+          "type": "h",
+          "text": "Scope: lokaal en globaal"
+        },
+        {
+          "type": "p",
+          "text": "Variabelen die je binnen een functie aanmaakt zijn **lokaal**: ze verdwijnen zodra de functie klaar is. Globale variabelen kun je binnen een functie gewoon lezen, maar om er een nieuwe waarde aan toe te wijzen heb je het keyword `global` nodig. Doe dat liever niet: functies die stilletjes globale toestand veranderen zijn lastig te testen en te debuggen. Geef waarden mee en geef het resultaat terug."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "teller = 0\n\ndef verhoog():\n    global teller        # alleen nodig om een global opnieuw toe te wijzen\n    teller += 1\n\ndef verhoogd(waarde):\n    return waarde + 1    # beter: waarde erin, resultaat eruit\n\nverhoog()\nteller = verhoogd(teller)\nprint(teller)",
+          "output": "2",
+          "run": true
+        },
+        {
+          "type": "h",
+          "text": "Docstrings, type hints en kleine functies"
+        },
+        {
+          "type": "p",
+          "text": "Geef elke functie vanaf dag één een docstring van één regel en type hints. Ze veranderen niets aan hoe de code draait, maar VS Code gebruikt ze voor autocompletion en om fouten te signaleren, en collega's lezen eraan af wat je bedoelt."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "def gemiddelde(waarden: list[float]) -> float:\n    \"\"\"Geef het rekenkundig gemiddelde van een niet-lege lijst.\"\"\"\n    return sum(waarden) / len(waarden)\n\ndef lijkt_op_email(adres: str) -> bool:\n    \"\"\"Grove controle op een e-mailadres, geen volledige validatie.\"\"\"\n    return adres.count(\"@\") == 1 and \".\" in adres.split(\"@\")[1]\n\nprint(gemiddelde([6.0, 7.5, 9.0]))\nprint(lijkt_op_email(\"sara@voorbeeld.nl\"), lijkt_op_email(\"sara@voorbeeld\"))",
+          "output": "7.5\nTrue False",
+          "run": true
+        },
+        {
+          "type": "note",
+          "tone": "tip",
+          "text": "Vuistregel: een functie doet één ding, past op één scherm en heeft een werkwoord als naam, zoals `load_config`, `send_invoice` of `is_valid_email`."
+        }
+      ],
+      "takeaways": [
+        "Een functie neemt invoer via parameters en geeft een resultaat terug met `return`; zonder `return` krijg je `None`.",
+        "Argumenten geef je positioneel of met naam; defaults maken parameters optioneel.",
+        "`*args` wordt een tuple, `**kwargs` een dict.",
+        "Gebruik nooit een mutable default: kies `None` en maak de list binnen de functie.",
+        "Vermijd `global`; geef elke functie een duidelijke naam, een docstring en type hints."
+      ],
+      "links": [
+        {
+          "label": "W3Schools — Python Functions",
+          "url": "https://www.w3schools.com/python/python_functions.asp"
+        },
+        {
+          "label": "W3Schools — Python Lambda",
+          "url": "https://www.w3schools.com/python/python_lambda.asp"
+        },
+        {
+          "label": "W3Schools — Python Scope",
+          "url": "https://www.w3schools.com/python/python_scope.asp"
+        },
+        {
+          "label": "Python-documentatie — Defining Functions",
+          "url": "https://docs.python.org/3/tutorial/controlflow.html#defining-functions"
+        }
+      ],
+      "tags": [
+        "functies",
+        "parameters",
+        "return",
+        "default",
+        "args",
+        "kwargs",
+        "scope",
+        "global",
+        "docstring",
+        "type hints"
+      ]
+    },
+    {
+      "id": "1.A",
+      "kind": "assessment",
+      "title": "Assessment week 1 — Contactenboek voor de command line",
+      "summary": "Je bouwt `contacts.py`, een menugestuurd programma in de terminal dat contacten in het geheugen beheert en alle onderwerpen van week 1 samenbrengt.",
+      "simple": "Simpel gezegd: je bouwt een digitaal adresboekje dat in de terminal draait. Je kunt mensen toevoegen, bekijken, zoeken en weer weghalen, en het boekje vertelt je een paar weetjes over je contacten. Alles wat je deze week hebt geleerd, komt hierin samen.",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Wat je bouwt"
+        },
+        {
+          "type": "p",
+          "text": "In de map `week1/` van je trainingsrepository schrijf je `contacts.py`. Het programma houdt een lijst contacten bij zolang het draait; opslaan in een bestand hoeft nog niet. Je gebruikt alles van deze week: types, strings, conditionals, loops, lists, dicts en functies."
+        },
+        {
+          "type": "p",
+          "text": "Elk contact is een dict met een naam, een e-mailadres, een telefoonnummer en een list met tags. Alle contacten samen staan in één list:"
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "contacten = [\n    {\"naam\": \"Iris Bos\", \"email\": \"iris@voorbeeld.nl\",\n     \"telefoon\": \"+31 6 1111 2222\", \"tags\": [\"werk\", \"python\"]},\n    {\"naam\": \"Joris Smit\", \"email\": \"joris@voorbeeld.nl\",\n     \"telefoon\": \"010 333 4444\", \"tags\": [\"sport\"]},\n]\nprint(len(contacten), contacten[0][\"tags\"])",
+          "output": "2 ['werk', 'python']",
+          "run": true,
+          "caption": "Het datamodel: een list van dicts."
+        },
+        {
+          "type": "h",
+          "text": "Wat het programma moet kunnen"
+        },
+        {
+          "type": "p",
+          "text": "Een genummerd menu toont de opties en komt steeds terug, tot de gebruiker kiest voor stoppen:"
+        },
+        {
+          "type": "table",
+          "head": [
+            "Menu-optie",
+            "Wat het doet"
+          ],
+          "rows": [
+            [
+              "Toevoegen",
+              "vraagt elk veld op; het e-mailadres moet een `@` bevatten en het telefoonnummer alleen cijfers, spaties of `+`. Bij foute invoer vraagt het programma opnieuw in plaats van te crashen."
+            ],
+            [
+              "Tonen",
+              "laat alle contacten zien als nette, uitgelijnde tabel (f-string-uitlijning), op naam gesorteerd en met een rijnummer."
+            ],
+            [
+              "Zoeken",
+              "zoekt zonder op hoofdletters te letten in naam, e-mail en tags, en toont de treffers of meldt dat er niets gevonden is."
+            ],
+            [
+              "Verwijderen",
+              "verwijdert een contact op rijnummer, maar pas nadat de gebruiker heeft bevestigd."
+            ],
+            [
+              "Statistieken",
+              "toont het aantal contacten, het aantal unieke tags (met een set) en de tag die het vaakst voorkomt."
+            ],
+            [
+              "Stoppen",
+              "beëindigt het programma."
+            ]
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Er is ook een eis aan de opbouw: elke menuactie is een eigen functie met een docstring en type hints. De menuloop doet niets anders dan de juiste functie aanroepen, en `global` komt nergens in je code voor."
+        },
+        {
+          "type": "h",
+          "text": "Stappenplan"
+        },
+        {
+          "type": "list",
+          "ordered": true,
+          "items": [
+            "Maak `week1/contacts.py` en zet er een paar voorbeeldcontacten in, zodat je meteen iets hebt om mee te testen.",
+            "Begin met de functies die geen invoer nodig hebben: tonen en statistieken. Geef ze de contactenlijst als parameter mee.",
+            "Bouw de menuloop met `while True`, een genummerd menu en `break` bij stoppen. Laat elke keuze precies één functie aanroepen.",
+            "Schrijf kleine validatiefuncties die `True` of `False` teruggeven, en gebruik ze in een `while`-loop die blijft vragen tot de invoer klopt.",
+            "Voeg zoeken toe: zet de zoekterm en de velden om naar kleine letters met `.lower()` en vergelijk met `in`.",
+            "Voeg verwijderen toe: laat een rijnummer kiezen, controleer dat het bestaat en vraag om bevestiging.",
+            "Probeer elke optie uit, ook met foute invoer, en commit na elke stap die werkt.",
+            "Schrijf de README en push alles naar GitHub."
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Bouwstenen uit deze week"
+        },
+        {
+          "type": "p",
+          "text": "Je hebt alle onderdelen al gezien. Een validatie is een kleine functie met een duidelijke ja/nee-uitkomst:"
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "def is_geldig_telefoonnummer(nummer: str) -> bool:\n    \"\"\"Alleen cijfers, spaties en + zijn toegestaan.\"\"\"\n    if nummer == \"\":\n        return False\n    for teken in nummer:\n        if teken not in \"0123456789 +\":\n            return False\n    return True\n\nprint(is_geldig_telefoonnummer(\"+31 6 1234\"))\nprint(is_geldig_telefoonnummer(\"06-1234\"))",
+          "output": "True\nFalse",
+          "run": true
+        },
+        {
+          "type": "p",
+          "text": "Voor de statistieken combineer je een set (unieke tags) met een tellende dict en het patroon voor het maximum uit les 1.3:"
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "alle_tags = [[\"werk\", \"python\"], [\"sport\"], [\"werk\"]]\nunieke = set()\ntelling = {}\nfor tags in alle_tags:\n    for tag in tags:\n        unieke.add(tag)\n        telling[tag] = telling.get(tag, 0) + 1\n\npopulairste, hoogste = None, 0\nfor tag, aantal in telling.items():\n    if aantal > hoogste:\n        populairste, hoogste = tag, aantal\nprint(len(unieke), populairste, hoogste)",
+          "output": "3 werk 2",
+          "run": true
+        },
+        {
+          "type": "p",
+          "text": "De menuloop zelf is kort. Ze vraagt een keuze en geeft het werk door aan de juiste functie:"
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "def main() -> None:\n    \"\"\"Toon het menu en voer de gekozen actie uit.\"\"\"\n    contacten = maak_voorbeeldcontacten()\n    while True:\n        print(\"1) Toevoegen 2) Tonen 3) Zoeken 4) Verwijderen 5) Statistieken 6) Stoppen\")\n        keuze = input(\"Keuze: \").strip()\n        if keuze == \"1\":\n            voeg_contact_toe(contacten)\n        elif keuze == \"2\":\n            toon_contacten(contacten)\n        # ... de andere opties op dezelfde manier\n        elif keuze == \"6\":\n            break\n        else:\n            print(\"Onbekende keuze, probeer het opnieuw.\")",
+          "caption": "Een skelet: de functies die hier worden aangeroepen schrijf je zelf."
+        },
+        {
+          "type": "note",
+          "tone": "tip",
+          "text": "Alle data reist via parameters: `main()` maakt de lijst en geeft hem door aan elke functie. Daardoor heb je geen `global` nodig."
+        },
+        {
+          "type": "h",
+          "text": "Extra opdrachten (optioneel, tellen mee)"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "Laad bij het starten vijf voorbeeldcontacten, zodat een tester niet alles zelf hoeft in te typen.",
+            "Ondersteun `python3 contacts.py --demo`: kijk in `sys.argv` en draai dan een vaste demo zonder invoer van de gebruiker.",
+            "Weiger een nieuw contact als het e-mailadres al in de lijst staat."
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Inleveren"
+        },
+        {
+          "type": "p",
+          "text": "Je programma moet zonder fouten starten met `python3 contacts.py`. Zet er een `week1/README.md` naast met drie zinnen: wat het programma doet, hoe je het start en wat je lastig vond. Commit en push alles naar GitHub, met minstens drie commits die duidelijk zeggen wat er veranderd is. Bij de review moet je elke regel van je code kunnen uitleggen."
+        }
+      ],
+      "takeaways": [
+        "Een list van dicts is een eenvoudig en krachtig datamodel voor records.",
+        "Valideer invoer met kleine functies en een `while`-loop, zodat foute invoer niet tot een crash leidt.",
+        "Een menuloop die alleen functies aanroept, houdt je programma overzichtelijk.",
+        "Geef data door via parameters en returnwaarden in plaats van `global`.",
+        "Commit vaak, met berichten die zeggen wat je hebt gedaan."
+      ],
+      "checklist": [
+        "Contacten staan in een list van dicts met naam, e-mail, telefoon en een list met tags",
+        "Het genummerde menu blijft terugkomen tot de gebruiker kiest voor stoppen",
+        "Een ongeldig e-mailadres of telefoonnummer leidt tot een nieuwe vraag, niet tot een crash",
+        "Tonen geeft een uitgelijnde tabel, op naam gesorteerd en met rijnummers",
+        "Zoeken werkt zonder hoofdlettergevoeligheid op naam, e-mail en tags",
+        "Verwijderen gaat op rijnummer en pas na bevestiging",
+        "Statistieken tonen het aantal contacten, het aantal unieke tags (via een set) en de populairste tag",
+        "Elke menuactie is een functie met docstring en type hints, zonder `global`",
+        "`python3 contacts.py` start zonder fouten",
+        "`week1/README.md` beschrijft wat het doet, hoe je het start en wat je lastig vond",
+        "Minstens drie zinvolle commits, gepusht naar GitHub",
+        "Je kunt elke regel van je code uitleggen"
+      ],
+      "links": [],
+      "tags": [
+        "assessment",
+        "contactenboek",
+        "menu",
+        "validatie",
+        "list van dicts",
+        "functies"
+      ]
+    }
+  ]
+}

@@ -20,7 +20,8 @@
         "`3` krijg je met `//`; dat gooit het stuk achter de komma weg.",
         "`4` zou afronden naar boven zijn, maar `/` rondt helemaal niet af.",
         "`3.0` is wel een float, maar dan mist de helft; 7 gedeeld door 2 is echt 3,5."
-      ]
+      ],
+      "section": "1.2"
     },
     {
       "id": "1-1",
@@ -38,7 +39,8 @@
         "`3.5` is wat `/` geeft; `//` telt alleen hele delen.",
         "Er blijft wel iets over: 2 keer 3 is 6, dus van 7 houd je 1 over.",
         "`//` rondt naar beneden af, niet naar boven, dus het wordt 3 en niet 4."
-      ]
+      ],
+      "section": "1.2"
     },
     {
       "id": "1-2",
@@ -56,7 +58,8 @@
         "Op school rond je .5 altijd naar boven, maar Python kiest bij precies .5 het even getal.",
         "`round()` zonder tweede getal geeft altijd een heel getal terug, geen kommagetal.",
         "`round()` werkt prima op een float; er gaat niets mis."
-      ]
+      ],
+      "section": "1.2"
     },
     {
       "id": "1-3",
@@ -74,7 +77,8 @@
         "Naar 4 gaan is afronden, en dat doet `int()` niet; daarvoor gebruik je `round()`.",
         "`int()` maakt er juist een heel getal van, dus het stuk achter de komma verdwijnt.",
         "Een float omzetten naar een int mag gewoon; er komt geen error."
-      ]
+      ],
+      "section": "1.2"
     },
     {
       "id": "1-4",
@@ -82,7 +86,8 @@
       "question": "`0.1 + 0.2 == 0.3` geeft `True`.",
       "answer": false,
       "explanation": "Floats zijn binair. `0.1 + 0.2` is `0.30000000000000004`. Daarom reken je geld in centen.",
-      "simple": "Een computer bewaart kommagetallen in enen en nullen, en 0.1 past daar niet precies in, net zoals je 1/3 niet precies kunt opschrijven als 0,333... Daardoor is `0.1 + 0.2` net iets meer dan 0.3 (`0.30000000000000004`) en geeft de vergelijking `False`. Daarom reken je met geld in hele centen."
+      "simple": "Een computer bewaart kommagetallen in enen en nullen, en 0.1 past daar niet precies in, net zoals je 1/3 niet precies kunt opschrijven als 0,333... Daardoor is `0.1 + 0.2` net iets meer dan 0.3 (`0.30000000000000004`) en geeft de vergelijking `False`. Daarom reken je met geld in hele centen.",
+      "section": "1.2"
     },
     {
       "id": "1-5",
@@ -100,7 +105,8 @@
         "Dan zou het eindnummer meetellen, maar bij slicing stop je net vóór het eind.",
         "Dan begin je bij 1, maar Python telt vanaf 0, dus de `P` hoort erbij.",
         "`'Py'` zijn maar twee letters; van 0 tot 3 krijg je er drie."
-      ]
+      ],
+      "section": "1.2"
     },
     {
       "id": "1-6",
@@ -118,7 +124,8 @@
         "Dat krijg je met stap 1; met stap -1 draai je de volgorde om.",
         "Alleen de laatste letter krijg je met `[-1]`; met de dubbele punten pak je alle letters.",
         "Een negatieve stap is gewoon toegestaan bij slicing."
-      ]
+      ],
+      "section": "1.2"
     },
     {
       "id": "1-7",
@@ -126,7 +133,8 @@
       "question": "Met `word[0] = \"J\"` pas je een string aan.",
       "answer": false,
       "explanation": "Strings zijn immutable. Elke string-methode geeft een nieuwe string terug.",
-      "simple": "Een string is als een gedrukt boek: je kunt geen letter op het papier veranderen. `word[0] = \"J\"` geeft daarom een error. Wil je iets anders, dan maak je een nieuwe string, bijvoorbeeld `word = \"J\" + word[1:]`."
+      "simple": "Een string is als een gedrukt boek: je kunt geen letter op het papier veranderen. `word[0] = \"J\"` geeft daarom een error. Wil je iets anders, dan maak je een nieuwe string, bijvoorbeeld `word = \"J\" + word[1:]`.",
+      "section": "1.2"
     },
     {
       "id": "1-8",
@@ -144,7 +152,8 @@
         "Ook als iemand `42` typt, krijg je de tekst `'42'`, geen getal.",
         "Python raadt niet wat je bedoelt; alles wat je typt komt binnen als tekst.",
         "Ook als je meteen op Enter drukt krijg je iets terug: een lege string `''`."
-      ]
+      ],
+      "section": "1.2"
     },
     {
       "id": "1-9",
@@ -162,7 +171,8 @@
         "`.2` zonder `f` betekent twee cijfers in totaal, dus je krijgt `1.2e+03`.",
         "`2f,` staat in de verkeerde volgorde; de komma moet vóór `.2f`, anders geeft Python een error.",
         "Alleen `,` zet wel komma's, maar geeft `1,234.5` met maar één cijfer achter de punt."
-      ]
+      ],
+      "section": "1.2"
     },
     {
       "id": "1-10",
@@ -180,7 +190,8 @@
         "Het getal `0` telt als niks, dus het is falsy.",
         "Een lege string `\"\"` is een lege doos, dus falsy.",
         "`None` betekent 'helemaal niks' en is dus falsy."
-      ]
+      ],
+      "section": "1.3"
     },
     {
       "id": "1-11",
@@ -198,7 +209,8 @@
         "Na een `break` wordt de `else` juist overgeslagen, dus niet altijd.",
         "Het is precies andersom: een `break` zorgt ervoor dat de `else` niet draait.",
         "`while` met `else` is gewoon geldige Python, al zie je het niet vaak."
-      ]
+      ],
+      "section": "1.3"
     },
     {
       "id": "1-12",
@@ -216,7 +228,8 @@
         "10 ligt nog vóór 11, dus die hoort er wel bij.",
         "12 ligt voorbij 11, en verder dan de stopwaarde ga je nooit.",
         "Je begint bij 2, want dat is het startgetal dat je opgeeft."
-      ]
+      ],
+      "section": "1.3"
     },
     {
       "id": "1-13",
@@ -234,7 +247,8 @@
         "Stoppen met de loop doe je met `break`.",
         "`continue` werkt alleen op de loop; het programma loopt gewoon verder.",
         "Je gaat juist door naar de volgende ronde, niet nog een keer dezelfde."
-      ]
+      ],
+      "section": "1.3"
     },
     {
       "id": "1-14",
@@ -253,7 +267,8 @@
         "Dat zou alleen kloppen als `b` een echte kopie was, maar `a` en `b` zijn dezelfde lijst.",
         "Twee namen voor één lijst is gewoon toegestaan; dat geeft geen error.",
         "`append` voegt 4 toe aan de bestaande lijst; de 1, 2 en 3 blijven er gewoon in."
-      ]
+      ],
+      "section": "1.4"
     },
     {
       "id": "1-15",
@@ -271,7 +286,8 @@
         "Een list is ook geordend en mag duplicaten hebben, maar je kunt hem wel aanpassen.",
         "Een set heeft geen vaste volgorde en gooit dubbele waarden weg.",
         "Een dict bewaart paren van key en waarde, elke key mag maar één keer voorkomen en je kunt hem aanpassen."
-      ]
+      ],
+      "section": "1.4"
     },
     {
       "id": "1-16",
@@ -289,7 +305,8 @@
         "Bij een list kijkt Python elk item één voor één na, en dat is traag bij een grote lijst.",
         "Een tuple wordt net als een list van voor naar achter doorzocht, dus ook traag.",
         "Een str is tekst, geen verzameling losse waarden; `in` zoekt daar naar stukjes tekst."
-      ]
+      ],
+      "section": "1.4"
     },
     {
       "id": "1-17",
@@ -307,7 +324,8 @@
         "`{5}` is `b - a`: wat alleen in `b` zit.",
         "`{3, 4}` is wat in beide zit; dat krijg je met `a & b`.",
         "`{1, 2, 5}` is wat in precies één van de twee zit; dat krijg je met `a ^ b`."
-      ]
+      ],
+      "section": "1.4"
     },
     {
       "id": "1-18",
@@ -325,7 +343,8 @@
         "Een KeyError krijg je met `customer[\"phone\"]`, niet met `get`.",
         "`None` krijg je alleen als je geen default meegeeft.",
         "Python verzint geen lege string; het geeft de default die jij opgeeft."
-      ]
+      ],
+      "section": "1.4"
     },
     {
       "id": "1-19",
@@ -344,7 +363,8 @@
         "Dat zou gebeuren als er elke keer een nieuwe lege lijst kwam, maar de default-lijst wordt hergebruikt.",
         "De tweede aanroep voegt `'b'` toe aan dezelfde lijst, dus die staat er ook in.",
         "De code is geldige Python; alleen het gedrag is verrassend."
-      ]
+      ],
+      "section": "1.5"
     },
     {
       "id": "1-20",
@@ -362,7 +382,8 @@
         "`0` is een echt getal, en dat verzint Python niet zelf.",
         "`False` is een echte ja/nee-waarde; zonder `return` krijg je `None`.",
         "Een lege string is nog steeds tekst; zonder `return` krijg je `None`."
-      ]
+      ],
+      "section": "1.5"
     },
     {
       "id": "1-21",
@@ -381,7 +402,8 @@
         "`*args` wordt een tuple met ronde haakjes, geen list met vierkante haakjes.",
         "`print` laat de tuple en de dict zelf zien, met haakjes en al, niet alleen de losse waarden.",
         "De aanroep past precies bij de functie, dus er komt geen TypeError."
-      ]
+      ],
+      "section": "1.5"
     },
     {
       "id": "1-22",
@@ -399,7 +421,8 @@
         "snake_case gebruik je voor variabelen en functies, zoals `load_config`.",
         "UPPER_CASE is voor constanten: waarden die niet veranderen.",
         "kebab-case kan niet in Python, want het streepje wordt gelezen als min."
-      ]
+      ],
+      "section": "1.2"
     },
     {
       "id": "1-23",
@@ -409,7 +432,8 @@
         "git status"
       ],
       "explanation": "De dagelijkse cyclus: `git status` → `git add -A` → `git commit -m \"...\"` → `git push`.",
-      "simple": "`git status` is als in je boodschappenmand kijken voordat je naar de kassa gaat: je ziet welke bestanden veranderd zijn en welke al klaarliggen voor de volgende commit. Daarom begin je de dagelijkse Git-cyclus ermee."
+      "simple": "`git status` is als in je boodschappenmand kijken voordat je naar de kassa gaat: je ziet welke bestanden veranderd zijn en welke al klaarliggen voor de volgende commit. Daarom begin je de dagelijkse Git-cyclus ermee.",
+      "section": "1.1"
     },
     {
       "id": "1-24",
@@ -427,7 +451,8 @@
         "`/mnt/c` is de Windows-schijf; daar werkt Linux veel trager en krijg je permissieproblemen.",
         "`C:\\Program Files` is een Windows-map voor geïnstalleerde programma's, niet voor je eigen code.",
         "Het maakt wel uit: op de verkeerde plek draait dezelfde code veel trager en loop je vast op rechten."
-      ]
+      ],
+      "section": "1.1"
     },
     {
       "id": "1-25",
@@ -437,7 +462,8 @@
         "pwd"
       ],
       "explanation": "pwd = print working directory.",
-      "simple": "`pwd` staat voor print working directory, oftewel: 'in welke kamer sta ik nu?'. De shell antwoordt met het volledige pad, zoals een adres, bijvoorbeeld `/home/jij/projects`."
+      "simple": "`pwd` staat voor print working directory, oftewel: 'in welke kamer sta ik nu?'. De shell antwoordt met het volledige pad, zoals een adres, bijvoorbeeld `/home/jij/projects`.",
+      "section": "1.1"
     },
     {
       "id": "1-26",
@@ -445,7 +471,8 @@
       "question": "`rm -r map` zet de map in de prullenbak.",
       "answer": false,
       "explanation": "De shell heeft geen prullenbak. Weg is weg.",
-      "simple": "De shell is geen Verkenner met een prullenbak. `rm -r map` gooit de map en alles erin meteen weg, alsof je het in de papierversnipperaar stopt. Kijk dus goed voordat je op Enter drukt."
+      "simple": "De shell is geen Verkenner met een prullenbak. `rm -r map` gooit de map en alles erin meteen weg, alsof je het in de papierversnipperaar stopt. Kijk dus goed voordat je op Enter drukt.",
+      "section": "1.1"
     },
     {
       "id": "1-27",
@@ -463,7 +490,8 @@
         "Een nieuwe repo heeft hetzelfde probleem: GitHub weet nog steeds niet wie je bent.",
         "`sudo` geeft je extra rechten op je eigen computer, maar GitHub kent je daardoor nog steeds niet.",
         "Een andere branch verandert niets aan wie je bent; het probleem is inloggen, niet de branch."
-      ]
+      ],
+      "section": "1.1"
     },
     {
       "id": "1-28",
@@ -481,7 +509,8 @@
         "Zonder `global` krijg je bij toewijzen een nieuwe lokale variabele; met `global` werk je juist met de echte.",
         "`global` gaat alleen over het eigen bestand (de module); iets delen met andere bestanden doe je met `import`.",
         "Het is andersom: met `global` mag je de variabele juist aanpassen."
-      ]
+      ],
+      "section": "1.5"
     },
     {
       "id": "1-29",
@@ -499,7 +528,8 @@
         "Een list comprehension bouwt een lijst met `[... for ...]`, en hier staat geen `for`.",
         "Een lambda is een mini-functie zonder naam en begint met het woord `lambda`.",
         "Een decorator is een regel met `@` boven een functie, die die functie aanpast."
-      ]
+      ],
+      "section": "1.3"
     },
     {
       "id": "1-30",
@@ -517,7 +547,8 @@
         "`\"AI\"` staat er echt in, dus de zoektocht slaagt.",
         "`in` geeft `True` of `False` terug, geen getal.",
         "`in` werkt prima op strings, dus er komt geen error."
-      ]
+      ],
+      "section": "1.2"
     }
   ],
   "flashcards": [
@@ -525,97 +556,113 @@
       "id": "1-f0",
       "front": "`/` vs `//` vs `%`",
       "back": "`/` geeft altijd een float (7/2 = 3.5). `//` is floor division (3). `%` is de rest (1). `**` is macht.",
-      "simple": "Denk aan 7 koekjes voor 2 kinderen. `/` deelt eerlijk met een kommagetal (3.5), `//` telt hoeveel hele koekjes ieder krijgt (3) en `%` hoeveel er overblijven (1). `**` is macht: `2 ** 3` is 2 x 2 x 2 = 8."
+      "simple": "Denk aan 7 koekjes voor 2 kinderen. `/` deelt eerlijk met een kommagetal (3.5), `//` telt hoeveel hele koekjes ieder krijgt (3) en `%` hoeveel er overblijven (1). `**` is macht: `2 ** 3` is 2 x 2 x 2 = 8.",
+      "section": "1.2"
     },
     {
       "id": "1-f1",
       "front": "Slicing",
       "back": "0-based, eind telt niet mee, negatief telt vanaf achter. `word[0:3]` = 'Pyt', `word[-1]` = 'n', `[::-1]` keert om.",
-      "simple": "Letters staan op genummerde plekken vanaf 0, zoals huisnummers. Bij `[begin:eind]` stop je net vóór het eindnummer, en negatieve nummers tellen vanaf achteren, dus `[-1]` is de laatste letter."
+      "simple": "Letters staan op genummerde plekken vanaf 0, zoals huisnummers. Bij `[begin:eind]` stop je net vóór het eindnummer, en negatieve nummers tellen vanaf achteren, dus `[-1]` is de laatste letter.",
+      "section": "1.2"
     },
     {
       "id": "1-f2",
       "front": "De vier collecties",
       "back": "list = reeks die je wijzigt · tuple = vaste record · dict = opzoeken op key (JSON-vorm) · set = uniek en snelle membership",
-      "simple": "Een list is een boodschappenlijst die je kunt aanvullen, een tuple een vast adres dat niet verandert. Een dict is een telefoonboek: je zoekt op naam (de key) en vindt het nummer. Een set is een stickerverzameling zonder dubbele, waarin je snel ziet of je iets al hebt."
+      "simple": "Een list is een boodschappenlijst die je kunt aanvullen, een tuple een vast adres dat niet verandert. Een dict is een telefoonboek: je zoekt op naam (de key) en vindt het nummer. Een set is een stickerverzameling zonder dubbele, waarin je snel ziet of je iets al hebt.",
+      "section": "1.4"
     },
     {
       "id": "1-f3",
       "front": "Mutable default trap",
       "back": "`def f(x, basket=[])` deelt één lijst tussen alle aanroepen. Gebruik `basket=None` en maak binnen de functie een nieuwe lijst.",
-      "simple": "De mand `basket=[]` wordt maar één keer gemaakt, en elke aanroep gooit er iets bij. Zo zit er spul van vorige keren in. Met `basket=None` en binnen de functie een nieuwe lijst maken krijgt elke aanroep een eigen lege mand."
+      "simple": "De mand `basket=[]` wordt maar één keer gemaakt, en elke aanroep gooit er iets bij. Zo zit er spul van vorige keren in. Met `basket=None` en binnen de functie een nieuwe lijst maken krijgt elke aanroep een eigen lege mand.",
+      "section": "1.5"
     },
     {
       "id": "1-f4",
       "front": "`b = a` bij een lijst",
       "back": "Kopieert niet, het is hetzelfde object. Kopie: `a.copy()`, `list(a)` of `a[:]`.",
-      "simple": "`b = a` hangt een tweede naamkaartje aan dezelfde lijst, zoals twee mensen met een sleutel van hetzelfde huis. Verandert de een iets, dan ziet de ander het ook. Wil je een eigen huis, maak dan een kopie met `a.copy()`."
+      "simple": "`b = a` hangt een tweede naamkaartje aan dezelfde lijst, zoals twee mensen met een sleutel van hetzelfde huis. Verandert de een iets, dan ziet de ander het ook. Wil je een eigen huis, maak dan een kopie met `a.copy()`.",
+      "section": "1.4"
     },
     {
       "id": "1-f5",
       "front": "Truthiness",
       "back": "Falsy: `0`, `\"\"`, `[]`, `{}`, `None`, `False`. Al het andere is truthy.",
-      "simple": "Python vraagt bij een `if` eigenlijk: zit er iets in? Nul, lege dingen (`\"\"`, `[]`, `{}`), `None` en `False` tellen als niks en dus als onwaar. Alles waar wel iets in zit, telt als waar."
+      "simple": "Python vraagt bij een `if` eigenlijk: zit er iets in? Nul, lege dingen (`\"\"`, `[]`, `{}`), `None` en `False` tellen als niks en dus als onwaar. Alles waar wel iets in zit, telt als waar.",
+      "section": "1.3"
     },
     {
       "id": "1-f6",
       "front": "break, continue, while/else",
       "back": "break verlaat de loop · continue gaat naar de volgende ronde · else draait alleen als er geen break was",
-      "simple": "Zie een loop als rondjes lopen op een atletiekbaan. `break` is van de baan stappen, `continue` is de rest van dit rondje overslaan en meteen aan het volgende beginnen. De `else` is het applaus aan het eind, maar alleen als je niet van de baan bent gestapt."
+      "simple": "Zie een loop als rondjes lopen op een atletiekbaan. `break` is van de baan stappen, `continue` is de rest van dit rondje overslaan en meteen aan het volgende beginnen. De `else` is het applaus aan het eind, maar alleen als je niet van de baan bent gestapt.",
+      "section": "1.3"
     },
     {
       "id": "1-f7",
       "front": "`*args` en `**kwargs`",
       "back": "`*args` verzamelt extra positionele argumenten als tuple, `**kwargs` keyword-argumenten als dict.",
-      "simple": "`*args` is een zak voor alle losse extra waarden; die komen in een tuple. `**kwargs` is een zak voor alles met een naam erbij (zoals `city=\"Rotterdam\"`); die komen in een dict. Zo kan een functie een wisselend aantal argumenten aannemen."
+      "simple": "`*args` is een zak voor alle losse extra waarden; die komen in een tuple. `**kwargs` is een zak voor alles met een naam erbij (zoals `city=\"Rotterdam\"`); die komen in een dict. Zo kan een functie een wisselend aantal argumenten aannemen.",
+      "section": "1.5"
     },
     {
       "id": "1-f8",
       "front": "Dagelijkse Git-cyclus",
       "back": "`git status` → `git add -A` → `git commit -m \"...\"` → `git push`. Elke sessie, af of niet.",
-      "simple": "Het is als een pakketje versturen: eerst kijken wat je hebt (`status`), dan in de doos doen (`add`), dichtplakken met een label (`commit`) en naar de post brengen (`push`). Doe dit elke sessie, zodat je werk veilig op GitHub staat, ook als het nog niet af is."
+      "simple": "Het is als een pakketje versturen: eerst kijken wat je hebt (`status`), dan in de doos doen (`add`), dichtplakken met een label (`commit`) en naar de post brengen (`push`). Doe dit elke sessie, zodat je werk veilig op GitHub staat, ook als het nog niet af is.",
+      "section": "1.1"
     },
     {
       "id": "1-f9",
       "front": "PEP 8-namen",
       "back": "snake_case variabelen en functies · UPPER_CASE constanten · PascalCase classes. Functies krijgen een werkwoord: `load_config`.",
-      "simple": "Aan de vorm van een naam zie je meteen wat het is, net als bij verkeersborden: `snake_case` voor variabelen en functies, `UPPER_CASE` voor constanten en `PascalCase` voor classes. Een functie doet iets, dus die krijgt een werkwoord als naam, zoals `load_config`."
+      "simple": "Aan de vorm van een naam zie je meteen wat het is, net als bij verkeersborden: `snake_case` voor variabelen en functies, `UPPER_CASE` voor constanten en `PascalCase` voor classes. Een functie doet iets, dus die krijgt een werkwoord als naam, zoals `load_config`.",
+      "section": "1.2"
     },
     {
       "id": "1-f10",
       "front": "Je ontwikkelomgeving",
       "back": "Windows = desktop, Ubuntu in WSL2 = code, VS Code = de brug. Bestanden in `~/projects`, niet in `/mnt/c`.",
-      "simple": "Windows is je bureau waar je alles ziet, Ubuntu in WSL2 is je werkplaats waar de code draait, en VS Code is de deur ertussen. Je bestanden horen in de werkplaats (`~/projects`), want via `/mnt/c` wordt alles trager en krijg je gedoe met rechten."
+      "simple": "Windows is je bureau waar je alles ziet, Ubuntu in WSL2 is je werkplaats waar de code draait, en VS Code is de deur ertussen. Je bestanden horen in de werkplaats (`~/projects`), want via `/mnt/c` wordt alles trager en krijg je gedoe met rechten.",
+      "section": "1.1"
     },
     {
       "id": "1-f11",
       "front": "Afronden",
       "back": "`round(2.5)` = 2 en `round(3.5)` = 4 (banker's rounding). `int(3.99)` = 3 (afkappen).",
-      "simple": "Bij precies .5 kiest `round()` het even buurgetal: 2.5 wordt 2 en 3.5 wordt 4, zodat afrondingen niet steeds dezelfde kant op gaan. `int()` rondt niet af, maar knipt alles na de komma weg, dus 3.99 wordt 3."
+      "simple": "Bij precies .5 kiest `round()` het even buurgetal: 2.5 wordt 2 en 3.5 wordt 4, zodat afrondingen niet steeds dezelfde kant op gaan. `int()` rondt niet af, maar knipt alles na de komma weg, dus 3.99 wordt 3.",
+      "section": "1.2"
     },
     {
       "id": "1-f12",
       "front": "f-string formats",
       "back": "`{price:,.2f}` → 1,234.50 · `{x:<10}` links · `{x:>5}` rechts · `{0.256:.1%}` → 25.6%",
-      "simple": "Na de dubbele punt in `{...}` geef je opmaakwensen, zoals instructies voor een prijskaartje. `,` zet scheidingstekens tussen de duizendtallen, `.2f` geeft twee decimalen, `<` en `>` zetten tekst links of rechts in een vak van vaste breedte, en `%` maakt er een percentage van."
+      "simple": "Na de dubbele punt in `{...}` geef je opmaakwensen, zoals instructies voor een prijskaartje. `,` zet scheidingstekens tussen de duizendtallen, `.2f` geeft twee decimalen, `<` en `>` zetten tekst links of rechts in een vak van vaste breedte, en `%` maakt er een percentage van.",
+      "section": "1.2"
     },
     {
       "id": "1-f13",
       "front": "Een goede functie",
       "back": "Doet één ding, past op één scherm, heeft een werkwoord als naam, een docstring en type hints, en geen global.",
-      "simple": "Een goede functie is als een keukenapparaat met één taak: een waterkoker kookt water en verder niets. Een naam met een werkwoord, een korte uitleg (docstring) en type hints vertellen wat erin gaat en wat eruit komt. Zonder `global` blijft alles netjes binnen de functie, en hij is kort genoeg om op één scherm te passen."
+      "simple": "Een goede functie is als een keukenapparaat met één taak: een waterkoker kookt water en verder niets. Een naam met een werkwoord, een korte uitleg (docstring) en type hints vertellen wat erin gaat en wat eruit komt. Zonder `global` blijft alles netjes binnen de functie, en hij is kort genoeg om op één scherm te passen.",
+      "section": "1.5"
     },
     {
       "id": "1-f14",
       "front": "`dict.get` vs `dict[key]`",
       "back": "`d[\"x\"]` geeft KeyError als de key ontbreekt. `d.get(\"x\", default)` geeft dan de default.",
-      "simple": "`d[\"x\"]` is als aanbellen bij een huis dat er niet is: het gaat mis met een KeyError. `d.get(\"x\", default)` vraagt het netjes en krijgt, als de key er niet is, gewoon de reservewaarde terug. Gebruik `get` als je niet zeker weet of de key bestaat."
+      "simple": "`d[\"x\"]` is als aanbellen bij een huis dat er niet is: het gaat mis met een KeyError. `d.get(\"x\", default)` vraagt het netjes en krijgt, als de key er niet is, gewoon de reservewaarde terug. Gebruik `get` als je niet zeker weet of de key bestaat.",
+      "section": "1.4"
     },
     {
       "id": "1-f15",
       "front": "Strings zijn immutable",
       "back": "`s.upper()` verandert `s` niet; het geeft een nieuwe string terug. Toewijzen: `s = s.upper()`.",
-      "simple": "Een string is als een gedrukte kaart: je kunt er niets op veranderen. `s.upper()` maakt een nieuwe kaart in hoofdletters, maar de oude blijft hetzelfde. Wil je de nieuwe houden, dan schrijf je `s = s.upper()`."
+      "simple": "Een string is als een gedrukte kaart: je kunt er niets op veranderen. `s.upper()` maakt een nieuwe kaart in hoofdletters, maar de oude blijft hetzelfde. Wil je de nieuwe houden, dan schrijf je `s = s.upper()`.",
+      "section": "1.2"
     }
   ],
   "typing": [
@@ -627,7 +674,8 @@
         "%"
       ],
       "explanation": "`%` is modulo: de rest na een deling met hele getallen. `7 % 2` is `1`.",
-      "simple": "Verdeel 7 koekjes over 2 kinderen: ieder krijgt er 3, en `%` vertelt hoeveel er overblijven: 1."
+      "simple": "Verdeel 7 koekjes over 2 kinderen: ieder krijgt er 3, en `%` vertelt hoeveel er overblijven: 1.",
+      "section": "1.2"
     },
     {
       "id": "1-t1",
@@ -640,7 +688,8 @@
       ],
       "exact": true,
       "explanation": "Een negatieve index telt vanaf achteren. `-1` is het laatste teken.",
-      "simple": "Met min tel je van achter naar voren. -1 is de laatste letter: de n."
+      "simple": "Met min tel je van achter naar voren. -1 is de laatste letter: de n.",
+      "section": "1.2"
     },
     {
       "id": "1-t2",
@@ -655,7 +704,8 @@
       ],
       "exact": true,
       "explanation": "`d.get(\"x\", default)` geeft de default terug als de key ontbreekt. `d[\"x\"]` geeft dan een `KeyError`.",
-      "simple": "`get` vraagt beleefd: \"heb je dit?\" Zo niet, dan krijg je een reservewaarde in plaats van een foutmelding."
+      "simple": "`get` vraagt beleefd: \"heb je dit?\" Zo niet, dan krijg je een reservewaarde in plaats van een foutmelding.",
+      "section": "1.4"
     },
     {
       "id": "1-t3",
@@ -668,7 +718,8 @@
         "UpperCamelCase"
       ],
       "explanation": "Classes in PascalCase (`TaskStore`), variabelen en functies in snake_case, constanten in UPPER_CASE.",
-      "simple": "Een class-naam is als een eigennaam: elk woord begint met een hoofdletter, zonder spaties. Zoals `TaskStore`."
+      "simple": "Een class-naam is als een eigennaam: elk woord begint met een hoofdletter, zonder spaties. Zoals `TaskStore`.",
+      "section": "1.2"
     },
     {
       "id": "1-t4",
@@ -680,7 +731,8 @@
         "git add --all"
       ],
       "explanation": "`git add -A` zet alle wijzigingen, ook verwijderde bestanden, in de staging area. Daarna volgt `git commit`.",
-      "simple": "Je legt alles wat je veranderd hebt in het mandje. Met de commit doe je het mandje daarna dicht en plak je er een label op."
+      "simple": "Je legt alles wat je veranderd hebt in het mandje. Met de commit doe je het mandje daarna dicht en plak je er een label op.",
+      "section": "1.1"
     },
     {
       "id": "1-t5",
@@ -690,7 +742,8 @@
         "break"
       ],
       "explanation": "`break` stopt de loop direct. `continue` slaat alleen de rest van de huidige ronde over.",
-      "simple": "`break` is de nooduitgang: je loopt meteen de loop uit, ook al zijn er nog rondes over."
+      "simple": "`break` is de nooduitgang: je loopt meteen de loop uit, ook al zijn er nog rondes over.",
+      "section": "1.3"
     },
     {
       "id": "1-t6",
@@ -701,7 +754,8 @@
         "De default wordt maar één keer gemaakt",
         "Alle aanroepen delen dezelfde lijst",
         "Oplossing: `None` als default en een nieuwe lijst in de functie"
-      ]
+      ],
+      "section": "1.5"
     },
     {
       "id": "1-t7",
@@ -712,7 +766,8 @@
         "Alleen unieke waarden",
         "Snel checken of iets erin zit met `in`",
         "Volgorde is niet belangrijk"
-      ]
+      ],
+      "section": "1.4"
     },
     {
       "id": "1-t8",
@@ -723,7 +778,8 @@
         "`b = a` is hetzelfde object",
         "Een wijziging via de ene naam zie je bij de andere",
         "`.copy()` maakt een nieuwe lijst"
-      ]
+      ],
+      "section": "1.4"
     },
     {
       "id": "1-t9",
@@ -734,7 +790,93 @@
         "Het Linux-bestandssysteem is veel sneller",
         "Minder problemen met rechten en regeleindes",
         "`/mnt/c` is de Windows-schijf via een brug"
-      ]
+      ],
+      "section": "1.1"
+    }
+  ],
+  "puzzles": [
+    {
+      "id": "1-p0",
+      "type": "fill",
+      "section": "1.2",
+      "question": "Vul in: vraag de gebruiker om zijn naam.",
+      "code": "naam = ___(\"Hoe heet je? \")",
+      "answers": [
+        "input"
+      ],
+      "simple": "`input()` stelt een vraag in de terminal en geeft terug wat de gebruiker typt, altijd als tekst."
+    },
+    {
+      "id": "1-p1",
+      "type": "parsons",
+      "section": "1.2",
+      "question": "Zet de regels in de goede volgorde.",
+      "lines": [
+        "naam = input(\"Naam? \")",
+        "groet = f\"Hoi {naam}\"",
+        "print(groet)"
+      ],
+      "simple": "Je moet eerst iets hebben voordat je het kunt gebruiken: eerst de naam vragen, dan de groet maken, dan printen."
+    },
+    {
+      "id": "1-p2",
+      "type": "fill",
+      "section": "1.2",
+      "question": "Vul in: check of een getal even is.",
+      "code": "if getal ___ 2 == 0:\n    print(\"even\")",
+      "answers": [
+        "%"
+      ],
+      "simple": "Een getal is even als er bij delen door 2 niets overblijft. De rest pak je met `%`."
+    },
+    {
+      "id": "1-p3",
+      "type": "fill",
+      "section": "1.2",
+      "question": "Vul in: haal de spaties aan beide kanten weg.",
+      "code": "woord = \"  hoi  \"\nprint(woord.___())",
+      "answers": [
+        "strip"
+      ],
+      "simple": "`strip()` knipt de spaties aan het begin en eind weg, zoals een korstje van een boterham."
+    },
+    {
+      "id": "1-p4",
+      "type": "parsons",
+      "section": "1.2",
+      "question": "Zet de regels in de goede volgorde.",
+      "lines": [
+        "tekst = \" Hallo Python \"",
+        "schoon = tekst.strip()",
+        "print(schoon.upper())"
+      ],
+      "simple": "Eerst de tekst hebben, dan schoonmaken, dan pas in hoofdletters printen."
+    },
+    {
+      "id": "1-p5",
+      "type": "fill",
+      "section": "1.3",
+      "question": "Vul in: tel elke poging op.",
+      "code": "pogingen = 0\nwhile pogingen < 3:\n    pogingen ___ 1",
+      "answers": [
+        "+="
+      ],
+      "simple": "`+= 1` betekent: neem wat er al is en doe er 1 bij."
+    },
+    {
+      "id": "1-p6",
+      "type": "parsons",
+      "section": "1.3",
+      "question": "Zet het if-blok in de goede volgorde.",
+      "lines": [
+        "if temp > 30:",
+        "    print(\"Heet\")",
+        "elif temp > 20:",
+        "    print(\"Lekker\")",
+        "else:",
+        "    print(\"Koud\")"
+      ],
+      "simple": "Eerst `if`, dan eventueel `elif`, en `else` altijd als laatste. Onder elke regel met een dubbele punt komt ingesprongen code."
     }
   ]
 }

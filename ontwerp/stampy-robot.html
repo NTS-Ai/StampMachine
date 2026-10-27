@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important}</style>
+<title>NTS Robotschetsen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: one power-up stage. Stampy stands inside a charging ring with a canvas fire aura behind him; controls sit beside him, and the 30-day upgrade ladder runs underneath. */
+:root{
+  --bg:#EDF0F7; --surface:#FFFFFF; --stage:#E1E6F2; --ink:#131A2F; --muted:#59627F; --line:#D3D9E7;
+  --accent:#2B47F0; --on-accent:#FFFFFF; --fire:#FF8A1F; --gold:#E7A51C; --dot:#C6CEE0;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0B0F1D; --surface:#141A2C; --stage:#0E1428; --ink:#E7EAF5; --muted:#9BA3C0; --line:#262E4C;
+  --accent:#7A8FFF; --on-accent:#0B0F1D; --fire:#FF9A3C; --gold:#FFC94A; --dot:#212946; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0B0F1D; --surface:#141A2C; --stage:#0E1428; --ink:#E7EAF5; --muted:#9BA3C0; --line:#262E4C;
+  --accent:#7A8FFF; --on-accent:#0B0F1D; --fire:#FF9A3C; --gold:#FFC94A; --dot:#212946; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,svg:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.08}
+.wrap{max-width:1160px;margin:0 auto;padding-inline:20px}
+@media (max-width:480px){.wrap{padding-inline:16px}}
+.eyebrow{font-family:var(--f-mono);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+header.top{padding-block:36px 8px;display:grid;gap:10px}
+header.top h1{font-size:clamp(40px,7vw,72px);font-weight:800;letter-spacing:-.02em}
+header.top p{max-width:64ch;color:var(--muted);margin:0}
+section{padding-block:22px}
+.lbl{font-family:var(--f-mono);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+
+/* power stage */
+.grow{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:24px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:22px}
+@media (max-width:880px){.grow{grid-template-columns:1fr}}
+.ringstage{position:relative;width:min(440px,100%);aspect-ratio:1;margin:0 auto;touch-action:none;user-select:none;-webkit-user-select:none}
+.ringstage::before{content:"";position:absolute;inset:4%;border-radius:50%;background-color:var(--stage);background-image:radial-gradient(var(--dot) 1.4px,transparent 1.5px);background-size:16px 16px}
+.ringstage canvas{position:absolute;inset:-6%;width:112%;height:112%;z-index:1;pointer-events:none}
+.ringstage svg.ring{position:absolute;inset:0;width:100%;height:100%;z-index:2;overflow:visible;pointer-events:none}
+.ring .track{fill:none;stroke:var(--line);stroke-width:7}
+.ring .fill{fill:none;stroke:url(#ringGrad);stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset .8s cubic-bezier(.2,.8,.2,1);filter:drop-shadow(0 0 2.5px var(--fire))}
+.ring .flow{fill:none;stroke:#FFF6D6;stroke-width:2.2;stroke-dasharray:1.4 5;stroke-linecap:round;opacity:.9;animation:flow 1.1s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-12.8}}
+.ring .head{fill:#FFF8DD;filter:drop-shadow(0 0 3px #FFD45A) drop-shadow(0 0 6px var(--fire));transition:cx .8s cubic-bezier(.2,.8,.2,1),cy .8s cubic-bezier(.2,.8,.2,1)}
+.ring .tick{stroke:var(--line);stroke-width:1;stroke-linecap:round;transition:stroke .12s}
+.ring .tick.on{stroke:#FFD45A;filter:drop-shadow(0 0 1.5px #FFB020)}
+.ringstage.full .ring .tick.on{stroke:#FFFFFF}
+.ringstage.levelup .ring .fill{animation:lvl .9s ease}
+@keyframes lvl{30%{stroke-width:11;filter:drop-shadow(0 0 8px #FFD45A) brightness(1.4)}}
+.ringstage .host{position:absolute;left:50%;top:55%;transform:translate(-50%,-50%);width:56%;z-index:3}
+.ringstage .bubble{top:-24%}
+.pct{position:absolute;left:50%;bottom:3.5%;transform:translateX(-50%);z-index:3;font-family:var(--f-mono);font-size:12px;font-weight:700;background:var(--surface);border:1.5px solid var(--line);border-radius:99px;padding:3px 10px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.host svg{display:block;width:100%;height:auto;overflow:visible;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.bubble{position:absolute;left:50%;transform:translate(-50%,6px);background:var(--surface);color:var(--ink);border:1.5px solid var(--ink);border-radius:14px;padding:7px 12px;font-size:14px;font-weight:700;line-height:1.3;width:max-content;max-width:min(270px,95%);text-align:center;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:4}
+.bubble::after{content:"";position:absolute;left:50%;bottom:-8px;width:12px;height:12px;background:var(--surface);border-right:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink);transform:translateX(-50%) rotate(45deg)}
+.bubble.on{opacity:1;transform:translate(-50%,0)}
+
+.controls{display:grid;gap:16px;min-width:0}
+.streak-read{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.streak-read b{font-family:var(--f-display);font-size:60px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.streak-read span{font-size:18px;color:var(--muted)}
+.stage-name{font-family:var(--f-display);font-size:26px;font-weight:800}
+.next{color:var(--muted);margin:2px 0 0;font-size:15px}
+input[type=range]{width:100%;accent-color:var(--fire);height:28px}
+.mile{display:flex;flex-wrap:wrap;gap:6px}
+.mile button{font-family:var(--f-mono);font-size:12px;font-weight:700;border:1.5px solid var(--line);background:transparent;border-radius:8px;padding:6px 9px;font-variant-numeric:tabular-nums}
+.mile button[aria-pressed="true"]{border-color:var(--fire);color:var(--fire)}
+.charge{position:relative;overflow:hidden;border:2px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:14px;padding:14px 18px;font-weight:800;font-size:17px;box-shadow:0 4px 0 color-mix(in srgb,var(--ink) 55%,var(--fire));transition:transform .1s,box-shadow .1s;touch-action:none;user-select:none;-webkit-user-select:none}
+.charge i{position:absolute;inset:0;width:0;background:linear-gradient(90deg,var(--fire),#FFD45A);opacity:.9}
+.charge span{position:relative}
+.charge.holding{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.chips,.react{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1.5px solid var(--line);background:transparent;border-radius:99px;padding:5px 11px;font-size:13px;font-weight:700;transition:border-color .15s,transform .15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.react button{border:1.5px solid var(--ink);background:var(--surface);border-radius:12px;padding:8px 12px;font-weight:700;font-size:14px;box-shadow:0 3px 0 var(--ink);transition:transform .1s,box-shadow .1s}
+.react button:hover{transform:translateY(-1px);box-shadow:0 4px 0 var(--ink)}
+.react button:active{transform:translateY(3px);box-shadow:0 0 0 var(--ink)}
+
+.ladder{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;margin-top:18px}
+@media (max-width:880px){.ladder{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:480px){.ladder{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.rung{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 8px 12px;display:grid;gap:4px;justify-items:center;text-align:center;cursor:pointer;transition:border-color .15s,transform .15s}
+.rung:hover{border-color:var(--fire);transform:translateY(-2px)}
+.rung[aria-current="true"]{border-color:var(--fire);box-shadow:0 0 0 2px color-mix(in srgb,var(--fire) 35%,transparent)}
+.rung .host{width:84%}
+.rung b{font-family:var(--f-mono);font-size:12px;font-variant-numeric:tabular-nums}
+.rung span{font-size:13px;color:var(--muted);line-height:1.25}
+.ask{background:var(--ink);color:var(--bg);border-radius:22px;padding:24px;display:grid;gap:10px}
+.ask h2{font-size:clamp(22px,3vw,30px);font-weight:800}
+.ask ol{margin:0;padding-left:20px;display:grid;gap:4px}
+footer{color:var(--muted);font-size:13px;padding-block:8px 36px}
+
+/* ---------- robot ---------- */
+.robot{--shell:#F3F5FB;--accent-r:#2B47F0;--plate:#2B47F0;--nts:#FFFFFF;--screen:#0F1633;--led:#62F0FF;--ol:#131A2F;--bulb:#FFC93D;--rim:none}
+.robot[data-expr="alarm"]{--led:#FF5A6A;--screen:#2A0910}
+.robot[data-expr="sleep"]{--led:#3F7F92}
+.robot[data-expr="power"]{--led:#FFE27A}
+.robot .shell{fill:var(--shell)}
+.robot .accent{fill:var(--accent-r)}
+.robot .plate{fill:var(--plate)}
+.robot .screen{fill:var(--screen)}
+.robot .bulb{fill:var(--bulb)}
+.robot .ol{stroke:var(--ol);stroke-width:3;stroke-linejoin:round}
+.robot .ol-line{stroke:var(--ol);stroke-width:4;stroke-linecap:round}
+.robot .nts{font-family:var(--f-display);font-weight:800;fill:var(--nts);text-anchor:middle;letter-spacing:1.5px}
+.robot .eye{fill:var(--led)}
+.robot .eye-line{fill:none;stroke:var(--led);stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round}
+.robot .eye-line.thin{stroke-width:3.5}
+.robot .mouth-line{fill:none;stroke:var(--led);stroke-width:4;stroke-linecap:round}
+.robot .mouth-fill{fill:var(--led)}
+.robot .teeth{stroke:var(--screen);stroke-width:1.6}
+.robot .shadow{fill:var(--ol);opacity:.13}
+.robot .face{transition:transform .18s ease-out}
+.robot .blink{transform-box:fill-box;transform-origin:center;animation:blink 5.2s infinite}
+@keyframes blink{0%,93%,100%{transform:scaleY(1)}95.5%{transform:scaleY(.12)}}
+.robot .bob{transform-origin:100px 210px;animation:idle 3.2s ease-in-out infinite}
+@keyframes idle{50%{transform:translateY(-4px)}}
+.robot .arm{transform-box:fill-box;transform-origin:50% 8%}
+.robot .armor{display:none}
+.robot .aura{opacity:0;transform-box:fill-box;transform-origin:50% 100%}
+.robot.noaura .aura{display:none}
+.robot .zzz,.robot .sparkles{opacity:0}
+.robot[data-expr="sleep"] .zzz{opacity:1}
+.robot .zzz text{font-family:var(--f-display);font-weight:800;fill:#8A93B3;animation:zrise 3s ease-in-out infinite}
+.robot .zzz text:nth-child(2){animation-delay:.5s}.robot .zzz text:nth-child(3){animation-delay:1s}
+@keyframes zrise{0%{opacity:0;transform:translate(0,6px)}30%{opacity:1}100%{opacity:0;transform:translate(6px,-10px)}}
+.robot.s0 .bob{filter:saturate(.25) brightness(.9)}
+.robot.s3 .bulb{animation:glow 2.2s ease-in-out infinite}
+@keyframes glow{50%{filter:drop-shadow(0 0 7px var(--bulb)) drop-shadow(0 0 2px var(--bulb))}}
+.robot.s7 .aura{opacity:.8;animation:flicker 1.7s ease-in-out infinite}
+@keyframes flicker{50%{transform:scale(1.05,1.09);opacity:.6}}
+.robot.s14 .armor{display:inline}
+.robot.s14 .plate{filter:drop-shadow(0 0 5px var(--led))}
+.robot.s21 .aura{filter:saturate(1.3) brightness(1.15)}
+.robot.s30 .shell{stroke:var(--rim);stroke-width:4.5}
+.robot.s30 .sparkles{opacity:1}
+.robot .sparkles path{fill:#FFF1B8;transform-box:fill-box;transform-origin:center;animation:twinkle 1.8s ease-in-out infinite}
+.robot .sparkles path:nth-child(2){animation-delay:.45s}.robot .sparkles path:nth-child(3){animation-delay:.9s}.robot .sparkles path:nth-child(4){animation-delay:1.35s}
+@keyframes twinkle{0%,100%{transform:scale(.3);opacity:.3}50%{transform:scale(1.1);opacity:1}}
+.robot[data-expr="alarm"] .bulb{animation:siren .45s steps(2) infinite}
+@keyframes siren{50%{fill:#FF3B4E}}
+.robot.anim-hop .bob{animation:hop .55s cubic-bezier(.3,1.6,.5,1) 2}
+@keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-16px)}}
+.robot.anim-hop .armL{animation:upL .55s ease-in-out 2}.robot.anim-hop .armR{animation:upR .55s ease-in-out 2}
+@keyframes upL{50%{transform:rotate(70deg)}}@keyframes upR{50%{transform:rotate(-70deg)}}
+.robot.anim-dance .bob{animation:dance .5s ease-in-out 4}
+@keyframes dance{0%,100%{transform:rotate(0)}25%{transform:rotate(-7deg) translateY(-7px)}75%{transform:rotate(7deg) translateY(-7px)}}
+.robot.anim-dance .armL{animation:waveL .5s ease-in-out 4}.robot.anim-dance .armR{animation:waveR .5s ease-in-out 4}
+@keyframes waveL{0%,100%{transform:rotate(120deg)}50%{transform:rotate(165deg)}}
+@keyframes waveR{0%,100%{transform:rotate(-120deg)}50%{transform:rotate(-165deg)}}
+.robot.anim-shake .bob,.robot.charging .bob{animation:shake .1s linear 14}
+.robot.charging .bob{animation-iteration-count:infinite}
+.robot.charging .armL{transform:rotate(28deg)}.robot.charging .armR{transform:rotate(-28deg)}
+@keyframes shake{25%{transform:translateX(-2.5px)}75%{transform:translateX(2.5px)}}
+.robot.anim-droop .bob{animation:droop 1.1s ease forwards}
+@keyframes droop{40%,100%{transform:translateY(5px) rotate(-3deg)}}
+.robot.anim-droop .armL{animation:sagL 1.1s ease forwards}.robot.anim-droop .armR{animation:sagR 1.1s ease forwards}
+@keyframes sagL{100%{transform:rotate(-8deg)}}@keyframes sagR{100%{transform:rotate(8deg)}}
+@media (prefers-reduced-motion:reduce){*,.robot *{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <span class="eyebrow">De NTS-robot</span>
+    <h1>Stampy laadt op</h1>
+    <p>Elke dag dat je oefent loopt de ring verder vol. Bij elke mijlpaal krijgt Stampy een upgrade, en vanaf dag 7 brandt er een vuur-aura achter hem die groeit tot volle kracht op dag 30. Houd de knop of Stampy zelf ingedrukt om hem op te laden.</p>
+  </header>
+
+  <section aria-label="Stampy en zijn streak">
+    <div class="grow">
+      <div class="ringstage" id="ringstage">
+        <canvas id="fire" aria-hidden="true"></canvas>
+        <svg class="ring" viewBox="0 0 100 100" aria-hidden="true">
+          <defs>
+            <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF6A1A"/><stop offset=".55" stop-color="#FFB020"/><stop offset="1" stop-color="#FFE27A"/></linearGradient>
+            <mask id="fillMask"><circle id="maskArc" cx="50" cy="50" r="43" fill="none" stroke="#fff" stroke-width="9" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" transform="rotate(-90 50 50)" style="transition:stroke-dashoffset .8s cubic-bezier(.2,.8,.2,1)"/></mask>
+          </defs>
+          <g id="ticks"></g>
+          <circle class="track" cx="50" cy="50" r="43"/>
+          <circle class="fill" id="ringFill" cx="50" cy="50" r="43" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" transform="rotate(-90 50 50)"/>
+          <circle class="flow" cx="50" cy="50" r="43" pathLength="100" transform="rotate(-90 50 50)" mask="url(#fillMask)"/>
+          <circle class="head" id="ringHead" cx="50" cy="7" r="2.4"/>
+        </svg>
+        <div class="host" id="bigHost"></div>
+        <span class="pct" id="pct">12 / 14 dagen</span>
+      </div>
+      <div class="controls">
+        <div>
+          <div class="streak-read"><b id="dayNum">12</b><span id="dayWord">dagen streak</span></div>
+          <div class="stage-name" id="stageName">Eerste vlam</div>
+          <p class="next" id="nextText">Nog 2 dagen tot Pantser-upgrade</p>
+        </div>
+        <div><label class="lbl" for="streak">Streak in dagen (0–30)</label><input type="range" id="streak" min="0" max="30" value="12"></div>
+        <div class="mile" id="mile" role="group" aria-label="Spring naar mijlpaal"></div>
+        <button class="charge" id="charge" type="button"><i id="chargeBar"></i><span id="chargeText">Houd vast om op te laden</span></button>
+        <div><div class="lbl" style="margin-bottom:8px">Gezichten</div><div class="chips" id="chips" role="group" aria-label="Gezicht van Stampy"></div></div>
+        <div><div class="lbl" style="margin-bottom:8px">Reacties in het spel</div><div class="react" id="react"></div></div>
+      </div>
+    </div>
+    <div class="ladder" id="ladder" aria-label="Alle upgrades binnen 30 dagen"></div>
+  </section>
+
+  <section>
+    <div class="ask">
+      <h2>Klopt dit zo?</h2>
+      <ol>
+        <li>Zijn de zeven upgrades goed: slaapstand, wakker, antenne gloeit, eerste vlam, pantser, super-aura en legendarisch op dag 30?</li>
+        <li>Heeft NTS huisstijlkleuren? Nu is Stampy kobaltblauw met een oranje-gouden vuur.</li>
+        <li>Je noemde drie delen: het spel, de kennisbank "en nog een stuk". Bedoel je daarmee de speeltuin waar je zelf SQL en Python uitprobeert, of iets anders?</li>
+      </ol>
+    </div>
+  </section>
+  <footer>Schets, nog geen definitief ontwerp. Stampy is een eigen ontwerp; Duolingo is alleen inspiratie voor hoe een mascotte motiveert.</footer>
+</div>
+
+<script>
+const V={name:"Stampy",colors:{shell:"#F3F5FB",accent:"#2B47F0",plate:"#2B47F0",bulb:"#FFC93D"},geo:{lx:80,rx:120,ey:78,my:98,s:1}};
+const BODY=`
+<g class="armL arm"><rect class="shell ol" x="38" y="132" width="16" height="42" rx="8"/><circle class="accent ol" cx="46" cy="177" r="8"/></g>
+<g class="armR arm"><rect class="shell ol" x="146" y="132" width="16" height="42" rx="8"/><circle class="accent ol" cx="154" cy="177" r="8"/></g>
+<rect class="accent ol" x="70" y="190" width="22" height="14" rx="6"/><rect class="accent ol" x="108" y="190" width="22" height="14" rx="6"/>
+<rect class="shell ol" x="56" y="122" width="88" height="74" rx="28"/>
+<rect class="plate ol" x="71" y="140" width="58" height="32" rx="10"/>
+<text class="nts" x="100" y="162" font-size="17">NTS</text>
+<rect class="armor accent ol" x="44" y="120" width="28" height="16" rx="8"/><rect class="armor accent ol" x="128" y="120" width="28" height="16" rx="8"/>
+<line class="ol-line" x1="100" y1="40" x2="100" y2="21"/><circle class="bulb ol" cx="100" cy="15" r="8"/>
+<rect class="accent ol" x="30" y="66" width="12" height="32" rx="6"/><rect class="accent ol" x="158" y="66" width="12" height="32" rx="6"/>
+<rect class="shell ol" x="38" y="38" width="124" height="88" rx="36"/>
+<rect class="screen" x="51" y="51" width="98" height="62" rx="24"/>
+<g class="face"></g>`;
+const LINES={
+  neutral:["Hoi! Zin in een rondje?","Klaar voor vandaag?"],
+  happy:["Goed zo, die zit erin.","Precies goed.","Netjes. Volgende!"],
+  cheer:["Vijf op rij! Ik ga dansen.","Combo! Niet te stoppen."],
+  sad:["Oei, net niet.","Die was lastig."],
+  encourage:["Lees de uitleg even, dan zit hij er zo in.","Fout is goed: nu onthoud je hem beter."],
+  worried:["Je streak staat op het spel. Eén rondje?","Nog niet geoefend vandaag… vijf minuutjes?"],
+  sleep:["Zzz… begin een streak om me wakker te maken."],
+  alarm:["Productie ligt eruit! Pak de pager!"],
+  power:["Hnnngh… bijna…","Kracht verzamelen…"],
+  poke:["Hé, dat kietelt! Nog een rondje?","Boop! Ik ben er klaar voor.","Houd me vast, dan laad ik op."]
+};
+const EXPR=[["neutral","Neutraal"],["happy","Blij"],["cheer","Juichen"],["power","Opladen"],["sad","Verdrietig"],["worried","Bezorgd"],["sleep","Slaap"],["alarm","Alarm"]];
+const EXPR_ANIM={happy:"hop",cheer:"dance",sad:"droop",alarm:"shake",power:"shake"};
+const STAGES=[[0,"Slaapstand"],[1,"Wakker"],[3,"Antenne gloeit"],[7,"Eerste vlam"],[14,"Pantser-upgrade"],[21,"Super-aura"],[30,"Legendarisch"]];
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const stageOf=d=>{let s=0;for(const [m] of STAGES)if(d>=m)s=m;return s};
+const REDUCED=matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function star(cx,cy,r){const p=[];for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.45:r;p.push((cx+Math.cos(a)*rr).toFixed(1)+","+(cy+Math.sin(a)*rr).toFixed(1))}return `<polygon class="eye" points="${p.join(" ")}"/>`}
+function face(e,g){
+  const {lx,rx,ey,my,s}=g,c=100;
+  const pill=(x,h=18,dy=0)=>`<rect class="eye blink" x="${x-6*s}" y="${ey+dy-h*s/2}" width="${12*s}" height="${h*s}" rx="${6*s}"/>`;
+  const arc=x=>`<path class="eye-line" d="M${x-8*s} ${ey+3*s} Q${x} ${ey-10*s} ${x+8*s} ${ey+3*s}"/>`;
+  const lid=x=>`<path class="eye-line" d="M${x-8*s} ${ey} Q${x} ${ey+6*s} ${x+8*s} ${ey}"/>`;
+  const brow=(x1,y1,x2,y2)=>`<path class="eye-line thin" d="M${x1} ${y1} L${x2} ${y2}"/>`;
+  const M=d=>`<path class="mouth-line" d="${d}"/>`,MF=d=>`<path class="mouth-fill" d="${d}"/>`;
+  switch(e){
+    case "happy":return arc(lx)+arc(rx)+MF(`M${c-11} ${my-3} Q${c} ${my+13} ${c+11} ${my-3} Z`);
+    case "cheer":return star(lx,ey,10)+star(rx,ey,10)+MF(`M${c-13} ${my-4} Q${c} ${my+16} ${c+13} ${my-4} Z`);
+    case "power":return `<rect class="eye" x="${lx-7}" y="${ey-4}" width="14" height="10" rx="5"/><rect class="eye" x="${rx-7}" y="${ey-4}" width="14" height="10" rx="5"/>`+brow(lx-9,ey-14,lx+7,ey-8)+brow(rx-7,ey-8,rx+9,ey-14)+`<rect class="mouth-fill" x="${c-12}" y="${my-4}" width="24" height="10" rx="3"/><line class="teeth" x1="${c-12}" y1="${my+1}" x2="${c+12}" y2="${my+1}"/><line class="teeth" x1="${c-4}" y1="${my-4}" x2="${c-4}" y2="${my+6}"/><line class="teeth" x1="${c+4}" y1="${my-4}" x2="${c+4}" y2="${my+6}"/>`;
+    case "sad":return pill(lx,13,3)+pill(rx,13,3)+brow(lx-8,ey-9,lx+7,ey-14)+brow(rx-7,ey-14,rx+8,ey-9)+M(`M${c-8} ${my+5} Q${c} ${my-3} ${c+8} ${my+5}`);
+    case "worried":return pill(lx,16,1)+pill(rx,16,1)+brow(lx-8,ey-11,lx+7,ey-15)+brow(rx-7,ey-15,rx+8,ey-11)+M(`M${c-10} ${my+2} q5 -4 10 0 t10 0`);
+    case "sleep":return lid(lx)+lid(rx)+`<circle class="mouth-line" cx="${c}" cy="${my+2}" r="3.5"/>`;
+    case "alarm":return `<circle class="eye" cx="${lx}" cy="${ey}" r="7"/><circle class="eye" cx="${rx}" cy="${ey}" r="7"/>`+brow(lx-8,ey-15,lx+7,ey-10)+brow(rx-7,ey-10,rx+8,ey-15)+`<rect class="mouth-fill" x="${c-7}" y="${my-3}" width="14" height="10" rx="4"/>`;
+    default:return pill(lx)+pill(rx)+M(`M${c-8} ${my} Q${c} ${my+6} ${c+8} ${my}`);
+  }
+}
+const spark=(x,y,r)=>`<path d="M${x} ${y-r} Q${x} ${y} ${x+r} ${y} Q${x} ${y} ${x} ${y+r} Q${x} ${y} ${x-r} ${y} Q${x} ${y} ${x} ${y-r}Z"/>`;
+
+const ROBOTS=[];let uidN=0;
+class Robot{
+  constructor(host,{days=1,bubble=true,interactive=true,aura=true}={}){
+    this.host=host;this.uid="rb"+(++uidN);
+    host.innerHTML=(bubble?'<div class="bubble" aria-live="polite"></div>':"")+'<svg class="robot" viewBox="0 0 200 230" role="img" aria-label="Stampy, de NTS-robot"></svg>';
+    this.svg=host.querySelector("svg");this.bubble=host.querySelector(".bubble");
+    if(!aura)this.svg.classList.add("noaura");
+    const u=this.uid;
+    this.svg.innerHTML=`<defs>
+      <linearGradient id="${u}-gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFEFB8"/><stop offset=".5" stop-color="#F7C03C"/><stop offset="1" stop-color="#D98E10"/></linearGradient>
+      <linearGradient id="${u}-holo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7AF0FF"/><stop offset=".33" stop-color="#B58CFF"/><stop offset=".66" stop-color="#FF8AD8"/><stop offset="1" stop-color="#7AF0FF"/>
+        <animateTransform attributeName="gradientTransform" type="rotate" from="0 .5 .5" to="360 .5 .5" dur="4s" repeatCount="indefinite"/></linearGradient>
+      <radialGradient id="${u}-flame" cx=".5" cy=".6" r=".5"><stop offset="0" stop-color="#FFE08A" stop-opacity=".95"/><stop offset=".55" stop-color="#FF9A2E" stop-opacity=".55"/><stop offset="1" stop-color="#FF5A1F" stop-opacity="0"/></radialGradient>
+    </defs>
+    <ellipse class="shadow" cx="100" cy="221" rx="46" ry="6"/>
+    <ellipse class="aura" cx="100" cy="118" rx="92" ry="104" fill="url(#${u}-flame)"/>
+    <g class="bob">${BODY}</g>
+    <g class="zzz"><text x="150" y="44" font-size="13">Z</text><text x="162" y="30" font-size="16">Z</text><text x="176" y="14" font-size="19">Z</text></g>
+    <g class="sparkles">${spark(26,40,8)}${spark(176,58,6)}${spark(20,168,6)}${spark(182,176,8)}</g>`;
+    this.faceEl=this.svg.querySelector(".face");
+    this.setStage(days);
+    if(interactive){this.svg.setAttribute("tabindex","0");ROBOTS.push(this)}
+  }
+  applyColors(){
+    const c=V.colors,st=this.svg.style,gold=this.stage>=21;
+    st.setProperty("--shell",gold?`url(#${this.uid}-gold)`:c.shell);
+    st.setProperty("--accent-r",gold?"#9A6410":c.accent);
+    st.setProperty("--plate",gold?"#4A3205":c.plate);
+    st.setProperty("--nts",gold?"#FFE7A3":"#FFFFFF");
+    st.setProperty("--bulb",c.bulb);
+    st.setProperty("--rim",`url(#${this.uid}-holo)`);
+  }
+  setStage(d){
+    const s=stageOf(d);this.stage=s;const cl=this.svg.classList;
+    ["s0","s3","s7","s14","s21","s30"].forEach(k=>cl.remove(k));
+    if(s===0)cl.add("s0");[3,7,14,21,30].forEach(m=>{if(s>=m)cl.add("s"+m)});
+    this.applyColors();this.rest();
+  }
+  setExpr(e){this.expr=e;this.svg.dataset.expr=e;this.faceEl.innerHTML=face(e,V.geo)}
+  rest(){this.setExpr(this.stage===0?"sleep":"neutral")}
+  anim(a){const cl=this.svg.classList;["anim-hop","anim-dance","anim-shake","anim-droop"].forEach(k=>cl.remove(k));if(!a)return;
+    void this.svg.getBoundingClientRect();cl.add("anim-"+a);clearTimeout(this.at);this.at=setTimeout(()=>cl.remove("anim-"+a),2400)}
+  say(t){if(!this.bubble)return;this.bubble.textContent=t;this.bubble.classList.add("on");clearTimeout(this.bt);this.bt=setTimeout(()=>this.bubble.classList.remove("on"),2600)}
+  show(e){clearTimeout(this.t);this.setExpr(e);this.anim(EXPR_ANIM[e]);this.say(pick(LINES[e]))}
+  react(kind){
+    clearTimeout(this.t);
+    if(kind==="poke"&&this.stage===0){this.anim("hop");this.say(pick(LINES.sleep));return}
+    const map={correct:["happy","hop",LINES.happy],wrong:["sad","droop",LINES.sad],combo:["cheer","dance",LINES.cheer],boss:["alarm","shake",LINES.alarm],risk:["worried",null,LINES.worried],poke:[Math.random()<.5?"happy":"cheer","hop",LINES.poke]};
+    const [e,a,lines]=map[kind];this.setExpr(e);this.anim(a);this.say(pick(lines));
+    this.t=setTimeout(()=>{if(kind==="wrong"){this.setExpr("worried");this.say(pick(LINES.encourage));this.t=setTimeout(()=>this.rest(),2600)}else this.rest()},kind==="boss"?3200:2300);
+  }
+}
+
+/* eyes follow the pointer */
+let raf=0,px=0,py=0;
+addEventListener("pointermove",e=>{px=e.clientX;py=e.clientY;if(!raf)raf=requestAnimationFrame(()=>{raf=0;
+  for(const r of ROBOTS){if(r.expr==="sleep"){r.faceEl.style.transform="";continue}
+    const b=r.svg.getBoundingClientRect();
+    const dx=Math.max(-5,Math.min(5,(px-(b.left+b.width/2))/b.width*9)),dy=Math.max(-4,Math.min(4,(py-(b.top+b.height*.35))/b.height*8));
+    r.faceEl.style.transform=`translate(${dx.toFixed(1)}px,${dy.toFixed(1)}px)`}})},{passive:true});
+
+/* ---------- main stage ---------- */
+const stageEl=document.getElementById("ringstage");
+const big=new Robot(document.getElementById("bigHost"),{days:12,aura:false});
+const slider=document.getElementById("streak");
+const ringFill=document.getElementById("ringFill"),maskArc=document.getElementById("maskArc"),ringHead=document.getElementById("ringHead");
+const ticksG=document.getElementById("ticks");const TICKS=60;
+ticksG.innerHTML=Array.from({length:TICKS},(_,i)=>{const a=i/TICKS*Math.PI*2-Math.PI/2;const c=Math.cos(a),s=Math.sin(a);
+  return `<line class="tick" x1="${(50+c*47.6).toFixed(2)}" y1="${(50+s*47.6).toFixed(2)}" x2="${(50+c*49.6).toFixed(2)}" y2="${(50+s*49.6).toFixed(2)}"/>`}).join("");
+const tickEls=[...ticksG.children];
+
+const mile=document.getElementById("mile");
+mile.innerHTML=STAGES.map(([m])=>`<button type="button" data-d="${m}">${m} d</button>`).join("");
+mile.addEventListener("click",e=>{const b=e.target.closest("[data-d]");if(!b)return;slider.value=b.dataset.d;update(true)});
+
+let lastStage=stageOf(+slider.value);
+function update(fromUser){
+  const d=+slider.value,s=stageOf(d);
+  document.getElementById("dayNum").textContent=d;
+  document.getElementById("dayWord").textContent=d===1?"dag streak":"dagen streak";
+  document.getElementById("stageName").textContent=STAGES.find(x=>x[0]===s)[1];
+  const idx=STAGES.findIndex(x=>x[0]===s),nxt=STAGES[idx+1];
+  let pct=1;
+  if(nxt){const left=nxt[0]-d;document.getElementById("nextText").textContent=`Nog ${left} ${left===1?"dag":"dagen"} tot ${nxt[1]}`;pct=(d-s)/(nxt[0]-s);
+    document.getElementById("pct").textContent=`${d} / ${nxt[0]} dagen`}
+  else{document.getElementById("nextText").textContent="Volle kracht. Houd de streak vast.";document.getElementById("pct").textContent="30 / 30 · max"}
+  const off=(100-pct*100).toFixed(1);ringFill.setAttribute("stroke-dashoffset",off);maskArc.setAttribute("stroke-dashoffset",off);
+  const a=pct*Math.PI*2-Math.PI/2;ringHead.setAttribute("cx",(50+Math.cos(a)*43).toFixed(2));ringHead.setAttribute("cy",(50+Math.sin(a)*43).toFixed(2));
+  ringHead.style.opacity=pct>0.001?1:0;
+  mile.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.d===s));
+  ladder.querySelectorAll(".rung").forEach(r=>r.setAttribute("aria-current",+r.dataset.d===s));
+  if(big.stage!==s){
+    const up=s>lastStage;big.setStage(d);
+    if(fromUser&&up){big.anim("hop");big.say(`${STAGES[idx][1]} ontgrendeld!`);stageEl.classList.remove("levelup");void stageEl.offsetWidth;stageEl.classList.add("levelup");Fire.burst(.7)}
+  }
+  lastStage=s;Fire.setStage(s);
+}
+slider.addEventListener("input",()=>update(true));
+
+/* faces + reactions */
+const chips=document.getElementById("chips");
+chips.innerHTML=EXPR.map(([e,l])=>`<button class="chip" type="button" data-e="${e}" aria-pressed="false">${l}</button>`).join("");
+chips.addEventListener("click",ev=>{const b=ev.target.closest("[data-e]");if(!b)return;chips.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",c===b));big.show(b.dataset.e)});
+const react=document.getElementById("react");
+react.innerHTML=[["correct","Goed antwoord"],["wrong","Fout antwoord"],["combo","Combo ×5"],["boss","Eindbaas"],["risk","Streak in gevaar"]].map(([k,l])=>`<button type="button" data-k="${k}">${l}</button>`).join("");
+react.addEventListener("click",e=>{const b=e.target.closest("[data-k]");if(b)big.react(b.dataset.k)});
+
+/* ladder */
+const ladder=document.getElementById("ladder");
+ladder.innerHTML=STAGES.map(([m,l])=>`<div class="rung" data-d="${m}" role="button" tabindex="0"><div class="host"></div><b>${m} ${m===1?"dag":"dagen"}</b><span>${l}</span></div>`).join("");
+ladder.querySelectorAll(".rung").forEach((r,i)=>{new Robot(r.querySelector(".host"),{days:STAGES[i][0],bubble:false,interactive:false});
+  const go=()=>{slider.value=r.dataset.d;update(true);stageEl.scrollIntoView({behavior:REDUCED?"auto":"smooth",block:"center"})};
+  r.addEventListener("click",go);r.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}})});
+
+/* ---------- fire aura (canvas particles) ---------- */
+const Fire=(()=>{
+  const cv=document.getElementById("fire"),ctx=cv.getContext("2d");
+  let W=0,H=0,dpr=1,k=1,body={x:0,y:0,rx:0,ry:0},parts=[],bolts=[],stage=0,charge=0,visible=true,acc=0,boltT=0,last=0,running=false;
+  const BASE={0:0,1:0,3:0,7:.35,14:.6,21:.92,30:1.2};
+  function sprite(r,g,b){const c=document.createElement("canvas");c.width=c.height=64;const x=c.getContext("2d");const gr=x.createRadialGradient(32,32,0,32,32,32);
+    gr.addColorStop(0,"rgba(255,255,240,1)");gr.addColorStop(.25,`rgba(${r},${g},${b},.9)`);gr.addColorStop(.6,`rgba(${r},${g},${b},.35)`);gr.addColorStop(1,`rgba(${r},${g},${b},0)`);x.fillStyle=gr;x.fillRect(0,0,64,64);return c}
+  const SPR={orange:sprite(255,120,30),gold:sprite(255,200,60),blue:sprite(110,200,255)};
+  function measure(){const r=cv.getBoundingClientRect();dpr=Math.min(2,devicePixelRatio||1);W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+    const h=big.svg.getBoundingClientRect();const ox=h.left-r.left,oy=h.top-r.top;k=h.width/200;
+    body={x:ox+100*k,y:oy+128*k,rx:66*k,ry:92*k}}
+  function intensity(){return (BASE[stage]||0)+charge*1.1}
+  function emit(n){const I=intensity();const gold=stage>=21||charge>.7;
+    for(let i=0;i<n;i++){const th=Math.random()*Math.PI*2;const ex=Math.cos(th),ey=Math.sin(th);
+      const x=body.x+ex*body.rx*(.85+Math.random()*.2),y=body.y+ey*body.ry*(.8+Math.random()*.25)+12*k;
+      const blue=stage>=30&&Math.random()<.18;
+      parts.push({x,y,vx:ex*14*k+(Math.random()-.5)*16*k,vy:-(70+Math.random()*90)*k*(.8+I*.45),age:0,life:.45+Math.random()*.6*(.7+I*.4),
+        size:(10+Math.random()*14)*k*(.75+I*.5),spr:blue?SPR.blue:gold?SPR.gold:SPR.orange})}}
+  function burst(power){if(REDUCED)return;for(let i=0;i<Math.round(140*power);i++){const a=Math.random()*Math.PI*2,sp=(160+Math.random()*260)*k*power;
+    parts.push({x:body.x,y:body.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-40*k,age:0,life:.5+Math.random()*.35,size:(8+Math.random()*10)*k,spr:Math.random()<.3?SPR.blue:SPR.gold,burst:1})}
+    ensure()}
+  function bolt(){const th=-Math.PI*(.15+Math.random()*.7)+(Math.random()<.5?0:Math.PI*0);const sx=body.x+Math.cos(th)*body.rx*.9,sy=body.y+Math.sin(th)*body.ry*.9;
+    const pts=[[sx,sy]];let x=sx,y=sy;const dir=Math.atan2(sy-body.y,sx-body.x);
+    for(let i=0;i<6;i++){x+=Math.cos(dir+(Math.random()-.5)*1.6)*12*k;y+=Math.sin(dir+(Math.random()-.5)*1.6)*12*k-4*k;pts.push([x,y])}
+    bolts.push({pts,t:.12})}
+  function frame(t){
+    const dt=Math.min(.05,(t-(last||t))/1000);last=t;
+    if(!visible){running=false;return}
+    const I=intensity();
+    acc+=dt*260*I;const n=Math.floor(acc);acc-=n;if(n>0)emit(Math.min(n,14));
+    if(stage>=30||charge>=1){boltT-=dt;if(boltT<=0){bolt();boltT=.18+Math.random()*.35}}
+    ctx.clearRect(0,0,W,H);
+    if(I>0){const g=ctx.createRadialGradient(body.x,body.y,body.rx*.4,body.x,body.y,body.ry*1.9);
+      const col=stage>=21||charge>.7?"255,200,70":"255,130,40";
+      g.addColorStop(0,`rgba(${col},${Math.min(.45,.18*I)})`);g.addColorStop(1,`rgba(${col},0)`);ctx.fillStyle=g;ctx.fillRect(0,0,W,H)}
+    ctx.globalCompositeOperation="lighter";
+    for(let i=parts.length-1;i>=0;i--){const p=parts[i];p.age+=dt;if(p.age>=p.life){parts.splice(i,1);continue}
+      if(!p.burst){p.vy-=55*k*dt;p.vx+=(body.x-p.x)*1.6*dt}else{p.vx*=.96;p.vy*=.96}
+      p.x+=p.vx*dt;p.y+=p.vy*dt;const r=p.age/p.life;const sz=p.size*(1-r*.65);
+      ctx.globalAlpha=(1-r)*(p.burst?1:.85);ctx.drawImage(p.spr,p.x-sz,p.y-sz,sz*2,sz*2)}
+    ctx.globalAlpha=1;
+    for(let i=bolts.length-1;i>=0;i--){const b=bolts[i];b.t-=dt;if(b.t<=0){bolts.splice(i,1);continue}
+      ctx.strokeStyle="rgba(190,235,255,.95)";ctx.lineWidth=2.2*k;ctx.shadowColor="#7FD8FF";ctx.shadowBlur=12;ctx.beginPath();b.pts.forEach(([x,y],j)=>j?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.stroke();ctx.shadowBlur=0}
+    ctx.globalCompositeOperation="source-over";
+    if(parts.length||bolts.length||intensity()>0)requestAnimationFrame(frame);else{running=false;ctx.clearRect(0,0,W,H)}
+  }
+  function ensure(){if(!running&&visible&&!REDUCED){running=true;last=0;requestAnimationFrame(frame)}}
+  function staticGlow(){ctx.clearRect(0,0,W,H);const I=intensity();if(I<=0)return;const g=ctx.createRadialGradient(body.x,body.y,body.rx*.3,body.x,body.y,body.ry*1.9);
+    g.addColorStop(0,`rgba(255,180,60,${Math.min(.5,.25*I)})`);g.addColorStop(1,"rgba(255,180,60,0)");ctx.fillStyle=g;ctx.fillRect(0,0,W,H)}
+  new ResizeObserver(()=>{measure();REDUCED&&staticGlow()}).observe(stageEl);
+  new IntersectionObserver(es=>{visible=es[0].isIntersecting;if(visible)ensure()}).observe(stageEl);
+  document.addEventListener("visibilitychange",()=>{visible=!document.hidden;if(visible)ensure()});
+  measure();
+  return{setStage(s){stage=s;REDUCED?staticGlow():ensure()},setCharge(c){charge=c;REDUCED?staticGlow():ensure()},burst};
+})();
+
+/* ---------- hold to charge ---------- */
+const btn=document.getElementById("charge"),bar=document.getElementById("chargeBar"),btxt=document.getElementById("chargeText");
+let holding=false,charge=0,full=false,cRaf=0,cLast=0;
+function startHold(){if(holding)return;holding=true;btn.classList.add("holding");big.svg.classList.add("charging");clearTimeout(big.t);big.setExpr("power");big.say(pick(LINES.power));loop()}
+function endHold(){if(!holding)return;holding=false;btn.classList.remove("holding");big.svg.classList.remove("charging");
+  if(full){Fire.burst(1.2);stageEl.classList.remove("levelup");void stageEl.offsetWidth;stageEl.classList.add("levelup");big.setExpr("cheer");big.anim("dance");big.say("POWER-UP! Volle kracht!");big.t=setTimeout(()=>big.rest(),2400)}
+  else{big.rest()}
+  full=false;loop()}
+function loop(){if(cRaf)return;cLast=0;const step=t=>{const dt=Math.min(.05,(t-(cLast||t))/1000);cLast=t;
+  charge=holding?Math.min(1,charge+dt/1.6):Math.max(0,charge-dt/.7);
+  if(holding&&charge>=1&&!full){full=true;stageEl.classList.add("full");btxt.textContent="Loslaten!";big.say("Volle kracht… loslaten!")}
+  if(!holding)stageEl.classList.remove("full");
+  if(!holding&&charge<=0)btxt.textContent="Houd vast om op te laden";else if(holding&&!full)btxt.textContent=`Opladen… ${Math.round(charge*100)}%`;
+  bar.style.width=(charge*100)+"%";const on=Math.round(charge*TICKS);tickEls.forEach((el,i)=>el.classList.toggle("on",i<on));
+  Fire.setCharge(charge);
+  if(holding||charge>0)cRaf=requestAnimationFrame(step);else cRaf=0};cRaf=requestAnimationFrame(step)}
+[btn,stageEl].forEach(el=>{el.addEventListener("pointerdown",e=>{e.preventDefault();el.setPointerCapture?.(e.pointerId);startHold()});
+  el.addEventListener("pointerup",endHold);el.addEventListener("pointercancel",endHold);el.addEventListener("lostpointercapture",endHold)});
+btn.addEventListener("keydown",e=>{if((e.key===" "||e.key==="Enter")){e.preventDefault();startHold()}});
+btn.addEventListener("keyup",e=>{if(e.key===" "||e.key==="Enter"){e.preventDefault();endHold()}});
+btn.addEventListener("blur",endHold);
+big.svg.addEventListener("keydown",e=>{if(e.key==="Enter")big.react("poke")});
+let downAt=0;stageEl.addEventListener("pointerdown",()=>downAt=performance.now());
+stageEl.addEventListener("pointerup",()=>{if(performance.now()-downAt<220){big.react("poke")}});
+
+update(false);
+</script>
+</body>
+</html>

@@ -22,6 +22,9 @@ const esc = s => String(s)
 /** Zoals esc, maar zet `backticks` om naar <code>. @param {unknown} s */
 const fmt = s => esc(s).replace(/`([^`]+)`/g, '<code>$1</code>');
 
+/** Een willekeurig element uit een lijst. @template T @param {T[]} list @returns {T} */
+const randomOf = list => list[Math.floor(Math.random() * list.length)];
+
 /**
  * Geeft een geschudde kopie terug (Fisher-Yates).
  * @template T
@@ -47,6 +50,16 @@ const hue = week => week ? `var(--w${week})` : 'var(--accent)';
 
 /** True op apparaten met een touchscreen als belangrijkste invoer. */
 const isTouch = () => window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+
+/** Korte melding bovenin het scherm (bijvoorbeeld "Level 3 is nu open"). @param {string} text */
+function toast(text) {
+  const el = document.getElementById('toast');
+  if (!el) return;
+  el.textContent = text;
+  el.classList.add('on');
+  clearTimeout(/** @type {any} */ (el)._t);
+  /** @type {any} */ (el)._t = setTimeout(() => el.classList.remove('on'), 2600);
+}
 
 /** Getal in Nederlandse notatie, bijvoorbeeld 1.234. @param {number} n */
 const nl = n => n.toLocaleString('nl-NL');
@@ -91,12 +104,16 @@ function editDistance(a, b) {
   return prev[b.length];
 }
 
-/** @typedef {'home' | 'play' | 'cards' | 'result' | 'search'} ScreenId */
+/** @typedef {'home' | 'map' | 'level' | 'boss' | 'oefenen' | 'profiel' | 'speeltuin' | 'play' | 'cards' | 'result' | 'search' | 'kb'} ScreenId */
+
+/** Alle schermen van de app; elk is een <section> met dat id. */
+const SCREENS = ['home', 'map', 'level', 'boss', 'oefenen', 'profiel', 'speeltuin', 'play', 'cards', 'result', 'search', 'kb'];
 
 /** Toont één scherm en verbergt de rest. @param {ScreenId} id */
 function showScreen(id) {
-  for (const s of ['home', 'play', 'cards', 'result', 'search']) $('#' + s).hidden = s !== id;
+  for (const s of SCREENS) $('#' + s).hidden = s !== id;
   document.body.dataset.screen = id;
+  if (typeof markTab === 'function') markTab(id);
   // Direct naar boven, ook al scrolt de pagina verder vloeiend.
   window.scrollTo({ top: 0, behavior: 'instant' });
 }

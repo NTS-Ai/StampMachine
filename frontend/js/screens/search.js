@@ -1,13 +1,15 @@
-/* ---------- opzoeken: alle vragen, uitleg en flashcards doorzoeken ----------
+/* ---------- opzoeken: vragen, flashcards en de kennisbank (lessen, naslag, begrippen) ----------
    Zoekt in de vraag, het antwoord en de uitleg. Elk zoekwoord moet ergens voorkomen;
    treffers in de vraag zelf wegen het zwaarst. */
 
-/** @typedef {'all' | 'q' | 't' | 'f'} SearchKind */
+/** @typedef {'all' | 'l' | 'b' | 'n' | 'q' | 't' | 'f'} SearchKind */
 
 /**
  * @typedef {Object} SearchItem
- * @property {'q' | 't' | 'f'} kind   Quizvraag, typvraag of flashcard.
- * @property {Question | Flashcard} item
+ * @property {'l' | 'b' | 'n' | 'q' | 't' | 'f'} kind   Les, begrip, naslag, quizvraag, typvraag of flashcard.
+ * @property {any} item              De vraag of kaart zelf; bij de kennisbank alleen { id }.
+ * @property {string} [href]         Kennisbank: de pagina waar het resultaat naartoe linkt.
+ * @property {string} [sub]          Kennisbank: extra context, zoals de naslag-groep.
  * @property {number} week
  * @property {string} title
  * @property {string} answer
@@ -15,7 +17,9 @@
  * @property {string[]} hay          Genormaliseerde titel, antwoord en uitleg.
  */
 
-const KIND_LABELS = { all: 'Alles', q: 'Quizvragen', t: 'Typvragen', f: 'Flashcards' };
+const KIND_LABELS = { all: 'Alles', l: 'Lessen', b: 'Begrippen', n: 'Naslag', q: 'Quizvragen', t: 'Typvragen', f: 'Flashcards' };
+/** Soorten uit de kennisbank: die linken naar een pagina in plaats van een oefening te starten. */
+const KB_KINDS = ['l', 'b', 'n'];
 const SEARCH_PAGE = 30;
 
 /** Kleine letters, zonder accenten en backticks, zodat "café" en `cafe` elkaar vinden. @param {string} s */
@@ -48,11 +52,34 @@ function buildIndex() {
     return { kind, item: it, week: it.week, title, answer, body, hay: [fold(title), fold(answer), fold(body)] };
   };
   return [
+    ...kbEntries(),
     ...ALLQ.map(q => entry('q', q)),
     ...ALLT.map(t => entry('t', t)),
     ...ALLF.map(c => entry('f', c)),
   ];
 }
+
+/** Lessen, naslag-tabellen en begrippen, zodra de kennisbank geladen is. @returns {SearchItem[]} */
+function kbEntries() {
+  if (typeof KB === 'undefined' || !KB.ok) return [];
+  /** @param {SearchItem['kind']} kind @param {string} id @param {number} week @param {string} title @param {string} answer @param {string} body @param {string} href @param {string} [sub] */
+  const item = (kind, id, week, title, answer, body, href, sub) =>
+    ({ kind, item: { id }, week, title, answer, body, href, sub, hay: [fold(title), fold(answer), fold(body)] });
+  const weekOfSection = (/** @type {string} */ s) => Number(String(s || '').split('.')[0]) || 0;
+  const blockText = (/** @type {KbBlock} */ b) => [b.text, b.code, b.caption, ...(b.items || []), ...(b.head || []), ...(b.rows || []).flat()].filter(Boolean).join(' ');
+
+  return [
+    ...KB.sections.map(s => item('l', 'les:' + s.id, s.week, `${s.id} ${s.title}`, s.summary,
+      [s.simple, ...s.blocks.map(blockText), ...(s.takeaways || []), ...(s.tags || [])].join(' '), '#/kennis/' + s.id)),
+    ...KB.terms.map(t => item('b', 'term:' + t.term, weekOfSection(t.section), t.term, t.short, t.simple,
+      KB.byId.has(t.section) ? '#/kennis/' + t.section : '#/kennis/begrippen')),
+    ...KB.groups.flatMap(g => g.tables.map(t => item('n', 'tab:' + t.id, weekOfSection(t.section), t.title, t.intro || '',
+      [...t.head, ...t.rows.flat()].join(' '), '#/kennis/naslag/' + g.id, g.title))),
+  ];
+}
+
+/** Stampy naast de titel van het zoekscherm. @type {any} */
+let searchBot = null;
 
 const SR = {
   query: '',
@@ -109,8 +136,21 @@ function statusChip(it) {
   return '';
 }
 
+/** Resultaat uit de kennisbank: een link naar de les, het begrip of de tabel. @param {SearchItem} it @param {string[]} terms @param {number} i */
+function kbResultCard(it, terms, i) {
+  const label = { l: 'Les', b: 'Begrip', n: 'Naslag' }[it.kind] + (it.sub ? ' · ' + esc(it.sub) : '');
+  return `<article class="sr sr-kb" style="--wc:${hue(it.week)};--i:${Math.min(i, 8)}">
+    <div class="sr-meta">${it.week ? `<span class="wchip">Week ${it.week}</span>` : ''}<span class="sr-kind">${label}</span>
+      <a class="btn sm" href="${esc(it.href || '#/kennis')}">Open</a></div>
+    <h2 class="sr-title"><a href="${esc(it.href || '#/kennis')}">${highlight(fmt(it.title), terms)}</a></h2>
+    ${it.answer ? `<p class="sr-answer">${highlight(fmt(it.answer), terms)}</p>` : ''}
+    ${it.kind === 'b' && it.body ? `<p class="sr-simple">${highlight(fmt(it.body), terms)}</p>` : ''}
+  </article>`;
+}
+
 /** @param {SearchItem} it @param {string[]} terms @param {number} i */
 function resultCard(it, terms, i) {
+  if (KB_KINDS.includes(it.kind)) return kbResultCard(it, terms, i);
   const q = /** @type {Question} */ (it.item);
   const kind = { q: 'Quizvraag', t: 'Typvraag', f: 'Flashcard' }[it.kind];
   let more = '';
@@ -119,8 +159,8 @@ function resultCard(it, terms, i) {
   if (q.explanation) more += `<div class="sr-block"><span class="lbl">Technisch</span><p>${highlight(fmt(q.explanation), terms)}</p></div>`;
   if (q.points && q.points.length) more += `<div class="sr-block"><span class="lbl">Moet erin staan</span><ul>${q.points.map(p => `<li>${highlight(fmt(p), terms)}</li>`).join('')}</ul></div>`;
 
-  return `<article class="sr" style="--hue:${hue(it.week)};--i:${Math.min(i, 8)}">
-    <div class="sr-meta"><span class="chip">Week ${it.week}</span><span class="sr-kind">${kind}</span>${statusChip(it)}
+  return `<article class="sr" style="--wc:${hue(it.week)};--i:${Math.min(i, 8)}">
+    <div class="sr-meta"><span class="wchip">Week ${it.week}</span><span class="sr-kind">${kind}</span>${statusChip(it)}
       ${it.kind !== 'f' ? `<button class="btn sm" type="button" data-practice="${esc(it.item.id)}">Oefen</button>` : ''}</div>
     <h2 class="sr-title">${highlight(fmt(it.title), terms)}</h2>
     <p class="sr-answer"><span class="lbl">Antwoord</span>${highlight(fmt(it.answer), terms)}</p>
@@ -132,7 +172,7 @@ function resultCard(it, terms, i) {
 function emptyState() {
   return `<div class="sr-empty">
     <p>Typ een begrip, commando of foutmelding. Of begin bij een onderwerp:</p>
-    ${WEEKS.map(w => `<div class="topic-row" style="--hue:${hue(w.week)}">
+    ${WEEKS.map(w => `<div class="topic-row" style="--wc:${hue(w.week)}">
       <span class="t-num">W${w.week}</span>
       <div class="topic-chips">${w.topics.split(/,\s*/).map(t => `<button class="topic" type="button" data-topic="${esc(t)}">${esc(t)}</button>`).join('')}</div>
     </div>`).join('')}
@@ -145,13 +185,13 @@ function renderSearch() {
   const byWeek = SR.week ? all.filter(h => h.week === SR.week) : all;
 
   // Aantallen per soort, zodat je ziet waar de treffers zitten.
-  const counts = { all: byWeek.length, q: 0, t: 0, f: 0 };
+  const counts = { all: byWeek.length, l: 0, b: 0, n: 0, q: 0, t: 0, f: 0 };
   for (const h of byWeek) counts[h.kind]++;
-  $('#searchKinds').innerHTML = /** @type {SearchKind[]} */ (['all', 'q', 't', 'f']).map(k =>
-    `<button class="seg-btn" type="button" role="radio" aria-checked="${SR.kind === k}" data-kind="${k}">${KIND_LABELS[k]}${terms.length ? `<span class="seg-count">${counts[k]}</span>` : ''}</button>`
+  $('#searchKinds').innerHTML = /** @type {SearchKind[]} */ (['all', 'l', 'b', 'n', 'q', 't', 'f']).map(k =>
+    `<button class="seg-btn" type="button" role="radio" aria-checked="${SR.kind === k}" tabindex="${SR.kind === k ? 0 : -1}" data-kind="${k}">${KIND_LABELS[k]}${terms.length ? `<span class="seg-count">${counts[k]}</span>` : ''}</button>`
   ).join('');
   $('#searchWeeks').innerHTML = [0, ...WEEKS.map(w => w.week)].map(wk =>
-    `<button class="seg-btn" type="button" role="radio" aria-checked="${SR.week === wk}" data-week="${wk}" style="--hue:${hue(wk)}">${wk ? 'W' + wk : 'Alle weken'}</button>`
+    `<button class="seg-btn" type="button" role="radio" aria-checked="${SR.week === wk}" tabindex="${SR.week === wk ? 0 : -1}" data-week="${wk}" style="--wc:${hue(wk)}">${wk ? 'W' + wk : 'Alle weken'}</button>`
   ).join('');
 
   SR.hits = SR.kind === 'all' ? byWeek : byWeek.filter(h => h.kind === SR.kind);
@@ -159,6 +199,7 @@ function renderSearch() {
 
   const status = $('#searchStatus');
   const results = $('#searchResults');
+  if (searchBot) searchBot.set(!terms.length ? 'neutral' : SR.hits.length ? 'happy' : 'think');
   if (!terms.length) {
     status.innerHTML = '';
     results.innerHTML = emptyState();
@@ -170,7 +211,7 @@ function renderSearch() {
     return;
   }
 
-  const practiceable = SR.hits.filter(h => h.kind !== 'f');
+  const practiceable = SR.hits.filter(h => h.kind === 'q' || h.kind === 't');
   status.innerHTML = `<span><b>${SR.hits.length}</b> ${SR.hits.length === 1 ? 'resultaat' : 'resultaten'}</span>`
     + (practiceable.length > 1 ? `<button class="btn primary sm" type="button" id="practiceAll">Oefen deze ${Math.min(practiceable.length, 20)} vragen</button>` : '');
   results.innerHTML = SR.hits.slice(0, SR.shown).map((h, i) => resultCard(h, terms, i)).join('')
@@ -179,20 +220,28 @@ function renderSearch() {
 
 /** Opent het zoekscherm, eventueel met een zoekterm die al is ingetypt. @param {string} [prefill] */
 function openSearch(prefill) {
-  closeThemeMenu();
   // Een nieuwe zoeksessie begint zonder filters, zodat je niet per ongeluk in één week zoekt.
   if (document.body.dataset.screen !== 'search') { SR.kind = 'all'; SR.week = 0; }
   showScreen('search');
+  if (!searchBot && typeof mountBot === 'function') searchBot = mountBot($('#searchBot'));
   const input = /** @type {HTMLInputElement} */ ($('#searchIn'));
   if (prefill != null) { SR.query = prefill; SR.shown = SEARCH_PAGE; }
   input.value = SR.query;
   renderSearch();
   input.focus();
   input.setSelectionRange(input.value.length, input.value.length);
+  // De kennisbank wordt pas bij de eerste zoekopdracht geladen; daarna doen lessen en begrippen mee.
+  if (typeof loadKB === 'function' && !KB.ok) {
+    loadKB().then(ok => {
+      if (!ok) return;
+      searchIndex = null;
+      if (document.body.dataset.screen === 'search') renderSearch();
+    });
+  }
 }
 
 /** True op schermen waar je kunt gaan zoeken zonder een lopend spel te verliezen. */
-const canOpenSearch = () => ['home', 'result', 'search'].includes(document.body.dataset.screen || '');
+const canOpenSearch = () => ['home', 'map', 'oefenen', 'profiel', 'speeltuin', 'result', 'search', 'kb'].includes(document.body.dataset.screen || '');
 
 /* ---------- invoer ---------- */
 
@@ -238,6 +287,25 @@ $('#searchWeeks').addEventListener('click', e => {
   renderSearch();
 });
 
+/**
+ * Pijltjestoetsen in een filtergroep: kies de vorige of volgende optie, zoals bij radioknoppen.
+ * @param {KeyboardEvent} e
+ */
+function onSegKey(e) {
+  const keys = { ArrowLeft: -1, ArrowUp: -1, ArrowRight: 1, ArrowDown: 1 };
+  if (!(e.key in keys)) return;
+  const group = /** @type {HTMLElement} */ (e.currentTarget);
+  const btns = /** @type {HTMLElement[]} */ (Array.from(group.querySelectorAll('.seg-btn')));
+  const at = btns.indexOf(/** @type {HTMLElement} */ (e.target));
+  if (at < 0) return;
+  e.preventDefault();
+  btns[(at + keys[e.key] + btns.length) % btns.length].click();
+  const checked = /** @type {HTMLElement | null} */ (group.querySelector('[aria-checked="true"]'));
+  if (checked) checked.focus();
+}
+$('#searchKinds').addEventListener('keydown', onSegKey);
+$('#searchWeeks').addEventListener('keydown', onSegKey);
+
 $('#search').addEventListener('click', e => {
   const target = /** @type {HTMLElement} */ (e.target);
   const topic = /** @type {HTMLElement | null} */ (target.closest('[data-topic]'));
@@ -253,7 +321,7 @@ $('#search').addEventListener('click', e => {
     return;
   }
   if (target.closest('#practiceAll')) {
-    const list = SR.hits.filter(h => h.kind !== 'f').map(h => /** @type {Question} */ (h.item));
+    const list = SR.hits.filter(h => h.kind === 'q' || h.kind === 't').map(h => /** @type {Question} */ (h.item));
     startGame('retry', 0, shuffle(list).slice(0, 20));
     $('#modeTag').textContent = 'Oefenen · ' + SR.query.trim();
     return;
@@ -261,14 +329,18 @@ $('#search').addEventListener('click', e => {
   if (target.closest('#searchMore')) { SR.shown += SEARCH_PAGE; renderSearch(); }
 });
 
-$('#searchBack').addEventListener('click', goHome);
-$('#searchBtn').addEventListener('click', () => openSearch());
+$('#searchBack').addEventListener('click', () => goHome());
 
-// Typ je op het startscherm in het zoekveld? Dan ga je meteen door op het zoekscherm.
-$('#homeSearch').addEventListener('submit', e => e.preventDefault());
-$('#homeSearchIn').addEventListener('input', e => {
+// Een zoekveld elders (bijvoorbeeld op de home) met data-search-field opent bij typen meteen het zoekscherm.
+document.addEventListener('input', e => {
   const input = /** @type {HTMLInputElement} */ (e.target);
+  if (!input.matches || !input.matches('[data-search-field]')) return;
   const value = input.value;
   input.value = '';
   openSearch(value);
+});
+// Een knop met data-open-search opent het zoekscherm.
+document.addEventListener('click', e => {
+  const btn = /** @type {HTMLElement} */ (e.target).closest && /** @type {HTMLElement} */ (e.target).closest('[data-open-search]');
+  if (btn && canOpenSearch()) openSearch();
 });

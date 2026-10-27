@@ -1,0 +1,1258 @@
+{
+  "week": 4,
+  "title": "Backend met FastAPI & Redis",
+  "sections": [
+    {
+      "id": "4.1",
+      "title": "Hoe het web werkt: HTTP, REST, JSON en httpx",
+      "summary": "Hoe een client en een server via HTTP met elkaar praten, wat REST is en hoe je vanuit Python een API aanroept met httpx.",
+      "minutes": 45,
+      "simple": "Simpel gezegd: HTTP werkt als een loket. Jij (de client) schuift een briefje naar binnen met wat je wilt en over welk ding het gaat; de medewerker (de server) schuift een antwoord terug met bovenaan een cijfer dat zegt of het gelukt is. Bij API's is de inhoud van die briefjes bijna altijd JSON.",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Client en server"
+        },
+        {
+          "type": "p",
+          "text": "Op het web zijn er altijd twee partijen. Een **client** stelt een vraag: dat kan een browser zijn, een mobiele app, een andere service of een LLM-agent die een tool aanroept. De **server** geeft antwoord. De vraag heet een HTTP-request, het antwoord een HTTP-response. Elke keer dat een app data ophaalt of opslaat, gaat dit heen en weer."
+        },
+        {
+          "type": "p",
+          "text": "Een request bestaat uit vier onderdelen: een **methode** (wat wil je doen), een pad of URL (met welk ding), headers (extra informatie, zoals het soort inhoud of een API-sleutel) en soms een body (de data zelf). Een response heeft een **statuscode**, headers en een body. Bij API's is die body vrijwel altijd JSON."
+        },
+        {
+          "type": "code",
+          "lang": "http",
+          "code": "POST /notes HTTP/1.1\nHost: api.example.com\nContent-Type: application/json\n\n{\"title\": \"Boodschappen\", \"tags\": [\"thuis\"]}",
+          "caption": "Een request: methode en pad, dan headers, een lege regel en de body."
+        },
+        {
+          "type": "code",
+          "lang": "http",
+          "code": "HTTP/1.1 201 Created\nContent-Type: application/json\n\n{\"id\": 42, \"title\": \"Boodschappen\", \"tags\": [\"thuis\"]}",
+          "caption": "De response: statuscode, headers en een JSON-body."
+        },
+        {
+          "type": "h",
+          "text": "HTTP-methodes"
+        },
+        {
+          "type": "p",
+          "text": "De methode is het werkwoord van je request. Je kiest hem op basis van wat je met de resource wilt doen. Let vooral op het verschil tussen `PUT` en `PATCH`: met `PUT` stuur je een complete nieuwe versie, met `PATCH` alleen de velden die veranderen."
+        },
+        {
+          "type": "table",
+          "head": [
+            "Methode",
+            "Betekenis",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "`GET`",
+              "lezen, verandert niets",
+              "`GET /notes/42`"
+            ],
+            [
+              "`POST`",
+              "iets aanmaken of een actie starten",
+              "`POST /notes` met een JSON-body"
+            ],
+            [
+              "`PUT`",
+              "een resource helemaal vervangen",
+              "`PUT /notes/42`"
+            ],
+            [
+              "`PATCH`",
+              "een resource gedeeltelijk bijwerken",
+              "`PATCH /notes/42`"
+            ],
+            [
+              "`DELETE`",
+              "een resource verwijderen",
+              "`DELETE /notes/42`"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "tone": "tip",
+          "text": "Een `GET` mag nooit iets veranderen (geen side effects). Daardoor kun je hem veilig herhalen, in een browser openen of cachen."
+        },
+        {
+          "type": "h",
+          "text": "Statuscodes"
+        },
+        {
+          "type": "p",
+          "text": "Een statuscode is een getal van drie cijfers. Het eerste cijfer zegt al veel: 2xx betekent gelukt, 4xx betekent dat de client iets verkeerd deed en 5xx betekent dat er bij de server iets misging. Lees daarom altijd eerst de status en pas daarna de body: een foutmelding ziet er heel anders uit dan de data die je verwacht."
+        },
+        {
+          "type": "table",
+          "head": [
+            "Code",
+            "Naam",
+            "Wanneer"
+          ],
+          "rows": [
+            [
+              "`200`",
+              "OK",
+              "gelukt, met data in de body"
+            ],
+            [
+              "`201`",
+              "Created",
+              "er is iets nieuws aangemaakt, meestal na een `POST`"
+            ],
+            [
+              "`204`",
+              "No Content",
+              "gelukt, maar zonder body, bijvoorbeeld na een `DELETE`"
+            ],
+            [
+              "`400`",
+              "Bad Request",
+              "de client stuurde onbruikbare data"
+            ],
+            [
+              "`422`",
+              "Unprocessable Entity",
+              "de data past niet bij het schema (validatiefout)"
+            ],
+            [
+              "`401`",
+              "Unauthorized",
+              "de server weet niet wie je bent: niet (goed) ingelogd"
+            ],
+            [
+              "`403`",
+              "Forbidden",
+              "de server weet wie je bent, maar je mag dit niet"
+            ],
+            [
+              "`404`",
+              "Not Found",
+              "deze resource bestaat niet"
+            ],
+            [
+              "`429`",
+              "Too Many Requests",
+              "te veel requests: je wordt afgeremd (rate limit)"
+            ],
+            [
+              "`500`",
+              "Internal Server Error",
+              "een bug aan de kant van de server"
+            ]
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "def family(code: int) -> str:\n    if 200 <= code < 300:\n        return \"gelukt\"\n    if 400 <= code < 500:\n        return \"fout van de client\"\n    if 500 <= code < 600:\n        return \"fout van de server\"\n    return \"iets anders\"\n\nfor code in (201, 404, 429, 500):\n    print(code, family(code))",
+          "output": "201 gelukt\n404 fout van de client\n429 fout van de client\n500 fout van de server",
+          "run": true,
+          "caption": "Aan het eerste cijfer zie je bij wie je het probleem moet zoeken."
+        },
+        {
+          "type": "h",
+          "text": "REST: resources en query-parameters"
+        },
+        {
+          "type": "p",
+          "text": "REST is een afspraak over hoe je een API opbouwt. Je modelleert alles als **resources**: zelfstandige naamwoorden in het pad, zoals `/customers` of `/customers/7/orders`. Wat je met zo'n resource doet, zeg je met de HTTP-methode. Daarbij stuur je JSON heen en weer en geef je statuscodes terug die echt iets betekenen."
+        },
+        {
+          "type": "table",
+          "head": [
+            "REST-stijl",
+            "Liever niet",
+            "Waarom"
+          ],
+          "rows": [
+            [
+              "`GET /customers/7/orders`",
+              "`GET /getCustomerOrders?id=7`",
+              "het werkwoord hoort in de methode, niet in het pad"
+            ],
+            [
+              "`POST /notes`",
+              "`POST /createNote`",
+              "`POST` zegt al dat je iets aanmaakt"
+            ],
+            [
+              "`DELETE /notes/42`",
+              "`GET /notes/42/delete`",
+              "een `GET` mag niets veranderen"
+            ]
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Wil je filteren of bladeren, dan gebruik je **query-parameters** achter een vraagteken. `GET /orders?status=open&limit=20&offset=40` vraagt open orders op, twintig per keer, en slaat de eerste veertig over. Met `limit` en `offset` bouw je zo paginatie."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "from urllib.parse import parse_qs, urlencode, urlparse\n\nparams = {\"status\": \"open\", \"limit\": 20, \"offset\": 40}\nurl = \"/orders?\" + urlencode(params)\nprint(url)\nprint(parse_qs(urlparse(url).query))",
+          "output": "/orders?status=open&limit=20&offset=40\n{'status': ['open'], 'limit': ['20'], 'offset': ['40']}",
+          "run": true,
+          "caption": "Query-parameters zijn gewoon tekst achter het ?-teken."
+        },
+        {
+          "type": "h",
+          "text": "JSON"
+        },
+        {
+          "type": "p",
+          "text": "JSON is een tekstformaat dat sterk lijkt op Python-dicts en -lists. Met `json.loads()` maak je van JSON-tekst een dict, met `json.dumps()` ga je de andere kant op. Let op de kleine verschillen: JSON schrijft `true`, `false` en `null`, Python `True`, `False` en `None`."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "import json\n\nbody = '{\"id\": 42, \"title\": \"Boodschappen\", \"done\": false, \"tags\": [\"thuis\"]}'\nnote = json.loads(body)              # JSON-tekst -> dict\nprint(note[\"title\"], note[\"done\"])\nprint(json.dumps({\"ok\": True, \"count\": 3}))",
+          "output": "Boodschappen False\n{\"ok\": true, \"count\": 3}",
+          "run": true
+        },
+        {
+          "type": "h",
+          "text": "API's aanroepen vanuit Python met httpx"
+        },
+        {
+          "type": "p",
+          "text": "Met de library httpx stuur je requests vanuit Python. Installeer hem in je virtual environment met `pip install httpx`. De manier van werken is vrijwel gelijk aan die van de oudere library requests, maar httpx kan ook async werken; dat heb je in les 4.3 nodig."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "import httpx\n\nr = httpx.get(\"https://httpbin.org/get\", params={\"limit\": 5}, timeout=10)\nprint(r.status_code)                  # eerst de status\nprint(r.headers[\"content-type\"])      # dan de headers\ndata = r.json()                       # JSON-body -> dict\nprint(data[\"args\"])\n\nr = httpx.post(\"https://httpbin.org/post\", json={\"title\": \"Test\"}, timeout=10)\nr.raise_for_status()                  # exception bij een 4xx of 5xx",
+          "caption": "Met json= stuurt httpx een dict als JSON-body mee."
+        },
+        {
+          "type": "p",
+          "text": "`r.json()` zet de body om naar een dict. `r.raise_for_status()` doet niets als alles goed ging, maar gooit een exception bij een 4xx of 5xx. Zo ga je nooit per ongeluk verder met een foutmelding alsof het echte data is. Geef ook bewust een `timeout` mee, zodat je zelf bepaalt hoe lang je op een trage server wacht."
+        },
+        {
+          "type": "p",
+          "text": "Je kunt hetzelfde vanuit de shell proberen met curl. Met de optie `-i` zie je ook de ruwe headers van de response."
+        },
+        {
+          "type": "code",
+          "lang": "bash",
+          "code": "curl -i https://api.github.com/zen"
+        }
+      ],
+      "takeaways": [
+        "Een request is methode + pad + headers + body; een response is status + headers + body.",
+        "Modelleer je API als resources (zelfstandige naamwoorden); de HTTP-methode is het werkwoord.",
+        "2xx is gelukt, 4xx is een fout van de client, 5xx een fout van de server. Lees de status voor de body.",
+        "Query-parameters zoals `limit` en `offset` gebruik je voor filteren en pagineren.",
+        "Met httpx roep je API's aan: `r.json()` geeft een dict en `raise_for_status()` gooit een exception bij 4xx/5xx."
+      ],
+      "exercise": "Haal met httpx data op bij een publieke API, controleer eerst de statuscode en print daarna één veld uit de JSON. Bekijk dezelfde URL met `curl -i` en vergelijk de headers.",
+      "links": [
+        {
+          "label": "W3Schools — What is HTTP",
+          "url": "https://www.w3schools.com/whatis/whatis_http.asp"
+        }
+      ],
+      "tags": [
+        "http",
+        "rest",
+        "json",
+        "statuscodes",
+        "httpx",
+        "curl",
+        "query-parameters"
+      ]
+    },
+    {
+      "id": "4.2",
+      "title": "FastAPI en Pydantic: routes, validatie en dependency injection",
+      "summary": "Je bouwt een eerste API met FastAPI: routes, path- en query-parameters, request bodies met Pydantic-modellen, foutafhandeling, Depends() en de automatische docs.",
+      "minutes": 75,
+      "simple": "Simpel gezegd: FastAPI is de receptie van je programma en Pydantic is het formulier dat elke bezoeker moet invullen. Je beschrijft één keer hoe het formulier eruitziet; FastAPI controleert elke aanvraag daartegen, stuurt foute formulieren terug en schrijft er vanzelf een handleiding bij.",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Wat is FastAPI?"
+        },
+        {
+          "type": "p",
+          "text": "FastAPI is een modern webframework voor Python. Het bijzondere is dat je de vorm van je data beschrijft met gewone **type hints**. Op basis daarvan controleert FastAPI wat er binnenkomt, zet het je antwoorden om naar JSON (serialiseren), maakt het interactieve documentatie en draait het op een snelle async server. De datamodellen komen uit **Pydantic**: zie ze als dataclasses die ook controleren of de waarden kloppen."
+        },
+        {
+          "type": "code",
+          "lang": "bash",
+          "code": "pip install \"fastapi[standard]\""
+        },
+        {
+          "type": "p",
+          "text": "Met de extra `[standard]` krijg je ook een server en de `fastapi`-commandline-tool mee."
+        },
+        {
+          "type": "h",
+          "text": "Je eerste routes"
+        },
+        {
+          "type": "p",
+          "text": "Een route is een gewone functie met een decorator erboven. De decorator koppelt een HTTP-methode en een pad aan de functie. Wat de functie teruggeeft, zet FastAPI om naar JSON."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "# app/main.py\nfrom fastapi import FastAPI\n\napp = FastAPI(title=\"Notes API\", version=\"0.1.0\")\n\n@app.get(\"/health\")\ndef health() -> dict[str, str]:\n    return {\"status\": \"ok\"}\n\n@app.get(\"/hello/{name}\")\ndef hello(name: str, shout: bool = False) -> dict[str, str]:\n    text = f\"Hallo {name}\"\n    return {\"message\": text.upper() if shout else text}"
+        },
+        {
+          "type": "code",
+          "lang": "bash",
+          "code": "fastapi dev app/main.py"
+        },
+        {
+          "type": "p",
+          "text": "`fastapi dev` start een ontwikkelserver op `http://127.0.0.1:8000` die automatisch herlaadt als je je code opslaat. Open daarna `/docs`: daar staat **Swagger UI**, een pagina die FastAPI uit je code heeft gemaakt volgens de OpenAPI-standaard. Je kunt er elk endpoint meteen uitproberen, zonder zelf een client te schrijven."
+        },
+        {
+          "type": "h",
+          "text": "Soorten parameters"
+        },
+        {
+          "type": "p",
+          "text": "FastAPI kijkt naar de parameters van je functie en bepaalt zelf waar elke waarde vandaan komt. Je hoeft dus niets handmatig uit het request te halen."
+        },
+        {
+          "type": "table",
+          "head": [
+            "Soort",
+            "Herken je aan",
+            "Voorbeeld"
+          ],
+          "rows": [
+            [
+              "Path-parameter",
+              "de naam staat tussen `{}` in het pad",
+              "`note_id: int` bij `/notes/{note_id}`"
+            ],
+            [
+              "Query-parameter",
+              "een simpel type (`str`, `int`, `bool`) dat niet in het pad staat",
+              "`tag: str | None = None` voor `?tag=werk`"
+            ],
+            [
+              "Request body",
+              "het type is een Pydantic-model",
+              "`payload: NoteIn`"
+            ],
+            [
+              "Dependency",
+              "de standaardwaarde is `Depends(...)`",
+              "`db: Session = Depends(get_db)`"
+            ]
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Heeft een query-parameter een standaardwaarde, dan is hij optioneel. Met `Query()` voeg je regels toe: `limit: int = Query(20, le=100)` betekent standaard 20 en nooit meer dan 100. Ook path-parameters worden gecontroleerd: vraag je `/notes/abc` op terwijl `note_id` een `int` is, dan antwoordt FastAPI zelf met een 422."
+        },
+        {
+          "type": "h",
+          "text": "Request bodies met Pydantic"
+        },
+        {
+          "type": "p",
+          "text": "Een Pydantic-model erft van `BaseModel`. Elk veld krijgt een type en eventueel een standaardwaarde. Met `Field()` leg je extra regels vast, zoals een minimale en maximale lengte."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "from datetime import datetime\nfrom pydantic import BaseModel, Field\n\nclass NoteIn(BaseModel):              # wat de client stuurt\n    title: str = Field(min_length=1, max_length=120)\n    body: str = \"\"\n    tags: list[str] = []\n\nclass Note(NoteIn):                   # wat de API teruggeeft\n    id: int\n    created_at: datetime"
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "from fastapi import HTTPException, status\n\nnotes: dict[int, Note] = {}            # voorlopig in het geheugen\n\n@app.post(\"/notes\", response_model=Note, status_code=status.HTTP_201_CREATED)\ndef create_note(payload: NoteIn) -> Note:\n    note = Note(id=len(notes) + 1, created_at=datetime.now(), **payload.model_dump())\n    notes[note.id] = note\n    return note\n\n@app.get(\"/notes/{note_id}\", response_model=Note)\ndef get_note(note_id: int) -> Note:\n    if note_id not in notes:\n        raise HTTPException(status_code=404, detail=\"note not found\")\n    return notes[note_id]",
+          "caption": "Aanmaken en opvragen. Een DELETE-route met status_code=204 werkt op dezelfde manier."
+        },
+        {
+          "type": "p",
+          "text": "Een lijst-endpoint `GET /notes` krijgt query-parameters zoals `tag: str | None = None` en `limit: int = Query(20, le=100)`. In de functie filter je de notes op tag en geef je er hoogstens `limit` terug, met `response_model=list[Note]`."
+        },
+        {
+          "type": "p",
+          "text": "Een paar dingen om op te letten. `response_model` bepaalt welke velden er in het antwoord komen. `status_code` zet de juiste code, hier `201` voor aanmaken. `HTTPException` stopt de functie en stuurt een foutcode met een `detail`-bericht terug. `payload.model_dump()` maakt van het model een dict, zodat je de velden met `**` kunt doorgeven. Stuur in `/docs` eens een titel van meer dan 120 tekens: je krijgt een 422 met een duidelijke foutmelding die je zelf niet hoefde te schrijven."
+        },
+        {
+          "type": "h",
+          "text": "Pydantic: validators en serialiseren"
+        },
+        {
+          "type": "p",
+          "text": "Pydantic controleert de types en de regels uit `Field()`. Wil je eigen logica, dan schrijf je een validator: een classmethod met `@field_validator`. Die kan een waarde opschonen of met een `ValueError` afkeuren. Met `model_validate()` maak je een model uit een dict, met `model_dump()` krijg je een dict terug en met `model_dump_json()` een JSON-string."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "from pydantic import BaseModel, EmailStr, field_validator\n\nclass Customer(BaseModel):            # EmailStr: pip install \"pydantic[email]\"\n    name: str\n    email: EmailStr\n    vat_number: str | None = None\n\n    @field_validator(\"name\")\n    @classmethod\n    def clean_name(cls, v: str) -> str:\n        v = v.strip()\n        if not v:\n            raise ValueError(\"naam mag niet leeg zijn\")\n        return v\n\nc = Customer.model_validate({\"name\": \"  Jansen \", \"email\": \"info@jansen.example\"})\nprint(c.model_dump())",
+          "output": "{'name': 'Jansen', 'email': 'info@jansen.example', 'vat_number': None}"
+        },
+        {
+          "type": "p",
+          "text": "Ter vergelijking: met een gewone dataclass uit de standaardbibliotheek moet je alle controles zelf schrijven. Pydantic doet dat werk voor je op basis van de type hints."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "from dataclasses import dataclass\n\n@dataclass\nclass PlainNote:\n    title: str\n\n    def __post_init__(self):\n        if not 1 <= len(self.title) <= 120:\n            raise ValueError(\"title moet 1 tot 120 tekens zijn\")\n\nprint(PlainNote(\"Boodschappen\"))\ntry:\n    PlainNote(\"\")\nexcept ValueError as e:\n    print(\"Fout:\", e)",
+          "output": "PlainNote(title='Boodschappen')\nFout: title moet 1 tot 120 tekens zijn",
+          "run": true
+        },
+        {
+          "type": "p",
+          "text": "Gebruik aparte modellen voor elke richting. Zo bepaal je precies wat een client mag sturen en wat hij te zien krijgt."
+        },
+        {
+          "type": "table",
+          "head": [
+            "Model",
+            "Doel",
+            "Kenmerk"
+          ],
+          "rows": [
+            [
+              "`NoteIn`",
+              "input: wat de client stuurt",
+              "geen `id` of andere velden die de server bepaalt"
+            ],
+            [
+              "`Note` / `NoteOut`",
+              "output: wat de client terugkrijgt",
+              "met `id` en `created_at`, zonder interne velden"
+            ],
+            [
+              "`NoteUpdate`",
+              "gedeeltelijke update (`PATCH`)",
+              "alle velden optioneel"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "tone": "warn",
+          "text": "Zet nooit database-internals in een output-model, zoals password hashes of interne ids die niet publiek horen te zijn. Alles wat in het response-model staat, gaat naar buiten."
+        },
+        {
+          "type": "h",
+          "text": "Dependency injection met Depends()"
+        },
+        {
+          "type": "p",
+          "text": "Een route heeft vaak dingen nodig die niet uit het request komen: een databasesessie, de ingelogde gebruiker of de settings. Met `Depends()` laat je FastAPI die aanleveren. Je schrijft een functie die het ding maakt; FastAPI roept hem bij elk request aan en geeft het resultaat aan je route. Gebruik je `yield`, dan draait de code na `yield` pas als het request klaar is. Zo sluit je een sessie altijd netjes af."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "from fastapi import Depends\nfrom sqlalchemy.orm import Session\nfrom app.db import SessionLocal\n\ndef get_db():\n    db = SessionLocal()\n    try:\n        yield db            # hier draait de route\n    finally:\n        db.close()          # altijd opruimen, ook na een fout\n\n@app.get(\"/notes/{note_id}\")\ndef get_note(note_id: int, db: Session = Depends(get_db)):\n    ..."
+        },
+        {
+          "type": "p",
+          "text": "Het grote voordeel merk je bij het testen: je kunt een dependency vervangen door een testversie zonder je routes aan te passen. Hoe dat gaat, zie je in les 4.3."
+        }
+      ],
+      "takeaways": [
+        "Routes zijn functies met een decorator zoals `@app.get(\"/pad\")`; het resultaat wordt JSON.",
+        "Pydantic-modellen leggen het contract vast en valideren de input; een fout geeft automatisch 422.",
+        "FastAPI herkent zelf path-parameters, query-parameters, bodies en dependencies.",
+        "Gebruik aparte modellen voor input, output en update, en lek nooit internals.",
+        "`Depends()` levert sessies, gebruikers en settings aan en is in tests te vervangen.",
+        "Op `/docs` krijg je gratis interactieve documentatie (Swagger UI)."
+      ],
+      "exercise": "Bouw de in-memory Notes API na met een health-check en routes om notes aan te maken, op te vragen, te filteren en te verwijderen. Probeer in `/docs` een te lange titel en lees de 422-response.",
+      "links": [
+        {
+          "label": "FastAPI — Tutorial",
+          "url": "https://fastapi.tiangolo.com/tutorial/"
+        },
+        {
+          "label": "FastAPI — Query Parameters",
+          "url": "https://fastapi.tiangolo.com/tutorial/query-params/"
+        },
+        {
+          "label": "FastAPI — Request Body",
+          "url": "https://fastapi.tiangolo.com/tutorial/body/"
+        },
+        {
+          "label": "FastAPI — Handling Errors",
+          "url": "https://fastapi.tiangolo.com/tutorial/handling-errors/"
+        },
+        {
+          "label": "FastAPI — Dependencies",
+          "url": "https://fastapi.tiangolo.com/tutorial/dependencies/"
+        },
+        {
+          "label": "Pydantic — Models",
+          "url": "https://docs.pydantic.dev/latest/concepts/models/"
+        }
+      ],
+      "tags": [
+        "fastapi",
+        "pydantic",
+        "routes",
+        "validatie",
+        "depends",
+        "swagger",
+        "openapi"
+      ]
+    },
+    {
+      "id": "4.3",
+      "title": "Database-CRUD, projectstructuur, async en testen",
+      "summary": "Je koppelt de API aan Postgres via SQLAlchemy, zet het project netjes in mappen, leert wanneer je async gebruikt en test je endpoints met TestClient.",
+      "minutes": 60,
+      "simple": "Simpel gezegd: een groeiende API is als een restaurant waarin iedereen een eigen taak heeft. De bediening (routers) neemt bestellingen aan, de keuken (services) bewaakt de recepten en de voorraadkast (database) bewaart alles. Async is een ober die niet bij één tafel blijft wachten, en een test is een proefdiner met een aparte voorraadkast.",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Een projectstructuur die meegroeit"
+        },
+        {
+          "type": "p",
+          "text": "Zolang je API uit één bestand bestaat, gaat alles goed. Maar zodra er gebruikers, notes en authenticatie bij komen, wordt dat ene bestand onleesbaar. Geef daarom elk soort code een vaste plek."
+        },
+        {
+          "type": "code",
+          "lang": "text",
+          "code": "notes-api/\n├── app/\n│   ├── main.py          # maakt de app, koppelt routers en middleware\n│   ├── config.py        # Settings uit .env (pydantic-settings)\n│   ├── db.py            # engine, SessionLocal, Base, get_db\n│   ├── models/          # SQLAlchemy-modellen (tabellen)\n│   ├── schemas/         # Pydantic-modellen (API-contract)\n│   ├── repositories/    # databasetoegang\n│   ├── services/        # businessregels\n│   ├── routers/         # één bestand per resource\n│   └── core/            # security, logging, Redis-client\n├── migrations/          # Alembic\n├── tests/\n├── compose.yaml\n├── Dockerfile\n├── pyproject.toml\n└── .env.example"
+        },
+        {
+          "type": "p",
+          "text": "Let op het verschil tussen `models/` en `schemas/`. In `models/` staan de SQLAlchemy-klassen die tabellen beschrijven. In `schemas/` staan de Pydantic-modellen die bepalen wat er via de API binnenkomt en naar buiten gaat. Ze lijken op elkaar, maar hebben een ander doel: zo kan je tabel een password hash bevatten zonder dat je API die ooit laat zien."
+        },
+        {
+          "type": "h",
+          "text": "CRUD met een router"
+        },
+        {
+          "type": "p",
+          "text": "Een `APIRouter` groepeert de endpoints van één resource. Met `prefix` hoef je `/notes` niet bij elke route te herhalen, en `tags` zet ze bij elkaar in `/docs`. In `main.py` koppel je de router met `app.include_router(notes.router)`."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "# app/routers/notes.py\nfrom fastapi import APIRouter, Depends, HTTPException, status\nfrom sqlalchemy.orm import Session\nfrom app.db import get_db\nfrom app.models.note import Note\nfrom app.schemas.note import NoteIn, NoteOut, NoteUpdate\n\nrouter = APIRouter(prefix=\"/notes\", tags=[\"notes\"])\n\n@router.post(\"\", response_model=NoteOut, status_code=status.HTTP_201_CREATED)\ndef create_note(payload: NoteIn, db: Session = Depends(get_db)):\n    note = Note(**payload.model_dump())\n    db.add(note)\n    db.commit()\n    db.refresh(note)          # haalt de gegenereerde id en created_at op\n    return note"
+        },
+        {
+          "type": "p",
+          "text": "Voor de lijst gebruik je `select(Note)` met `.order_by()`, `.limit()` en `.offset()`, en voeg je alleen een `.where(Note.title.ilike(f\"%{q}%\"))` toe als er een zoekterm `q` is meegegeven. `ilike` zoekt zonder op hoofdletters te letten. Met `db.scalars(stmt).all()` krijg je de notes als lijst terug."
+        },
+        {
+          "type": "p",
+          "text": "Bij een `PATCH` wil je alleen de velden aanpassen die de client echt heeft meegestuurd. Daarvoor is `model_dump(exclude_unset=True)`: die geeft alleen velden terug die in het request stonden, niet de lege standaardwaarden van `NoteUpdate`."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "@router.patch(\"/{note_id}\", response_model=NoteOut)\ndef update_note(note_id: int, payload: NoteUpdate, db: Session = Depends(get_db)):\n    note = db.get(Note, note_id)\n    if note is None:\n        raise HTTPException(404, \"note not found\")\n    changes = payload.model_dump(exclude_unset=True)   # alleen meegestuurde velden\n    for key, value in changes.items():\n        setattr(note, key, value)\n    db.commit()\n    db.refresh(note)\n    return note"
+        },
+        {
+          "type": "p",
+          "text": "Hetzelfde idee kun je met gewone dicts laten zien. De client stuurt alleen een nieuwe body mee; titel en tags blijven staan."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "note = {\"title\": \"Boodschappen\", \"body\": \"melk\", \"tags\": [\"thuis\"]}\nchanges = {\"body\": \"melk, brood\"}      # alleen wat de client stuurde\n\nfor key, value in changes.items():\n    note[key] = value                  # zoals setattr bij een SQLAlchemy-object\n\nprint(note)",
+          "output": "{'title': 'Boodschappen', 'body': 'melk, brood', 'tags': ['thuis']}",
+          "run": true
+        },
+        {
+          "type": "h",
+          "text": "Settings en ORM-objecten"
+        },
+        {
+          "type": "p",
+          "text": "Instellingen zoals de database-URL en het JWT-secret horen niet in je code. Met pydantic-settings maak je een `Settings`-klasse die ze uit omgevingsvariabelen en een `.env`-bestand leest. Een verplichte waarde die ontbreekt, laat de app meteen bij het opstarten falen, in plaats van later midden in een request."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "# app/config.py\nfrom pydantic_settings import BaseSettings\n\nclass Settings(BaseSettings):\n    database_url: str                          # verplicht\n    redis_url: str = \"redis://localhost:6379/0\"\n    jwt_secret: str                            # verplicht\n    jwt_expire_minutes: int = 60\n    model_config = {\"env_file\": \".env\"}\n\nsettings = Settings()"
+        },
+        {
+          "type": "p",
+          "text": "Je route geeft een SQLAlchemy-object terug, maar `NoteOut` is een Pydantic-model. Normaal leest Pydantic alleen dicts. Zet daarom in `NoteOut` de regel `model_config = ConfigDict(from_attributes=True)`; dan leest Pydantic de attributen van het object, zoals `note.title`."
+        },
+        {
+          "type": "h",
+          "text": "Async: wanneer en waarom"
+        },
+        {
+          "type": "p",
+          "text": "Een webserver is het grootste deel van de tijd aan het wachten: op de database, op Redis of op een LLM-API die een paar seconden nodig heeft. Met `async`/`await` kan één proces in die wachttijd andere requests afhandelen. FastAPI ondersteunt beide stijlen. Een gewone `def`-route draait in een thread pool; dat past bij synchrone SQLAlchemy-code. Een `async def`-route mag alleen async libraries gebruiken, zoals `httpx.AsyncClient`, `redis.asyncio` of de async engine van SQLAlchemy met asyncpg."
+        },
+        {
+          "type": "table",
+          "head": [
+            "Situatie",
+            "Kies",
+            "Waarom"
+          ],
+          "rows": [
+            [
+              "synchrone SQLAlchemy-code",
+              "`def`",
+              "FastAPI draait de route in een aparte thread"
+            ],
+            [
+              "externe API aanroepen met `httpx.AsyncClient`",
+              "`async def`",
+              "met `await` kan de server ondertussen anderen helpen"
+            ],
+            [
+              "Redis via `redis.asyncio`",
+              "`async def`",
+              "idem: wachten zonder te blokkeren"
+            ],
+            [
+              "`time.sleep()` of `requests.get()`",
+              "nooit in `async def`",
+              "blokkeert de hele server"
+            ]
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "import asyncio\nimport httpx\n\nasync def status_of(client: httpx.AsyncClient, url: str) -> int:\n    r = await client.get(url)\n    return r.status_code\n\nasync def main():\n    async with httpx.AsyncClient(timeout=10) as client:\n        urls = [\"https://httpbin.org/delay/1\"] * 5\n        codes = await asyncio.gather(*(status_of(client, u) for u in urls))\n    print(codes)        # klaar na ongeveer 1 seconde, niet na 5\n\nasyncio.run(main())",
+          "caption": "asyncio.gather laat vijf requests tegelijk wachten."
+        },
+        {
+          "type": "note",
+          "tone": "warn",
+          "text": "Een blokkerende aanroep zoals `time.sleep()` of `requests.get()` in een `async def`-route bevriest de hele server: geen enkel ander request wordt dan nog afgehandeld. Gebruik `await asyncio.sleep()` en async clients."
+        },
+        {
+          "type": "h",
+          "text": "De API testen"
+        },
+        {
+          "type": "p",
+          "text": "Met `TestClient` stuur je requests naar je app zonder dat er een echte server draait. Voor de database gebruik je een aparte testdatabase. Een fixture met `autouse=True` maakt vóór elke test de tabellen aan (`Base.metadata.create_all`) en ruimt ze daarna weer op (`drop_all`). Vervolgens vervang je `get_db` via `app.dependency_overrides`, zodat elke route de testsessie krijgt."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "# tests/conftest.py\nimport pytest\nfrom fastapi.testclient import TestClient\nfrom app.main import app\nfrom app.db import get_db\nfrom tests.db import TestingSession       # sessies op de testdatabase\n\n@pytest.fixture\ndef client():\n    def override_get_db():\n        db = TestingSession()\n        try:\n            yield db\n        finally:\n            db.close()\n    app.dependency_overrides[get_db] = override_get_db\n    with TestClient(app) as c:\n        yield c\n    app.dependency_overrides.clear()"
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "# tests/test_notes.py\ndef test_create_then_read(client):\n    r = client.post(\"/notes\", json={\"title\": \"Hallo\", \"tags\": [\"x\"]})\n    assert r.status_code == 201\n    note_id = r.json()[\"id\"]\n    assert client.get(f\"/notes/{note_id}\").json()[\"title\"] == \"Hallo\"\n\ndef test_empty_title_is_rejected(client):\n    assert client.post(\"/notes\", json={\"title\": \"\"}).status_code == 422\n\ndef test_unknown_note(client):\n    assert client.get(\"/notes/999\").status_code == 404"
+        }
+      ],
+      "takeaways": [
+        "Eén router per resource; schemas (Pydantic) los van models (SQLAlchemy).",
+        "Settings komen via pydantic-settings uit `.env`; een ontbrekende waarde faalt bij het opstarten.",
+        "`model_dump(exclude_unset=True)` werkt bij een PATCH alleen de meegestuurde velden bij.",
+        "`NoteOut` heeft `from_attributes=True` nodig om SQLAlchemy-objecten te lezen.",
+        "`async def` voor I/O naar andere services, `def` voor synchrone databasecode; nooit blokkeren in async.",
+        "Test met `TestClient` en vervang de database via `app.dependency_overrides`."
+      ],
+      "exercise": "Zet je Notes API om naar de mappenstructuur met een router, Pydantic-schemas en SQLAlchemy-models, en schrijf tests voor aanmaken, validatie (422) en een onbekende note (404).",
+      "links": [
+        {
+          "label": "FastAPI — Bigger Applications",
+          "url": "https://fastapi.tiangolo.com/tutorial/bigger-applications/"
+        },
+        {
+          "label": "FastAPI — SQL Databases",
+          "url": "https://fastapi.tiangolo.com/tutorial/sql-databases/"
+        },
+        {
+          "label": "FastAPI — Testing",
+          "url": "https://fastapi.tiangolo.com/tutorial/testing/"
+        },
+        {
+          "label": "FastAPI — Concurrency and async / await",
+          "url": "https://fastapi.tiangolo.com/async/"
+        }
+      ],
+      "tags": [
+        "crud",
+        "apirouter",
+        "sqlalchemy",
+        "pydantic-settings",
+        "async",
+        "testclient",
+        "pytest"
+      ]
+    },
+    {
+      "id": "4.4",
+      "title": "Authenticatie met JWT, configuratie en secrets",
+      "summary": "Hoe je wachtwoorden veilig opslaat, gebruikers een ondertekende JWT geeft en elke beveiligde route laat afhangen van de ingelogde gebruiker.",
+      "minutes": 45,
+      "simple": "Simpel gezegd: een JWT is een polsbandje op een festival. Bij de ingang laat je één keer je kaartje zien (je wachtwoord) en krijg je een bandje met een stempel. Daarna kijkt de beveiliging bij elke tent alleen nog of het stempel echt is; ze hoeven je kaartje niet opnieuw te controleren.",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Hoe token-authenticatie werkt"
+        },
+        {
+          "type": "p",
+          "text": "De meeste API's moeten weten wie er belt. Het gebruikelijke patroon werkt in een paar stappen:"
+        },
+        {
+          "type": "list",
+          "ordered": true,
+          "items": [
+            "De gebruiker stuurt e-mailadres en wachtwoord naar `POST /auth/token`.",
+            "De server controleert het wachtwoord en geeft een ondertekende **JSON Web Token** (JWT) terug.",
+            "Bij elk volgend request stuurt de client die token mee in de header `Authorization: Bearer <token>`.",
+            "De server controleert alleen de handtekening en de vervaldatum. Er hoeft niets in een sessie-opslag te staan."
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Installeer de benodigde libraries: `pip install \"pyjwt\" \"passlib[bcrypt]\"`. PyJWT maakt en controleert tokens, passlib regelt het hashen van wachtwoorden met bcrypt."
+        },
+        {
+          "type": "h",
+          "text": "Wachtwoorden hashen"
+        },
+        {
+          "type": "p",
+          "text": "Een wachtwoord sla je **nooit** zelf op, ook niet versleuteld. Je bewaart alleen een hash: een vingerafdruk waaruit je het wachtwoord niet kunt terugrekenen. Bij het inloggen hash je het ingevoerde wachtwoord opnieuw en vergelijk je. bcrypt is daarvoor gemaakt: het is expres traag, zodat een aanvaller niet miljoenen pogingen per seconde kan doen."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "# app/core/security.py\nfrom passlib.context import CryptContext\n\npwd = CryptContext(schemes=[\"bcrypt\"], deprecated=\"auto\")\n\ndef hash_password(plain: str) -> str:\n    return pwd.hash(plain)                    # sla alleen de hash op\n\ndef verify_password(plain: str, hashed: str) -> bool:\n    return pwd.verify(plain, hashed)"
+        },
+        {
+          "type": "h",
+          "text": "Tokens maken en controleren"
+        },
+        {
+          "type": "p",
+          "text": "Een JWT bevat **claims**: korte uitspraken zoals `sub` (subject, het user-id) en `exp` (wanneer de token verloopt). De server ondertekent die met een geheim (`JWT_SECRET`) en het algoritme HS256. Bij het decoderen controleert PyJWT de handtekening en de vervaltijd; klopt een van de twee niet, dan volgt een exception."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "from datetime import datetime, timedelta, timezone\nimport jwt\nfrom app.config import settings\n\ndef create_token(user_id: int) -> str:\n    expires = datetime.now(timezone.utc) + timedelta(minutes=settings.jwt_expire_minutes)\n    claims = {\"sub\": str(user_id), \"exp\": expires}\n    return jwt.encode(claims, settings.jwt_secret, algorithm=\"HS256\")\n\ndef decode_token(token: str) -> int:\n    # gooit een exception als de token is aangepast of verlopen\n    claims = jwt.decode(token, settings.jwt_secret, algorithms=[\"HS256\"])\n    return int(claims[\"sub\"])"
+        },
+        {
+          "type": "p",
+          "text": "Belangrijk om te begrijpen: een JWT is **ondertekend, niet versleuteld**. De drie delen (header, payload en handtekening) zijn alleen base64-gecodeerd, dus iedereen kan de inhoud lezen. Wat niemand zonder het secret kan, is de inhoud aanpassen zonder dat de handtekening ongeldig wordt. Het voorbeeld hieronder bouwt een token na met alleen de standaardbibliotheek."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "import base64, hashlib, hmac, json\n\ndef b64url(data: bytes) -> str:\n    return base64.urlsafe_b64encode(data).rstrip(b\"=\").decode()\n\nheader = b64url(json.dumps({\"alg\": \"HS256\", \"typ\": \"JWT\"}).encode())\npayload = b64url(json.dumps({\"sub\": \"7\", \"exp\": 1767225600}).encode())\nsigned_part = f\"{header}.{payload}\".encode()\nsignature = b64url(hmac.new(b\"geheim\", signed_part, hashlib.sha256).digest())\ntoken = f\"{header}.{payload}.{signature}\"\n\nmiddle = token.split(\".\")[1]           # iedereen kan dit lezen, zonder secret\nprint(json.loads(base64.urlsafe_b64decode(middle + \"=\" * (-len(middle) % 4))))\nprint(token.count(\".\"), \"punten, dus drie delen\")",
+          "output": "{'sub': '7', 'exp': 1767225600}\n2 punten, dus drie delen",
+          "run": true,
+          "caption": "Zet daarom nooit wachtwoorden of andere geheimen in een JWT."
+        },
+        {
+          "type": "h",
+          "text": "Login-endpoint en current_user"
+        },
+        {
+          "type": "p",
+          "text": "FastAPI heeft hulpmiddelen voor dit patroon. `OAuth2PasswordRequestForm` leest gebruikersnaam en wachtwoord uit een formulier, en `OAuth2PasswordBearer` haalt de token uit de `Authorization`-header. Doordat je die gebruikt, verschijnt er in `/docs` een **Authorize**-knop waarmee je ingelogd endpoints kunt testen."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "# app/routers/auth.py\nfrom fastapi import APIRouter, Depends, HTTPException\nfrom fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm\n\nrouter = APIRouter(prefix=\"/auth\", tags=[\"auth\"])\noauth2 = OAuth2PasswordBearer(tokenUrl=\"/auth/token\")\n\n@router.post(\"/token\")\ndef login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):\n    user = db.scalar(select(User).where(User.email == form.username))\n    if user is None or not verify_password(form.password, user.password_hash):\n        raise HTTPException(401, \"invalid credentials\")\n    return {\"access_token\": create_token(user.id), \"token_type\": \"bearer\"}"
+        },
+        {
+          "type": "p",
+          "text": "De dependency `current_user` haalt de token op, decodeert hem en zoekt de gebruiker in de database. Elke beveiligde route hoeft daarna alleen `Depends(current_user)` te vragen."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "def current_user(token: str = Depends(oauth2), db: Session = Depends(get_db)) -> User:\n    try:\n        user_id = decode_token(token)\n    except jwt.PyJWTError:\n        raise HTTPException(401, \"invalid or expired token\")\n    user = db.get(User, user_id)\n    if user is None:\n        raise HTTPException(401, \"user not found\")\n    return user\n\n@router.get(\"/me\")\ndef me(user: User = Depends(current_user)):\n    return {\"id\": user.id, \"email\": user.email}"
+        },
+        {
+          "type": "h",
+          "text": "Security-regels die je nooit breekt"
+        },
+        {
+          "type": "table",
+          "head": [
+            "Regel",
+            "Waarom"
+          ],
+          "rows": [
+            [
+              "Wachtwoorden alleen als bcrypt-hash opslaan",
+              "lekt de database, dan liggen de wachtwoorden niet op straat"
+            ],
+            [
+              "`JWT_SECRET` lang en random, alleen in `.env`",
+              "wie het secret kent, kan geldige nep-tokens maken"
+            ],
+            [
+              "Een goed secret maken met `openssl rand -hex 32`",
+              "32 willekeurige bytes zijn niet te raden"
+            ],
+            [
+              "HTTPS in productie",
+              "anders kan iemand onderweg de token uit de header lezen"
+            ],
+            [
+              "Eigenaarschap checken: `note.owner_id == user.id`",
+              "een geldige token zegt niet dat de data van jou is"
+            ],
+            [
+              "`401` voor 'wie ben jij?', `403` voor 'dit mag jij niet'",
+              "de client weet dan of hij moet inloggen of geen toegang heeft"
+            ]
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "note = db.get(Note, note_id)\nif note is None:\n    raise HTTPException(404, \"note not found\")\nif note.owner_id != user.id:\n    raise HTTPException(403, \"not your note\")",
+          "caption": "Eerst bestaan, dan eigenaarschap: pas daarna geef je de note terug of pas je hem aan."
+        }
+      ],
+      "takeaways": [
+        "Wachtwoorden worden gehasht met bcrypt, nooit als tekst opgeslagen.",
+        "Een JWT is een ondertekende claim, zoals 'user 7, geldig tot 15:00'; de server controleert hem zonder databasecall.",
+        "Een JWT is leesbaar voor iedereen: ondertekend, niet versleuteld.",
+        "De client stuurt de token mee als `Authorization: Bearer <token>`.",
+        "Elke beveiligde route hangt af van `current_user`; controleer daarnaast altijd eigenaarschap.",
+        "`401` = niet ingelogd, `403` = ingelogd maar geen toestemming."
+      ],
+      "exercise": "Voeg aan je API een login-endpoint toe dat een JWT teruggeeft, maak `/auth/me` beveiligd met `current_user` en test via de Authorize-knop in `/docs`.",
+      "links": [
+        {
+          "label": "FastAPI — Security",
+          "url": "https://fastapi.tiangolo.com/tutorial/security/"
+        },
+        {
+          "label": "jwt.io — Introduction to JSON Web Tokens",
+          "url": "https://jwt.io/introduction"
+        }
+      ],
+      "tags": [
+        "jwt",
+        "authenticatie",
+        "bcrypt",
+        "bearer",
+        "oauth2",
+        "security",
+        "secrets"
+      ]
+    },
+    {
+      "id": "4.5",
+      "title": "Redis, background jobs en de complete Docker-stack",
+      "summary": "Je gebruikt Redis voor caching, rate limiting en een job-queue, verplaatst traag werk naar een worker en draait API, database, cache en worker samen met Docker Compose.",
+      "minutes": 75,
+      "simple": "Simpel gezegd: Redis is het whiteboard naast de kassa. Je schrijft er snel iets op, iedereen kan het lezen en je kunt erbij zetten dat het na een minuut weer wordt uitgeveegd. Docker Compose is het rooster dat ervoor zorgt dat de kassa, het magazijn, het whiteboard en de achterkamer allemaal tegelijk open gaan.",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Redis: snel, gedeeld en tijdelijk"
+        },
+        {
+          "type": "p",
+          "text": "Redis is een server die datastructuren in het geheugen bewaart en daardoor in microseconden antwoordt. Een sleutel kan automatisch verlopen na een ingestelde tijd (de **TTL**, time to live). Dat maakt Redis ideaal voor alles wat tijdelijk is. In deze training gebruik je het voor vier dingen:"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "**caching** van dure resultaten;",
+            "**rate limiting**: tellen hoeveel requests iemand doet;",
+            "kortlevende state, zoals een chatgesprek zolang het actief is;",
+            "**queues** voor werk dat op de achtergrond moet gebeuren."
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Je voegt Redis als service toe aan je `compose.yaml` met het image `redis:7-alpine`, poort `6379` en een volume voor `/data`. Met de optie `--appendonly yes` schrijft Redis ook naar schijf, zodat data een herstart overleeft. Start hem met `docker compose up -d redis` en open daarna de command-line client."
+        },
+        {
+          "type": "code",
+          "lang": "text",
+          "code": "$ docker compose exec redis redis-cli\n127.0.0.1:6379> SET greeting \"hallo\" EX 60\nOK\n127.0.0.1:6379> GET greeting\n\"hallo\"\n127.0.0.1:6379> INCR api:calls:user:7\n(integer) 1\n127.0.0.1:6379> LPUSH jobs '{\"type\":\"email\"}'\n(integer) 1\n127.0.0.1:6379> RPOP jobs\n\"{\\\"type\\\":\\\"email\\\"}\"\n127.0.0.1:6379> HSET user:7 name \"Sanne\" plan \"pro\"\n(integer) 2\n127.0.0.1:6379> HGETALL user:7\n1) \"name\"\n2) \"Sanne\"\n3) \"plan\"\n4) \"pro\"",
+          "caption": "EX 60 laat de key na 60 seconden verlopen."
+        },
+        {
+          "type": "table",
+          "head": [
+            "Datatype",
+            "Geschikt voor",
+            "Commando's"
+          ],
+          "rows": [
+            [
+              "string",
+              "losse waarden en tellers",
+              "`SET`, `GET`, `INCR`"
+            ],
+            [
+              "hash",
+              "kleine objecten met velden",
+              "`HSET`, `HGETALL`"
+            ],
+            [
+              "list",
+              "queues (wachtrijen)",
+              "`LPUSH`, `RPOP`, `BRPOP`"
+            ],
+            [
+              "set / sorted set",
+              "unieke waarden, leaderboards, ids op tijd gesorteerd",
+              "`SADD`, `ZADD`"
+            ],
+            [
+              "pub/sub en streams",
+              "berichten tussen services",
+              "`PUBLISH`, `XADD`"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "tone": "warn",
+          "text": "Gebruik `KEYS *` nooit in productie. Redis doet één ding tegelijk, en bij veel keys houdt dit commando alles op. Gebruik `SCAN`, dat in kleine stukjes door de keys loopt."
+        },
+        {
+          "type": "h",
+          "text": "Caching vanuit Python"
+        },
+        {
+          "type": "p",
+          "text": "Installeer de client met `pip install redis`. Het cache-patroon is altijd hetzelfde: kijk eerst of de key in Redis staat (een **hit**). Zo ja, geef die waarde terug. Zo nee (een **miss**), reken het antwoord uit, sla het op met een TTL en geef het terug. Omdat Redis alleen tekst en bytes bewaart, zet je de waarde om naar JSON."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "# app/core/cache.py\nimport json\nfrom redis.asyncio import Redis\nfrom app.config import settings\n\nredis = Redis.from_url(settings.redis_url, decode_responses=True)\n\nasync def cached_json(key: str, ttl: int, compute):\n    hit = await redis.get(key)\n    if hit is not None:                       # cache hit\n        return json.loads(hit)\n    value = await compute()                   # cache miss: echt uitrekenen\n    await redis.set(key, json.dumps(value), ex=ttl)\n    return value"
+        },
+        {
+          "type": "p",
+          "text": "Het lastige deel is **cache-invalidatie**: verandert de onderliggende data, dan moet de oude waarde weg. Wordt er bijvoorbeeld een note aangemaakt, dan roep je `await redis.delete(\"stats:notes\")` aan. Een praktische regel: kies liever een korte TTL dan heel slimme invalidatie-logica."
+        },
+        {
+          "type": "h",
+          "text": "Rate limiting met een teller"
+        },
+        {
+          "type": "p",
+          "text": "Een eenvoudige rate limiter telt per client en per pad hoeveel requests er in een tijdvak (window) zijn gedaan. `INCR` verhoogt de teller atomair, dus ook bij veel gelijktijdige requests gaat er geen telling verloren. Geeft `INCR` de waarde 1 terug, dan is dit de eerste request van het tijdvak en zet je met `EXPIRE` de vervaltijd. Komt de teller boven de limiet, dan antwoord je met `429`."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "from fastapi import Depends, HTTPException, Request\n\nLIMIT, WINDOW = 60, 60          # 60 requests per 60 seconden\n\nasync def rate_limit(request: Request):\n    key = f\"rl:{request.client.host}:{request.url.path}\"\n    count = await redis.incr(key)\n    if count == 1:\n        await redis.expire(key, WINDOW)       # eerste hit start het tijdvak\n    if count > LIMIT:\n        raise HTTPException(429, \"too many requests, slow down\")\n\n@router.get(\"/notes\", dependencies=[Depends(rate_limit)])\nasync def list_notes():\n    ..."
+        },
+        {
+          "type": "p",
+          "text": "Hieronder dezelfde logica met een gewone dict, zodat je kunt zien wat er gebeurt bij een limiet van 3."
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "LIMIT, WINDOW = 3, 60\ncounters: dict[str, int] = {}\n\ndef hit(key: str) -> int:\n    counters[key] = counters.get(key, 0) + 1          # zoals INCR\n    if counters[key] == 1:\n        print(f\"  eerste hit: EXPIRE {key} {WINDOW}\")\n    return 429 if counters[key] > LIMIT else 200\n\nfor i in range(5):\n    print(\"request\", i + 1, \"->\", hit(\"rl:10.0.0.5:/notes\"))",
+          "output": "  eerste hit: EXPIRE rl:10.0.0.5:/notes 60\nrequest 1 -> 200\nrequest 2 -> 200\nrequest 3 -> 200\nrequest 4 -> 429\nrequest 5 -> 429",
+          "run": true
+        },
+        {
+          "type": "h",
+          "text": "Background jobs"
+        },
+        {
+          "type": "p",
+          "text": "Traag werk, zoals een e-mail versturen, een PDF maken of een LLM een document laten samenvatten, mag de HTTP-response niet ophouden. De gebruiker krijgt meteen antwoord en het werk gebeurt daarna. Daarvoor zijn twee niveaus:"
+        },
+        {
+          "type": "table",
+          "head": [
+            "Aanpak",
+            "Hoe",
+            "Geschikt voor"
+          ],
+          "rows": [
+            [
+              "FastAPI `BackgroundTasks`",
+              "draait na de response in hetzelfde proces",
+              "klein fire-and-forget werk; weg bij een herstart"
+            ],
+            [
+              "Redis-queue + worker",
+              "de API doet `LPUSH`, een apart proces doet `BRPOP`",
+              "belangrijk werk: overleeft herstarts en schaalt los van de API"
+            ]
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "from fastapi import BackgroundTasks\n\n@router.post(\"/notes/{note_id}/share\")\nasync def share(note_id: int, email: str, tasks: BackgroundTasks):\n    tasks.add_task(send_share_email, note_id, email)   # draait na de response\n    return {\"queued\": True}\n\n@router.post(\"/notes/{note_id}/summary\")\nasync def summarise(note_id: int):\n    job = {\"type\": \"summarise\", \"note_id\": note_id}\n    await redis.lpush(\"jobs\", json.dumps(job))         # producer: job in de queue\n    return {\"queued\": True}"
+        },
+        {
+          "type": "code",
+          "lang": "python",
+          "code": "# app/worker.py  (start met: python -m app.worker)\nimport json\nimport redis\nfrom app.config import settings\n\nr = redis.Redis.from_url(settings.redis_url, decode_responses=True)\n\nwhile True:\n    _, raw = r.brpop(\"jobs\")          # wacht tot er een job binnenkomt\n    job = json.loads(raw)\n    print(\"processing\", job)\n    handle(job)                       # jouw eigen verwerkingsfunctie",
+          "caption": "LPUSH zet jobs links in de list, BRPOP pakt ze rechts: wie het eerst komt, wordt het eerst geholpen."
+        },
+        {
+          "type": "p",
+          "text": "Libraries als RQ, arq en Celery bouwen op ditzelfde patroon voort en voegen retries, planning en monitoring toe. Gebruik ze in echte projecten zodra je de kale versie begrijpt."
+        },
+        {
+          "type": "h",
+          "text": "De API in Docker"
+        },
+        {
+          "type": "p",
+          "text": "Een Dockerfile beschrijft hoe het image van je API wordt gebouwd. Docker bouwt in lagen en hergebruikt lagen die niet veranderd zijn. Daarom kopieer je eerst alleen `pyproject.toml` en installeer je de dependencies, en kopieer je pas daarna je code. Pas je alleen code aan, dan hoeft Docker de dependencies niet opnieuw te installeren."
+        },
+        {
+          "type": "code",
+          "lang": "dockerfile",
+          "code": "FROM python:3.12-slim\nENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1\nWORKDIR /code\nCOPY pyproject.toml ./\nRUN pip install --no-cache-dir .\nCOPY app ./app\nCOPY migrations ./migrations\nCOPY alembic.ini ./\nEXPOSE 8000\nCMD [\"fastapi\", \"run\", \"app/main.py\", \"--port\", \"8000\"]"
+        },
+        {
+          "type": "h",
+          "text": "De complete stack met Docker Compose"
+        },
+        {
+          "type": "p",
+          "text": "In `compose.yaml` zet je alle onderdelen bij elkaar. Binnen het Compose-netwerk vinden services elkaar via hun **servicenaam**, niet via `localhost`. In een container betekent `localhost` namelijk de container zelf. Je lokale `.env` wijst naar localhost; in Compose overschrijf je die waarden voor de containers."
+        },
+        {
+          "type": "code",
+          "lang": "yaml",
+          "code": "services:\n  api:\n    build: .\n    ports: [\"8000:8000\"]\n    env_file: .env\n    environment:\n      DATABASE_URL: postgresql://app:secret@db:5432/notes   # db = servicenaam\n      REDIS_URL: redis://redis:6379/0\n    depends_on:\n      db: { condition: service_healthy }\n      redis: { condition: service_started }\n    command: sh -c \"alembic upgrade head && fastapi run app/main.py --port 8000\"",
+          "caption": "Alleen de api-service; de andere services staan in de tabel hieronder."
+        },
+        {
+          "type": "table",
+          "head": [
+            "Service",
+            "Bron",
+            "Rol"
+          ],
+          "rows": [
+            [
+              "`api`",
+              "`build: .` (je Dockerfile)",
+              "draait eerst de Alembic-migraties en start dan FastAPI"
+            ],
+            [
+              "`worker`",
+              "`build: .`, command `python -m app.worker`",
+              "verwerkt jobs uit Redis; heeft ook de servicenamen als hosts nodig"
+            ],
+            [
+              "`db`",
+              "image `postgres:16`",
+              "database met een volume en een healthcheck met `pg_isready`"
+            ],
+            [
+              "`redis`",
+              "image `redis:7-alpine`",
+              "cache, rate limiter en queue"
+            ]
+          ]
+        },
+        {
+          "type": "p",
+          "text": "`depends_on` met `condition: service_healthy` laat de API wachten tot de healthcheck van de database slaagt. Een container die gestart is, is namelijk nog niet per se klaar om verbindingen aan te nemen. Start de hele stack met `docker compose up --build -d`, controleer hem met `curl http://localhost:8000/health` en volg de logs met `docker compose logs -f api`."
+        }
+      ],
+      "takeaways": [
+        "Redis is snelle, gedeelde state die kan verlopen: ideaal voor cache, rate limit en queue.",
+        "Cache-patroon: get, bij een miss uitrekenen en opslaan met TTL, bij een wijziging de key verwijderen.",
+        "Rate limiting: `INCR` per request, `EXPIRE` bij de eerste, boven de limiet `429`.",
+        "Traag werk gaat naar de achtergrond: `BackgroundTasks` voor klein werk, een Redis-queue met worker voor robuust werk.",
+        "Kopieer `pyproject.toml` vóór je code in de Dockerfile, zodat de dependency-laag gecachet wordt.",
+        "In Compose zijn servicenamen (`db`, `redis`) de hostnamen."
+      ],
+      "exercise": "Voeg Redis toe aan je stack, cache één traag endpoint met een korte TTL, zet een rate limit op het aanmaken van notes en draai alles met één `docker compose up --build -d`.",
+      "links": [
+        {
+          "label": "Redis — Get started",
+          "url": "https://redis.io/docs/latest/develop/get-started/"
+        },
+        {
+          "label": "Redis — redis-py guide",
+          "url": "https://redis.io/docs/latest/develop/clients/redis-py/"
+        },
+        {
+          "label": "FastAPI — FastAPI in Containers (Docker)",
+          "url": "https://fastapi.tiangolo.com/deployment/docker/"
+        },
+        {
+          "label": "Docker — Environment variables in Compose",
+          "url": "https://docs.docker.com/compose/how-tos/environment-variables/"
+        }
+      ],
+      "tags": [
+        "redis",
+        "cache",
+        "ttl",
+        "rate-limiting",
+        "queue",
+        "worker",
+        "docker",
+        "compose"
+      ]
+    },
+    {
+      "id": "4.A",
+      "kind": "assessment",
+      "title": "Assessment week 4 — Notes API, production style",
+      "summary": "Je bouwt een multi-user Notes API met authenticatie, Redis-caching, rate limiting, een background worker en tests, die met één Compose-commando draait.",
+      "simple": "Simpel gezegd: je bouwt een complete, kleine notitie-app zonder scherm. Iedereen heeft een eigen kluisje met notities, er is een portier die controleert wie er binnenkomt, een whiteboard dat veelgevraagde antwoorden onthoudt en een achterkamer waar exports worden gemaakt. Een reviewer moet het hele gebouw met één commando kunnen openen.",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Wat je bouwt"
+        },
+        {
+          "type": "p",
+          "text": "Je combineert alles van deze week en week 3 tot één API waarin meerdere gebruikers hun eigen notities beheren. De reviewer kloont je repository, start de stack met Docker Compose en klikt alles door via `/docs`. Werk op de branch `feature/week4-notes-api` in de map `week4/notes-api/`."
+        },
+        {
+          "type": "table",
+          "head": [
+            "Onderdeel",
+            "Wat er moet werken"
+          ],
+          "rows": [
+            [
+              "Stack",
+              "FastAPI, SQLAlchemy, Alembic, Postgres en Redis in `compose.yaml` met de services api, worker, db en redis; een Dockerfile en `.env.example`"
+            ],
+            [
+              "Gebruikers en auth",
+              "registreren met bcrypt-hash, inloggen voor een JWT en een `/auth/me`; wachtwoorden komen nooit in een response"
+            ],
+            [
+              "Notes CRUD",
+              "aanmaken, lijst, ophalen, bijwerken en verwijderen; zoeken met `q`, filteren op tag, `limit`/`offset` en het totaal in de header `X-Total-Count`"
+            ],
+            [
+              "Eigenaarschap",
+              "gebruikers zien en wijzigen alleen hun eigen notes, anders `403`"
+            ],
+            [
+              "Validatie",
+              "titel 1–120 tekens, maximaal 10 tags, tags in kleine letters en zonder dubbelen via een validator; correcte 422, 404, 401, 403 en 429"
+            ],
+            [
+              "Redis",
+              "een enkele note 60 seconden cachen en de cache legen bij wijzigen of verwijderen; aanmaken beperken tot 10 per minuut per gebruiker; een health-endpoint dat Postgres en Redis controleert"
+            ],
+            [
+              "Background job",
+              "een export-request zet een job op een Redis-list; de worker schrijft de note als Markdown-bestand; de status staat in een Redis-hash met een TTL van een uur"
+            ],
+            [
+              "Async",
+              "Redis- en health-code async, SQLAlchemy-code sync; leg die keuze uit in de README"
+            ],
+            [
+              "Tests",
+              "minstens 15 pytest-tests met TestClient, een testdatabase en echte Redis: auth, eigenaarschap, validatie, paginatie, caching en rate limiting"
+            ],
+            [
+              "Kwaliteit",
+              "`ruff check .` zonder meldingen, overal type hints, één router per resource en geen businesslogica in routers"
+            ]
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Architectuur"
+        },
+        {
+          "type": "p",
+          "text": "Zet in je README een eenvoudig diagram met blokken en pijlen. Het idee ziet er zo uit:"
+        },
+        {
+          "type": "code",
+          "lang": "text",
+          "code": "client ──> api ──> db (Postgres)\n            │\n            └────> redis <── worker"
+        },
+        {
+          "type": "h",
+          "text": "Stappenplan"
+        },
+        {
+          "type": "list",
+          "ordered": true,
+          "items": [
+            "Zet de mappenstructuur op uit les 4.3 en maak `compose.yaml` met db en redis. Controleer dat beide starten.",
+            "Maak de SQLAlchemy-models voor users en notes (met een `owner_id`) en de eerste Alembic-migratie.",
+            "Schrijf de Pydantic-schemas: aparte modellen voor input, output en update, met de validator voor tags.",
+            "Bouw registreren, inloggen en `current_user`, en test meteen via de Authorize-knop in `/docs`.",
+            "Bouw de notes-router met eigenaarschapscontrole, zoeken, filteren, paginatie en de header `X-Total-Count`.",
+            "Voeg Redis toe: caching van één note met invalidatie, de rate limiter en een async health-endpoint.",
+            "Bouw de export: de API doet een `LPUSH`, de worker een `BRPOP`, en de status gaat in een hash met TTL.",
+            "Voeg de api- en worker-service toe aan Compose, schrijf de tests en draai ruff tot alles schoon is.",
+            "Start vanaf een schone clone met `docker compose up --build -d` en loop de hele flow door."
+          ]
+        },
+        {
+          "type": "code",
+          "lang": "bash",
+          "code": "docker compose up --build -d\npytest -q\nruff check ."
+        },
+        {
+          "type": "note",
+          "tone": "tip",
+          "text": "Extra uitdagingen als je tijd over hebt: refresh tokens en uitloggen met een token-blacklist in Redis, gestructureerde JSON-logging met een request-id-middleware, of de zelfgebouwde queue vervangen door arq of rq."
+        },
+        {
+          "type": "h",
+          "text": "Inleveren"
+        },
+        {
+          "type": "p",
+          "text": "Open een pull request met de uitvoer van `pytest -q` en een screenshot van `/docs`. De reviewer moet na `docker compose up --build -d` in `/docs` kunnen registreren, een token ophalen, op Authorize klikken en een note aanmaken."
+        }
+      ],
+      "takeaways": [
+        "Een productieklare API combineert validatie, auth, eigenaarschap, caching, rate limiting en background jobs.",
+        "De hele stack moet vanaf een schone clone met één Compose-commando draaien.",
+        "Tests bewijzen dat auth, eigenaarschap, validatie, paginatie, cache en rate limit echt werken.",
+        "Houd routers dun: businessregels horen in services, databasecode in repositories."
+      ],
+      "checklist": [
+        "Compose-stack met api, worker, db en redis start vanaf een schone clone",
+        "Dockerfile en `.env.example` aanwezig",
+        "Registreren, token ophalen en `/auth/me` werken; geen wachtwoorden in responses",
+        "Notes CRUD met zoeken, tag-filter, paginatie en `X-Total-Count`",
+        "Alleen eigen notes zichtbaar en aanpasbaar, anders 403",
+        "Validatie van titel en tags met correcte foutcodes",
+        "Note-cache van 60 seconden met invalidatie bij wijzigen en verwijderen",
+        "Rate limit van 10 nieuwe notes per minuut per gebruiker (429)",
+        "Health-endpoint controleert Postgres en Redis",
+        "Export via Redis-queue en worker, met status in een hash met TTL",
+        "Minstens 15 tests groen en `ruff check .` schoon",
+        "README met architectuurdiagram en uitleg van de async-keuze"
+      ],
+      "tags": [
+        "assessment",
+        "notes-api",
+        "fastapi",
+        "redis",
+        "docker",
+        "jwt"
+      ]
+    }
+  ]
+}
