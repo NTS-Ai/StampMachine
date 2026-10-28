@@ -72,6 +72,37 @@ function setBar(el, frac) {
   el.style.transform = `translateX(${((Math.max(0, Math.min(1, frac)) - 1) * 100).toFixed(2)}%)`;
 }
 
+// Een vinkje (.tick) wiebelt alleen als jij het aanzet, niet als een pagina opent met punten die al afgevinkt waren.
+document.addEventListener('change', e => {
+  const box = e.target;
+  if (box instanceof HTMLInputElement && box.classList.contains('tick')) box.classList.toggle('just', box.checked);
+});
+
+/**
+ * Zwevende code-stukjes (versiering, aria-hidden). Tik erop en er ploept een ander stukje uit de lijst tevoorschijn.
+ * De plek van elk stukje (.f0, .f1, ...) zet het scherm zelf in zijn CSS.
+ * @param {HTMLElement} host
+ * @param {string[]} words
+ * @param {number} [count]
+ */
+function mountFloats(host, words, count = 3) {
+  host.setAttribute('aria-hidden', 'true');
+  host.innerHTML = words.slice(0, count).map((w, i) => `<span class="float f${i}">${esc(w)}</span>`).join('');
+  let next = count;
+  host.onclick = e => {
+    const chip = /** @type {HTMLElement} */ (e.target).closest('.float');
+    if (!chip) return;
+    const word = words[next++ % words.length];
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { chip.textContent = word; return; }
+    // Krimpen, woord wisselen, terugveren. Alleen scale: het zweven loopt via translate en rotate gewoon door.
+    chip.animate([{ scale: 1 }, { scale: .6, opacity: .2 }], { duration: 110, easing: 'cubic-bezier(0.23, 1, 0.32, 1)' })
+      .finished.then(() => {
+        chip.textContent = word;
+        chip.animate([{ scale: .6, opacity: .2 }, { scale: 1.15, offset: .6 }, { scale: 1 }], { duration: 260, easing: 'cubic-bezier(0.23, 1, 0.32, 1)' });
+      });
+  };
+}
+
 /** Getal in Nederlandse notatie, bijvoorbeeld 1.234. @param {number} n */
 const nl = n => n.toLocaleString('nl-NL');
 

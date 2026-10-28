@@ -217,7 +217,7 @@ function renderLevelFrame() {
   destroyLevelBots();
   const solo = LV.mode === 'solo';
   const title = solo
-    ? `<span class="lvchip" style="--wc:var(--violet)">Minigame</span>${esc(GAMES[/** @type {string} */ (LV.key)].name)}`
+    ? `<span class="lvchip" style="--wc:var(--accent)">Minigame</span>${esc(GAMES[/** @type {string} */ (LV.key)].name)}`
     : `<span class="lvchip" style="--wc:${WORLD_HEX[/** @type {Level} */ (LV.level).week - 1]}">Level ${/** @type {Level} */ (LV.level).index + 1}</span>${esc(shortTitle(/** @type {Level} */ (LV.level).title))}`;
   $('#level').innerHTML = `
     <div class="topbar lvtop">

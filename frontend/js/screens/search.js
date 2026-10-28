@@ -139,7 +139,7 @@ function statusChip(it) {
 /** Resultaat uit de kennisbank: een link naar de les, het begrip of de tabel. @param {SearchItem} it @param {string[]} terms @param {number} i */
 function kbResultCard(it, terms, i) {
   const label = { l: 'Les', b: 'Begrip', n: 'Naslag' }[it.kind] + (it.sub ? ' · ' + esc(it.sub) : '');
-  return `<article class="sr sr-kb" style="--wc:${hue(it.week)};--i:${Math.min(i, 8)}">
+  return `<article class="sr sr-kb" style="--wc:${hue(it.week)}">
     <div class="sr-meta">${it.week ? `<span class="wchip">Week ${it.week}</span>` : ''}<span class="sr-kind">${label}</span>
       <a class="btn sm" href="${esc(it.href || '#/kennis')}">Open</a></div>
     <h2 class="sr-title"><a href="${esc(it.href || '#/kennis')}">${highlight(fmt(it.title), terms)}</a></h2>
@@ -159,7 +159,7 @@ function resultCard(it, terms, i) {
   if (q.explanation) more += `<div class="sr-block"><span class="lbl">Technisch</span><p>${highlight(fmt(q.explanation), terms)}</p></div>`;
   if (q.points && q.points.length) more += `<div class="sr-block"><span class="lbl">Moet erin staan</span><ul>${q.points.map(p => `<li>${highlight(fmt(p), terms)}</li>`).join('')}</ul></div>`;
 
-  return `<article class="sr" style="--wc:${hue(it.week)};--i:${Math.min(i, 8)}">
+  return `<article class="sr" style="--wc:${hue(it.week)}">
     <div class="sr-meta"><span class="wchip">Week ${it.week}</span><span class="sr-kind">${kind}</span>${statusChip(it)}
       ${it.kind !== 'f' ? `<button class="btn sm" type="button" data-practice="${esc(it.item.id)}">Oefen</button>` : ''}</div>
     <h2 class="sr-title">${highlight(fmt(it.title), terms)}</h2>

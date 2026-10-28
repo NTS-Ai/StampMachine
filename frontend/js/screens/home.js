@@ -28,8 +28,18 @@ const HOME_ICONS = {
   play: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8l4 4-4 4M12 17h6" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
 };
 
-/** Zwevend code-stukje boven Stampy op de kaart van je huidige wereld, per week. Eén is genoeg: meer botst met de titel. */
-const HOME_FLOATS = { 1: 'print()', 2: 'def', 3: 'SELECT', 4: '@app.get', 5: 'prompt', 6: 'pytest' };
+/** Een wolkje dat langzaam door de wereldkaart drijft. */
+const HOME_CLOUD = '<svg viewBox="0 0 64 28"><path d="M10 26a9 9 0 0 1 1-18 13 13 0 0 1 24-3 10 10 0 0 1 17 6 8 8 0 0 1 2 15z" fill="#fff"/></svg>';
+
+/** Code die rond Stampy zweeft, per wereld. De eerste drie staan er meteen; tikken haalt de rest tevoorschijn. */
+const HOME_FLOATS = {
+  1: ['int', 'print()', '"str"', 'input()', 'True', 'len()', 'git'],
+  2: ['def', 'class', 'try:', 'import', 'return', 'with open()'],
+  3: ['SELECT', 'JOIN', 'WHERE', 'docker', 'COUNT(*)', 'Session'],
+  4: ['@app.get', '200', 'json', 'POST', 'redis', '404'],
+  5: ['prompt', 'tokens', 'role', 'system', 'temp', 'embed'],
+  6: ['pytest', 'async', 'await', 'assert', 'logging', 'agent'],
+};
 
 /** Naam van de draak van een wereld, als de draken al bestaan. @param {number} week */
 function homeDragonName(week) {
@@ -80,13 +90,13 @@ function openHome() {
     <div class="tiles3" id="hmTiles"></div>
     <section class="course hm-course" id="hmCourse" aria-labelledby="hmCourseTitle">
       <div class="hm-course-text">
-        <p class="hm-eyebrow">Je bent nu hier</p>
         <h2 id="hmCourseTitle"></h2>
         <div class="pctpill"><span id="hmPct"></span><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="3"/><circle id="hmRing" cx="10" cy="10" r="7.5" fill="none" stroke="#3AD0FF" stroke-width="3" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" transform="rotate(-90 10 10)"/></svg></div>
         <p class="hm-next" id="hmNext"></p>
         <button class="hm-play" type="button" id="hmPlay"><span id="hmPlayLabel">Verder spelen</span>${HOME_ICONS.arrow}</button>
       </div>
-      <div class="hm-floats" id="hmFloats" aria-hidden="true"></div>
+      <div class="hm-sky" aria-hidden="true">${HOME_CLOUD}${HOME_CLOUD}</div>
+      <div class="hm-floats" id="hmFloats"></div>
       <div class="bot" id="hmCourseBot"></div>
     </section>
     <label class="hm-search">
@@ -166,6 +176,11 @@ function paintHome() {
   const pct = Math.round((p.done + (p.dragon ? 1 : 0)) / (p.levels + 1) * 100);
   const course = $('#hmCourse');
   course.style.setProperty('--wc', hue(week));
+  const floats = $('#hmFloats');
+  if (floats.dataset.week !== String(week)) {
+    floats.dataset.week = String(week);
+    mountFloats(floats, HOME_FLOATS[week] || HOME_FLOATS[1]);
+  }
   $('#hmCourseTitle').textContent = `Wereld ${week} · ${w ? w.title : ''}`;
   $('#hmPct').textContent = pct + '%';
   $('#hmRing').setAttribute('stroke-dashoffset', String(100 - pct));
@@ -175,22 +190,21 @@ function paintHome() {
   else next = 'Alle werelden gehaald en alle draken verslagen. Knap werk!';
   $('#hmNext').textContent = next;
   $('#hmPlayLabel').textContent = step.type === 'done' ? 'Bekijk de kaart' : step.type === 'dragon' ? 'Versla de draak' : 'Verder spelen';
-  $('#hmFloats').innerHTML = `<span class="float f0">${esc(HOME_FLOATS[week] || HOME_FLOATS[1])}</span>`;
 
   // Snel oefenen voor je huidige week
   const weak = weakItems().length;
   const flash = w ? w.flashcards.length : 0;
   const quick = [
-    { kind: 'quiz', title: 'Quiz', sub: `12 vragen uit week ${week}`, color: '#1F72D0', icon: HOME_ICONS.quiz },
-    { kind: 'cards', title: 'Flashcards', sub: `${flash} kaarten om te stampen`, color: '#1E9E66', icon: HOME_ICONS.cards },
-    { kind: 'speed', title: 'Speedrun', sub: 'Zoveel mogelijk in 60 s', color: '#D63A68', icon: HOME_ICONS.speed },
-    { kind: 'boss', title: 'Eindbaas', sub: 'Pager om 03:00, alle weken', color: '#6A4BEF', icon: HOME_ICONS.boss },
-    { kind: 'play', title: 'Speeltuin', sub: 'Zelf Python uitproberen', color: '#D6336C', icon: HOME_ICONS.play },
+    { kind: 'quiz', title: 'Quiz', sub: `12 vragen uit week ${week}`, icon: HOME_ICONS.quiz },
+    { kind: 'cards', title: 'Flashcards', sub: `${flash} kaarten om te stampen`, icon: HOME_ICONS.cards },
+    { kind: 'speed', title: 'Speedrun', sub: 'Zoveel mogelijk in 60 s', icon: HOME_ICONS.speed },
+    { kind: 'boss', title: 'Eindbaas', sub: 'Pager om 03:00, alle weken', icon: HOME_ICONS.boss },
+    { kind: 'play', title: 'Speeltuin', sub: 'Zelf Python uitproberen', icon: HOME_ICONS.play },
   ];
-  if (weak) quick.splice(1, 0, { kind: 'retry', title: 'Zwakke plekken', sub: `${weak} ${weak === 1 ? 'vraag' : 'vragen'} die je fout had`, color: '#C2304F', icon: HOME_ICONS.retry });
+  if (weak) quick.splice(1, 0, { kind: 'retry', title: 'Zwakke plekken', sub: `${weak} ${weak === 1 ? 'vraag' : 'vragen'} die je fout had`, icon: HOME_ICONS.retry });
   $('#hmQuickWeek').textContent = `Week ${week} · telt niet voor de kaart`;
   $('#hmQuick').innerHTML = quick.map(q => `<button class="qcard" type="button" data-quick="${q.kind}">
-      <span class="qi" style="background:${q.color}">${q.icon}</span><b>${q.title}</b><small>${esc(q.sub)}</small></button>`).join('');
+      <span class="qi">${q.icon}</span><b>${q.title}</b><small>${esc(q.sub)}</small></button>`).join('');
 
   // Alle werelden: bekijken mag altijd, spelen pas als de vorige draak verslagen is.
   $('#hmWorldsSum').textContent = `${totals.dragons} van ${WEEKS.length} draken verslagen`;
@@ -217,7 +231,7 @@ function homeWorldRow(wk, here) {
   }
   return `<a class="world" href="#/kaart/${wk.week}" style="--wc:${hue(wk.week)}" data-locked="${!open}"${here ? ' aria-current="location"' : ''}>
       <span class="num" aria-hidden="true">${wk.week}</span>
-      <div class="grow">${here ? '<span class="hm-here">Hier ben je</span>' : ''}<h3>Wereld ${wk.week} · ${esc(wk.title)}</h3><p>${esc(status)}</p></div>
+      <div class="grow"><h3>Wereld ${wk.week} · ${esc(wk.title)}</h3><p>${here ? '<b class="hm-here">Hier ben je</b> · ' : ''}${esc(status)}</p></div>
       ${badge}</a>`;
 }
 

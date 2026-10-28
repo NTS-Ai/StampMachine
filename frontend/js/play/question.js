@@ -187,7 +187,7 @@ function checkPlayItem(state) {
     const points = q.points || [];
     state.box.insertAdjacentHTML('beforeend', `<div class="model"><b>Modelantwoord</b>${fmt(q.model)}</div>
       <div class="plabel">Wat zat er in jouw uitleg?</div>
-      <div class="checks">${points.map((p, k) => `<label><input type="checkbox" data-ck="${k}">${fmt(p)}</label>`).join('')}</div>
+      <div class="checks">${points.map((p, k) => `<label><input class="tick" type="checkbox" data-ck="${k}">${fmt(p)}</label>`).join('')}</div>
       <button class="cta blue" type="button" id="pqSelf">Klaar met nakijken</button>`);
     const self = /** @type {HTMLButtonElement} */ (state.box.querySelector('#pqSelf'));
     self.focus({ preventScroll: true });

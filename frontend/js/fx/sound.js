@@ -25,7 +25,7 @@ function tone(freq, start, dur, type = 'sine', vol = .07) {
   osc.stop(start + dur + .02);
 }
 
-/** @param {'ok' | 'bad' | 'combo' | 'win' | 'flip' | 'lose'} kind */
+/** @param {'ok' | 'bad' | 'combo' | 'win' | 'flip' | 'lose' | 'pop'} kind */
 function sfx(kind) {
   if (!S.sound) return;
   try {
@@ -37,6 +37,7 @@ function sfx(kind) {
       case 'combo': [523, 659, 784, 1047].forEach((f, i) => tone(f, t + i * .055, .12, 'triangle', .06)); break;
       case 'win': [523, 659, 784, 659, 784, 1047].forEach((f, i) => tone(f, t + i * .1, .18, 'triangle', .07)); break;
       case 'flip': tone(420, t, .05, 'triangle', .04); break;
+      case 'pop': tone(520 + Math.random() * 260, t, .06, 'triangle', .035); break;
       case 'lose': [392, 330, 262, 196].forEach((f, i) => tone(f, t + i * .14, .2, 'sawtooth', .04)); break;
     }
   } catch (e) { /* geen audio beschikbaar: stil doorgaan */ }

@@ -1,76 +1,79 @@
-/* Stampy-app: de stijl uit het ontwerp (frontend/spel, ontwerp/stampy-robot.html).
-   "Dag" (licht) is een zonnige weide, "Nacht" (donker) een indigo nachthemel. Glazen panelen,
-   dikke 3D-knoppen, een isometrische eilandkaart en Stampy als mascotte op elk scherm.
+/* Stampy-app in een vlakke, Duolingo-achtige stijl: effen kleuren, witte kaarten met een rand van 2 px,
+   dikke knoppen met een effen "lip" eronder (het enige 3D-effect), één blauw accent en groen voor de hoofdactie.
+   Geen verlopen, glas, gloed of zachte schaduwen op dingen die stilliggen. "Dag" is een lichte weide, "Nacht" neutraal donker.
    Schermspecifieke stijl staat in eigen bestanden (map.css, boss.css, practice.css, kb.css, home.css). */
-
-/* Layout: a phone-width game app. "Dag" (light) is a sunny meadow, "Nacht" (dark) an indigo night sky. Glass panels, chunky 3D answer tiles, an isometric island map; Stampy lives in a glass bubble in the top corner of every screen. */
 :root{
-  --bg1:#EAF7DD; --bg2:#CDEBB4; --glow1:#FFFFFF; --glow2:#E3F6CF;
-  --glass:rgba(255,255,255,.72); --glass2:rgba(255,255,255,.9); --glass3:#FFFFFF; --stroke:rgba(31,77,23,.12); --track:rgba(31,77,23,.12); --chipbg:rgba(31,77,23,.08);
-  --ink:#16380F; --muted:#5B7853; --btn1:#6AD54F; --btn2:#3FAE2C; --btn-sh:#2C7E1E;
-  --tile1:#FFFFFF; --tile2:#F1F9EA; --tile-ink:#16380F; --tile-d:#B9DAA2; --pl1:#FFFFFF; --pl2:#EEF8E6;
-  --field:#FFFFFF; --course1:#2B6B1F; --course2:#1F5418; --course3:#173F12; --nav-bg:rgba(255,255,255,.88);
+  --bg1:#F4F8EF; --bg2:var(--bg1); --glow1:var(--bg1); --glow2:var(--bg1);
+  --glass:#FFFFFF; --glass2:#FFFFFF; --glass3:#EEF4E8; --stroke:#DCE7D2; --track:#E2EBD9; --chipbg:#EAF2E2;
+  --ink:#16380F; --muted:#4F6B48; --btn1:#46A302; --btn2:#46A302; --btn-sh:#2F7A00;
+  --tile1:#FFFFFF; --tile2:#FFFFFF; --tile-ink:#16380F; --tile-d:#D3E0C9; --pl1:#FFFFFF; --pl2:#FFFFFF;
+  --field:#FFFFFF; --course1:#2B6B1F; --course2:#1F5418; --course3:#173F12; --nav-bg:#FFFFFF;
   --map1:#BFE6FF; --map2:#9AD3F5; --map3:#7BC1EC;
   --blue:#3AA8FF; --blue-d:#1F72D0; --gold:#FFC93D; --gold-d:#C98512; --pink:#FF5C86;
-  --green:#2FBF71; --green-d:#1E9E66; --red:#FF5C7A; --red-d:#C23052; --violet:#7B5CFF;
+  --green:#2FBF71; --green-d:#1E9E66; --red:#FF5C7A; --red-d:#C23052;
+  /* Eén accent (blauw) voor selectie en links; --accent-ink is de tekstversie met genoeg contrast. */
+  --accent:#1F7AC0; --accent-ink:#165C91;
   --f-display:"Fredoka","Nunito",system-ui,sans-serif; --f-body:"Nunito","Segoe UI",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg1:#14173A; --bg2:#231C57; --glow1:#2E2A80; --glow2:#3A1F6E;
-  --glass:rgba(255,255,255,.06); --glass2:rgba(255,255,255,.11); --glass3:rgba(255,255,255,.16); --stroke:rgba(255,255,255,.13); --track:rgba(255,255,255,.12); --chipbg:rgba(255,255,255,.1);
-  --ink:#F3F2FF; --muted:#ABA8D9; --btn1:#4DB4FF; --btn2:#1F72D0; --btn-sh:#134A8C;
-  --tile1:#5247B0; --tile2:#3A3189; --tile-ink:#FFFFFF; --tile-d:#1E1A52; --pl1:#4A40A3; --pl2:#372E85;
-  --field:#0F1030; --course1:#2E7FD6; --course2:#3C4FC4; --course3:#4B2E9E; --nav-bg:rgba(22,20,62,.82);
-  --map1:#2B4C8C; --map2:#1C2A63; --map3:#181845; --green:#3DDC97; --violet:#8A6BFF; color-scheme:dark}}
+  --bg1:#131A1F;
+  --glass:#1B242A; --glass2:#1B242A; --glass3:#232E35; --stroke:#2C3940; --track:#2A363D; --chipbg:#222C32;
+  --ink:#EEF3F6; --muted:#A3B0B9;
+  --tile1:#1B242A; --tile2:#1B242A; --tile-ink:#EEF3F6; --tile-d:#0D1317; --pl1:#232E35; --pl2:#232E35;
+  --field:#0F1519; --nav-bg:#131A1F;
+  --map1:#2B4C8C; --map2:#1C2A63; --map3:#181845; --green:#3DDC97; --accent:#5DB8F5; --accent-ink:#7CC8F7; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg1:#14173A; --bg2:#231C57; --glow1:#2E2A80; --glow2:#3A1F6E;
-  --glass:rgba(255,255,255,.06); --glass2:rgba(255,255,255,.11); --glass3:rgba(255,255,255,.16); --stroke:rgba(255,255,255,.13); --track:rgba(255,255,255,.12); --chipbg:rgba(255,255,255,.1);
-  --ink:#F3F2FF; --muted:#ABA8D9; --btn1:#4DB4FF; --btn2:#1F72D0; --btn-sh:#134A8C;
-  --tile1:#5247B0; --tile2:#3A3189; --tile-ink:#FFFFFF; --tile-d:#1E1A52; --pl1:#4A40A3; --pl2:#372E85;
-  --field:#0F1030; --course1:#2E7FD6; --course2:#3C4FC4; --course3:#4B2E9E; --nav-bg:rgba(22,20,62,.82);
-  --map1:#2B4C8C; --map2:#1C2A63; --map3:#181845; --green:#3DDC97; --violet:#8A6BFF; color-scheme:dark}
+  --bg1:#131A1F;
+  --glass:#1B242A; --glass2:#1B242A; --glass3:#232E35; --stroke:#2C3940; --track:#2A363D; --chipbg:#222C32;
+  --ink:#EEF3F6; --muted:#A3B0B9;
+  --tile1:#1B242A; --tile2:#1B242A; --tile-ink:#EEF3F6; --tile-d:#0D1317; --pl1:#232E35; --pl2:#232E35;
+  --field:#0F1519; --nav-bg:#131A1F;
+  --map1:#2B4C8C; --map2:#1C2A63; --map3:#181845; --green:#3DDC97; --accent:#5DB8F5; --accent-ink:#7CC8F7; color-scheme:dark}
 *{box-sizing:border-box}
 html,body{height:100%}
 /* Telefoon: geen blauwe tikflits, geen trek-om-te-verversen midden in een spel, geen tikvertraging en geen tekstselectie bij lang drukken op knoppen. */
 html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;overscroll-behavior:none}
 button,a,[role="button"],.tile,.cta{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-body{margin:0;color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;background-color:var(--bg1);
-  background-image:radial-gradient(900px 600px at 15% -10%,var(--glow1) 0%,transparent 60%),radial-gradient(700px 500px at 110% 30%,var(--glow2) 0%,transparent 55%),linear-gradient(165deg,var(--bg1),var(--bg2));background-attachment:fixed}
+body{margin:0;color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;background:var(--bg1)}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
 h1,h2,h3{font-family:var(--f-display);margin:0;line-height:1.1;text-wrap:balance}
 code,.mono{font-family:var(--f-mono)}
 .app{max-width:var(--app-w,460px);min-height:100%;margin:0 auto;padding-inline:16px;display:flex;flex-direction:column}
-/* Schermwissels gebeuren vaak (tabbalk): alleen een korte fade, geen beweging. */
-.screen{flex:1;display:flex;flex-direction:column;gap:16px;padding-block:calc(18px + env(safe-area-inset-top,0px)) 110px;animation:enter .15s var(--ease-out)}
-@keyframes enter{from{opacity:0}}
-.glass{background:var(--glass);border:1px solid var(--stroke);border-radius:24px;backdrop-filter:blur(10px)}
-.rbtn{width:48px;height:48px;flex:none;border-radius:50%;display:grid;place-items:center;background:linear-gradient(180deg,var(--btn1),var(--btn2));box-shadow:0 4px 0 var(--btn-sh),inset 0 1px 0 rgba(255,255,255,.35);transition:transform .1s var(--ease-out),box-shadow .1s var(--ease-out)}
-.rbtn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--btn-sh)}
+/* Een app-scherm verschijnt meteen: schermwissels via de tabbalk gebeuren te vaak voor een animatie. */
+.screen{flex:1;display:flex;flex-direction:column;gap:16px;padding-block:calc(18px + env(safe-area-inset-top,0px)) 110px}
+.glass{background:var(--glass);border:2px solid var(--stroke);border-radius:16px}
+/* Ronde terugknop: wit met een rand en een effen lip, de pijl in de tekstkleur. */
+.rbtn{width:48px;height:48px;flex:none;border-radius:50%;display:grid;place-items:center;background:var(--glass2);border:2px solid var(--stroke);box-shadow:0 4px 0 var(--stroke);transition:transform .1s var(--ease-out),box-shadow .1s var(--ease-out)}
+.rbtn path{stroke:var(--ink)}
+.rbtn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--stroke)}
 .theme{height:34px;border-radius:99px;padding:0 12px;display:inline-flex;align-items:center;gap:6px;background:var(--glass2);border:1px solid var(--stroke);font-weight:800;font-size:13px}
 .theme svg{width:16px;height:16px}
 .tiles3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.st{border-radius:20px;padding:12px 8px;text-align:center;background:var(--glass2);border:1px solid var(--stroke);display:grid;gap:2px;justify-items:center}
+.st{border-radius:16px;padding:12px 8px;text-align:center;background:var(--glass2);border:2px solid var(--stroke);display:grid;gap:2px;justify-items:center}
 .st svg{width:26px;height:26px}
 .st small{color:var(--muted);font-weight:800;font-size:12px}
 .st b{font-family:var(--f-display);font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
 .quick{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;scroll-snap-type:x mandatory}
-.qcard{flex:none;width:132px;scroll-snap-align:start;border-radius:20px;padding:12px;text-align:left;background:var(--glass2);border:1px solid var(--stroke);display:grid;gap:6px;transition:transform .15s var(--ease-out)}
+.qcard{flex:none;width:132px;scroll-snap-align:start;border-radius:16px;padding:12px;text-align:left;background:var(--glass2);border:2px solid var(--stroke);display:grid;gap:6px;transition:transform .15s var(--ease-out)}
 .qcard:active{transform:scale(.97)}
-.qcard .qi{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:#fff;font-family:var(--f-display);font-weight:700}
+/* Iconen staan los, zonder gekleurd vakje, in de tekstkleur. */
+.qcard .qi{width:32px;height:32px;display:grid;place-items:center;color:var(--ink)}
+/* De iconen zijn wit getekend (voor een gekleurd vakje); los op een kaart nemen ze de tekstkleur aan. */
+.qi [stroke="#fff"]{stroke:currentColor}.qi [fill="#fff"]{fill:currentColor}
 .qcard b{font-family:var(--f-display);font-weight:600;font-size:16px}
 .qcard small{color:var(--muted);font-weight:700;font-size:12px;line-height:1.3}
 .sechead{display:flex;justify-content:space-between;align-items:baseline}
-.sechead span{color:var(--green);font-weight:800;font-size:13px}
+.sechead span{color:var(--muted);font-weight:800;font-size:13px}
 .rbtn svg{width:22px;height:22px}
 .topbar{display:flex;align-items:center;gap:10px}
 .grow{flex:1;min-width:0}
 
 /* mascot corner */
-.mascot{position:relative;width:66px;height:66px;flex:none;border-radius:50%;background:var(--glass2);border:1px solid var(--stroke);display:grid;place-items:center;box-shadow:0 0 0 4px rgba(138,107,255,.12)}
+.mascot{position:relative;width:66px;height:66px;flex:none;border-radius:50%;background:var(--glass2);border:2px solid var(--stroke);display:grid;place-items:center}
 .mascot .host{width:58px;margin-top:4px}
 /* De tekstballon komt ónder Stampy, met een puntje naar hem toe, zodat hij geen titel of balk bedekt. */
-.mascot .bubble{position:absolute;top:calc(100% + 10px);width:max-content;max-width:min(230px,calc(100vw - 40px));background:#fff;color:#1A1640;border:1px solid rgba(20,20,60,.12);box-shadow:0 10px 24px -10px rgba(0,0,0,.45);font-weight:800;font-size:13px;line-height:1.3;padding:8px 12px;border-radius:14px;opacity:0;transform:translateY(-4px) scale(.96);transition:opacity .2s var(--ease-out),transform .2s var(--ease-out);pointer-events:none;z-index:15}
+.mascot .bubble{position:absolute;top:calc(100% + 10px);width:max-content;max-width:min(230px,calc(100vw - 40px));background:#fff;color:#1C2B22;border:1px solid rgba(20,20,60,.12);box-shadow:0 10px 24px -10px rgba(0,0,0,.45);font-weight:800;font-size:13px;line-height:1.3;padding:8px 12px;border-radius:12px;opacity:0;transform:translateY(-4px) scale(.96);transition:opacity .2s var(--ease-out),transform .2s var(--ease-out);pointer-events:none;z-index:15}
 .mascot .bubble::before{content:"";position:absolute;top:-6px;width:10px;height:10px;background:inherit;border:inherit;border-right:0;border-bottom:0;transform:rotate(45deg)}
 .mascot.right .bubble{right:0;transform-origin:top right}
 .mascot.right .bubble::before{right:28px}
@@ -80,29 +83,23 @@ code,.mono{font-family:var(--f-mono)}
 
 /* home */
 .hello{display:flex;align-items:center;gap:12px}
-.hello h1{font-size:30px;font-weight:700}
+.hello h1{font-size:28px;font-weight:700}
 .hello p{margin:2px 0 0;color:var(--muted);font-weight:700;font-size:14px}
 .xpbar{height:8px;border-radius:99px;background:var(--track);overflow:hidden;margin-top:6px;max-width:190px}
-.xpbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#FFE27A);border-radius:99px;transition:transform .6s var(--ease-out)}
-.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.cat{display:grid;justify-items:center;gap:6px;font-size:12px;font-weight:800;color:var(--muted)}
-.cat .ic{width:62px;height:62px;border-radius:50%;display:grid;place-items:center;background:var(--glass2);border:1px solid var(--stroke);transition:transform .15s,background .15s}
-.cat .ic svg{width:30px;height:30px}
-.cat[aria-current="true"] .ic{background:linear-gradient(180deg,#5A4BD8,#3A2E9E);box-shadow:0 0 0 3px rgba(138,107,255,.35)}
-.course{position:relative;overflow:hidden;color:#fff;border-radius:26px;padding:18px;min-height:210px;background:linear-gradient(150deg,var(--course1) 0%,var(--course2) 45%,var(--course3) 100%);border:1px solid rgba(255,255,255,.18);box-shadow:0 18px 40px -18px #000}
-.course::before{content:"";position:absolute;inset:auto -40px -60px auto;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.18),transparent 65%)}
+.xpbar i{display:block;height:100%;background:var(--gold);border-radius:99px;transition:transform .6s var(--ease-out)}
+/* De kaart van je huidige wereld: één effen vlak in de wereldkleur, zoals een unit-banner. */
+.course{position:relative;overflow:hidden;color:#fff;border-radius:16px;padding:18px;min-height:210px;background:var(--wc,var(--course2))}
 .course h2{font-size:22px;font-weight:600}
 .course .row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.pctpill{display:inline-flex;align-items:center;gap:8px;margin-top:10px;background:rgba(10,12,40,.45);border-radius:99px;padding:5px 12px 5px 14px;font-weight:800;font-variant-numeric:tabular-nums}
+.pctpill{display:inline-flex;align-items:center;gap:8px;margin-top:10px;background:rgba(0,0,0,.22);border-radius:99px;padding:5px 12px 5px 14px;font-weight:800;font-variant-numeric:tabular-nums}
 .pctpill svg{width:18px;height:18px}
 .course .bot{position:absolute;right:6px;bottom:-14px;width:150px}
-.course .float{position:absolute;font-family:var(--f-mono);font-weight:700;font-size:15px;background:rgba(255,255,255,.92);color:#2A1F7A;border-radius:10px;padding:4px 8px;box-shadow:0 6px 14px -6px #000;animation:floaty 4s ease-in-out infinite}
-@keyframes floaty{50%{transform:translateY(-8px) rotate(-3deg)}}
-.sec-t{font-family:var(--f-display);font-size:19px;font-weight:600;margin-top:4px}
+@keyframes floaty{50%{translate:0 -8px;rotate:-3deg}}
+.sec-t{font-family:var(--f-display);font-size:20px;font-weight:600;margin-top:4px}
 .wlist{display:grid;gap:12px}
-.world{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:22px;text-align:left;background:var(--glass2);border:1px solid var(--stroke);transition:transform .15s var(--ease-out)}
+.world{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:16px;text-align:left;background:var(--glass2);border:2px solid var(--stroke);transition:transform .15s var(--ease-out)}
 .world:active{transform:scale(.98)}
-.world .num{width:46px;height:46px;flex:none;border-radius:14px;display:grid;place-items:center;font-family:var(--f-display);font-weight:700;font-size:20px;color:#fff;background:var(--wc);box-shadow:0 4px 0 rgba(0,0,0,.25)}
+.world .num{width:46px;height:46px;flex:none;border-radius:12px;display:grid;place-items:center;font-family:var(--f-display);font-weight:700;font-size:20px;color:#fff;background:var(--wc)}
 .world .lock{color:var(--muted)}
 .world h3{font-size:17px;font-weight:600}
 .world p{margin:0;font-size:13px;color:var(--muted);font-weight:700}
@@ -111,11 +108,11 @@ code,.mono{font-family:var(--f-mono)}
 
 /* map */
 .mapbar{display:flex;align-items:center;gap:10px}
-.wsel{flex:1;min-width:0;height:48px;border-radius:99px;background:var(--glass2);border:1px solid var(--stroke);font-family:var(--f-display);font-weight:600;font-size:17px;display:flex;align-items:center;justify-content:center;gap:8px;padding-inline:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mapstats{display:flex;justify-content:space-around;align-items:center;padding:8px 10px;border-radius:99px;background:var(--glass2);border:1px solid var(--stroke);font-weight:800;font-variant-numeric:tabular-nums}
+.wsel{flex:1;min-width:0;height:48px;border-radius:99px;background:var(--glass2);border:2px solid var(--stroke);font-family:var(--f-display);font-weight:600;font-size:17px;display:flex;align-items:center;justify-content:center;gap:8px;padding-inline:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mapstats{display:flex;justify-content:space-around;align-items:center;padding:8px 10px;border-radius:99px;background:var(--glass2);border:2px solid var(--stroke);font-weight:800;font-variant-numeric:tabular-nums}
 .mapstats span{display:inline-flex;align-items:center;gap:6px}
 .mapstats svg{width:20px;height:20px}
-.mapwrap{position:relative;border-radius:28px;overflow:hidden;background:radial-gradient(120% 80% at 50% 20%,var(--map1) 0%,var(--map2) 45%,var(--map3) 100%);border:1px solid var(--stroke)}
+.mapwrap{position:relative;border-radius:16px;overflow:hidden;background:var(--map1);border:2px solid var(--stroke)}
 .mapwrap .mascot{position:absolute;left:12px;top:12px;z-index:3}
 .mapwrap svg.map{display:block;width:100%;height:auto}
 .node{cursor:pointer}
@@ -123,108 +120,104 @@ code,.mono{font-family:var(--f-mono)}
 .node:focus-visible .top{transform:translateY(-3px)}
 .node .pulse{animation:pulse 1.6s ease-out infinite;transform-box:fill-box;transform-origin:center}
 @keyframes pulse{0%{opacity:.8;transform:scale(1)}100%{opacity:0;transform:scale(1.9)}}
-.water-sh{animation:shimmer 6s ease-in-out infinite}
-@keyframes shimmer{50%{opacity:.35}}
-.cloud{animation:drift 14s ease-in-out infinite alternate}
-@keyframes drift{to{transform:translateX(26px)}}
 .legend{display:flex;gap:14px;justify-content:center;font-size:12px;color:var(--muted);font-weight:800;flex-wrap:wrap}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
 
 /* play */
 .pbar{flex:1;height:12px;border-radius:99px;background:var(--track);overflow:hidden}
-.pbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#FFE27A);border-radius:99px;transition:transform .4s var(--ease-out)}
+.pbar i{display:block;height:100%;background:var(--gold);border-radius:99px;transition:transform .4s var(--ease-out)}
 .hearts{display:flex;gap:4px;align-items:center;font-weight:800;color:var(--pink)}
 .hearts svg{width:20px;height:20px}
 .hearts .lost{opacity:.2}
-.qtype{font-family:var(--f-mono);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--violet);text-align:center}
+.qtype{font-size:14px;font-weight:800;color:var(--muted);text-align:center}
 .qtitle{font-size:24px;font-weight:600;text-align:center;line-height:1.25}
 .qtitle code{font-size:.85em;background:var(--chipbg);padding:1px 6px;border-radius:7px}
-pre.code{margin:0;background:#0F1030;color:#EDEBFF;border:1px solid var(--stroke);border-radius:18px;padding:16px;font-family:var(--f-mono);font-size:15px;line-height:1.6;overflow-x:auto;white-space:pre}
+pre.code{margin:0;background:#12181C;color:#E8EEF2;border:1px solid var(--stroke);border-radius:16px;padding:16px;font-family:var(--f-mono);font-size:15px;line-height:1.6;overflow-x:auto;white-space:pre}
 pre.code .k{color:#C49BFF}pre.code .s{color:#7EE7A8}pre.code .n{color:#FFC27A}pre.code .f{color:#6FC8FF}
 .blank{font:inherit;font-family:var(--f-mono);width:7ch;background:rgba(255,255,255,.1);border:0;border-bottom:2px solid var(--gold);color:var(--gold);padding:1px 4px;border-radius:6px 6px 0 0;text-align:center}
 .tiles{display:grid;gap:14px;grid-template-columns:repeat(var(--cols,3),minmax(0,1fr));margin-top:auto}
-.tile{min-height:84px;border-radius:20px;padding:12px;font-family:var(--f-display);font-weight:700;font-size:26px;color:var(--tile-ink);background:linear-gradient(180deg,var(--tile1),var(--tile2));border:1px solid var(--stroke);box-shadow:0 7px 0 var(--tile-d),inset 0 1px 0 rgba(255,255,255,.22);transition:transform .1s var(--ease-out),box-shadow .1s var(--ease-out),background .2s ease;overflow-wrap:anywhere}
+.tile{min-height:84px;border-radius:16px;padding:12px;font-family:var(--f-display);font-weight:700;font-size:26px;color:var(--tile-ink);background:var(--tile1);border:2px solid var(--stroke);box-shadow:0 4px 0 var(--tile-d);transition:transform .1s var(--ease-out),box-shadow .1s var(--ease-out),background .2s ease;overflow-wrap:anywhere}
 .tile.mono{font-family:var(--f-mono);font-size:18px}
-.tile:active{transform:translateY(5px);box-shadow:0 2px 0 var(--tile-d)}
-.tile.ok{color:#fff;background:linear-gradient(180deg,#4BE6A6,var(--green-d));box-shadow:0 7px 0 #136B45}
-.tile.no{color:#fff;background:linear-gradient(180deg,#FF7891,var(--red-d));box-shadow:0 7px 0 #7D1A33;animation:shake .35s}
+.tile:active{transform:translateY(4px);box-shadow:0 0 0 var(--tile-d)}
+.tile.ok{color:#fff;background:var(--green-d);border-color:var(--green-d);box-shadow:0 4px 0 #136B45}
+.tile.no{color:#fff;background:var(--red-d);border-color:var(--red-d);box-shadow:0 4px 0 #7D1A33;animation:shake .35s}
 .tile[disabled]{cursor:default}
 @keyframes shake{25%,75%{transform:translateX(-6px)}50%{transform:translateX(6px)}}
-.field{width:100%;font-family:var(--f-mono);font-size:18px;padding:14px 16px;border-radius:16px;background:var(--field);border:1.5px solid var(--stroke);color:var(--ink)}
+.field{width:100%;font-family:var(--f-mono);font-size:18px;padding:14px 16px;border-radius:16px;background:var(--field);border:2px solid var(--stroke);color:var(--ink)}
 textarea.field{min-height:120px;font-family:var(--f-body);font-size:16px;resize:vertical}
-.cta{margin-top:auto;width:100%;min-height:58px;border-radius:18px;font-family:var(--f-display);font-weight:700;font-size:20px;color:#1A1450;background:linear-gradient(180deg,#FFE27A,var(--gold));box-shadow:0 6px 0 var(--gold-d),inset 0 1px 0 rgba(255,255,255,.6);transition:transform .1s var(--ease-out),box-shadow .1s var(--ease-out)}
-.cta:active{transform:translateY(4px);box-shadow:0 2px 0 var(--gold-d)}
-.cta[disabled]{filter:grayscale(1) brightness(.6);cursor:default;transform:none}
-.cta.blue{color:#fff;background:linear-gradient(180deg,var(--btn1),var(--btn2));box-shadow:0 6px 0 var(--btn-sh)}
+.cta{margin-top:auto;width:100%;min-height:58px;border-radius:16px;font-family:var(--f-display);font-weight:700;font-size:20px;color:#fff;background:var(--btn1);box-shadow:0 5px 0 var(--btn-sh);transition:transform .1s var(--ease-out),box-shadow .1s var(--ease-out)}
+.cta:active{transform:translateY(4px);box-shadow:0 1px 0 var(--btn-sh)}
+.cta[disabled]{background:var(--track);color:var(--muted);box-shadow:none;cursor:default;transform:none}
+.cta.blue{color:var(--ink);background:var(--glass2);border:2px solid var(--stroke);box-shadow:0 4px 0 var(--stroke)}
+.cta.blue:active{box-shadow:0 0 0 var(--stroke)}
 .parsons{display:grid;gap:8px}
-.plabel{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.plabel{font-size:13px;font-weight:800;color:var(--muted)}
 .pzone{min-height:58px;border-radius:16px;border:2px dashed var(--stroke);padding:8px;display:grid;gap:8px}
-.pline{text-align:left;font-family:var(--f-mono);font-size:14px;white-space:pre;padding:10px 12px;border-radius:12px;color:var(--tile-ink);background:linear-gradient(180deg,var(--pl1),var(--pl2));border:1px solid var(--stroke);box-shadow:0 4px 0 var(--tile-d);overflow-x:auto;transition:transform .1s var(--ease-out)}
+.pline{text-align:left;font-family:var(--f-mono);font-size:14px;white-space:pre;padding:10px 12px;border-radius:12px;color:var(--tile-ink);background:var(--pl1);border:2px solid var(--stroke);box-shadow:0 4px 0 var(--tile-d);overflow-x:auto;transition:transform .1s var(--ease-out)}
 .pline:active{transform:translateY(3px);box-shadow:0 1px 0 var(--tile-d)}
-.pzone .pline{color:#fff;background:linear-gradient(180deg,#2F6FBF,#24569A);box-shadow:0 4px 0 #123566}
+.pzone .pline{color:#fff;background:#24569A;box-shadow:0 4px 0 #123566}
 .checks{display:grid;gap:8px;margin:8px 0 0}
-.checks label{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:var(--glass2);border:1px solid var(--stroke);font-weight:700}
-.checks input{width:20px;height:20px;accent-color:var(--green);flex:none;margin-top:1px}
+.checks label{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--glass2);border:2px solid var(--stroke);font-weight:700}
 .model{border-radius:16px;padding:12px 14px;background:rgba(61,220,151,.1);border:1px solid rgba(61,220,151,.35)}
-.model b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--green);margin-bottom:2px}
+.model b{display:block;font-size:13px;color:var(--good);margin-bottom:2px}
 
 /* feedback sheet */
-.sheet{color:#fff;position:fixed;left:50%;bottom:0;transform:translate(-50%,105%);width:min(var(--app-w,460px),100%);padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));border-radius:26px 26px 0 0;z-index:20;transition:transform .2s var(--ease-out);display:grid;gap:8px}
+.sheet{color:#fff;position:fixed;left:50%;bottom:0;transform:translate(-50%,105%);width:min(var(--app-w,460px),100%);padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));border-radius:16px 16px 0 0;z-index:20;transition:transform .2s var(--ease-out);display:grid;gap:8px}
 /* Erin rustig (300 ms), eruit snel (200 ms): het systeem antwoordt. */
 .sheet.on{transform:translate(-50%,0);transition-duration:.3s}
-.sheet.ok{background:linear-gradient(180deg,#1E6B54,#164A3E);border-top:2px solid var(--green)}
-.sheet.no{background:linear-gradient(180deg,#6B1E37,#4A1628);border-top:2px solid var(--red)}
+.sheet.ok{background:#164A3E;border-top:2px solid var(--green)}
+.sheet.no{background:#4A1628;border-top:2px solid var(--red)}
 .sheet h3{font-size:24px;font-weight:700}
 .sheet.ok h3{color:#8CF5C8}.sheet.no h3{color:#FFB3C3}
 .sheet p{margin:0}
 .sheet .simple{font-size:15px;background:rgba(0,0,0,.2);border-radius:12px;padding:8px 12px}
-.sheet .simple b{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.75}
+.sheet .simple b{display:block;font-size:13px;opacity:.8}
 
 /* minigame */
 .gamehead{display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:800;font-variant-numeric:tabular-nums}
 .gamehead .score{font-family:var(--f-display);font-size:28px}
-.combo{background:var(--gold);color:#1A1450;border-radius:99px;padding:3px 10px;font-size:13px}
+.combo{background:var(--gold);color:#2A2208;border-radius:99px;padding:3px 10px;font-size:13px}
 .combo.pop{animation:pop .3s}
 @keyframes pop{50%{transform:scale(1.3) rotate(-4deg)}}
 .gtimer{height:10px;border-radius:99px;background:var(--track);overflow:hidden}
-.gtimer i{display:block;height:100%;background:linear-gradient(90deg,var(--pink),var(--gold))}
-.gcard{color:#fff;border-radius:26px;padding:26px 16px;text-align:center;background:radial-gradient(120% 120% at 50% 0%,#3B4FC9,#2A2276);border:1px solid rgba(255,255,255,.18);box-shadow:0 18px 40px -20px #000;display:grid;gap:8px}
+.gtimer i{display:block;height:100%;background:var(--pink)}
+.gcard{color:#fff;border-radius:16px;padding:26px 16px;text-align:center;background:#1F2A30;display:grid;gap:8px}
 .gcard .prompt{font-family:var(--f-mono);font-size:30px;font-weight:700;overflow-wrap:anywhere}
-.gcard .cap{color:#C9C6F0;font-weight:800;font-size:14px}
+.gcard .cap{color:#B8C4CC;font-weight:800;font-size:14px}
 .gcard.flash-ok{animation:fok .3s}.gcard.flash-no{animation:fno .3s}
-@keyframes fok{50%{box-shadow:0 0 0 4px var(--green),0 0 40px var(--green)}}
+@keyframes fok{50%{box-shadow:0 0 0 4px var(--green)}}
 @keyframes fno{50%{box-shadow:0 0 0 4px var(--red);transform:translateX(-5px)}}
 .intro{display:grid;gap:12px;justify-items:center;text-align:center}
-.intro .badge{color:#fff;font-family:var(--f-mono);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:var(--violet);border-radius:99px;padding:4px 12px}
-.intro h2{font-size:30px}
+.intro .badge{color:#fff;font-size:13px;font-weight:800;background:var(--accent);border-radius:99px;padding:3px 12px}
+.intro h2{font-size:28px}
 .intro p{margin:0;color:var(--muted);max-width:32ch}
 .bigbot{width:180px}
 
 /* result */
 .stars{display:flex;gap:8px;justify-content:center}
-.stars svg{width:62px;height:62px;filter:drop-shadow(0 6px 0 rgba(0,0,0,.25))}
+.stars svg{width:62px;height:62px}
 .stars .s{animation:starIn .5s cubic-bezier(.3,1.6,.5,1) both}
 .stars .s:nth-child(2){animation-delay:.18s;transform:translateY(-12px)}.stars .s:nth-child(3){animation-delay:.36s}
 @keyframes starIn{from{opacity:0;transform:scale(.5) rotate(-40deg)}}
 .rgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.rstat{border-radius:18px;padding:12px;text-align:center;background:var(--glass2);border:1px solid var(--stroke)}
+.rstat{border-radius:16px;padding:12px;text-align:center;background:var(--glass2);border:2px solid var(--stroke)}
 .rstat b{display:block;font-family:var(--f-display);font-size:26px;font-variant-numeric:tabular-nums}
 .rstat small{color:var(--muted);font-weight:800}
-.upgrade{border-radius:18px;padding:12px 14px;background:linear-gradient(90deg,rgba(255,154,46,.25),rgba(255,201,61,.12));border:1px solid rgba(255,201,61,.4);font-weight:800;text-align:center}
+.upgrade{border-radius:16px;padding:12px 14px;background:rgba(255,154,46,.25);border:1px solid rgba(255,201,61,.4);font-weight:800;text-align:center}
 
 /* nav */
-.nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));width:min(428px,calc(100% - 24px));display:flex;justify-content:space-around;align-items:center;padding:6px;border-radius:28px;background:var(--nav-bg);backdrop-filter:blur(14px);border:1px solid var(--stroke);box-shadow:0 12px 30px -16px rgba(0,0,0,.45);z-index:10}
+.nav{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:space-around;align-items:center;padding:6px max(8px,calc((100% - 460px) / 2)) calc(6px + env(safe-area-inset-bottom,0px));background:var(--nav-bg);border-top:2px solid var(--stroke);z-index:10}
 /* Tabbalk: icoon met een klein label, zodat je ziet waar elke knop heen gaat. */
-.nav a{min-width:60px;height:56px;padding:0 6px;border-radius:20px;display:grid;place-items:center;align-content:center;gap:2px;color:var(--muted);font-size:11px;font-weight:800;line-height:1;transition:background .15s,color .15s}
+.nav a{min-width:60px;height:56px;padding:0 6px;border-radius:16px;display:grid;place-items:center;align-content:center;gap:2px;color:var(--muted);font-size:11px;font-weight:800;line-height:1;transition:background .15s,color .15s}
 .nav a svg{width:23px;height:23px}
-.nav a[aria-current="page"]{background:linear-gradient(180deg,#6D5BEA,#4733B8);color:#fff;box-shadow:0 0 0 4px rgba(138,107,255,.25)}
+.nav a[aria-current="page"]{color:var(--accent-ink);background:color-mix(in srgb,var(--accent) 12%,transparent);box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--accent) 45%,transparent)}
 .nav a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 @media (max-width:360px){.nav a{min-width:52px;font-size:10px}}
 .nav[hidden]{display:none!important}
 .soon{display:grid;gap:14px;justify-items:center;text-align:center;padding-top:30px}
 .soon p{color:var(--muted);margin:0;max-width:30ch}
 /* In rust onzichtbaar (ook de lege toast stak eerst 8 px in beeld). Erin 250 ms, eruit 150 ms. */
-.toast{position:fixed;left:50%;top:calc(16px + env(safe-area-inset-top,0px));transform:translate(-50%,-12px);opacity:0;visibility:hidden;background:#fff;color:#1A1640;font-weight:800;border-radius:14px;padding:10px 16px;box-shadow:var(--shadow-md);z-index:30;transition:transform .15s var(--ease-out),opacity .15s var(--ease-out),visibility 0s linear .15s;max-width:90%;text-align:center}
+.toast{position:fixed;left:50%;top:calc(16px + env(safe-area-inset-top,0px));transform:translate(-50%,-12px);opacity:0;visibility:hidden;background:#fff;color:#1C2B22;font-weight:800;border-radius:12px;padding:10px 16px;box-shadow:var(--shadow-md);z-index:30;transition:transform .15s var(--ease-out),opacity .15s var(--ease-out),visibility 0s linear .15s;max-width:90%;text-align:center}
 .toast.on{transform:translate(-50%,0);opacity:1;visibility:visible;transition:transform .25s var(--ease-out),opacity .25s var(--ease-out),visibility 0s}
 
 /* robot */
@@ -244,7 +237,7 @@ textarea.field{min-height:120px;font-family:var(--f-body);font-size:16px;resize:
 .robot .armor,.robot .sparkles{display:none}
 .robot .aura{opacity:0;transform-box:fill-box;transform-origin:50% 100%}
 .robot.s3 .bulb{animation:glow 2.2s ease-in-out infinite}
-@keyframes glow{50%{filter:drop-shadow(0 0 7px var(--bulb))}}
+@keyframes glow{50%{opacity:.55}}
 .robot.s7 .aura{opacity:.85;animation:flicker 1.7s ease-in-out infinite}
 @keyframes flicker{50%{transform:scale(1.05,1.09);opacity:.6}}
 .robot.s14 .armor{display:inline}
@@ -263,24 +256,22 @@ textarea.field{min-height:120px;font-family:var(--f-body);font-size:16px;resize:
    Laadspinners blijven draaien (langzaam), anders lijkt de app vast te zitten. */
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition-property:opacity,color,background-color,border-color,visibility!important;transition-duration:.15s!important}
-  .screen{animation:enter .15s ease!important}
   .pg-spin,.spinner{animation:pg-spin 1.6s linear infinite!important}
 }
 @keyframes pg-spin{to{transform:rotate(360deg)}}
 
 /* Hover alleen met een muis: op een touchscreen blijft een hover-stand na een tik anders hangen. */
 @media (hover:hover) and (pointer:fine){
-  .qcard:not(:active):hover{transform:translateY(-3px)}
-  .world:not(:active):hover{transform:translateY(-2px)}
+  .qcard:not(:active):hover,.world:not(:active):hover{background:var(--glass3)}
   .node:hover .top{transform:translateY(-3px)}
-  .tile:not([disabled]):not(:active):not(.ok):not(.no):hover{transform:translateY(-2px);box-shadow:0 9px 0 var(--tile-d),inset 0 1px 0 rgba(255,255,255,.22)}
+  .tile:not([disabled]):not(:active):not(.ok):not(.no):hover{background:var(--glass3)}
   .nav a:hover{color:var(--ink);background:var(--chipbg)}
 }
 
 /* ================= gedeelde basis voor alle schermen ================= */
 :root {
   /* Werelden: één kleur per week (kaart, kaarten, kennisbank). */
-  --w1: #3A5BD8; --w2: #7A45D8; --w3: #2563EB; --w4: #0E8A6C; --w5: #C9561F; --w6: #B8326F;
+  --w1: #3A5BD8; --w2: #A86A00; --w3: #2563EB; --w4: #0E8A6C; --w5: #C9561F; --w6: #B8326F;
   /* Tekstkleuren met genoeg contrast (WCAG AA) op de lichte panelen. */
   --good: #13794B; --bad: #C2304F; --warn: #A15C00; --link: #1F5FB8;
   --r-xs: 6px; --r-sm: 10px; --r-md: 14px; --r-lg: 20px; --r-xl: 26px;
@@ -288,20 +279,20 @@ textarea.field{min-height:120px;font-family:var(--f-body);font-size:16px;resize:
   --shadow-sm: 0 2px 0 rgba(0, 0, 0, .06); --shadow-md: 0 10px 24px -14px rgba(0, 0, 0, .35); --shadow-lg: 0 24px 50px -20px rgba(0, 0, 0, .5);
   /* Oude namen, zodat bestaande schermen meteen in de nieuwe stijl staan tot ze zijn omgebouwd. */
   --bg: var(--bg1); --surface: var(--glass3); --surface-fill: var(--glass2); --sunk: var(--chipbg);
-  --line: var(--stroke); --line-strong: var(--stroke); --accent: var(--violet); --accent-2: var(--blue);
+  --line: var(--stroke); --line-strong: var(--stroke); --accent-2: var(--blue);
   --on-accent: #FFFFFF;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --w1: #7D93FF; --w2: #B38BFF; --w3: #6FA2FF; --w4: #48D3A6; --w5: #FF9C6B; --w6: #FF7EB6;
+  --w1: #7D93FF; --w2: #FFB547; --w3: #6FA2FF; --w4: #48D3A6; --w5: #FF9C6B; --w6: #FF7EB6;
   --good: #3DDC97; --bad: #FF7A93; --warn: #FFC93D; --link: #8FC6FF;
 } }
 :root[data-theme="dark"] {
-  --w1: #7D93FF; --w2: #B38BFF; --w3: #6FA2FF; --w4: #48D3A6; --w5: #FF9C6B; --w6: #FF7EB6;
+  --w1: #7D93FF; --w2: #FFB547; --w3: #6FA2FF; --w4: #48D3A6; --w5: #FF9C6B; --w6: #FF7EB6;
   --good: #3DDC97; --bad: #FF7A93; --warn: #FFC93D; --link: #8FC6FF;
 }
 
 html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--stroke) transparent; }
-::selection { background: rgba(123, 92, 255, .3); }
+::selection { background: rgba(31, 122, 192, .3); }
 .sr-only {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
@@ -345,6 +336,91 @@ body[data-screen="boss"] .nav, body[data-screen="result"] .nav { display: none; 
 .sheet .sheet-les{color:#fff;font-weight:800;font-size:14px;text-decoration:underline;text-underline-offset:3px}
 .sheet .cta{margin-top:4px}
 
-.pcard{border-radius:22px;padding:18px;background:var(--glass2);border:1px solid var(--stroke);min-height:70px}
+.pcard{border-radius:16px;padding:18px;background:var(--glass2);border:2px solid var(--stroke);min-height:70px}
 .pcard-back{font-size:17px;line-height:1.55}
 .pcard-back code{font-family:var(--f-mono);font-size:.9em;background:var(--chipbg);padding:1px 6px;border-radius:7px}
+
+/* ================= speels: zwevende code, wolkjes, scroll-reveal, tik-effecten =================
+   Alleen translate/rotate/scale/opacity, zodat het niet botst met de transform van een ingedrukte knop.
+   Bij "minder beweging" zet de regel bovenaan alle animaties uit; de scroll-reveal staat dan niet eens aan. */
+
+/* Zwevende code-stukjes (mountFloats in utils.js): wit met een lipje, net als de knoppen. Tik = ander stukje. */
+.float{position:absolute;z-index:1;font-family:var(--f-mono);font-weight:700;font-size:14px;line-height:1.2;white-space:nowrap;
+  padding:4px 9px;border-radius:10px;background:#fff;color:#16380F;box-shadow:0 3px 0 rgba(0,0,0,.22);
+  animation:floaty 4s ease-in-out infinite;cursor:pointer;pointer-events:auto;user-select:none;-webkit-user-select:none}
+.float.f1{animation-duration:4.6s;animation-delay:-1.4s}
+.float.f2{animation-duration:5.2s;animation-delay:-2.7s}
+
+/* Wolkjes die heen en weer drijven (home-wereldkaart en de eilandkaart). */
+@keyframes drift{to{translate:28px 0}}
+
+/* Scroll-reveal: kaarten schuiven omhoog en worden zichtbaar terwijl je ze in beeld scrolt.
+   Puur CSS (scroll-driven animations); een browser zonder steun toont ze gewoon meteen. */
+@keyframes reveal{from{opacity:0;translate:0 28px;scale:.95}}
+@supports (animation-timeline: view()){
+  @media (prefers-reduced-motion:no-preference){
+    #home .world,#home .hm-sec .qcard,.modes .mode,.games .game,.pf-tile,.kb-world,.kb-tile{
+      animation:reveal linear both;animation-timeline:view();animation-range:entry 0% entry 80%}
+  }
+}
+
+/* Tikken en hoveren: het icoon in een kaart wiebelt mee, de pijl in een knop wijst vooruit. */
+.qi,.qi svg{transition:rotate .2s var(--ease-out),scale .2s var(--ease-out)}
+.qcard:active .qi,.mode:active .qi,.game:active .qi{rotate:-10deg;scale:1.15}
+.world .num{transition:rotate .2s var(--ease-out),scale .2s var(--ease-out)}
+.world:active .num{rotate:-6deg;scale:1.08}
+.cta svg,.hm-play svg{transition:translate .2s var(--ease-out)}
+@media (hover:hover) and (pointer:fine){
+  .qcard:hover .qi,.mode:hover .qi,.game:hover .qi{rotate:-8deg;scale:1.1}
+  .world:hover .num{rotate:-6deg;scale:1.06}
+  .cta:hover svg,.hm-play:hover svg{translate:3px 0}
+  .float:hover{scale:1.08}
+}
+
+/* Het tabblad waar je naartoe gaat veert even op. */
+@keyframes tab-pop{40%{scale:1.22;rotate:-6deg}}
+.nav a[aria-current="page"] svg{animation:tab-pop .35s var(--ease-out)}
+
+/* ================= de maker: GitHub en LinkedIn =================
+   Telefoon: onderaan de home. Breed scherm: rechtsonder in de tabbalk, als watermerk op elk scherm met tabbalk.
+   Hover: de merkkleur schuift van onder het rondje in en er verschijnt een label (idee: Uiverse, wilsondesouza). */
+.credit{display:none;align-items:center;justify-content:center;gap:12px;margin:4px 0 calc(96px + env(safe-area-inset-bottom,0px));color:var(--muted);font-size:13px;font-weight:800}
+body[data-screen="home"] .credit{display:flex}
+body[data-screen="home"] #home{padding-bottom:16px}
+.credit ul{display:flex;gap:10px;margin:0;padding:0;list-style:none}
+.credit li{position:relative}
+.credit li[data-social="github"]{--brand:#24292F}
+.credit li[data-social="linkedin"]{--brand:#0A66C2}
+.credit a{position:relative;overflow:hidden;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;color:var(--ink);background:var(--glass2);border:2px solid var(--stroke);box-shadow:0 3px 0 var(--stroke);transition:color .2s var(--ease-out),border-color .2s var(--ease-out),transform .12s var(--ease-out),box-shadow .12s var(--ease-out)}
+.credit a:active{transform:translateY(2px);box-shadow:0 1px 0 var(--stroke)}
+.credit a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.credit svg{position:relative;width:20px;height:20px}
+.credit .fill{position:absolute;inset:0;background:var(--brand);transform:translateY(101%);transition:transform .25s var(--ease-out)}
+.credit .tip{position:absolute;bottom:calc(100% + 10px);left:50%;padding:4px 10px;border-radius:8px;background:var(--brand);color:#fff;font-size:13px;font-weight:800;white-space:nowrap;pointer-events:none;opacity:0;translate:-50% 6px;transition:opacity .15s var(--ease-out),translate .15s var(--ease-out)}
+.credit li:has(a:focus-visible) .tip{opacity:1;translate:-50% 0}
+@media (hover:hover) and (pointer:fine){
+  .credit li:hover a{color:#fff;border-color:var(--brand)}
+  .credit li:hover .fill{transform:none}
+  .credit li:hover .tip{opacity:1;translate:-50% 0}
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .credit li[data-social="github"]{--brand:#3D4651}}
+:root[data-theme="dark"] .credit li[data-social="github"]{--brand:#3D4651}
+@media (min-width:960px){
+  .credit{display:flex;position:fixed;right:20px;bottom:calc(12px + env(safe-area-inset-bottom,0px));margin:0;z-index:11}
+  body[data-screen="home"] #home{padding-bottom:110px}
+  body[data-screen="play"] .credit,body[data-screen="cards"] .credit,body[data-screen="level"] .credit,
+  body[data-screen="boss"] .credit,body[data-screen="result"] .credit{display:none}
+}
+
+/* ================= vinkje (.tick): inleverlijst in de kennisbank en zelf nakijken bij een open vraag =================
+   Leeg een rondje; aangevinkt een groen blokje met een wit vinkje dat even wiebelt en een ring uitzendt
+   (idee: Uiverse, bociKond). Het wiebelen gebeurt alleen als jij aanvinkt (.just, zie utils.js),
+   niet als een pagina opent met punten die al afgevinkt waren. */
+.tick{appearance:none;-webkit-appearance:none;flex:none;width:26px;height:26px;margin:0;border-radius:50%;cursor:pointer;
+  background:var(--glass2) center/16px no-repeat;border:2px solid var(--stroke);box-shadow:0 2px 0 var(--stroke);
+  transition:border-radius .3s var(--ease-out),background-color .2s var(--ease-out),border-color .2s var(--ease-out)}
+.tick:checked{border-radius:8px;border-color:var(--green-d);background-color:var(--green-d);box-shadow:0 2px 0 color-mix(in srgb,var(--green-d) 70%,#000);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+.tick:checked.just{animation:tick .5s ease-in-out}
+.tick:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+@keyframes tick{0%{rotate:20deg;outline:0 solid color-mix(in srgb,var(--green) 60%,transparent);outline-offset:0}50%{rotate:-20deg}100%{rotate:0deg;outline:3px solid transparent;outline-offset:12px}}

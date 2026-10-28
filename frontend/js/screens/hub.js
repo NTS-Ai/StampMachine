@@ -77,8 +77,8 @@ function openHub() {
     ${minigames()}
     <div class="sechead"><h2 class="sec-t">Meer</h2></div>
     <div class="hub-tools">
-      <a class="hub-tool" href="#/speeltuin"><span class="qi" style="--qc:#FF5C86">${HUB_ICON.play}</span><span class="grow"><b>Speeltuin</b><small>Zelf Python uitproberen in de browser</small></span>${HUB_ICON.arrow}</a>
-      <button class="hub-tool" type="button" data-open-search><span class="qi" style="--qc:#1F72D0">${HUB_ICON.search}</span><span class="grow"><b>Zoeken</b><small>Alle vragen, flashcards en lessen</small></span>${HUB_ICON.arrow}</button>
+      <a class="hub-tool" href="#/speeltuin"><span class="qi">${HUB_ICON.play}</span><span class="grow"><b>Speeltuin</b><small>Zelf Python uitproberen in de browser</small></span>${HUB_ICON.arrow}</a>
+      <button class="hub-tool" type="button" data-open-search><span class="qi">${HUB_ICON.search}</span><span class="grow"><b>Zoeken</b><small>Alle vragen, flashcards en lessen</small></span>${HUB_ICON.arrow}</button>
     </div>
   </div>`;
 
@@ -142,12 +142,12 @@ function modeCards(week) {
     return best ? `${HUB_ICON.trophy}<span>Record ${nl(best)} ${unit}</span>` : '<span>Nog geen record</span>';
   };
   const modes = [
-    { go: 'quiz', name: 'Quiz', sub: `${QUIZ_LEN} vragen met uitleg`, color: '#3AA8FF', f: mastery(poolFor('quiz', week)), label: 'beheerst', rec: rec('q', 'punten') },
-    { go: 'cards', name: 'Flashcards', sub: 'Omdraaien en stampen', color: '#2FBF71', f: cards.length ? known / cards.length : 0, label: `${known}/${cards.length} zit erin`, rec: '<span>Elke kaart één keer goed</span>' },
-    { go: 'speed', name: 'Speedrun', sub: 'Zo veel mogelijk in 60 s', color: '#FF5C86', f: mastery(poolFor('speed', week)), label: 'beheerst', rec: rec('s', 'punten') },
-    { go: 'type', name: 'Typen', sub: `${TYPE_LEN} typvragen, zonder klok`, color: '#FF9A2E', f: mastery(poolFor('type', week)), label: 'beheerst', rec: rec('t', 'punten') },
+    { go: 'quiz', name: 'Quiz', sub: `${QUIZ_LEN} vragen met uitleg`, f: mastery(poolFor('quiz', week)), label: 'beheerst', rec: rec('q', 'punten') },
+    { go: 'cards', name: 'Flashcards', sub: 'Omdraaien en stampen', f: cards.length ? known / cards.length : 0, label: `${known}/${cards.length} zit erin`, rec: '<span>Elke kaart één keer goed</span>' },
+    { go: 'speed', name: 'Speedrun', sub: 'Zo veel mogelijk in 60 s', f: mastery(poolFor('speed', week)), label: 'beheerst', rec: rec('s', 'punten') },
+    { go: 'type', name: 'Typen', sub: `${TYPE_LEN} typvragen, zonder klok`, f: mastery(poolFor('type', week)), label: 'beheerst', rec: rec('t', 'punten') },
   ];
-  return `<div class="modes">${modes.map((m, i) => `<button class="mode" type="button" data-go="${m.go}" data-week="${week}" style="--qc:${m.color};--i:${i}">
+  return `<div class="modes">${modes.map(m => `<button class="mode" type="button" data-go="${m.go}" data-week="${week}">
       <span class="qi">${HUB_ICON[m.go]}</span>
       <b>${m.name}</b>
       <small>${esc(m.sub)}</small>
@@ -161,9 +161,9 @@ function weakRow(week) {
   const n = hubWeak(week).length;
   const scope = week ? `in week ${week}` : 'in alle weken';
   if (!n) {
-    return `<div class="weak calm"><span class="qi" style="--qc:var(--green-d)">${HUB_ICON.check}</span><span class="grow"><b>Geen zwakke plekken ${scope}</b><small>Vragen die je fout hebt, komen hier vanzelf terug.</small></span></div>`;
+    return `<div class="weak calm"><span class="qi">${HUB_ICON.check}</span><span class="grow"><b>Geen zwakke plekken ${scope}</b><small>Vragen die je fout hebt, komen hier vanzelf terug.</small></span></div>`;
   }
-  return `<button class="weak" type="button" data-go="weak" data-week="${week}"><span class="qi" style="--qc:var(--red-d)">${HUB_ICON.weak}</span><span class="grow"><b>Zwakke plekken <span class="weak-n">${n}</span></b><small>${n === 1 ? 'Eén vraag' : n + ' vragen'} ${scope} die je laatst fout had. Herhaal ze nu.</small></span>${HUB_ICON.arrow}</button>`;
+  return `<button class="weak" type="button" data-go="weak" data-week="${week}"><span class="qi">${HUB_ICON.weak}</span><span class="grow"><b>Zwakke plekken <span class="weak-n">${n}</span></b><small>${n === 1 ? 'Eén vraag' : n + ' vragen'} ${scope} die je laatst fout had. Herhaal ze nu.</small></span>${HUB_ICON.arrow}</button>`;
 }
 
 /** De eindbaas: Pager om 03:00, vragen uit alle weken. */
@@ -190,20 +190,20 @@ function minigames() {
   if (!list.length) return '';
   return `<div class="sechead"><h2 class="sec-t">Minigames</h2><span>30 seconden, zo veel mogelijk goed</span></div>
     <div class="games">${list.map(([key, g]) => `<button class="game" type="button" data-game="${esc(key)}">
-      <span class="qi" style="--qc:${(GAME_LOOK[key] || {}).color || '#7B5CFF'}">${(GAME_LOOK[key] || {}).icon || HUB_ICON.game}</span>
+      <span class="qi">${GAME_ICON[key] || HUB_ICON.game}</span>
       <b>${esc((g && (g.name || g.title)) || key)}</b>
       ${g && (g.how || g.desc) ? `<small>${fmt(g.how || g.desc)}</small>` : ''}
     </button>`).join('')}</div>`;
 }
 
-/** Eigen icoon en kleur per minigame, zodat je ze niet alleen aan de titel herkent. Onbekende games krijgen de gamepad. */
-const GAME_LOOK = {
-  types: { color: '#2F6FD6', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12.5 11.5 4H20v8.5L11.5 21z"/><circle cx="15.5" cy="8.5" r="1.4" fill="#fff"/></svg>' },
-  arith: { color: '#D2691E', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h6M7 4v6M14 7h6M5 15l4 4M9 15l-4 4M14 15h6M14 19h6"/></svg>' },
-  slice: { color: '#C2305F', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="6" cy="7" r="2.6"/><circle cx="6" cy="17" r="2.6"/><path d="M8.2 8.5 20 18M8.2 15.5 20 6"/></svg>' },
-  loops: { color: '#178A5C', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 2 3 3-3 3"/><path d="M4 11V9a4 4 0 0 1 4-4h12"/><path d="m7 22-3-3 3-3"/><path d="M20 13v2a4 4 0 0 1-4 4H4"/></svg>' },
-  sql: { color: '#3A4FC4', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" aria-hidden="true"><ellipse cx="12" cy="5.5" rx="7" ry="2.5"/><path d="M5 5.5v13c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-13M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"/></svg>' },
-  http: { color: '#6A4BEF', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>' },
+/** Eigen icoon per minigame, zodat je ze niet alleen aan de titel herkent. Onbekende games krijgen de gamepad. */
+const GAME_ICON = {
+  types: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12.5 11.5 4H20v8.5L11.5 21z"/><circle cx="15.5" cy="8.5" r="1.4" fill="#fff"/></svg>',
+  arith: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h6M7 4v6M14 7h6M5 15l4 4M9 15l-4 4M14 15h6M14 19h6"/></svg>',
+  slice: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="6" cy="7" r="2.6"/><circle cx="6" cy="17" r="2.6"/><path d="M8.2 8.5 20 18M8.2 15.5 20 6"/></svg>',
+  loops: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 2 3 3-3 3"/><path d="M4 11V9a4 4 0 0 1 4-4h12"/><path d="m7 22-3-3 3-3"/><path d="M20 13v2a4 4 0 0 1-4 4H4"/></svg>',
+  sql: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" aria-hidden="true"><ellipse cx="12" cy="5.5" rx="7" ry="2.5"/><path d="M5 5.5v13c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-13M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"/></svg>',
+  http: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>',
 };
 
 /** Een tip die past bij waar je staat. @param {number} week */

@@ -160,6 +160,8 @@ function mountKbBots(root) {
     KB.bots.push(bot);
     if (kind === 'check') KB.checkBot = bot;
   });
+  const floats = /** @type {HTMLElement | null} */ (root.querySelector('.kb-floats'));
+  if (floats && typeof mountFloats === 'function') mountFloats(floats, ['def', 'print()', '"str"', 'for', 'SELECT', '@app.get', 'pytest', 'async']);
 }
 
 /**
@@ -280,9 +282,8 @@ function kbHomePage() {
         </div>
       </div>
       <div class="kb-hero-bot">
-        <span class="kb-float" style="left:-6px;bottom:96px" aria-hidden="true">def</span>
-        <span class="kb-float" style="right:-10px;bottom:46px;animation-delay:-1.6s" aria-hidden="true">print()</span>
         <p class="kb-say">${esc(tip)}</p>
+        <div class="kb-floats"></div>
         <div class="kb-bot-host" data-kb-bot="hero"></div>
       </div>
     </header>
@@ -290,8 +291,8 @@ function kbHomePage() {
     <div class="kb-wgrid">${KB.weeks.map(kbWorldCard).join('')}</div>
     <h2 class="kb-sec-t">Opzoeken</h2>
     <div class="kb-tiles">
-      ${KB.groups.length ? `<a class="kb-tile" href="#/kennis/naslag" style="--ic:var(--blue-d)"><span class="kb-tile-ic">${ICON_TABLE}</span><b>Naslag</b><span>${tables} opzoektabellen: methodes, commando's, statuscodes en meer.</span>${ICON_NEXT}</a>` : ''}
-      ${KB.terms.length ? `<a class="kb-tile" href="#/kennis/begrippen" style="--ic:var(--green-d)"><span class="kb-tile-ic">${ICON_BOOK}</span><b>Begrippen A–Z</b><span>${KB.terms.length} begrippen, elk in één zin en in gewone taal.</span>${ICON_NEXT}</a>` : ''}
+      ${KB.groups.length ? `<a class="kb-tile" href="#/kennis/naslag"><span class="kb-tile-ic">${ICON_TABLE}</span><b>Naslag</b><span>${tables} opzoektabellen: methodes, commando's, statuscodes en meer.</span>${ICON_NEXT}</a>` : ''}
+      ${KB.terms.length ? `<a class="kb-tile" href="#/kennis/begrippen"><span class="kb-tile-ic">${ICON_BOOK}</span><b>Begrippen A–Z</b><span>${KB.terms.length} begrippen, elk in één zin en in gewone taal.</span>${ICON_NEXT}</a>` : ''}
     </div>`;
 }
 
@@ -429,7 +430,7 @@ function checklistHtml(sec) {
           <div class="kb-check-bar" aria-hidden="true"><i style="width:${list.length ? Math.round(done / list.length * 100) : 0}%"></i></div>
         </div>
       </div>
-      <ul>${list.map((item, i) => `<li><label><input type="checkbox" data-check="${esc(sec.id)}:${i}"${checks[`${sec.id}:${i}`] ? ' checked' : ''}><span>${kbText(item)}</span></label></li>`).join('')}</ul>
+      <ul>${list.map((item, i) => `<li><label><input class="tick" type="checkbox" data-check="${esc(sec.id)}:${i}"${checks[`${sec.id}:${i}`] ? ' checked' : ''}><span>${kbText(item)}</span></label></li>`).join('')}</ul>
     </section>`;
 }
 
@@ -437,9 +438,9 @@ function checklistHtml(sec) {
 
 function kbReferencePage() {
   return `<nav class="kb-crumbs" aria-label="Kruimelpad"><a href="#/kennis">Kennisbank</a><span aria-hidden="true">/</span><span>Naslag</span></nav>
-    <header class="kb-head-card"><span class="kb-tile-ic" style="--ic:var(--blue-d)">${ICON_TABLE}</span>
+    <header class="kb-head-card"><span class="kb-tile-ic">${ICON_TABLE}</span>
       <div><h1>Opzoektabellen</h1><p class="kb-lead">Snel de juiste methode, het juiste commando of de betekenis van een statuscode vinden. Elke tabel verwijst naar de les waar het vandaan komt.</p></div></header>
-    <div class="kb-tiles">${KB.groups.map((g, i) => `<a class="kb-tile compact" href="#/kennis/naslag/${esc(g.id)}" style="--ic:${hue((i % 6) + 1)}"><span class="kb-tile-ic">${ICON_TABLE}</span><b>${esc(g.title)}</b><span>${g.tables.map(t => esc(t.title)).join(' · ')}</span></a>`).join('')}</div>`;
+    <div class="kb-tiles">${KB.groups.map((g, i) => `<a class="kb-tile compact" href="#/kennis/naslag/${esc(g.id)}"><span class="kb-tile-ic">${ICON_TABLE}</span><b>${esc(g.title)}</b><span>${g.tables.map(t => esc(t.title)).join(' · ')}</span></a>`).join('')}</div>`;
 }
 
 /** @param {KbGroup} g */
@@ -455,7 +456,7 @@ function kbGroupPage(g) {
 function kbGlossaryPage() {
   const letters = [...new Set(KB.terms.map(t => firstLetter(t.term)))].sort((a, b) => Number(a === '#') - Number(b === '#') || a.localeCompare(b));
   return `<nav class="kb-crumbs" aria-label="Kruimelpad"><a href="#/kennis">Kennisbank</a><span aria-hidden="true">/</span><span>Begrippen</span></nav>
-    <header class="kb-head-card"><span class="kb-tile-ic" style="--ic:var(--green-d)">${ICON_BOOK}</span>
+    <header class="kb-head-card"><span class="kb-tile-ic">${ICON_BOOK}</span>
       <div><h1>Begrippen A–Z</h1><p class="kb-lead">${KB.terms.length} begrippen uit de zes weken. Elk begrip in één zin, plus een uitleg in gewone taal.</p></div></header>
     <div class="gl-tools">
       <label class="gl-filter">${ICON_SEARCH}<input id="glFilter" type="search" placeholder="Filter begrippen" aria-label="Filter begrippen" autocomplete="off"></label>

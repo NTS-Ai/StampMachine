@@ -39,7 +39,7 @@ function showResult({ title, sub, stats, buttons, record = false, extraHtml = ''
   let h = `<div class="intro res-head"><div class="res-badges">${badgeHtml}</div><h1>${esc(title)}</h1><p>${esc(sub)}</p></div>`;
   h += '<div class="bigbot res-bot" id="resBot"></div>';
   h += `<div class="rgrid n${stats.length}">` + stats.map((s, i) =>
-    `<div class="rstat tone-${s.tone}${record && i === 0 ? ' is-record' : ''}" style="--i:${i}"><b data-i="${i}">${esc((s.prefix || '') + '0' + (s.suffix || ''))}</b><small>${esc(s.label)}</small></div>`
+    `<div class="rstat tone-${s.tone}${record && i === 0 ? ' is-record' : ''}"><b data-i="${i}">${esc((s.prefix || '') + '0' + (s.suffix || ''))}</b><small>${esc(s.label)}</small></div>`
   ).join('') + '</div>';
   h += extraHtml;
   h += '<div class="res-btns">' + buttons.map((b, i) =>

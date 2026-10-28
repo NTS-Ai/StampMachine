@@ -44,7 +44,7 @@ const ISLANDS = [
 ];
 
 /** Wereldkleuren als vaste tint (zoals --w1..--w6 in Dag), donker genoeg voor witte tekst in beide thema's. */
-const WORLD_HEX = ['#3A5BD8', '#7A45D8', '#2563EB', '#0B7A5F', '#B34A17', '#B8326F'];
+const WORLD_HEX = ['#3A5BD8', '#A86A00', '#2563EB', '#0B7A5F', '#B34A17', '#B8326F'];
 
 const MAP_ICON = {
   back: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H6M11 6l-6 6 6 6" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -154,6 +154,7 @@ function renderMap() {
     : `<span class="mapchip locked">${MAP_ICON.lock}Op slot</span>`;
 
   $('#map').innerHTML = `
+    <h1 class="sr-only">Kaart: wereld ${week}, ${esc(w.title)}</h1>
     <div class="mapbar">
       <button class="rbtn" type="button" data-act="home" aria-label="Terug naar home">${MAP_ICON.back}</button>
       <button class="wsel" type="button" id="wselBtn" aria-haspopup="true" aria-expanded="false" aria-controls="wPanel">
@@ -250,12 +251,12 @@ function islandSvg(week) {
   const look = ISLANDS[week - 1];
   let s = `<defs><linearGradient id="mapWater" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${look.water[0]}"/><stop offset="1" stop-color="${look.water[1]}"/></linearGradient>
     <radialGradient id="mapGlow"><stop offset="0" stop-color="#FFE08A" stop-opacity=".9"/><stop offset="1" stop-color="#FFE08A" stop-opacity="0"/></radialGradient></defs>`;
-  s += `<g aria-hidden="true">${skySvg(week)}`;
+  s += `<g aria-hidden="true"><g class="sky">${skySvg(week)}</g>`;
 
   // Zee rond het eiland
   const [wx, wy] = mapIso(3, 3, 0);
-  s += `<path d="M${wx} ${wy - 160} L${wx + 260} ${wy - 3} L${wx} ${wy + 154} L${wx - 260} ${wy - 3} Z" fill="url(#mapWater)" opacity=".92"/>`;
-  s += `<path class="water-sh" d="M${wx - 150} ${wy + 40} q20 -6 40 0 M${wx + 90} ${wy + 70} q20 -6 40 0 M${wx - 40} ${wy + 112} q20 -6 40 0 M${wx + 150} ${wy + 10} q14 -5 28 0" stroke="${look.shine}" stroke-width="2" fill="none" opacity=".65"/>`;
+  s += `<path d="M${wx} ${wy - 160} L${wx + 260} ${wy - 3} L${wx} ${wy + 154} L${wx - 260} ${wy - 3} Z" fill="url(#mapWater)" opacity=".92" class="sea"/>`;
+  s += `<path class="water-sh" d="M${wx - 150} ${wy + 40} q20 -6 40 0 M${wx + 90} ${wy + 70} q20 -6 40 0 M${wx - 40} ${wy + 112} q20 -6 40 0 M${wx + 150} ${wy + 10} q14 -5 28 0" stroke="${look.shine}" stroke-width="2" fill="none" opacity=".65"/><g class="ripples"></g>`;
 
   // Vakjes, van achter naar voor
   const onPath = new Set(MAP_PATH.map(p => p.join(',')));
@@ -402,10 +403,19 @@ function islCyl(cx, cy, r, h, top, side, line) {
     + (line ? `<path d="M${cx - r} ${cy - h / 2} A${r} ${ry} 0 0 0 ${cx + r} ${cy - h / 2}" fill="none" stroke="${line}" stroke-width="1.5"/>` : '');
 }
 
+/**
+ * Een decorstuk dat reageert als je erop tikt (mapPoke): sway wiebelt vanaf de voet, boing veert in en uit,
+ * hop springt op, term veert en laat een code-woordje opstijgen.
+ * @param {'sway' | 'boing' | 'hop' | 'term'} kind @param {string} svg
+ */
+function mapProp(kind, svg) {
+  return `<g class="prop" data-prop="${kind}">${svg}</g>`;
+}
+
 /** Ronde boom (uit het ontwerp). */
 function islTree(x, y, k = 1) {
   const [cx, cy] = mapAt(x, y);
-  return `<rect x="${cx - 2.5}" y="${cy - 16 * k}" width="5" height="${16 * k}" rx="2" fill="#7A4E2E"/><circle cx="${cx}" cy="${cy - 24 * k}" r="${12 * k}" fill="#1F8F6A"/><circle cx="${cx - 6 * k}" cy="${cy - 18 * k}" r="${8 * k}" fill="#26A97A"/><circle cx="${cx + 5 * k}" cy="${cy - 30 * k}" r="${6 * k}" fill="#3CC48F"/>`;
+  return mapProp('sway', `<rect x="${cx - 2.5}" y="${cy - 16 * k}" width="5" height="${16 * k}" rx="2" fill="#7A4E2E"/><circle cx="${cx}" cy="${cy - 24 * k}" r="${12 * k}" fill="#1F8F6A"/><circle cx="${cx - 6 * k}" cy="${cy - 18 * k}" r="${8 * k}" fill="#26A97A"/><circle cx="${cx + 5 * k}" cy="${cy - 30 * k}" r="${6 * k}" fill="#3CC48F"/>`);
 }
 
 /** Den; met snow = true een besneeuwde den. */
@@ -416,30 +426,30 @@ function islPine(x, y, k = 1, snow = false) {
   let s = `<rect x="${cx - 2}" y="${cy - 10 * k}" width="4" height="${10 * k}" fill="#6A4428"/>`;
   s += tri(13 * k, 30 * k, 8 * k, g[1]) + tri(10 * k, 40 * k, 20 * k, g[0]) + tri(7 * k, 48 * k, 31 * k, g[1]);
   if (snow) s += `<path d="M${cx - 4 * k} ${cy - 41 * k} L${cx} ${cy - 48 * k} L${cx + 4 * k} ${cy - 41 * k} Q${cx} ${cy - 39 * k} ${cx - 4 * k} ${cy - 41 * k}Z" fill="#fff"/><path d="M${cx - 6 * k} ${cy - 30 * k} L${cx} ${cy - 40 * k} L${cx + 6 * k} ${cy - 30 * k} Q${cx} ${cy - 28 * k} ${cx - 6 * k} ${cy - 30 * k}Z" fill="#fff" opacity=".9"/>`;
-  return s;
+  return mapProp('sway', s);
 }
 
 /** Bloemetjes. */
 function islFlowers(x, y, colors = ['#FF5C86', '#FFC93D', '#fff']) {
   const [cx, cy] = mapAt(x, y);
-  return [[-10, -2], [6, -5], [12, 3], [-2, 5]].map(([dx, dy], i) => `<circle cx="${cx + dx}" cy="${cy + dy}" r="2.4" fill="${colors[i % colors.length]}"/><circle cx="${cx + dx}" cy="${cy + dy}" r=".9" fill="#8A5A00"/>`).join('');
+  return mapProp('hop', [[-10, -2], [6, -5], [12, 3], [-2, 5]].map(([dx, dy], i) => `<circle cx="${cx + dx}" cy="${cy + dy}" r="2.4" fill="${colors[i % colors.length]}"/><circle cx="${cx + dx}" cy="${cy + dy}" r=".9" fill="#8A5A00"/>`).join(''));
 }
 
 /** Terminal met een prompt (uit het ontwerp). */
 function islTerminal(x, y) {
   const [cx, cy] = mapAt(x, y);
-  return `<path d="M${cx - 14} ${cy - 2} L${cx} ${cy + 6} L${cx + 14} ${cy - 2} L${cx} ${cy - 10}Z" fill="#2A2A55"/><path d="M${cx - 12} ${cy - 26} L${cx + 10} ${cy - 34} L${cx + 10} ${cy - 14} L${cx - 12} ${cy - 6}Z" fill="#1A1A3A" stroke="#8A6BFF" stroke-width="2"/><text x="${cx - 6}" y="${cy - 15}" font-family="JetBrains Mono, monospace" font-size="9" fill="#7EE7A8" transform="translate(${cx} ${cy}) skewY(-20) translate(${-cx} ${-cy})">&gt;_</text>`;
+  return mapProp('term', `<path d="M${cx - 14} ${cy - 2} L${cx} ${cy + 6} L${cx + 14} ${cy - 2} L${cx} ${cy - 10}Z" fill="#2A2A55"/><path d="M${cx - 12} ${cy - 26} L${cx + 10} ${cy - 34} L${cx + 10} ${cy - 14} L${cx - 12} ${cy - 6}Z" fill="#1A1A3A" stroke="#8A6BFF" stroke-width="2"/><text x="${cx - 6}" y="${cy - 15}" font-family="JetBrains Mono, monospace" font-size="9" fill="#7EE7A8" transform="translate(${cx} ${cy}) skewY(-20) translate(${-cx} ${-cy})">&gt;_</text>`);
 }
 
 /** Een pakket (doos met tape). */
 function islPackage(cx, cy, a = 9, h = 12) {
-  return islBox(cx, cy, a, h, '#E2B178', '#C08A4E', '#A4723C') + `<path d="M${cx - a / 2} ${cy - h - a * 17 / 60} L${cx + a / 2} ${cy - h + a * 17 / 60}" stroke="#F7E3B5" stroke-width="2.5"/>`;
+  return mapProp('boing', islBox(cx, cy, a, h, '#E2B178', '#C08A4E', '#A4723C') + `<path d="M${cx - a / 2} ${cy - h - a * 17 / 60} L${cx + a / 2} ${cy - h + a * 17 / 60}" stroke="#F7E3B5" stroke-width="2.5"/>`);
 }
 
 /** Stapel boeken. */
 function islBooks(x, y) {
   const [cx, cy] = mapAt(x, y);
-  return islBox(cx, cy, 10, 4, '#FFE7C2', '#D9485F', '#B5324A') + islBox(cx + 1, cy - 4, 9, 4, '#FFE7C2', '#3A7BD5', '#2A5FAE') + islBox(cx - 1, cy - 8, 8, 4, '#FFE7C2', '#F2A93B', '#C98512');
+  return mapProp('boing', islBox(cx, cy, 10, 4, '#FFE7C2', '#D9485F', '#B5324A') + islBox(cx + 1, cy - 4, 9, 4, '#FFE7C2', '#3A7BD5', '#2A5FAE') + islBox(cx - 1, cy - 8, 8, 4, '#FFE7C2', '#F2A93B', '#C98512'));
 }
 
 /** Stapel database-schijven. */
@@ -447,7 +457,7 @@ function islDatabase(x, y, k = 1) {
   const [cx, cy] = mapAt(x, y);
   let s = '';
   for (let i = 0; i < 3; i++) s += islCyl(cx, cy - i * 11 * k, 11 * k, 9 * k, '#9CC2FF', '#3F6FD8', null);
-  return s + `<circle cx="${cx + 6 * k}" cy="${cy - 2 * k}" r="1.6" fill="#7EE7A8"/><circle cx="${cx + 6 * k}" cy="${cy - 13 * k}" r="1.6" fill="#7EE7A8"/><circle cx="${cx + 6 * k}" cy="${cy - 24 * k}" r="1.6" fill="#FFC93D"/>`;
+  return mapProp('boing', s + `<circle cx="${cx + 6 * k}" cy="${cy - 2 * k}" r="1.6" fill="#7EE7A8"/><circle cx="${cx + 6 * k}" cy="${cy - 13 * k}" r="1.6" fill="#7EE7A8"/><circle cx="${cx + 6 * k}" cy="${cy - 24 * k}" r="1.6" fill="#FFC93D"/>`);
 }
 
 /** Container met ribbels. */
@@ -456,13 +466,13 @@ function islContainer(x, y) {
   let s = islBox(cx, cy, 20, 16, '#7DB7FF', '#2F7DD6', '#2263B0');
   for (let i = 1; i < 5; i++) s += `<path d="M${cx - 20 + i * 4} ${cy + i * 2.27} l0 -16" stroke="#1D5AA0" stroke-width="1.2"/>`;
   for (let i = 1; i < 5; i++) s += `<path d="M${cx + i * 4} ${cy + 11.3 - i * 2.27} l0 -16" stroke="#184B86" stroke-width="1.2"/>`;
-  return s;
+  return mapProp('boing', s);
 }
 
 /** IJskristal op de grond. */
 function islIce(x, y) {
   const [cx, cy] = mapAt(x, y);
-  return `<path d="M${cx - 8} ${cy} L${cx - 3} ${cy - 18} L${cx + 1} ${cy}Z" fill="#E6F7FF" stroke="#9CCFF2"/><path d="M${cx} ${cy + 2} L${cx + 5} ${cy - 12} L${cx + 10} ${cy + 1}Z" fill="#CFEFFF" stroke="#9CCFF2"/>`;
+  return mapProp('boing', `<path d="M${cx - 8} ${cy} L${cx - 3} ${cy - 18} L${cx + 1} ${cy}Z" fill="#E6F7FF" stroke="#9CCFF2"/><path d="M${cx} ${cy + 2} L${cx + 5} ${cy - 12} L${cx + 10} ${cy + 1}Z" fill="#CFEFFF" stroke="#9CCFF2"/>`);
 }
 
 /** Servertoren met lampjes. */
@@ -474,58 +484,58 @@ function islTower(x, y, colors = ['#7A6AD0', '#5A4B9E', '#43387C'], k = 1) {
     const yy = cy - 10 - i * 8 * k;
     s += `<path d="M${cx + 2} ${yy + 5} l8 -4.5" stroke="#1E1840" stroke-width="2.5" opacity=".5"/><circle cx="${cx + 4}" cy="${yy + 3.2}" r="1.6" fill="${['#FF5C7A', '#3DDC97', '#FFC93D'][i % 3]}"/>`;
   }
-  return s;
+  return mapProp('boing', s);
 }
 
 /** Cactus. */
 function islCactus(x, y, k = 1) {
   const [cx, cy] = mapAt(x, y);
-  return `<rect x="${cx - 4 * k}" y="${cy - 30 * k}" width="${8 * k}" height="${30 * k}" rx="${4 * k}" fill="#3E9B5A"/>
+  return mapProp('sway', `<rect x="${cx - 4 * k}" y="${cy - 30 * k}" width="${8 * k}" height="${30 * k}" rx="${4 * k}" fill="#3E9B5A"/>
     <path d="M${cx - 4 * k} ${cy - 14 * k} h-5 a3 3 0 0 1 -3 -3 v-8" stroke="#3E9B5A" stroke-width="${5 * k}" fill="none" stroke-linecap="round"/>
     <path d="M${cx + 4 * k} ${cy - 18 * k} h4 a3 3 0 0 0 3 -3 v-6" stroke="#358A4F" stroke-width="${5 * k}" fill="none" stroke-linecap="round"/>
-    <circle cx="${cx}" cy="${cy - 31 * k}" r="${2.5 * k}" fill="#FF5C86"/>`;
+    <circle cx="${cx}" cy="${cy - 31 * k}" r="${2.5 * k}" fill="#FF5C86"/>`);
 }
 
 /** Schotelantenne (API's). */
 function islDish(x, y) {
   const [cx, cy] = mapAt(x, y);
-  return `<rect x="${cx - 1.5}" y="${cy - 20}" width="3" height="20" fill="#8A93B8"/><path d="M${cx - 14} ${cy - 30} Q${cx} ${cy - 8} ${cx + 14} ${cy - 30} Z" fill="#E8ECF8" stroke="#8A93B8" stroke-width="1.5"/>
+  return mapProp('boing', `<rect x="${cx - 1.5}" y="${cy - 20}" width="3" height="20" fill="#8A93B8"/><path d="M${cx - 14} ${cy - 30} Q${cx} ${cy - 8} ${cx + 14} ${cy - 30} Z" fill="#E8ECF8" stroke="#8A93B8" stroke-width="1.5"/>
     <path d="M${cx} ${cy - 22} L${cx + 6} ${cy - 36}" stroke="#8A93B8" stroke-width="1.5"/><circle cx="${cx + 6}" cy="${cy - 37}" r="2.4" fill="#FF5C7A"/>
-    <path class="signal" d="M${cx + 12} ${cy - 44} q6 4 4 12 M${cx + 17} ${cy - 49} q9 7 6 18" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".8"/>`;
+    <path class="signal" d="M${cx + 12} ${cy - 44} q6 4 4 12 M${cx + 17} ${cy - 49} q9 7 6 18" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".8"/>`);
 }
 
 /** Palmboom bij het water. */
 function islPalm(x, y) {
   const [cx, cy] = mapAt(x, y);
-  return `<path d="M${cx} ${cy} Q${cx - 4} ${cy - 18} ${cx + 3} ${cy - 34}" stroke="#9C6B3C" stroke-width="4" fill="none" stroke-linecap="round"/>
-    <path d="M${cx + 3} ${cy - 34} q-14 -4 -20 6 q10 -8 20 -6z M${cx + 3} ${cy - 34} q14 -6 20 4 q-10 -6 -20 -4z M${cx + 3} ${cy - 34} q-4 -12 -14 -14 q10 2 14 14z M${cx + 3} ${cy - 34} q8 -12 18 -10 q-10 0 -18 10z" fill="#2FA866"/>`;
+  return mapProp('sway', `<path d="M${cx} ${cy} Q${cx - 4} ${cy - 18} ${cx + 3} ${cy - 34}" stroke="#9C6B3C" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M${cx + 3} ${cy - 34} q-14 -4 -20 6 q10 -8 20 -6z M${cx + 3} ${cy - 34} q14 -6 20 4 q-10 -6 -20 -4z M${cx + 3} ${cy - 34} q-4 -12 -14 -14 q10 2 14 14z M${cx + 3} ${cy - 34} q8 -12 18 -10 q-10 0 -18 10z" fill="#2FA866"/>`);
 }
 
 /** Kristal: twee vlakken met een gloed. */
 function islCrystal(x, y, k = 1, c = ['#FF8AD8', '#C04FA0']) {
   const [cx, cy] = mapAt(x, y);
   const shard = (dx, h, w) => `<path d="M${cx + dx - w} ${cy - h * .3} L${cx + dx} ${cy - h} L${cx + dx} ${cy + 2} Z" fill="${c[0]}"/><path d="M${cx + dx} ${cy - h} L${cx + dx + w} ${cy - h * .3} L${cx + dx} ${cy + 2} Z" fill="${c[1]}"/>`;
-  return `<ellipse class="glow" cx="${cx}" cy="${cy - 10 * k}" rx="${16 * k}" ry="${14 * k}" fill="${c[0]}" opacity=".25"/>` + shard(-6 * k, 18 * k, 4 * k) + shard(2 * k, 28 * k, 6 * k) + shard(9 * k, 14 * k, 4 * k);
+  return mapProp('boing', `<ellipse class="glow" cx="${cx}" cy="${cy - 10 * k}" rx="${16 * k}" ry="${14 * k}" fill="${c[0]}" opacity=".25"/>` + shard(-6 * k, 18 * k, 4 * k) + shard(2 * k, 28 * k, 6 * k) + shard(9 * k, 14 * k, 4 * k));
 }
 
 /** Vulkaan met lava en rook. */
 function islVolcano(x, y) {
   const [cx, cy] = mapAt(x, y);
-  return `<path d="M${cx - 34} ${cy + 6} L${cx - 11} ${cy - 44} L${cx + 11} ${cy - 44} L${cx + 34} ${cy + 6} Q${cx} ${cy + 18} ${cx - 34} ${cy + 6}Z" fill="#4A2C7A"/>
+  return mapProp('boing', `<path d="M${cx - 34} ${cy + 6} L${cx - 11} ${cy - 44} L${cx + 11} ${cy - 44} L${cx + 34} ${cy + 6} Q${cx} ${cy + 18} ${cx - 34} ${cy + 6}Z" fill="#4A2C7A"/>
     <path d="M${cx + 11} ${cy - 44} L${cx + 34} ${cy + 6} Q${cx + 18} ${cy + 13} ${cx + 4} ${cy + 12}Z" fill="#3A2262"/>
     <ellipse cx="${cx}" cy="${cy - 44}" rx="11" ry="4.5" fill="#FF7A2E"/><ellipse cx="${cx}" cy="${cy - 44}" rx="6" ry="2.4" fill="#FFD84A"/>
     <path d="M${cx - 3} ${cy - 41} Q${cx - 10} ${cy - 24} ${cx - 6} ${cy - 14} Q${cx - 14} ${cy - 2} ${cx - 10} ${cy + 8}" stroke="#FF8A3D" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-    <g class="smoke" fill="#B7A6D9" opacity=".7"><circle cx="${cx - 2}" cy="${cy - 56}" r="6"/><circle cx="${cx + 6}" cy="${cy - 64}" r="7.5"/><circle cx="${cx - 1}" cy="${cy - 74}" r="5"/></g>`;
+    <g class="smoke" fill="#B7A6D9" opacity=".7"><circle cx="${cx - 2}" cy="${cy - 56}" r="6"/><circle cx="${cx + 6}" cy="${cy - 64}" r="7.5"/><circle cx="${cx - 1}" cy="${cy - 74}" r="5"/></g>`);
 }
 
 /** Vuurtoren met een draaiende lichtbundel. */
 function islLighthouse(x, y) {
   const [cx, cy] = mapAt(x, y);
-  return `<path class="beam" d="M${cx} ${cy - 52} L${cx + 80} ${cy - 70} L${cx + 80} ${cy - 40} Z" fill="url(#mapGlow)" opacity=".75"/>
+  return mapProp('boing', `<path class="beam" d="M${cx} ${cy - 52} L${cx + 80} ${cy - 70} L${cx + 80} ${cy - 40} Z" fill="url(#mapGlow)" opacity=".75"/>
     <path d="M${cx - 9} ${cy} L${cx - 6} ${cy - 44} L${cx + 6} ${cy - 44} L${cx + 9} ${cy} Q${cx} ${cy + 4} ${cx - 9} ${cy}Z" fill="#F3F5FB"/>
     <path d="M${cx - 8.2} ${cy - 12} L${cx + 8.2} ${cy - 12} L${cx + 7.4} ${cy - 22} L${cx - 7.4} ${cy - 22}Z M${cx - 6.8} ${cy - 30} L${cx + 6.8} ${cy - 30} L${cx + 6.2} ${cy - 38} L${cx - 6.2} ${cy - 38}Z" fill="#E0475F"/>
     <rect x="${cx - 6}" y="${cy - 54}" width="12" height="10" rx="2" fill="#FFE27A" stroke="#2A2F48" stroke-width="2"/>
-    <path d="M${cx - 8} ${cy - 54} L${cx} ${cy - 62} L${cx + 8} ${cy - 54}Z" fill="#E0475F"/>`;
+    <path d="M${cx - 8} ${cy - 54} L${cx} ${cy - 62} L${cx + 8} ${cy - 54}Z" fill="#E0475F"/>`);
 }
 
 /** Gebouw met verlichte ramen (serverstad). */
@@ -543,28 +553,28 @@ function islBuilding(cx, cy, a, h, k = 0) {
       s += `<rect x="${wxR.toFixed(1)}" y="${wyR.toFixed(1)}" width="3" height="4" fill="${(r + i + k) % 2 ? '#7EE7FF' : '#2A2F48'}"/>`;
     }
   }
-  return s;
+  return mapProp('boing', s);
 }
 
 /** Rotsblokjes. */
 function islRocks(x, y, c = ['#8A90B0', '#6A708E', '#565B78']) {
   const [cx, cy] = mapAt(x, y);
-  return islBox(cx - 6, cy + 2, 6, 6, c[0], c[1], c[2]) + islBox(cx + 6, cy - 1, 4, 4, c[0], c[1], c[2]);
+  return mapProp('boing', islBox(cx - 6, cy + 2, 6, 6, c[0], c[1], c[2]) + islBox(cx + 6, cy - 1, 4, 4, c[0], c[1], c[2]));
 }
 
 /** Houten bordje met een stukje code. */
 function islSign(x, y, text) {
   const [cx, cy] = mapAt(x, y);
-  return `<rect x="${cx - 1.5}" y="${cy - 20}" width="3" height="20" fill="#7A4E2E"/><path d="M${cx - 15} ${cy - 30} L${cx + 15} ${cy - 36} L${cx + 15} ${cy - 22} L${cx - 15} ${cy - 16}Z" fill="#C89A5E" stroke="#7A4E2E" stroke-width="1.5"/>
-    <text x="${cx}" y="${cy - 22}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="700" font-size="8" fill="#3A2412" transform="translate(${cx} ${cy - 26}) skewY(-11) translate(${-cx} ${-(cy - 26)})">${esc(text)}</text>`;
+  return mapProp('sway', `<rect x="${cx - 1.5}" y="${cy - 20}" width="3" height="20" fill="#7A4E2E"/><path d="M${cx - 15} ${cy - 30} L${cx + 15} ${cy - 36} L${cx + 15} ${cy - 22} L${cx - 15} ${cy - 16}Z" fill="#C89A5E" stroke="#7A4E2E" stroke-width="1.5"/>
+    <text x="${cx}" y="${cy - 22}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="700" font-size="8" fill="#3A2412" transform="translate(${cx} ${cy - 26}) skewY(-11) translate(${-cx} ${-(cy - 26)})">${esc(text)}</text>`);
 }
 
 /** Sneeuwpop. */
 function islSnowman(x, y) {
   const [cx, cy] = mapAt(x, y);
-  return `<circle cx="${cx}" cy="${cy - 8}" r="9" fill="#FFFFFF" stroke="#B9DAF4"/><circle cx="${cx}" cy="${cy - 22}" r="6.5" fill="#FFFFFF" stroke="#B9DAF4"/>
+  return mapProp('sway', `<circle cx="${cx}" cy="${cy - 8}" r="9" fill="#FFFFFF" stroke="#B9DAF4"/><circle cx="${cx}" cy="${cy - 22}" r="6.5" fill="#FFFFFF" stroke="#B9DAF4"/>
     <circle cx="${cx - 2}" cy="${cy - 23}" r="1" fill="#1A1450"/><circle cx="${cx + 2}" cy="${cy - 23}" r="1" fill="#1A1450"/><path d="M${cx} ${cy - 21} l5 1.5 l-5 1z" fill="#FF8A3D"/>
-    <path d="M${cx - 6} ${cy - 16} h12" stroke="#E0475F" stroke-width="3" stroke-linecap="round"/>`;
+    <path d="M${cx - 6} ${cy - 16} h12" stroke="#E0475F" stroke-width="3" stroke-linecap="round"/>`);
 }
 
 /* Decor per wereld; vakjes zijn gekozen zodat niets het pad of de sterren bedekt. Van achter naar voor. */
@@ -624,8 +634,8 @@ function openNodePanel(i) {
     const L = n.level;
     const count = Math.min(LEVEL_SIZE, levelPool(L.id).length);
     const gameNames = typeof levelGames === 'function' ? levelGames(L.id).map(k => GAMES[k].name) : [];
-    h += `<p class="np-chip" style="--wc:${WORLD_HEX[week - 1]}">Wereld ${week} · Level ${L.index + 1}</p>
-      <h2 id="npTitle">${esc(shortTitle(L.title))}</h2>
+    h += `<h2 id="npTitle">${esc(shortTitle(L.title))}</h2>
+      <p class="np-chip">Wereld ${week} · level ${L.index + 1}</p>
       ${shortTitle(L.title) !== L.title ? `<p class="np-sub">${esc(L.title.slice(shortTitle(L.title).length).replace(/^:\s*/, ''))}</p>` : ''}
       <ul class="np-facts">
         <li>${count} vragen · 3 levens</li>
@@ -638,8 +648,8 @@ function openNodePanel(i) {
     h += `<a class="cta blue np-read" href="#/kennis/${encodeURIComponent(L.id)}">${MAP_ICON.book}Lees de les</a></div>`;
   } else {
     const d = dragonInfo(week);
-    h += `<p class="np-chip" style="--wc:${WORLD_HEX[week - 1]}">Wereld ${week} · Eindbaas</p>
-      <h2 id="npTitle">${esc(d.name)}</h2>
+    h += `<h2 id="npTitle">${esc(d.name)}</h2>
+      <p class="np-chip">Wereld ${week} · eindbaas</p>
       <p class="np-sub">${esc(d.title)}</p>
       <ul class="np-facts">
         <li>Vragen uit de hele wereld · ${DRAGON_HP} keer raak om te winnen</li>
@@ -699,6 +709,90 @@ function goWorld(week, refocus = '') {
   navigate('#/kaart/' + week);
 }
 
+/* ---------- het decor leeft ---------- */
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const mapCalm = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/** Bewegingen per soort decorstuk; alleen rotate, scale en translate, zodat ze de rest niet storen. */
+const PROP_MOVES = {
+  sway: [{ rotate: '0deg' }, { rotate: '-9deg' }, { rotate: '6deg' }, { rotate: '-3deg' }, { rotate: '0deg' }],
+  boing: [{ scale: '1 1' }, { scale: '1.12 .82' }, { scale: '.94 1.1' }, { scale: '1 1' }],
+  hop: [{ translate: '0 0' }, { translate: '0 -6px' }, { translate: '0 0' }],
+};
+
+/**
+ * Tik op het decor van de kaart: bomen wiebelen, dingen veren, de terminal zegt iets,
+ * het water rimpelt en een wolk waait even weg. Puur versiering; de levels werken los hiervan.
+ * @param {Element} t @param {MouseEvent} e
+ */
+function mapPoke(t, e) {
+  const svg = /** @type {SVGSVGElement | null} */ (t.closest('svg.map'));
+  if (!svg) return;
+  const calm = mapCalm();
+  const prop = /** @type {SVGGElement | null} */ (t.closest('.prop'));
+  if (prop) {
+    const kind = prop.dataset.prop || 'boing';
+    if (!calm) prop.animate(PROP_MOVES[kind] || PROP_MOVES.boing, { duration: 650, easing: 'ease-out' });
+    if (kind === 'term') mapWord(svg, prop, calm);
+    sfx('pop');
+    return;
+  }
+  const cloud = t.closest('.cloud');
+  if (cloud) {
+    cloud.animate([{ opacity: .7, scale: 1 }, { opacity: 0, scale: 1.3, offset: .3 }, { opacity: 0, scale: .8, offset: .6 }, { opacity: .7, scale: 1 }],
+      { duration: calm ? 900 : 1600, easing: 'ease-out' });
+    return;
+  }
+  if (t.closest('.sea, .water-sh')) {
+    const ctm = svg.getScreenCTM();
+    const layer = svg.querySelector('.ripples');
+    if (!ctm || !layer) return;
+    const p = new DOMPoint(e.clientX, e.clientY).matrixTransform(ctm.inverse());
+    const ring = document.createElementNS(SVG_NS, 'ellipse');
+    ring.setAttribute('class', 'ripple');
+    ring.setAttribute('cx', p.x.toFixed(1));
+    ring.setAttribute('cy', p.y.toFixed(1));
+    ring.setAttribute('rx', '6');
+    ring.setAttribute('ry', '3');
+    layer.appendChild(ring);
+    ring.animate(calm ? [{ opacity: .9 }, { opacity: 0 }] : [{ opacity: .9, scale: 1 }, { opacity: 0, scale: 4.5 }],
+      { duration: 800, easing: 'cubic-bezier(0.23, 1, 0.32, 1)' }).finished.then(() => ring.remove(), () => ring.remove());
+  }
+}
+
+/** Laat een code-woordje uit deze wereld boven een decorstuk opstijgen. @param {SVGSVGElement} svg @param {SVGGElement} prop @param {boolean} calm */
+function mapWord(svg, prop, calm) {
+  const words = (typeof HOME_FLOATS !== 'undefined' && HOME_FLOATS[MAPV.world]) || ['hoi!'];
+  const box = prop.getBBox();
+  const txt = document.createElementNS(SVG_NS, 'text');
+  txt.setAttribute('class', 'popword');
+  txt.setAttribute('x', (box.x + box.width / 2).toFixed(1));
+  txt.setAttribute('y', (box.y - 4).toFixed(1));
+  txt.setAttribute('text-anchor', 'middle');
+  txt.textContent = words[Math.floor(Math.random() * words.length)];
+  svg.appendChild(txt);
+  const move = calm ? [{ opacity: 0 }, { opacity: 1, offset: .25 }, { opacity: 0 }]
+    : [{ opacity: 0, translate: '0 4px' }, { opacity: 1, translate: '0 -6px', offset: .25 }, { opacity: 0, translate: '0 -22px' }];
+  txt.animate(move, { duration: 1100, easing: 'ease-out' }).finished.then(() => txt.remove(), () => txt.remove());
+}
+
+// Met een muis schuift de lucht een paar pixels mee: wat diepte, zonder dat de levels verschuiven.
+let mapSkyFrame = 0;
+document.addEventListener('pointermove', e => {
+  if (e.pointerType !== 'mouse' || document.body.dataset.screen !== 'map' || mapSkyFrame || mapCalm()) return;
+  mapSkyFrame = requestAnimationFrame(() => {
+    mapSkyFrame = 0;
+    const wrap = document.querySelector('#map .mapwrap');
+    const sky = /** @type {SVGGElement | null} */ (wrap && wrap.querySelector('.sky'));
+    if (!wrap || !sky) return;
+    const r = wrap.getBoundingClientRect();
+    const fx = Math.max(-1, Math.min(1, (e.clientX - r.left) / r.width * 2 - 1));
+    const fy = Math.max(-1, Math.min(1, (e.clientY - r.top) / r.height * 2 - 1));
+    sky.style.transform = `translate(${(-fx * 8).toFixed(1)}px, ${(-fy * 5).toFixed(1)}px)`;
+  });
+}, { passive: true });
+
 /* ---------- klikken en toetsen ---------- */
 
 document.addEventListener('click', e => {
@@ -712,7 +806,7 @@ document.addEventListener('click', e => {
   const act = /** @type {HTMLElement | null} */ (t.closest('[data-act], [data-world], .node, #wselBtn'));
   // Klik buiten de wereldkiezer sluit hem.
   if (!t.closest('#wPanel') && !t.closest('#wselBtn')) toggleWorldPanel(false);
-  if (!act) return;
+  if (!act) { mapPoke(t, e); return; }
   if (act.id === 'wselBtn') { toggleWorldPanel(); return; }
   if (act.classList.contains('node')) { openNodePanel(Number(act.getAttribute('data-node'))); return; }
   if (act.dataset.world) {
