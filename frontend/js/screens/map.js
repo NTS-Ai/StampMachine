@@ -767,9 +767,9 @@ function mapWord(svg, prop, calm) {
   const box = prop.getBBox();
   const txt = document.createElementNS(SVG_NS, 'text');
   txt.setAttribute('class', 'popword');
-  txt.setAttribute('x', (box.x + box.width / 2).toFixed(1));
-  txt.setAttribute('y', (box.y - 4).toFixed(1));
-  txt.setAttribute('text-anchor', 'middle');
+  // Rechts naast het decorstuk, niet erboven: daar staat vaak een level.
+  txt.setAttribute('x', (box.x + box.width + 4).toFixed(1));
+  txt.setAttribute('y', (box.y + 10).toFixed(1));
   txt.textContent = words[Math.floor(Math.random() * words.length)];
   svg.appendChild(txt);
   const move = calm ? [{ opacity: 0 }, { opacity: 1, offset: .25 }, { opacity: 0 }]
@@ -803,7 +803,7 @@ document.addEventListener('click', e => {
     if (t instanceof Element && !t.closest('#map')) toggleWorldPanel(false);
     return;
   }
-  const act = /** @type {HTMLElement | null} */ (t.closest('[data-act], [data-world], .node, #wselBtn'));
+  const act = /** @type {HTMLElement | null} */ (t.closest('[data-act], [data-world]:not(.mapwrap), .node, #wselBtn'));
   // Klik buiten de wereldkiezer sluit hem.
   if (!t.closest('#wPanel') && !t.closest('#wselBtn')) toggleWorldPanel(false);
   if (!act) { mapPoke(t, e); return; }
