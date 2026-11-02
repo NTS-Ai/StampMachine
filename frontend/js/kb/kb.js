@@ -154,7 +154,7 @@ function mountKbBots(root) {
     const host = /** @type {HTMLElement} */ (el);
     const kind = host.dataset.kbBot;
     // Alleen bij de inleverlijst praat Stampy terug; elders staat zijn tekst vast op de pagina.
-    const bot = mountBot(host, { bubble: kind === 'check' });
+    const bot = mountBot(host, { bubble: kind === 'check', three: kind === 'hero' });
     if (kind === 'hero') bot.set('happy');
     else if (kind === '404') bot.set('sad');
     KB.bots.push(bot);

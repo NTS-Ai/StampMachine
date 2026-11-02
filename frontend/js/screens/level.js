@@ -534,7 +534,7 @@ function finishLevel() {
       <button class="cta${primary ? ' blue' : ''}" type="button" data-lv="map">Naar de kaart</button>
       <button class="lvlink" type="button" data-lv="again">Opnieuw spelen</button></div>
   </div>`;
-  const bot = mountBot($('#lvResBot'), { bubble: false });
+  const bot = mountBot($('#lvResBot'), { bubble: false, three: true });
   LV_BOTS.push(bot);
   bot.react('win');
   sfx('win');
@@ -562,7 +562,7 @@ function failLevel() {
       <button class="cta blue" type="button" data-lv="map">Naar de kaart</button>
       <a class="lvlink" href="#/kennis/${encodeURIComponent(level.id)}">Lees de les</a></div>
   </div>`;
-  const bot = mountBot($('#lvResBot'), { bubble: false });
+  const bot = mountBot($('#lvResBot'), { bubble: false, three: true });
   LV_BOTS.push(bot);
   bot.set('sad');
   bot.anim('droop');

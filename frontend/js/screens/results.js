@@ -56,7 +56,7 @@ function showResult({ title, sub, stats, buttons, record = false, extraHtml = ''
   showScreen('result');
 
   if (typeof mountBot === 'function') {
-    resultBot = mountBot($('#resBot'), { bubble: false });
+    resultBot = mountBot($('#resBot'), { bubble: false, three: true });
     if (mood === 'win') resultBot.react('win');
     else if (mood === 'sad') resultBot.set('sad');
     else resultBot.set('happy');

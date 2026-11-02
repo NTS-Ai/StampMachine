@@ -149,9 +149,10 @@ let botUid = 0;
 class Bot {
   /**
    * @param {HTMLElement} host
-   * @param {{ bubble?: boolean, aura?: boolean, interactive?: boolean, label?: string | null }} [opts]
+   * @param {{ bubble?: boolean, aura?: boolean, interactive?: boolean, label?: string | null, three?: boolean }} [opts]
+   *   three: op deze plek wordt Stampy 3D zodra js/stampy/bot3d.js geladen is (alleen voor grote plekken)
    */
-  constructor(host, { bubble = true, aura = true, interactive = true, label = 'Stampy, de NTS-robot' } = {}) {
+  constructor(host, { bubble = true, aura = true, interactive = true, label = 'Stampy, de NTS-robot', three = false } = {}) {
     this.id = 'stampy' + (++botUid);
     /** Streak in dagen; null zolang stage() niet is aangeroepen. @type {number | null} */
     this.days = null;
@@ -180,6 +181,27 @@ class Bot {
       this.svg.addEventListener('click', this.onPoke);
       BOTS.push(this);
     }
+    if (three) this.want3d(label);
+  }
+
+  /**
+   * Vervangt de SVG door de 3D-Stampy zodra die geladen is. Lukt dat niet (geen WebGL, geen netwerk),
+   * dan blijft de SVG gewoon staan. @param {string | null} label
+   */
+  want3d(label) {
+    const go = () => {
+      if (this.dead || this.v3 || !this.svg.isConnected || !window.Stampy3D) return;
+      const holder = /** @type {HTMLElement} */ (this.svg.parentElement);
+      const v3 = window.Stampy3D.create(holder, { label });
+      if (!v3) return;
+      this.v3 = v3;
+      holder.classList.add('is3d');
+      v3.set(this.expr);
+      if (this.days !== null) v3.stage(this.days);
+      if (this.onPoke) v3.canvas.addEventListener('click', this.onPoke);
+    };
+    if (window.Stampy3D) go();
+    else addEventListener('stampy3d:ready', go, { once: true });
   }
 
   /** Zet het gezicht. @param {string} expr */
@@ -188,6 +210,7 @@ class Bot {
     this.svg.dataset.expr = expr;
     this.faceEl.innerHTML = botFace(expr);
     if (expr === 'sleep') this.faceEl.style.transform = '';
+    if (this.v3) this.v3.set(expr);
   }
 
   /** Terug naar rust: slapen bij streak 0, anders neutraal. */
@@ -200,6 +223,7 @@ class Bot {
   anim(name) {
     const c = this.svg.classList;
     ['anim-hop', 'anim-dance', 'anim-droop', 'anim-shake'].forEach(k => c.remove(k));
+    if (this.v3) this.v3.anim(name);
     if (!name) return;
     void this.svg.getBoundingClientRect();
     c.add('anim-' + name);
@@ -265,16 +289,19 @@ class Bot {
     st.setProperty('--accent-r', gold ? '#9A6410' : '#2B47F0');
     st.setProperty('--plate', gold ? '#4A3205' : '#2B47F0');
     st.setProperty('--nts', gold ? '#FFE7A3' : '#FFFFFF');
+    if (this.v3) this.v3.stage(d);
     // Alleen vanuit rust wisselen tussen slapen en wakker; een lopende reactie maakt hij af.
     if (this.expr === 'neutral' || this.expr === 'sleep') this.set(d === 0 ? 'sleep' : 'neutral');
   }
 
   /** Haalt deze Stampy weg (bijvoorbeeld als een scherm opnieuw wordt getekend). */
   destroy() {
+    this.dead = true;
     clearTimeout(this.t);
     clearTimeout(this.at);
     clearTimeout(this.bt);
     if (this.onPoke) this.svg.removeEventListener('click', this.onPoke);
+    if (this.v3) { this.v3.destroy(); this.v3 = null; }
     const i = BOTS.indexOf(this);
     if (i >= 0) BOTS.splice(i, 1);
   }
@@ -304,7 +331,7 @@ addEventListener('pointermove', e => {
 /**
  * Stampy op een scherm zetten, met upgrades volgens je huidige streak (slaapt bij 0 dagen).
  * @param {HTMLElement} host
- * @param {{ bubble?: boolean, aura?: boolean, interactive?: boolean, label?: string | null }} [opts]
+ * @param {{ bubble?: boolean, aura?: boolean, interactive?: boolean, label?: string | null, three?: boolean }} [opts]
  */
 function mountBot(host, opts) {
   const bot = new Bot(host, opts);

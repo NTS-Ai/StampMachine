@@ -320,3 +320,7 @@ fieldset.pf-theme { margin: 0; min-width: 0; border: 0; border-top: 1px solid va
 
 /* Op een touchscreen minstens 16 px in de editor, anders zoomt iOS in en niet meer terug. */
 @media (pointer: coarse) { .pg-code { font-size: 16px; } }
+
+/* 3D-Stampy (js/stampy/bot3d.js): het canvas neemt de plek van de SVG over, met dezelfde verhouding. */
+.host.is3d > .robot { display: none; }
+.host > .bot3d { display: block; width: 100%; aspect-ratio: 200 / 230; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }

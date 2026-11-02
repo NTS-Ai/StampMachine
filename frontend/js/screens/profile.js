@@ -86,7 +86,7 @@ function openProfile() {
     </section>`;
 
   // Stampy groot in het midden, met zijn upgrade; de vuur-aura doet het canvas.
-  const big = mountBot($('#pfBot'), { aura: false });
+  const big = mountBot($('#pfBot'), { aura: false, three: true });
   profileBots = [big];
   el.querySelectorAll('.pf-rung-bot').forEach(host => {
     const b = new Bot(/** @type {HTMLElement} */ (host), { bubble: false, interactive: false, label: null });

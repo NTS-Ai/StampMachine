@@ -115,7 +115,7 @@ function openHome() {
     </section>`;
 
   const bot = mountBot($('#hmBot'));
-  const courseBot = mountBot($('#hmCourseBot'), { bubble: false, label: null });
+  const courseBot = mountBot($('#hmCourseBot'), { bubble: false, label: null, three: true });
   homeBots = [bot, courseBot];
 
   const close = document.getElementById('hmNoticeClose');
