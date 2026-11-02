@@ -143,7 +143,7 @@ const LV_ICON = {
  * @type {null | {
  *   mode: 'level' | 'solo', key?: string, level?: Level, items?: any[], i?: number, hearts?: number, mistakes?: number,
  *   correct?: number, combo?: number, xp?: number, answered: number, game?: string | null, gameScore?: number,
- *   stageBefore?: number, over?: boolean }}
+ *   stageBefore?: number, over?: boolean, arena?: any, arenaDone?: boolean }}
  */
 let LV = null;
 /**
@@ -204,6 +204,7 @@ function startLevel(levelId) {
   LV = {
     mode: 'level', level, items: pickLevelItems(level.id), i: 0, hearts: 3, mistakes: 0, correct: 0, combo: 0, xp: 0, answered: 0,
     game: games.length ? randomOf(games) : null, gameScore: 0, stageBefore: lvStage(currentStreak()), over: false,
+    arena: null, arenaDone: false,
   };
   showScreen('level');
   renderLevelFrame();
@@ -230,11 +231,33 @@ function renderLevelFrame() {
       <h1 class="lvtitle">${title}</h1>
       ${solo ? '' : '<span class="lvxp" id="lvXp" aria-live="polite">0 XP</span><span class="combo" id="lvCombo" hidden>x2</span>'}
     </div>
+    ${solo ? '' : `<div class="lvarena" id="lvArena" style="--wc:${WORLD_HEX[/** @type {Level} */ (LV.level).week - 1]}" hidden></div>`}
     <div class="lvbox" id="lvBox"></div>`;
   lvBot = mountBot($('#lvBot'));
   LV_BOTS.push(lvBot);
   $('#lvQuit').addEventListener('click', quitLevel);
-  if (!solo) renderLevelHud();
+  if (!solo) { renderLevelHud(); mountLevelArena(); }
+}
+
+/**
+ * Zet de 3D-arena boven de vragen: Stampy tegen het wezentje van dit level, met evenveel HP als vragen.
+ * Wacht op three.js (js/battle/arena3d.js); lukt WebGL niet, dan blijft het level zoals het was.
+ */
+function mountLevelArena() {
+  const lv = LV;
+  const go = () => {
+    const host = document.getElementById('lvArena');
+    if (LV !== lv || !lv || !host || lv.arena || lv.over || !window.Arena3D) return;
+    const level = /** @type {Level} */ (lv.level);
+    const total = /** @type {any[]} */ (lv.items).length;
+    const arena = window.Arena3D.create(host, { world: level.week, level: level.index, hp: total });
+    if (!arena) return;
+    lv.arena = arena;
+    arena.setHp(total - /** @type {number} */ (lv.correct), total);
+    host.hidden = false;
+  };
+  if (window.Arena3D) go();
+  else addEventListener('arena3d:ready', go, { once: true });
 }
 
 /** Voortgangsbalk, levens, XP en combo bijwerken. @param {boolean} [lostOne] */
@@ -269,6 +292,13 @@ function renderLevelItem() {
   renderLevelHud();
   const items = /** @type {any[]} */ (LV.items);
   if (/** @type {number} */ (LV.i) >= items.length) {
+    // Alle vragen gehad: eerst gaat het wezentje neer, daarna de minigame of de uitslag.
+    if (LV.arena && !LV.arenaDone) {
+      const lv = LV;
+      lv.arenaDone = true;
+      lv.arena.faint().then(() => { if (LV === lv) renderLevelItem(); });
+      return;
+    }
     if (LV.game) renderGameIntro(LV.game);
     else finishLevel();
     return;
@@ -296,6 +326,7 @@ function onLevelAnswer(item, r) {
     lv.xp = /** @type {number} */ (lv.xp) + gain;
     S.xp += gain;
     sfx(lv.combo >= 3 ? 'combo' : 'ok');
+    if (lv.arena) { const arena = lv.arena, left = /** @type {any[]} */ (lv.items).length - lv.correct; arena.attack(1, lv.combo >= 3).then(() => arena.setHp(left)); }
     if (lvBot) {
       if (lv.combo >= 3 && lv.combo % 3 === 0) lvBot.react('combo', `${lv.combo} op rij! Dubbele XP.`);
       else lvBot.react('ok', randomOf(['Goed zo!', 'Die zit erin.', 'Netjes!', `+${gain} XP`]));
@@ -309,6 +340,7 @@ function onLevelAnswer(item, r) {
     lv.combo = 0;
     lost = true;
     sfx('bad');
+    if (lv.arena) lv.arena.foeAttack();
     if (lvBot) lvBot.react('no', lv.hearts > 0 ? randomOf(['Oei. Lees de uitleg even.', 'Die was lastig.', 'Fout is goed: nu onthoud je hem.']) : 'Oh nee, je levens zijn op…');
   }
   save();
@@ -624,6 +656,7 @@ function endSoloGame(mg) {
 
 function destroyLevelBots() {
   LV_BOTS.splice(0).forEach(b => b.destroy());
+  if (LV && LV.arena) { LV.arena.destroy(); LV.arena = null; }
   lvBot = null;
 }
 

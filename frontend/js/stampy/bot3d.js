@@ -3,6 +3,7 @@
    (zie de importmap in index.html). Het hangt zich aan window.Stampy3D en stuurt 'stampy3d:ready'.
    bot.js (gewoon script) blijft de baas: een Bot met { three: true } vervangt zijn SVG door dit 3D-figuurtje
    zodra het klaar is. Lukt WebGL niet, dan blijft gewoon de SVG-Stampy staan.
+   De gevechts-arena (js/battle/arena3d.js) gebruikt dezelfde bouwstenen: toon, outline, build en rig.
 
    Opbouw: toon-materialen met een zwarte omtrek (een iets grotere, binnenstebuiten kopie van elk onderdeel),
    een gezicht op een canvas waarvan ogen en mond met veren naar een nieuwe vorm morphen, en een kop die
@@ -10,7 +11,7 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 
-const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+export const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
 /* ---------- gezicht ---------- */
@@ -31,20 +32,23 @@ const MOODS = {
   think: { w: .18, h: .36, lidT: .22, tilt: -10, lidB: 0, star: 0, lookX: .7, lookY: -.6, mw: .1, curve: -.15, open: 0, col: 0, zz: 0 },
   worried: { w: .2, h: .42, lidT: .16, tilt: 16, lidB: 0, star: 0, lookX: -.2, lookY: 0, mw: .17, curve: -.35, open: .12, col: 0, zz: 0 },
   sleep: { w: .25, h: .05, lidT: 0, tilt: 0, lidB: 0, star: 0, lookX: 0, lookY: .3, mw: .05, curve: 0, open: .35, col: 1, zz: 1 },
+  angry: { w: .22, h: .34, lidT: .34, tilt: -24, lidB: 0, star: 0, lookX: 0, lookY: .1, mw: .2, curve: -.45, open: .25, col: 0, zz: 0 },
   power: { w: .22, h: .3, lidT: .34, tilt: -24, lidB: 0, star: 0, lookX: 0, lookY: .1, mw: .22, curve: -.2, open: .5, col: 0, zz: 0 },
   alarm: { w: .3, h: .34, lidT: 0, tilt: 0, lidB: 0, star: 0, lookX: 0, lookY: 0, mw: .12, curve: 0, open: .9, col: -1, zz: 0 },
 };
 
 /** Een veer: snel, met een beetje overshoot zodat het leeft. */
-class Spring {
+export class Spring {
   constructor(v) { this.v = v; this.t = v; this.vel = 0; }
   step(dt, k = 260, d = 22) { this.vel += ((this.t - this.v) * k - this.vel * d) * dt; this.v += this.vel * dt; }
 }
 
-class Face {
-  /** @param {HTMLCanvasElement} canvas */
-  constructor(canvas) {
+/** Een LED-gezicht op een canvas. led = eigen LED-kleur (de draken hebben oranje, groene ... ogen). */
+export class Face {
+  /** @param {HTMLCanvasElement} canvas @param {{ led?: number[] }} [o] */
+  constructor(canvas, { led = LED } = {}) {
     this.c = canvas;
+    this.led = led;
     this.layer = document.createElement('canvas');
     /** @type {Record<string, Spring>} */
     this.s = {};
@@ -121,7 +125,7 @@ class Face {
     }
     // Inkleuren: rood bij alarm, gedimd bij slapen; daarna met gloed op het scherm.
     const col = v('col');
-    const base = col < 0 ? mix(LED, RED, -col) : mix(LED, DIM, col);
+    const base = col < 0 ? mix(this.led, RED, -col) : mix(this.led, DIM, col);
     L.globalCompositeOperation = 'source-in'; L.fillStyle = `rgb(${base.join(',')})`; L.fillRect(0, 0, W, H);
     L.globalCompositeOperation = 'source-over';
     const g = /** @type {CanvasRenderingContext2D} */ (c.getContext('2d'));
@@ -133,14 +137,47 @@ class Face {
   }
 }
 
-/* ---------- materialen en bouw ---------- */
+/* ---------- cartoonlook ---------- */
 
 const steps = new Uint8Array([95, 180, 255]);
 const gradientMap = new THREE.DataTexture(steps, 3, 1, THREE.RedFormat);
 gradientMap.minFilter = gradientMap.magFilter = THREE.NearestFilter;
 gradientMap.needsUpdate = true;
-const toon = (color, extra = {}) => new THREE.MeshToonMaterial({ color, gradientMap, ...extra });
 const outlineMat = new THREE.MeshBasicMaterial({ color: '#131A2F', side: THREE.BackSide });
+
+/** Toon-materiaal: drie harde lichttrappen. */
+export const toon = (color, extra = {}) => new THREE.MeshToonMaterial({ color, gradientMap, ...extra });
+
+/**
+ * Zwarte omtrek: elk onderdeel krijgt een iets grotere, binnenstebuiten kopie. Onderdelen met een textuur
+ * of met userData.noOutline worden overgeslagen. Werkt niet op gespiegelde (scale -1) onderdelen.
+ * @param {THREE.Mesh[]} meshes @param {number} [t] dikte in wereld-eenheden
+ */
+export function outline(meshes, t = .026) {
+  for (const m of meshes) {
+    if (m.material.map || m.userData.noOutline) continue;
+    m.geometry.computeBoundingBox();
+    const size = new THREE.Vector3(); m.geometry.boundingBox.getSize(size);
+    const hull = new THREE.Mesh(m.geometry, outlineMat);
+    hull.scale.set(1 + 2 * t / Math.max(size.x * m.scale.x, .04), 1 + 2 * t / Math.max(size.y * m.scale.y, .04), 1 + 2 * t / Math.max(size.z * m.scale.z, .04));
+    m.add(hull);
+  }
+}
+
+/** Zachte schaduwvlek op de grond. */
+export function shadowBlob(w = 1.5, d = .9) {
+  const c = document.createElement('canvas'); c.width = c.height = 64;
+  const g = /** @type {CanvasRenderingContext2D} */ (c.getContext('2d'));
+  const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  gr.addColorStop(0, 'rgba(10,20,50,.35)'); gr.addColorStop(1, 'rgba(10,20,50,0)');
+  g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
+  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false }));
+  m.rotation.x = -Math.PI / 2; m.position.y = .002;
+  return m;
+}
+
+/* ---------- Stampy bouwen ---------- */
 
 /** Afgerond rechthoekig vlak met UV's van 0 tot 1. */
 function roundedShape(w, h, r) {
@@ -171,34 +208,19 @@ function ntsTexture() {
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
   return t;
 }
-function shadowBlob() {
-  const c = document.createElement('canvas'); c.width = c.height = 64;
-  const g = /** @type {CanvasRenderingContext2D} */ (c.getContext('2d'));
-  const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
-  gr.addColorStop(0, 'rgba(10,20,50,.35)'); gr.addColorStop(1, 'rgba(10,20,50,0)');
-  g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
-  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
-  const m = new THREE.Mesh(new THREE.PlaneGeometry(1.5, .9), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false }));
-  m.rotation.x = -Math.PI / 2; m.position.y = .002;
-  return m;
-}
 
 const HEAD_Y = .84;
 
-/** Bouwt Stampy; maten uit de SVG van de app (100 SVG-pixels = 1 eenheid, voeten op y = 0). */
-function build() {
+/** Bouwt Stampy; maten uit de SVG van de app (100 SVG-pixels = 1 eenheid, voeten op y = 0, kijkt naar +z). */
+export function build() {
   const mats = { shell: toon('#F3F5FB'), accent: toon('#2B47F0'), dark: toon('#131A2F'), bulb: toon('#FFC93D', { emissive: '#FFB020', emissiveIntensity: .5 }) };
   const meshes = [];
-  const add = (parent, geo, mat, x = 0, y = 0, z = 0, outline = true) => {
-    const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); parent.add(m);
-    if (outline) meshes.push(m);
-    return m;
-  };
+  const add = (parent, geo, mat, x = 0, y = 0, z = 0) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); parent.add(m); meshes.push(m); return m; };
   const root = new THREE.Group(), bot = new THREE.Group(); root.add(bot); root.add(shadowBlob());
   const body = new THREE.Group(); body.position.y = .41; bot.add(body);
   add(body, new RoundedBoxGeometry(.88, .74, .62, 6, .27), mats.shell);
   add(body, roundedSlab(.58, .32, .1, .04), mats.accent, 0, .03, .31);
-  add(body, roundedPlane(.5, .26, .08), new THREE.MeshBasicMaterial({ map: ntsTexture() }), 0, .03, .355, false);
+  add(body, roundedPlane(.5, .26, .08), new THREE.MeshBasicMaterial({ map: ntsTexture() }), 0, .03, .355);
   add(body, new THREE.CapsuleGeometry(.08, .14, 8, 16).rotateZ(Math.PI / 2), mats.accent, -.42, .31, 0);
   add(body, new THREE.CapsuleGeometry(.08, .14, 8, 16).rotateZ(Math.PI / 2), mats.accent, .42, .31, 0);
   const arm = side => {
@@ -221,18 +243,84 @@ function build() {
   const faceCanvas = document.createElement('canvas'); faceCanvas.width = 384; faceCanvas.height = 243;
   const face = new Face(faceCanvas);
   const faceTex = new THREE.CanvasTexture(faceCanvas); faceTex.colorSpace = THREE.SRGBColorSpace; faceTex.anisotropy = 4;
-  add(head, roundedPlane(.96, .6, .24), new THREE.MeshBasicMaterial({ map: faceTex }), 0, hy, .422, false);
+  add(head, roundedPlane(.96, .6, .24), new THREE.MeshBasicMaterial({ map: faceTex }), 0, hy, .422);
   add(head, new THREE.CylinderGeometry(.018, .018, .3, 12), mats.dark, 0, hy + .57, 0);
   const bulb = add(head, new THREE.SphereGeometry(.085, 32, 24), mats.bulb, 0, hy + .76, 0);
-  // Omtrek
-  for (const m of meshes) {
-    m.geometry.computeBoundingBox();
-    const size = new THREE.Vector3(); m.geometry.boundingBox.getSize(size);
-    const t = .026, hull = new THREE.Mesh(m.geometry, outlineMat);
-    hull.scale.set(1 + 2 * t / Math.max(size.x, .04), 1 + 2 * t / Math.max(size.y, .04), 1 + 2 * t / Math.max(size.z, .04));
-    m.add(hull);
-  }
+  outline(meshes);
   return { root, bot, head, body, armL, armR, bulb, face, faceTex, mats };
+}
+
+/**
+ * Beweging van een gebouwde Stampy: houding per gezicht, meekijken, ademen, animaties (hop, dance, droop, shake)
+ * en streak-upgrades. Roep update(dt, px, py) elk frame aan; px/py = waar hij heen kijkt, -1..1.
+ * @param {ReturnType<typeof build>} s
+ */
+export function rig(s) {
+  const sp = { hry: new Spring(0), hrx: new Spring(0), hrz: new Spring(0), by: new Spring(0), y: new Spring(0), sq: new Spring(1), al: new Spring(0), ar: new Spring(0) };
+  let pose = 'neutral', move = '', moveT = 0, t = 0, days = 1;
+  return {
+    /** Gezicht en houding (neutral, happy, cheer, sad, think, worried, sleep, alarm, power). @param {string} expr */
+    set(expr) { pose = expr; s.face.set(expr); },
+    /** hop, dance, droop of shake (zoals de SVG-animaties). @param {string | null} name */
+    anim(name) {
+      if (!name) { moveT = 0; return; }
+      move = name; moveT = name === 'hop' ? 0 : 1.6;
+      if (name === 'hop' && !calm()) { sp.sq.v = .8; sp.y.vel = 3.2; s.face.blink(); }
+    },
+    /** Vanaf 3 dagen gloeit de antenne feller, vanaf 21 dagen is hij goud. @param {number} d */
+    stage(d) {
+      days = d;
+      s.mats.shell.color.set(d >= 21 ? '#F7C03C' : '#F3F5FB');
+      s.mats.accent.color.set(d >= 21 ? '#9A6410' : '#2B47F0');
+    },
+    /** Hoe hoog hij nu springt (voor de schaduw). */
+    get lift() { return Math.max(0, sp.y.v); },
+    update(dt, px = 0, py = 0) {
+      t += dt; moveT = Math.max(0, moveT - dt);
+      const still = calm(), act = moveT > 0 ? move : '';
+      const looking = pose !== 'sleep';
+      s.face.px = looking ? px : 0; s.face.py = looking ? py : 0;
+      let hry = looking ? px * .5 : 0, hrx = looking ? py * .25 : 0, hrz = looking ? -px * .07 : 0, by = looking ? px * .15 : 0, al = 0, ar = 0, shake = 0;
+      let bob = still ? 0 : Math.sin(t * 2.1) * .025;
+      if (pose === 'sad' || act === 'droop') { hrx += .3; hrz += .1; al = -.05; ar = .05; }
+      if (pose === 'sleep') { hrx += .28; hrz = .12; bob = still ? 0 : Math.sin(t * 1.1) * .015; }
+      if (pose === 'think') { hrz += .14; hry -= .2; hrx -= .12; ar = .55; }
+      if (pose === 'happy') { al = -.35; ar = .35; }
+      if ((pose === 'cheer' || act === 'dance') && !still) { hrz += Math.sin(t * 9) * .16; al = -2.4 - Math.sin(t * 12) * .4; ar = 2.4 + Math.sin(t * 12) * .4; bob = Math.abs(Math.sin(t * 6)) * .12; }
+      if ((pose === 'alarm' || pose === 'power' || act === 'shake') && !still) { shake = Math.sin(t * 46) * .035; al = -.7; ar = .7; }
+      sp.hry.t = hry; sp.hrx.t = hrx; sp.hrz.t = hrz; sp.by.t = by; sp.al.t = al; sp.ar.t = ar; sp.y.t = 0; sp.sq.t = 1;
+      for (const k in sp) sp[k].step(dt, k === 'sq' ? 300 : k === 'y' ? 160 : 110, 13);
+      s.bot.position.set(shake, Math.max(-.02, sp.y.v) + bob, 0);
+      s.bot.scale.set(1 / Math.sqrt(sp.sq.v), sp.sq.v, 1 / Math.sqrt(sp.sq.v));
+      s.bot.rotation.y = sp.by.v;
+      // Geen botsingen: de kop kantelt binnen grenzen en komt omhoog zoveel als zijn onderste hoek zakt;
+      // de armen gaan alleen naar buiten (naar binnen zit meteen het lijf).
+      const rx = clamp(sp.hrx.v, -.22, .32), ry = clamp(sp.hry.v, -.6, .6), rz = clamp(sp.hrz.v, -.17, .17);
+      s.head.rotation.set(rx, ry, rz);
+      s.head.position.y = HEAD_Y + .5 * Math.abs(Math.sin(rz)) + .44 * Math.abs(Math.sin(rx));
+      s.body.scale.set(1, still ? 1 : 1 + Math.sin(t * 2.1) * .012, 1);
+      s.armL.rotation.z = Math.min(sp.al.v, 0); s.armR.rotation.z = Math.max(sp.ar.v, 0);
+      s.mats.bulb.emissiveIntensity = pose === 'sleep' ? .1 : (days >= 3 ? .9 : .5) + Math.sin(t * 2.4) * .2;
+      s.face.update(dt); s.faceTex.needsUpdate = true;
+    },
+  };
+}
+
+/**
+ * Tekenlus die pauzeert als het canvas niet in beeld is of het tabblad verborgen is.
+ * @param {HTMLCanvasElement} canvas @param {(dt: number) => void} tick
+ */
+export function loop(canvas, tick) {
+  let raf = 0, last = performance.now(), visible = true;
+  const io = new IntersectionObserver(([en]) => { visible = en.isIntersecting; });
+  io.observe(canvas);
+  const frame = now => {
+    raf = requestAnimationFrame(frame);
+    const dt = Math.min((now - last) / 1000, .05); last = now;
+    if (visible && !document.hidden) tick(dt);
+  };
+  raf = requestAnimationFrame(frame);
+  return () => { cancelAnimationFrame(raf); io.disconnect(); };
 }
 
 /* ---------- een Stampy op een plek ---------- */
@@ -258,77 +346,29 @@ function create(host, { label = null } = {}) {
   camera.position.set(0, 1.12, 4.7); camera.lookAt(0, 1.0, 0);
   const s = build();
   scene.add(s.root);
+  const r = rig(s);
 
-  const sp = { hry: new Spring(0), hrx: new Spring(0), hrz: new Spring(0), by: new Spring(0), y: new Spring(0), sq: new Spring(1), al: new Spring(0), ar: new Spring(0) };
-  let pose = 'neutral', move = '', moveT = 0, px = 0, py = 0, t = 0, days = 1, visible = true, raf = 0, last = performance.now();
-
+  let px = 0, py = 0;
   const fit = () => {
     const w = canvas.clientWidth || host.clientWidth, h = canvas.clientHeight || w * 230 / 200;
     if (!w || !h) return;
     renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
   };
   const ro = new ResizeObserver(fit); ro.observe(canvas); fit();
-  const io = new IntersectionObserver(([en]) => { visible = en.isIntersecting; }); io.observe(canvas);
   const onMove = e => {
-    const r = canvas.getBoundingClientRect();
-    if (!r.width) return;
-    px = clamp((e.clientX - (r.left + r.width / 2)) / (r.width * .9), -1, 1);
-    py = clamp((e.clientY - (r.top + r.height * .35)) / (r.height * .9), -1, 1);
+    const b = canvas.getBoundingClientRect();
+    if (!b.width) return;
+    px = clamp((e.clientX - (b.left + b.width / 2)) / (b.width * .9), -1, 1);
+    py = clamp((e.clientY - (b.top + b.height * .35)) / (b.height * .9), -1, 1);
   };
   addEventListener('pointermove', onMove, { passive: true });
-
-  const frame = now => {
-    raf = requestAnimationFrame(frame);
-    const dt = Math.min((now - last) / 1000, .05); last = now;
-    if (!visible || document.hidden) return;
-    t += dt; moveT = Math.max(0, moveT - dt);
-    const still = calm(), act = moveT > 0 ? move : '';
-    const looking = pose !== 'sleep';
-    s.face.px = looking ? px : 0; s.face.py = looking ? py : 0;
-    let hry = looking ? px * .5 : 0, hrx = looking ? py * .25 : 0, hrz = looking ? -px * .07 : 0, by = looking ? px * .15 : 0, al = 0, ar = 0, shake = 0;
-    let bob = still ? 0 : Math.sin(t * 2.1) * .025;
-    if (pose === 'sad' || act === 'droop') { hrx += .3; hrz += .1; al = -.05; ar = .05; }
-    if (pose === 'sleep') { hrx += .28; hrz = .12; bob = still ? 0 : Math.sin(t * 1.1) * .015; }
-    if (pose === 'think') { hrz += .14; hry -= .2; hrx -= .12; ar = .55; }
-    if (pose === 'happy') { al = -.35; ar = .35; }
-    if ((pose === 'cheer' || act === 'dance') && !still) { hrz += Math.sin(t * 9) * .16; al = -2.4 - Math.sin(t * 12) * .4; ar = 2.4 + Math.sin(t * 12) * .4; bob = Math.abs(Math.sin(t * 6)) * .12; }
-    if ((pose === 'alarm' || pose === 'power' || act === 'shake') && !still) { shake = Math.sin(t * 46) * .035; al = -.7; ar = .7; }
-    sp.hry.t = hry; sp.hrx.t = hrx; sp.hrz.t = hrz; sp.by.t = by; sp.al.t = al; sp.ar.t = ar; sp.y.t = 0; sp.sq.t = 1;
-    for (const k in sp) sp[k].step(dt, k === 'sq' ? 300 : k === 'y' ? 160 : 110, 13);
-    s.bot.position.set(shake, Math.max(-.02, sp.y.v) + bob, 0);
-    s.bot.scale.set(1 / Math.sqrt(sp.sq.v), sp.sq.v, 1 / Math.sqrt(sp.sq.v));
-    s.bot.rotation.y = sp.by.v;
-    // Geen botsingen: de kop kantelt binnen grenzen en komt omhoog zoveel als zijn onderste hoek zakt;
-    // de armen gaan alleen naar buiten (naar binnen zit meteen het lijf).
-    const rx = clamp(sp.hrx.v, -.22, .32), ry = clamp(sp.hry.v, -.6, .6), rz = clamp(sp.hrz.v, -.17, .17);
-    s.head.rotation.set(rx, ry, rz);
-    s.head.position.y = HEAD_Y + .5 * Math.abs(Math.sin(rz)) + .44 * Math.abs(Math.sin(rx));
-    s.body.scale.set(1, still ? 1 : 1 + Math.sin(t * 2.1) * .012, 1);
-    s.armL.rotation.z = Math.min(sp.al.v, 0); s.armR.rotation.z = Math.max(sp.ar.v, 0);
-    s.mats.bulb.emissiveIntensity = pose === 'sleep' ? .1 : (days >= 3 ? .9 : .5) + Math.sin(t * 2.4) * .2;
-    s.face.update(dt); s.faceTex.needsUpdate = true;
-    renderer.render(scene, camera);
-  };
-  raf = requestAnimationFrame(frame);
+  const stop = loop(canvas, dt => { r.update(dt, px, py); renderer.render(scene, camera); });
 
   return {
     canvas,
-    /** Gezicht en houding (neutral, happy, cheer, sad, think, worried, sleep, alarm, power). @param {string} expr */
-    set(expr) { pose = expr; s.face.set(expr); },
-    /** Animatie zoals bij de SVG: hop, dance, droop of shake. @param {string | null} name */
-    anim(name) {
-      if (!name) { moveT = 0; return; }
-      move = name; moveT = name === 'hop' ? 0 : 1.6;
-      if (name === 'hop' && !calm()) { sp.sq.v = .8; sp.y.vel = 3.2; s.face.blink(); }
-    },
-    /** Streak-upgrades: vanaf 3 dagen gloeit de antenne feller, vanaf 21 dagen een gouden pantser. @param {number} d */
-    stage(d) {
-      days = d;
-      s.mats.shell.color.set(d >= 21 ? '#F7C03C' : '#F3F5FB');
-      s.mats.accent.color.set(d >= 21 ? '#9A6410' : '#2B47F0');
-    },
+    set: r.set, anim: r.anim, stage: r.stage,
     destroy() {
-      cancelAnimationFrame(raf); ro.disconnect(); io.disconnect();
+      stop(); ro.disconnect();
       removeEventListener('pointermove', onMove);
       scene.traverse(o => { if (o.geometry) o.geometry.dispose(); });
       renderer.dispose(); canvas.remove();

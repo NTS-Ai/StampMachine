@@ -194,3 +194,14 @@ body[data-screen="boss"] { --app-w: 460px; }
     left: calc(50% + (min(100vw, 1040px) - 32px) / 4 + 6px);
   }
 }
+
+/* 3D-arena (js/battle/arena3d.js): vervangt de getekende draak, de heuvel en Stampy. De tekstballonnen blijven. */
+.boss-3d { position: absolute; inset: 0; z-index: 1; }
+.boss-stage.is3d::after, .boss-stage.is3d .boss-scene, .boss-stage.is3d .boss-dragon { visibility: hidden; }
+.boss-stage.is3d .boss-stampy .robot { visibility: hidden; }
+/* In 3D staan de tekstballonnen bovenin naast elkaar: Stampy links, de draak rechts, met het eiland eronder. */
+.boss-stage.is3d { min-height: clamp(270px, 76vw, 330px); }
+.boss-stage.is3d .boss-stampy { top: 3%; bottom: auto; left: 3%; width: 47%; max-width: none; }
+.boss-stage.is3d .boss-stampy .bubble { top: 0; bottom: auto; max-width: 100%; }
+.boss-stage.is3d .boss-say { left: auto; right: 3%; top: 3%; max-width: 47%; transform-origin: right top; }
+.boss-stage.is3d .boss-say::after { right: 24px; top: auto; bottom: -6px; transform: rotate(135deg); }

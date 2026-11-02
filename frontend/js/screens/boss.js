@@ -16,7 +16,7 @@ const BOSS_XP_COMBO = 30;
  * Het lopende gevecht, of null.
  * @type {null | { week: number, phase: 'intro' | 'fight' | 'end' | 'locked', hp: number, lives: number, streak: number,
  *   bestStreak: number, hits: number, misses: number, asked: number, xp: number, queue: PlayItem[], last: string,
- *   timers: number[], bot: any, sayTimer: number }}
+ *   timers: number[], bot: any, sayTimer: number, arena: any }}
  */
 let B = null;
 
@@ -53,7 +53,7 @@ function startBoss(week) {
   const locked = !dragonUnlocked(week);
   B = {
     week, phase: locked ? 'locked' : 'intro', hp: DRAGON_HP, lives: BOSS_LIVES, streak: 0, bestStreak: 0,
-    hits: 0, misses: 0, asked: 0, xp: 0, queue: [], last: '', timers: [], bot: null, sayTimer: 0,
+    hits: 0, misses: 0, asked: 0, xp: 0, queue: [], last: '', timers: [], bot: null, sayTimer: 0, arena: null,
   };
   renderBossScreen();
   showScreen('boss');
@@ -71,6 +71,7 @@ function leaveBoss() {
   B.timers.forEach(clearTimeout);
   clearTimeout(B.sayTimer);
   if (B.bot) B.bot.destroy();
+  if (B.arena) B.arena.destroy();
   B = null;
   const fx = document.getElementById('bossFx');
   if (fx) fx.innerHTML = '';
@@ -116,6 +117,33 @@ function renderBossScreen() {
   $('#bossQuit').addEventListener('click', quitBoss);
   setDragon('sleep');
   renderBossStatus();
+  mountBossArena();
+}
+
+/**
+ * Vervangt het getekende podium door de 3D-arena met de draak van deze wereld (js/battle/arena3d.js).
+ * De SVG-Stampy blijft de baas over gezicht en tekstballon en stuurt de 3D-Stampy aan via Bot.v3.
+ * Lukt WebGL niet of laadt three.js niet, dan blijft het podium zoals het was.
+ */
+function mountBossArena() {
+  const fight = B;
+  const go = () => {
+    const stage = document.getElementById('bossStage');
+    if (B !== fight || !B || !stage || B.arena || !window.Arena3D) return;
+    const host = document.createElement('div');
+    host.className = 'boss-3d';
+    stage.prepend(host);
+    const arena = window.Arena3D.create(host, { world: B.week, boss: true, hud: false });
+    if (!arena) { host.remove(); return; }
+    B.arena = arena;
+    stage.classList.add('is3d');
+    B.bot.v3 = arena.stampy;
+    arena.stampy.set(B.bot.expr);
+    if (B.bot.days !== null) arena.stampy.stage(B.bot.days);
+    if (B.phase === 'end' && B.hp <= 0) arena.faint();
+  };
+  if (window.Arena3D) go();
+  else addEventListener('arena3d:ready', go, { once: true });
 }
 
 /** Tekent de draak opnieuw in een staat (de HP bepaalt hoe gehavend hij is). @param {string} state */
@@ -123,6 +151,7 @@ function setDragon(state) {
   const host = document.getElementById('bossDragon');
   if (!host || !B) return;
   host.innerHTML = dragonSVG(B.week, { state: /** @type {any} */ (state), hp: B.hp });
+  if (B.arena && state === 'defeated') B.arena.faint();
 }
 
 /** De rusthouding: duizelig bij weinig HP, anders klaar voor het gevecht. */
@@ -341,7 +370,8 @@ function bossHit(dmg, combo) {
   sfx(combo ? 'combo' : 'ok');
   B.bot.react(combo ? 'combo' : 'ok', combo ? randomOf(['Combo! Dubbele stempel!', 'Drie op rij!', 'Nu gaat ie hard!']) : randomOf(['Stempel erop!', 'Raak!', 'Goedgekeurd!']));
   const calm = bossCalm();
-  if (!calm) {
+  if (B.arena) B.arena.attack(dmg, combo);
+  else if (!calm) {
     const bot = $('#bossBot svg'), dragon = $('#bossDragon svg');
     const a = bossPoint(bot, .5, .62), b = bossPoint(dragon, .56, .66);
     const dx = b.x - a.x, dy = b.y - a.y;
@@ -365,7 +395,8 @@ function bossFire() {
   setDragon('attack');
   dragonSay(dragonLine(B.week, 'miss'), 2400);
   const calm = bossCalm();
-  if (!calm) {
+  if (B.arena) B.arena.foeAttack();
+  else if (!calm) {
     const dragon = $('#bossDragon svg'), bot = $('#bossBot svg');
     const a = bossPoint(dragon, -0.1, .52), b = bossPoint(bot, .5, .5);
     bossFx(`<i class="boss-fireball" style="left:${a.x}px;top:${a.y}px;--dx:${(b.x - a.x).toFixed(0)}px;--dy:${(b.y - a.y).toFixed(0)}px"></i>`, 600);
@@ -431,6 +462,7 @@ function bossLost() {
   renderBossStatus();
   sfx('lose');
   setDragon(bossRest());
+  if (B.arena) B.arena.gloat();
   dragonSay(dragonLine(B.week, 'win'), 4000);
   B.bot.react('no', 'Volgende keer pakken we hem.');
   bossLater(() => B.bot.set('sad'), 2300);
